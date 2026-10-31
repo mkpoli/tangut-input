@@ -1,0 +1,11 @@
+node_modules
+types/
+dist/
+.wrangler/
+.svelte-check/
+*.log
+.DS_Store
+/shots/
+__pycache__/
+/cache/
+/dist-worker/
