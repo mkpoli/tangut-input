@@ -7,6 +7,7 @@
 // saves the strokes normalised to the pad's width, so they can be rasterised exactly as the Draw
 // page does. `--strokes 1` adds the recorded stroke count to the score, as the Draw page can.
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { gunzipSync } from 'node:zlib'
 import { parseShapes, indexShapes, rasterize, rankShapes } from '../../app/lib/shape.js'
 
@@ -23,7 +24,10 @@ function latestSession() {
   return new URL(`${names.at(-1)}/`, root)
 }
 
-const dir = args.find(arg => !arg.startsWith('--')) ? new URL(`file://${args.find(arg => !arg.startsWith('--')).replace(/\/*$/, '/')}`) : latestSession()
+// A session directory from the command line is resolved against the working directory.
+const dir = args.find(arg => !arg.startsWith('--'))
+  ? new URL(`file://${resolve(args.find(arg => !arg.startsWith('--')).replace(/\/*$/, ''))}/`)
+  : latestSession()
 const shapes = parseShapes(gunzipSync(readFileSync(new URL('../../app/data/tangut-shapes.bin.gz', import.meta.url))))
 const index = indexShapes(shapes)
 const strokeCounts = new Map(Object.entries(
