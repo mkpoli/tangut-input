@@ -41,6 +41,14 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-shapes.bin.gz`: glyph masks for the drawing pad, rendered from Noto Serif Tangut
   2.168 by `scripts/build_tangut_shapes.py`; `scripts/eval_tangut_shapes.mjs` measures the search.
 
+## Handwriting data
+
+`bun run quiz` serves a local quiz on <http://127.0.0.1:5411/>: it shows one Tangut character to
+copy, or two to four characters that look alike to choose between and draw, and saves each answer's
+strokes beside the prompt it answered in `data/handwriting/<timestamp>/`. Pass `--size`, `--seed`,
+`--port` and `--out` to change the round. The strokes are normalised to the pad's width, so they can
+be compared with a drawing made on the site's Draw page.
+
 ## Development
 
 ```sh

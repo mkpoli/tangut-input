@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Tangut handwriting quiz</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tangut&display=swap">
+<style>
+  :root{
+    color-scheme:light dark;
+    --bg:light-dark(#faf8f3,#151412);--surface:light-dark(#fff,#1e1d1a);--surface-2:light-dark(#f3f0e9,#26241f);
+    --ink:light-dark(#1c1a16,#f0ece2);--ink-2:light-dark(#55524a,#b7b1a3);--line:light-dark(#e2ddd1,#3a3730);
+    --accent:light-dark(#b23a2b,#e07a68);--tangut:"Noto Serif Tangut",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;min-height:100dvh}
+  header{display:flex;align-items:baseline;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line)}
+  h1{margin:0;font-size:16px;font-weight:650;letter-spacing:.01em}
+  header p{margin:0;color:var(--ink-2);font-size:13px}
+  header .bar{margin-left:auto;color:var(--ink-2);font-variant-numeric:tabular-nums;font-size:13px}
+  main{max-width:960px;margin:0 auto;padding:24px 20px 80px}
+  .prompt{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+  .glyph{font-family:var(--tangut);font-size:150px;line-height:1;border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:18px 30px;min-width:200px;text-align:center}
+  .glyph.multi{display:flex;gap:6px;font-size:96px;padding:18px 14px}
+  .glyph .opt{border:1px solid transparent;border-radius:12px;padding:0 6px}
+  .glyph .opt:hover,.glyph .opt:focus{border-color:var(--accent);outline:none}
+  .glyph .opt.chosen{border-color:var(--accent);background:var(--surface-2)}
+  .preview{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+  .side{flex:1;min-width:260px}
+  .side p{margin:0 0 10px;color:var(--ink-2);font-size:13.5px}
+  .pad-wrap{position:relative;width:340px;max-width:100%}
+  canvas{display:block;width:100%;aspect-ratio:1;touch-action:none;cursor:crosshair;border-radius:16px;background:var(--surface);
+    box-shadow:inset 0 0 0 1px var(--line);color:var(--ink)}
+  .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  button{font:inherit;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button:disabled{opacity:.45;cursor:default}
+  .status{margin-top:10px;color:var(--ink-2);font-size:13px;min-height:20px}
+  .done{text-align:center;padding-top:60px}
+  .done h2{font-family:var(--tangut);font-size:13px;font-weight:400;letter-spacing:.08em;text-transform:uppercase}
+  @media (prefers-color-scheme:dark){.glyph img,.glyph .opt img{filter:invert(1)}}
+  .hint{color:var(--ink-2);font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Tangut handwriting quiz</h1>
+  <p>Draw the character; your strokes are saved with the answer on the server.</p>
+  <span class="bar" id="bar"></span>
+</header>
+<main>
+  <div class="prompt">
+    <div class="glyph" id="glyph" aria-live="polite">…</div>
+    <div class="side">
+      <p id="instruction">Loading…</p>
+      <div class="pad-wrap"><canvas id="pad" width="680" height="680" aria-label="Drawing pad"></canvas></div>
+      <div class="actions">
+        <button class="primary" id="done" disabled>Done</button>
+        <button id="undo">Undo stroke</button>
+        <button id="clear">Clear</button>
+        <button id="skip">Skip</button>
+      </div>
+      <p class="status" id="status"></p>
+    </div>
+  </div>
+</main>
+<script type="module">
+  const pad = document.getElementById('pad')
+  const glyph = document.getElementById('glyph')
+  const instruction = document.getElementById('instruction')
+  const status = document.getElementById('status')
+  const done = document.getElementById('done')
+  const bar = document.getElementById('bar')
+  const context = pad.getContext('2d')
+
+  let item = null
+  let chosen = null
+  let strokes = []
+  let current = null
+  let first = null
+  let live = true
+
+  function paint() {
+    const ratio = pad.width / pad.clientWidth
+    context.setTransform(1, 0, 0, 1, 0, 0)
+    context.clearRect(0, 0, pad.width, pad.height)
+    const ink = getComputedStyle(pad).color
+    context.strokeStyle = ink
+    context.lineCap = 'round'
+    context.lineJoin = 'round'
+    context.lineWidth = 9 * ratio
+    for (const stroke of [...strokes, ...(current ? [current] : [])]) {
+      context.beginPath()
+      stroke.forEach(([x, y], i) => i ? context.lineTo(x * ratio, y * ratio) : context.moveTo(x * ratio, y * ratio))
+      if (stroke.length === 1) context.lineTo(stroke[0][0] * ratio + 0.1, stroke[0][1] * ratio)
+      context.stroke()
+    }
+    done.disabled = !strokes.length || (item?.kind === 'lookalike' && !chosen)
+  }
+
+  function point(event) {
+    const box = pad.getBoundingClientRect()
+    return [event.clientX - box.left, event.clientY - box.top]
+  }
+  pad.addEventListener('pointerdown', event => {
+    if (!item || (item.kind === 'lookalike' && !chosen)) return
+    pad.setPointerCapture(event.pointerId)
+    first = event.pointerId
+    current = [point(event)]
+    live = true
+    strokes = [...strokes, current]
+    paint()
+  })
+  pad.addEventListener('pointermove', event => {
+    if (event.pointerId !== first || !current) return
+    current.push(point(event))
+    strokes = [...strokes.slice(0, -1), current]
+    paint()
+  })
+  const end = event => {
+    if (event.pointerId !== first) return
+    current = null
+    first = null
+    paint()
+  }
+  pad.addEventListener('pointerup', end)
+  pad.addEventListener('pointercancel', end)
+
+  document.getElementById('undo').onclick = () => { if (!strokes.length) return; strokes = strokes.slice(0, -1); paint() }
+  document.getElementById('clear').onclick = () => { strokes = []; paint() }
+
+  async function next() {
+    strokes = []
+    chosen = null
+    item = null
+    glyph.textContent = '…'
+    instruction.textContent = 'Loading the next character…'
+    status.textContent = ''
+    paint()
+    const response = await fetch('/api/next')
+    const body = await response.json()
+    if (body.done) {
+      bar.textContent = ''
+      glyph.textContent = '✓'
+      instruction.textContent = 'That is the whole round. Thank you; every drawing is saved on the server.'
+      pad.style.display = 'none'
+      document.querySelector('.actions').style.display = 'none'
+      return
+    }
+    item = body
+    bar.textContent = `${body.index + 1} / ${body.total}`
+    if (body.kind === 'lookalike') {
+      // Several characters share this look; pick the one meant, then draw it.
+      glyph.classList.add('multi')
+      glyph.replaceChildren(...body.options.map((option, i) => {
+        const button = document.createElement('button')
+        button.type = 'button'
+        button.className = 'opt'
+        button.setAttribute('aria-pressed', 'false')
+        button.textContent = option.image ? '' : '?'
+        if (option.image) {
+          const picture = document.createElement('img')
+          picture.src = `/glyph-${option.image.split('glyph-').pop()}`
+          picture.alt = ''
+          picture.style.cssText = 'display:block;width:96px;height:96px;object-fit:contain'
+          button.append(picture)
+        }
+        button.onclick = () => {
+          chosen = i
+          for (const other of glyph.children) {
+            other.classList.toggle('chosen', other === button)
+            other.setAttribute('aria-pressed', String(other === button))
+          }
+          instruction.textContent = 'Now draw it in the square below.'
+          paint()
+        }
+        return button
+      }))
+      instruction.textContent = 'These characters are easy to mix up. Which one is printed here? Pick it, then draw what you see.'
+    } else {
+      // One glyph to copy: the image is the character, shown large and greyscale.
+      glyph.classList.remove('multi')
+      glyph.replaceChildren()
+      const picture = document.createElement('img')
+      picture.src = body.image ? `/glyph-${body.image.split('glyph-').pop()}` : ''
+      picture.alt = 'The character to draw'
+      picture.style.cssText = 'display:block;width:220px;height:220px;object-fit:contain;filter:invert(1)'
+      picture.style.filter = 'invert(var(--invert,0))'
+      document.documentElement.style.setProperty('--invert', matchMedia('(prefers-color-scheme: dark)').matches ? '1' : '0')
+      glyph.append(picture)
+      chosen = 'glyph'
+      instruction.textContent = 'Draw this whole character in the square below, as large as it fits.'
+    }
+    paint()
+  }
+
+  done.onclick = async () => {
+    const width = pad.clientWidth, height = pad.clientHeight
+    status.textContent = 'Saving…'
+    const response = await fetch('/api/save', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / width).toFixed(4), +(y / height).toFixed(4)])), width, height }),
+    })
+    const body = await response.json()
+    status.textContent = body.error ? body.error : `Saved as ${body.saved}.`
+    await next()
+  }
+  document.getElementById('skip').onclick = async () => { await fetch('/api/skip', { method: 'POST' }); next() }
+
+  next()
+</script>
+</body>
+</html>
