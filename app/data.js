@@ -22,6 +22,8 @@ let entries = null
 let codes = null
 /** @type {Promise<Attestation> | null} */
 let attestation = null
+/** @type {Promise<[string, number][]> | null} */
+let parts = null
 
 /** @returns {Promise<Entry[]>} */
 export async function loadEntries() {
@@ -36,6 +38,11 @@ export async function loadCodes() {
 /** Attestation of every character in the recorded corpus, built from the Glyph Atlas records. @returns {Promise<Attestation>} */
 export async function loadAttestation() {
   return attestation ??= readJsonGz(new URL('./data/tangut-attestation.json.gz', import.meta.url)).then(data => /** @type {Attestation} */ (data))
+}
+
+/** Every Tangut character and component the records or the font define, with how many descriptions use it. @returns {Promise<[string, number][]>} */
+export async function loadParts() {
+  return parts ??= readJsonGz(new URL('./data/tangut-parts.json.gz', import.meta.url)).then(data => /** @type {{ parts: [string, number][] }} */ (data).parts)
 }
 
 /** @param {string} char */

@@ -1,5 +1,5 @@
 // The state every view shares: the loaded records, the chosen character, and the search box.
-import { loadCodes, loadEntries } from './data.js'
+import { loadCodes, loadEntries, loadParts } from './data.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
 export const app = $state({
@@ -9,10 +9,12 @@ export const app = $state({
     /** @type {Map<string, Entry>} */ byChar: new Map(),
     /** Full Cangjie codes by character, from the RIME table. @type {Map<string, string[]>} */
     codes: new Map(),
+    /** Every Tangut character and component the data holds, with the descriptions using it. @type {[string, number][]} */
+    parts: [],
   },
   view: {
     /** @type {string | null} */ selected: null,
-    /** @type {'code' | 'phonetic' | 'glyph' | 'component'} */ mode: 'code',
+    /** @type {'code' | 'phonetic' | 'glyph' | 'component' | 'browse'} */ mode: 'code',
     /** @type {string} */ query: '',
   },
 })
@@ -20,8 +22,8 @@ export const app = $state({
 export async function load() {
   if (app.data.status !== 'loading') return
   try {
-    /** @type {[Entry[], [string, string][]]} */
-    const [records, pairs] = await Promise.all([loadEntries(), loadCodes()])
+    /** @type {[Entry[], [string, string][], [string, number][]]} */
+    const [records, pairs, parts] = await Promise.all([loadEntries(), loadCodes(), loadParts()])
     const codes = new Map()
     for (const [char, code] of pairs) {
       const list = codes.get(char)
@@ -31,6 +33,7 @@ export async function load() {
     app.data.entries = records
     app.data.byChar = new Map(records.map(record => [record.char, record]))
     app.data.codes = codes
+    app.data.parts = parts
     app.data.status = 'ready'
   } catch {
     app.data.status = 'failed'
@@ -50,6 +53,7 @@ export function search(query, mode) {
   if (mode === 'phonetic') return byPhonetic(text)
   if (mode === 'glyph') return byGloss(text)
   if (mode === 'component') return byComponent(text)
+  if (mode === 'browse') return browse(text)
   return []
 }
 
@@ -99,6 +103,18 @@ function byComponent(query) {
   const char = [...query.trim()][0]
   if (!char) return []
   return app.data.entries.filter(entry => entry.composition?.includes(char) && entry.char !== char).map(entry => entry.char)
+}
+
+/** Every character in the data, in code point order, narrowed by a typed digit or component. @param {string} query */
+function browse(query) {
+  const text = query.trim()
+  const all = [...new Set([...app.data.byChar.keys(), ...app.data.parts.map(([char]) => char)])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
+  if (!text) return all
+  if (/^[0-9]+$/.test(text)) {
+    const digits = text.replace(/^0x/i, '').toUpperCase()
+    return all.filter(char => char.codePointAt(0)?.toString(16).toUpperCase().includes(digits))
+  }
+  return all.filter(char => (app.data.byChar.get(char)?.composition ?? '').includes(text))
 }
 
 /** Lower case, tone marks and vowel diacritics dropped, nothing between letters. @param {string} value */

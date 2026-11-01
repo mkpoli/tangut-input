@@ -41,6 +41,8 @@
     {#if hits.length > 600}<p class="more">The first 600 of {hits.length}.</p>{/if}
   {:else if app.view.query.trim() && app.data.status === 'ready'}
     <p class="none">Nothing matches that.</p>
+  {:else if app.view.mode === 'browse' && app.data.status === 'ready'}
+    <p class="none">Type a digit to narrow by code point, or a component to find descriptions using it.</p>
   {:else if app.data.status === 'loading'}
     <p class="none">Loading the Tangut records…</p>
   {/if}

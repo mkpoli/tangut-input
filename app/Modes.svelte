@@ -9,6 +9,7 @@
     { key: 'phonetic', label: 'Reconstruction', hint: 'a reconstruction', example: 'do' },
     { key: 'glyph', label: 'Meaning', hint: 'an English, Japanese or Chinese meaning', example: 'poison' },
     { key: 'component', label: 'Component', hint: 'a component', example: '𘠀' },
+    { key: 'browse', label: 'Browse', hint: 'digits of a code point, or a component', example: '1700' },
   ]
   const current = $derived(MODES.find(mode => mode.key === app.view.mode) ?? MODES[0])
 </script>
