@@ -82,7 +82,8 @@
     "build:tangut-layers": "node scripts/build_tangut_layers.mjs",
     "build:app": "vite build app",
     "preview:app": "vite preview app",
-    "quiz": "bun scripts/handwriting/quiz.js"
+    "quiz": "bun scripts/handwriting/quiz.js",
+    "build:tangut-fonts": "uv run scripts/build_tangut_font_faces.py"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "6.2.4",

@@ -1,6 +1,15 @@
 /* Noto Serif Tangut from Google Fonts lacks the newest components; this subset of the bundled
    version 2.168 draws them. */
 @font-face{font-family:"Tangut Supplement";src:url("/fonts/NotoSerifTangut-supplement.woff2") format("woff2");unicode-range:U+18AF3-18AFF,U+18D00-18D08;font-display:swap}
+/* Three faces a reader may set Tangut in. Noto comes from Google Fonts, Yinchuan (景永時's design,
+   completed by Andrew West) is served from the site, and Wenhai is a subset of BabelStone Tangut
+   Wenhai holding only the characters Noto lacks. Their licences are in FONT-LICENCES.md. */
+@font-face{font-family:"Tangut Yinchuan";src:url("/fonts/TangutYinchuan.ttf") format("truetype");font-display:swap;
+  unicode-range:U+17000-18AFF,U+18D00-18DFF}
+@font-face{font-family:"BabelStone Wenhai";src:url("/fonts/BabelStoneTangutWenhai.ttf") format("truetype");font-display:swap;
+  unicode-range:U+17000-187FF}
+@font-face{font-family:"BabelStone Complement";src:url("/fonts/BabelStoneTangut-complement.woff2") format("woff2");font-display:swap;
+  unicode-range:U+18800-18DFF}
 
 /* Tangut Input: warm paper and ink, with one vermilion accent for what acts. Every colour is a
    light-dark() pair, so color-scheme (or the theme switch) picks the side. */
@@ -27,12 +36,16 @@
   --shadow:light-dark(0 1px 2px rgb(60 40 20 / .08),0 1px 2px rgb(0 0 0 / .5));
   --lift:light-dark(0 8px 30px rgb(60 40 20 / .14),0 10px 30px rgb(0 0 0 / .6));
   --r:10px;
+  /* The reader picks one face; the others are fallbacks for what it lacks. */
   --tangut:"Noto Serif Tangut","Tangut Supplement","Tangut Yinchuan",serif;
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
   --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
   --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans JP","Noto Sans SC",sans-serif;
   --top:52px;
 }
+:root[data-tangut="serif"]{--tangut:"Noto Serif Tangut","Tangut Supplement","Tangut Yinchuan",serif}
+:root[data-tangut="yinchuan"]{--tangut:"Tangut Yinchuan","Tangut Supplement","Noto Serif Tangut",serif}
+:root[data-tangut="wenhai"]{--tangut:"BabelStone Wenhai","BabelStone Complement","Tangut Supplement",serif}
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}

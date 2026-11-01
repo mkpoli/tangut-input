@@ -41,6 +41,14 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-shapes.bin.gz`: glyph masks for the drawing pad, rendered from Noto Serif Tangut
   2.168 by `scripts/build_tangut_shapes.py`; `scripts/eval_tangut_shapes.mjs` measures the search.
 
+## Faces
+
+The Tangut script can be set in three faces from the switch at the right of the top bar: Noto Serif
+Tangut (the default, from Google Fonts), Tangut Yinchuan (景永時's design, completed by Andrew West)
+and BabelStone Tangut Wenhai. Yinchuan and the Wenhai complement are served from the site; their
+terms are in `app/public/fonts/FONT-LICENCES.md`. `bun run build:tangut-fonts` rebuilds the two
+small subsets.
+
 ## Handwriting data
 
 `bun run quiz` serves a local quiz on <http://127.0.0.1:5411/>: it shows one Tangut character to

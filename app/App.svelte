@@ -3,7 +3,7 @@
   // card of the open character beside it (a sheet over it on a phone).
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES } from './lib/route.svelte.js'
-  import { ui, applyTheme, cycleTheme } from './lib/ui.svelte.js'
+  import { ui, applyTangut, applyTheme, cycleTheme, setTangut, TANGUT_FACES } from './lib/ui.svelte.js'
   import { toast } from './lib/clip.svelte.js'
   import Writing from './ui/Writing.svelte'
   import Card from './ui/Card.svelte'
@@ -16,6 +16,9 @@
 
   load()
   applyTheme()
+  applyTangut()
+
+  let fontMenu = $state(false)
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page */
   function nav(event, page) {
@@ -54,6 +57,18 @@
     </nav>
     <div class="aside">
       <a href="/about" class="about" class:on={route.page === 'about'} onclick={event => nav(event, 'about')}>Sources</a>
+      <div class="font-pick">
+        <button class="btn ghost face" type="button" aria-haspopup="listbox" aria-expanded={fontMenu}
+          title="The face Tangut is set in" onclick={() => { fontMenu = !fontMenu }}><span class="tg sample" aria-hidden="true">𘅤</span><span class="face-name">{TANGUT_FACES.find(face => face.key === ui.tangut)?.label}</span></button>
+        {#if fontMenu}
+          <ul class="font-menu" role="listbox" aria-label="Tangut face">
+            {#each TANGUT_FACES as face (face.key)}
+              <li><button type="button" role="option" aria-selected={ui.tangut === face.key} class:on={ui.tangut === face.key}
+                onclick={() => { setTangut(face.key); fontMenu = false }}><span class="tg sample" style:font-family={face.family} aria-hidden="true">𗀀</span><span>{face.label}</span></button></li>
+            {/each}
+          </ul>
+        {/if}
+      </div>
       <button class="btn ghost theme" type="button" onclick={cycleTheme} title={THEMES[ui.theme]} aria-label={THEMES[ui.theme]}>
         {#if ui.theme === 'light'}
           <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="currentColor"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 1.8v2.4M10 15.8v2.4M1.8 10h2.4M15.8 10h2.4M4.2 4.2l1.7 1.7M14.1 14.1l1.7 1.7M4.2 15.8l1.7-1.7M14.1 5.9l1.7-1.7"/></g></svg>
@@ -109,6 +124,15 @@
   .finders a:hover,.about:hover{background:var(--hover);color:var(--ink)}
   .finders a.on,.about.on{background:var(--ink);color:var(--bg)}
   .aside{margin-left:auto;display:flex;align-items:center;gap:4px}
+  .font-pick{position:relative}
+  .face{display:flex;align-items:center;gap:6px;padding:6px 9px}
+  .sample{font-size:16px;line-height:1}
+  .face-name{font-size:12.5px;color:var(--ink-2)}
+  .font-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;margin:0;padding:4px;list-style:none;min-width:180px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:var(--lift)}
+  .font-menu button{display:flex;align-items:center;gap:9px;width:100%;padding:7px 9px;border:0;border-radius:7px;background:none;text-align:left;font-size:13px}
+  .font-menu button:hover{background:var(--hover)}
+  .font-menu button.on{background:var(--ink);color:var(--bg)}
+  .font-menu .sample{font-size:19px}
   .theme{padding:0 8px}
 
   .body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 440px;align-items:start}
@@ -124,7 +148,7 @@
   @media (max-width:1180px){.body{grid-template-columns:minmax(0,1fr) 380px}}
   @media (max-width:900px){
     .top{gap:10px;padding:0 14px}
-    .finders,.about{display:none}
+    .finders,.about,.face-name{display:none}
     .body{grid-template-columns:minmax(0,1fr)}
     .finder{padding:16px 14px 90px}
     .card{position:fixed;inset:0;top:0;height:100dvh;z-index:40;border:0;transform:translateY(100%);transition:transform .22s ease;visibility:hidden}
