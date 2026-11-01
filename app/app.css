@@ -8,6 +8,10 @@
   unicode-range:U+17000-18AFF,U+18D00-18DFF}
 @font-face{font-family:"BabelStone Wenhai";src:url("/fonts/BabelStoneTangutWenhai.ttf") format("truetype");font-display:swap;
   unicode-range:U+17000-187FF}
+@font-face{font-family:"New Tangut Std";src:url("/fonts/NewTangutStd.ttf") format("truetype");font-display:swap;
+  unicode-range:U+17000-187FF}
+@font-face{font-family:"New Tangut Std Complement";src:url("/fonts/NewTangutStd-complement.woff2") format("woff2");font-display:swap;
+  unicode-range:U+17000-18DFF}
 @font-face{font-family:"BabelStone Complement";src:url("/fonts/BabelStoneTangut-complement.woff2") format("woff2");font-display:swap;
   unicode-range:U+18800-18DFF}
 
@@ -46,6 +50,7 @@
 :root[data-tangut="serif"]{--tangut:"Noto Serif Tangut","Tangut Supplement","Tangut Yinchuan",serif}
 :root[data-tangut="yinchuan"]{--tangut:"Tangut Yinchuan","Tangut Supplement","Noto Serif Tangut",serif}
 :root[data-tangut="wenhai"]{--tangut:"BabelStone Wenhai","BabelStone Complement","Tangut Supplement",serif}
+:root[data-tangut="kai"]{--tangut:"New Tangut Std","New Tangut Std Complement","Tangut Supplement",serif}
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}

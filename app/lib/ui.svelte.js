@@ -11,6 +11,7 @@ export const TANGUT_FACES = /** @type {const} */ ([
   { key: 'serif', label: 'Noto Serif', family: '"Noto Serif Tangut"' },
   { key: 'yinchuan', label: 'Yinchuan', family: '"Tangut Yinchuan"' },
   { key: 'wenhai', label: 'Wenhai', family: '"BabelStone Wenhai"' },
+  { key: 'kai', label: 'New Standard (kai)', family: '"New Tangut Std"' },
 ])
 
 export const ui = $state({
@@ -18,8 +19,8 @@ export const ui = $state({
   sheet: false,
   /** @type {'auto' | 'light' | 'dark'} */
   theme: /** @type {'auto' | 'light' | 'dark'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(THEME)) || 'auto'),
-  /** The face Tangut is set in. @type {'serif' | 'yinchuan' | 'wenhai'} */
-  tangut: /** @type {'serif' | 'yinchuan' | 'wenhai'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(TANGUT)) || 'serif'),
+  /** The face Tangut is set in. @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */
+  tangut: /** @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(TANGUT)) || 'serif'),
 })
 
 /** Show a character in the card without taking the reader anywhere (arrow keys, highlighting). @param {string} char */
@@ -43,7 +44,7 @@ export function cycleTheme() {
   try { localStorage.setItem(THEME, ui.theme) } catch { /* ignore */ }
 }
 
-/** @param {'serif' | 'yinchuan' | 'wenhai'} key */
+/** @param {'serif' | 'yinchuan' | 'wenhai' | 'kai'} key */
 export function setTangut(key) {
   ui.tangut = key
   document.documentElement.dataset.tangut = key

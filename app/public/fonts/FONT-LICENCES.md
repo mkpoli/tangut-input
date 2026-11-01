@@ -14,3 +14,9 @@
   ideographs. The full font is in this directory for rebuilding that subset.
 
 Rebuild the Noto supplement and the BabelStone complement with `bun run build:tangut-fonts`.
+
+- **New Tangut Std** (新西夏字體), from the 古今文字集成 font page (ccamc.org/fonts_tangut.php),
+  where it is offered for download alongside Noto Serif Tangut; it is described there as built
+  from 文海, 同音 and 同義 with the script's structures corrected. No licence text ships with the
+  archive; the font is served for this personal tool. `NewTangutStd-complement.woff2` draws the
+  Tangut components with Noto Serif Tangut, which this face leaves out.

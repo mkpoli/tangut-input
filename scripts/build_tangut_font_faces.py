@@ -6,7 +6,8 @@
 
 `NotoSerifTangut-supplement.woff2` holds the characters Google Fonts' Noto Serif Tangut lacks,
 taken from the bundled 2.168. `BabelStoneTangut-complement.woff2` holds the characters BabelStone
-Tangut Wenhai draws that Noto does not.
+Tangut Wenhai draws that Noto does not. `NewTangutStd-complement.woff2` holds what the kai
+structure face, new Tangut Std, lacks.
 """
 from pathlib import Path
 
@@ -49,6 +50,8 @@ def main() -> None:
     noto = points(NOTO)
     wenhai = points(FONTS / 'BabelStoneTangutWenhai.ttf')
     write_subset(FONTS / 'BabelStoneTangutWenhai.ttf', sorted(noto - wenhai), FONTS / 'BabelStoneTangut-complement.woff2')
+    std = points(FONTS / 'NewTangutStd.ttf')
+    write_subset(NOTO, sorted(noto - std), FONTS / 'NewTangutStd-complement.woff2')
 
 
 if __name__ == '__main__':

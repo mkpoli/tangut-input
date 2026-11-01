@@ -2,15 +2,19 @@
 # requires-python = ">=3.11"
 # dependencies = ["pillow==13.0.0", "fonttools[woff]==4.68.0", "brotli==1.2.1"]
 # ///
-"""Build `app/data/tangut-shapes.bin.gz`, the glyph masks the drawing pad compares a drawing with.
+"""Build the glyph masks the drawing pad compares a drawing with: one file per face.
 
-Every Tangut ideograph and component that Noto Serif Tangut draws is rendered at 96 px, cropped to
-its ink and stretched to fill a 32×32 square, then packed as 128 bytes of bits.
+Every Tangut ideograph and component the face draws is rendered at 96 px, cropped to its ink and
+stretched to fill a 32×32 square, then packed as 128 bytes of bits. `--face` names the face:
+`noto` (the default, Noto Serif Tangut), `std` (new Tangut Std, 楷書-structured), `yinchuan`
+(Tangut Yinchuan) or `wenhai` (BabelStone Tangut Wenhai), so the drawings can be compared against
+each of the shapes a reader might write from.
 The file is a little-endian u32 header length, the header as UTF-8 JSON (format, size, font and
 the characters in order), then the masks back to back.
 The page normalises a drawing the same way, so a match compares the shape of the font's glyph with
 the shape of the drawing and nothing else.
 """
+import argparse
 import gzip
 import hashlib
 import json
@@ -21,8 +25,13 @@ from fontTools.ttLib import TTFont
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
-FONT = ROOT / 'fonts/NotoSerifTangut-Regular.woff2'
-OUT = ROOT / 'app/data/tangut-shapes.bin.gz'
+# Each face, its file, its name in the file header and where it comes from.
+FACES = {
+    'noto': (ROOT / 'fonts/NotoSerifTangut-Regular.woff2', 'Noto Serif Tangut', 'app/data/tangut-shapes.bin.gz'),
+    'std': (ROOT / 'app/public/fonts/NewTangutStd.ttf', 'New Tangut Std', 'app/data/tangut-shapes-std.bin.gz'),
+    'yinchuan': (ROOT / 'app/public/fonts/TangutYinchuan.ttf', 'Tangut Yinchuan', 'app/data/tangut-shapes-yinchuan.bin.gz'),
+    'wenhai': (ROOT / 'app/public/fonts/BabelStoneTangutWenhai.ttf', 'BabelStone Tangut Wenhai', 'app/data/tangut-shapes-wenhai.bin.gz'),
+}
 SIZE = 32
 FIT = 30
 RENDER = 96
@@ -31,6 +40,11 @@ RANGES = [(0x17000, 0x187FF), (0x18800, 0x18AFF), (0x18D00, 0x18D1F)]
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--face', choices=sorted(FACES), default='noto')
+    face_name = parser.parse_args().face
+    FONT, NAME, out = FACES[face_name]
+    OUT = ROOT / out
     font = TTFont(FONT)
     cmap = font.getBestCmap() or {}
     font.flavor = None
@@ -51,7 +65,8 @@ def main():
     document = {
         'format': 'tangut-input/shapes',
         'size': SIZE,
-        'font': 'Noto Serif Tangut',
+        'font': NAME,
+        'face': face_name,
         'fontSha256': hashlib.sha256(FONT.read_bytes()).hexdigest(),
         'chars': ''.join(chars),
     }
