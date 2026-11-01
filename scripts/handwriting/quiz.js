@@ -172,14 +172,14 @@ const server = Bun.serve({
       current = await makeItem()
       if (!current) return Response.json({ done: true })
       // The answer never reaches the page.
-      // The answer never reaches the page; a lookalike prompt sends the images of its options only.
-      const options = current.kind === 'lookalike' ? current.options.map((char, i) => ({ image: current.images[i] })) : null
-      return Response.json({ kind: current.kind, index: session.items.length, total: size, image: current.image ?? null, options })
+      // The answer never reaches the page: it gets the picture to copy and nothing that names it.
+      const image = current.kind === 'lookalike' ? current.images[current.options.indexOf(current.char)] : current.image
+      return Response.json({ kind: current.kind, index: session.items.length, total: size, image: image ?? null })
     }
     if (url.pathname === '/api/save' && request.method === 'POST') {
       const body = await request.json()
       if (!current) return Response.json({ error: 'no prompt' }, { status: 409 })
-      const record = { char: current.char, kind: current.kind, strokes: body.strokes, width: body.width, height: body.height, at: new Date().toISOString() }
+      const record = { char: current.char, lookalikes: current.options ?? null, kind: current.kind, strokes: body.strokes, width: body.width, height: body.height, at: new Date().toISOString() }
       session.items.push(record)
       const name = `${String(session.items.length).padStart(3, '0')}-${current.char.codePointAt(0)?.toString(16)}.json`
       writeFileSync(`${out}/${name}`, JSON.stringify(record))

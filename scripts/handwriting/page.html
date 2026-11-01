@@ -152,33 +152,16 @@
     item = body
     bar.textContent = `${body.index + 1} / ${body.total}`
     if (body.kind === 'lookalike') {
-      // Several characters share this look; pick the one meant, then draw it.
-      glyph.classList.add('multi')
-      glyph.replaceChildren(...body.options.map((option, i) => {
-        const button = document.createElement('button')
-        button.type = 'button'
-        button.className = 'opt'
-        button.setAttribute('aria-pressed', 'false')
-        button.textContent = option.image ? '' : '?'
-        if (option.image) {
-          const picture = document.createElement('img')
-          picture.src = `/glyph-${option.image.split('glyph-').pop()}`
-          picture.alt = ''
-          picture.style.cssText = 'display:block;width:96px;height:96px;object-fit:contain'
-          button.append(picture)
-        }
-        button.onclick = () => {
-          chosen = i
-          for (const other of glyph.children) {
-            other.classList.toggle('chosen', other === button)
-            other.setAttribute('aria-pressed', String(other === button))
-          }
-          instruction.textContent = 'Now draw it in the square below.'
-          paint()
-        }
-        return button
-      }))
-      instruction.textContent = 'These characters are easy to mix up. Which one is printed here? Pick it, then draw what you see.'
+      // Several characters that look alike exist; one of them is the answer. They are all valid
+      // drawings, so the prompt names none of them and any of them is accepted as the shape.
+      glyph.classList.remove('multi')
+      const picture = document.createElement('img')
+      picture.src = body.image ? `/glyph-${body.image.split('glyph-').pop()}` : ''
+      picture.alt = 'The character to draw'
+      picture.style.cssText = 'display:block;width:220px;height:220px;object-fit:contain'
+      glyph.replaceChildren(picture)
+      chosen = 'lookalike'
+      instruction.textContent = 'This character has several lookalikes. Draw this one in the square below.'
     } else {
       // One glyph to copy: the image is the character, shown large and greyscale.
       glyph.classList.remove('multi')
