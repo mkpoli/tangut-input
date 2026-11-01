@@ -75,14 +75,14 @@ export function cardSvg({ sequence, drawing = null, char = null, familyOf = () =
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Noto Sans CJK JP">`
     + `<rect width="1200" height="630" fill="${p.bg}"/>`
     + `<rect x="24" y="24" width="1152" height="582" rx="28" fill="${p.surface}" stroke="${p.line}"/>`
-    + `<rect x="56" y="54" width="5" height="26" rx="2.5" fill="${p.accent}"/><text x="76" y="77" font-size="26" fill="${p.ink}">IDS Workshop</text>`
-    + `<text x="1120" y="75" text-anchor="end" font-size="18" fill="${p.muted}">ids.mkpo.li</text>`
+    + `<rect x="56" y="54" width="5" height="26" rx="2.5" fill="${p.accent}"/><text x="76" y="77" font-size="26" fill="${p.ink}">Tangut Input</text>`
+    + `<text x="1120" y="75" text-anchor="end" font-size="18" fill="${p.muted}">tangut.mkpo.li</text>`
     + `<path d="M56 103H1144" stroke="${p.line}"/>`
     + frame(p) + glyph(drawing, p)
     + `<text x="568" y="193" font-size="19" fill="${p.muted}">Ideographic description sequence</text>`
     + text + identity
     + `<path d="M568 479H1108" stroke="${p.line}"/>`
-    + `<text x="568" y="520" font-size="20" fill="${p.muted}">Open in IDS Workshop</text>`
+    + `<text x="568" y="520" font-size="20" fill="${p.muted}">Open in Tangut Input</text>`
     + `<path d="M1081 513H1105M1097 505L1105 513L1097 521" fill="none" stroke="${p.accent}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
     + '</svg>'
 }

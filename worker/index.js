@@ -6,7 +6,7 @@ import { EXAMPLES } from '../demo/lib/examples.js'
 import { shareHtml, routeFor } from './page.js'
 import { cardResponse, characterOf } from './render.js'
 
-const ORIGIN = 'https://ids.mkpo.li'
+const ORIGIN = 'https://tangut.mkpo.li'
 const failure = (message, status) => new Response(message, { status, headers: { 'cache-control': 'no-store' } })
 
 // A sequence's own letters: operators, the marks a draft leaves for an empty slot, selectors.
@@ -38,7 +38,7 @@ function notFound(url, text, doomed = false) {
 <meta name="robots" content="noindex">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<title>${shown} — not found · IDS Workshop</title>
+<title>${shown} — not found · Tangut Input</title>
 <style>
   :root { color-scheme: light dark; font-family: "Noto Sans CJK JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif; }
   *, *::before, *::after { box-sizing: border-box; }
@@ -136,7 +136,7 @@ export default {
           const template = await env.ASSETS.fetch(new URL('/index.html', url.origin).href)
           if (!template.ok) throw new Error('Page unavailable')
           const html = await template.text()
-          if (!html.includes('<title>IDS Workshop — Ideographic Description Sequence Editor</title>')) response = render(request, notFound(url, route.sequence), 404)
+          if (!html.includes('<title>Tangut Input — Tangut IDS Editor</title>')) response = render(request, notFound(url, route.sequence), 404)
           else response = new Response(shareHtml(html, {
             sequence: route.sequence, char: await characterOf(env, route.sequence), origin: ORIGIN,
           }), { headers: {
@@ -151,7 +151,7 @@ export default {
     }
     // Dynamic responses need their own indexing policy.
     const headers = new Headers(response.headers)
-    if (url.hostname !== 'ids.mkpo.li') headers.set('x-robots-tag', 'noindex')
+    if (url.hostname !== 'tangut.mkpo.li') headers.set('x-robots-tag', 'noindex')
     return new Response(request.method === 'HEAD' ? null : response.body, {
       status: response.status, statusText: response.statusText, headers,
     })

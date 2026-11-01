@@ -54,10 +54,10 @@ export function routeFor(url, defaultSequence) {
  */
 export function metaFor({ sequence, char, origin }) {
   const url = `${origin}${pathOf(sequence)}`
-  const title = char ? `${sequence} = ${char} (${codePoint(char)}) — IDS Workshop` : `${sequence} — IDS Workshop`
+  const title = char ? `${sequence} = ${char} (${codePoint(char)}) — Tangut Input` : `${sequence} — Tangut Input`
   const description = char
-    ? `The ideographic description sequence ${sequence} composes ${char} (${codePoint(char)}). Drawn by IDS Workshop.`
-    : `The ideographic description sequence ${sequence}, composed by IDS Workshop.`
+    ? `The ideographic description sequence ${sequence} composes ${char} (${codePoint(char)}). Drawn by Tangut Input.`
+    : `The ideographic description sequence ${sequence}, composed by Tangut Input.`
   const image = `${origin}/og/${encodeURIComponent(sequence)}.png`
   return {
     title,
@@ -65,7 +65,7 @@ export function metaFor({ sequence, char, origin }) {
       `<meta name="description" content="${escaped(description)}">`,
       `<link rel="canonical" href="${escaped(url)}">`,
       `<meta property="og:type" content="article">`,
-      `<meta property="og:site_name" content="IDS Workshop">`,
+      `<meta property="og:site_name" content="Tangut Input">`,
       `<meta property="og:url" content="${escaped(url)}">`,
       `<meta property="og:title" content="${escaped(title)}">`,
       `<meta property="og:description" content="${escaped(description)}">`,

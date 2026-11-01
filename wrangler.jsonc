@@ -1,5 +1,5 @@
 {
-  "name": "ids-input-workshop",
+  "name": "tangut-input",
   "main": "worker/index.js",
   "compatibility_date": "2026-10-30",
   "assets": {
@@ -10,7 +10,7 @@
     // SPA fallback here would resolve the miss before the worker ever sees it.
     "not_found_handling": "none"
   },
-  "routes": [{ "pattern": "ids.mkpo.li", "custom_domain": true }],
+  "routes": [{ "pattern": "tangut.mkpo.li", "custom_domain": true }],
   "workers_dev": false,
   "observability": { "enabled": true },
   "preview_urls": true
