@@ -22,7 +22,11 @@
   header .bar{margin-left:auto;color:var(--ink-2);font-variant-numeric:tabular-nums;font-size:13px}
   main{max-width:960px;margin:0 auto;padding:24px 20px 80px}
   .prompt{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
-  .glyph{font-family:var(--tangut);font-size:150px;line-height:1;border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:18px 30px;min-width:200px;text-align:center}
+  /* The prompt and the pad keep their boxes whatever is loading, so nothing moves between prompts. */
+  .glyph{font-family:var(--tangut);font-size:150px;line-height:1;border:1px solid var(--line);border-radius:18px;background:var(--surface);
+    padding:18px;width:272px;height:272px;display:grid;place-items:center;text-align:center;flex:none}
+  .glyph img{display:block;width:224px;height:224px;object-fit:contain;filter:invert(var(--invert,0))}
+  .glyph.loading{color:var(--line)}
   .glyph.multi{display:flex;gap:6px;font-size:96px;padding:18px 14px}
   .glyph .opt{border:1px solid transparent;border-radius:12px;padding:0 6px}
   .glyph .opt:hover,.glyph .opt:focus{border-color:var(--accent);outline:none}
@@ -37,7 +41,7 @@
   button{font:inherit;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:inherit;cursor:pointer}
   button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   button:disabled{opacity:.45;cursor:default}
-  .status{margin-top:10px;color:var(--ink-2);font-size:13px;min-height:20px}
+  .status{margin-top:10px;color:var(--ink-2);font-size:13px;height:20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
   .done{text-align:center;padding-top:60px}
   .done h2{font-family:var(--tangut);font-size:13px;font-weight:400;letter-spacing:.08em;text-transform:uppercase}
   @media (prefers-color-scheme:dark){.glyph img,.glyph .opt img{filter:invert(1)}}
@@ -131,52 +135,79 @@
   document.getElementById('undo').onclick = () => { if (!strokes.length) return; strokes = strokes.slice(0, -1); paint() }
   document.getElementById('clear').onclick = () => { strokes = []; paint() }
 
+  /** A prompt as the page shows it: the image to copy, and one line of instruction. */
+  function show(body) {
+    item = body
+    bar.textContent = `${body.index + 1} / ${body.total}`
+    // The box is the same size for every prompt and shows the image only once it is decoded.
+    glyph.classList.remove('multi', 'loading')
+    const picture = document.createElement('img')
+    picture.src = drawable(body.image)
+    picture.alt = 'The character to draw'
+    picture.decoding = 'sync'
+    glyph.replaceChildren(picture)
+    chosen = body.kind
+    instruction.textContent = body.kind === 'lookalike'
+      ? 'This character has several lookalikes. Draw this one in the square below.'
+      : 'Draw this whole character in the square below, as large as it fits.'
+    paint()
+  }
+
+  /** @param {string} path */
+  const drawable = path => path ? `/glyph-${path.split('glyph-').pop()}` : ''
+
+  // The prompt after the current one, fetched while the current one is being drawn, so pressing
+  // Done shows it at once instead of waiting for a round trip and an image.
+  /** @type {{ body: any, images: HTMLImageElement[] } | null} */
+  let ahead = null
+  async function prefetch() {
+    if (!item || ahead) return
+    const response = await fetch('/api/peek').catch(() => null)
+    if (!response?.ok) return
+    const body = await response.json()
+    if (body.done) return
+    const images = [body.image, ...(body.options ?? []).map(option => option.image)].filter(Boolean).map(path => {
+      const img = new Image()
+      img.src = drawable(path)
+      img.decode?.().catch(() => {})
+      return img
+    })
+    ahead = { body, images }
+    void images.length
+  }
+
   async function next() {
     strokes = []
     chosen = null
     item = null
+    paint()
+    if (ahead) {
+      // The next prompt was fetched while drawing; it is shown without a request.
+      const { body } = ahead
+      ahead = null
+      instruction.textContent = ''
+      show(body)
+      prefetch()
+      return
+    }
+    glyph.className = 'glyph loading'
     glyph.textContent = '…'
     instruction.textContent = 'Loading the next character…'
     status.textContent = ''
-    paint()
     const response = await fetch('/api/next')
     const body = await response.json()
     if (body.done) {
       bar.textContent = ''
+      glyph.className = 'glyph'
       glyph.textContent = '✓'
       instruction.textContent = 'That is the whole round. Thank you; every drawing is saved on the server.'
       pad.style.display = 'none'
       document.querySelector('.actions').style.display = 'none'
       return
     }
-    item = body
-    bar.textContent = `${body.index + 1} / ${body.total}`
-    if (body.kind === 'lookalike') {
-      // Several characters that look alike exist; one of them is the answer. They are all valid
-      // drawings, so the prompt names none of them and any of them is accepted as the shape.
-      glyph.classList.remove('multi')
-      const picture = document.createElement('img')
-      picture.src = body.image ? `/glyph-${body.image.split('glyph-').pop()}` : ''
-      picture.alt = 'The character to draw'
-      picture.style.cssText = 'display:block;width:220px;height:220px;object-fit:contain'
-      glyph.replaceChildren(picture)
-      chosen = 'lookalike'
-      instruction.textContent = 'This character has several lookalikes. Draw this one in the square below.'
-    } else {
-      // One glyph to copy: the image is the character, shown large and greyscale.
-      glyph.classList.remove('multi')
-      glyph.replaceChildren()
-      const picture = document.createElement('img')
-      picture.src = body.image ? `/glyph-${body.image.split('glyph-').pop()}` : ''
-      picture.alt = 'The character to draw'
-      picture.style.cssText = 'display:block;width:220px;height:220px;object-fit:contain;filter:invert(1)'
-      picture.style.filter = 'invert(var(--invert,0))'
-      document.documentElement.style.setProperty('--invert', matchMedia('(prefers-color-scheme: dark)').matches ? '1' : '0')
-      glyph.append(picture)
-      chosen = 'glyph'
-      instruction.textContent = 'Draw this whole character in the square below, as large as it fits.'
-    }
-    paint()
+    instruction.textContent = ''
+    show(body)
+    prefetch()
   }
 
   done.onclick = async () => {

@@ -150,6 +150,8 @@ const session = { started: new Date().toISOString(), size, seed, items: [] }
 mkdirSync(out, { recursive: true })
 
 let current = null
+/** The prompt fetched ahead with `/api/peek`, shown by the next `/api/next`. */
+let pending = null
 const makeItem = async () => {
   if (session.items.length >= size) return null
   const previous = session.items.at(-1)
@@ -169,12 +171,22 @@ const server = Bun.serve({
   async fetch(request) {
     const url = new URL(request.url)
     if (url.pathname === '/api/next') {
-      current = await makeItem()
+      // A prompt fetched ahead by `/api/peek` is the next one; otherwise it is made now.
+      current = pending ?? await makeItem()
+      pending = null
       if (!current) return Response.json({ done: true })
       // The answer never reaches the page.
       // The answer never reaches the page: it gets the picture to copy and nothing that names it.
       const image = current.kind === 'lookalike' ? current.images[current.options.indexOf(current.char)] : current.image
       return Response.json({ kind: current.kind, index: session.items.length, total: size, image: image ?? null })
+    }
+    if (url.pathname === '/api/peek') {
+      // The prompt after the current one, so the page can fetch it while the reader draws.
+      const ahead = pending ?? await makeItem()
+      pending = ahead
+      if (!ahead) return Response.json({ done: true })
+      const image = ahead.kind === 'lookalike' ? ahead.images[ahead.options.indexOf(ahead.char)] : ahead.image
+      return Response.json({ index: session.items.length + 1, total: size, kind: ahead.kind, image: image ?? null })
     }
     if (url.pathname === '/api/save' && request.method === 'POST') {
       const body = await request.json()
@@ -189,10 +201,13 @@ const server = Bun.serve({
     }
     if (url.pathname === '/api/skip' && request.method === 'POST') {
       current = null
+      pending = null
       return Response.json({ skipped: true })
     }
     if (url.pathname === '/api/session') return Response.json({ out, count: session.items.length, total: size })
-    // The prompt images are the session's own files.
+    // The prompt images are the session's own files, made on first use.
+    const asked = /^\/glyph-([0-9a-f]+)\.png$/i.exec(url.pathname)
+    if (asked && !(await Bun.file(`${out}/glyph-${asked[1]}.png`).exists())) await glyphImage(String.fromCodePoint(parseInt(asked[1], 16)))
     const glyph = /^\/glyph-([0-9a-f]+)\.png$/i.exec(url.pathname)
     if (glyph) {
       const file = Bun.file(`${out}/glyph-${glyph[1]}.png`)
