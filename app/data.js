@@ -7,12 +7,16 @@
 /** @typedef {[line: string, position: number]} AttestedLine */
 /** @typedef {{ built: string, corpus: { lines: number, characters: number, sha256: string }, sources: AttestationSource[], rows: Record<string, Record<string, AttestedLine[]>> }} Attestation */
 
+// The dev server sends the gzipped files already decoded, so the magic bytes say whether there is
+// anything left to decompress before parsing.
 /** @param {string | URL} url @returns {Promise<unknown>} */
 async function readJsonGz(url) {
   const response = await fetch(url)
   if (!response.ok) throw new Error(`${url}: ${response.status}`)
-  const stream = response.body?.pipeThrough(new DecompressionStream('gzip'))
-  if (!stream) throw new Error('This browser cannot decompress the data.')
+  const bytes = new Uint8Array(await response.arrayBuffer())
+  const gzipped = bytes[0] === 0x1f && bytes[1] === 0x8b
+  if (!gzipped) return JSON.parse(new TextDecoder().decode(bytes))
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))
   return new Response(stream).json()
 }
 
