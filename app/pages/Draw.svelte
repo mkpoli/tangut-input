@@ -4,7 +4,7 @@
   // Serif Tangut, and says so beside the results.
   import { onMount } from 'svelte'
   import { db, ix, gloss } from '../lib/db.svelte.js'
-  import { loadShapes } from '../lib/data.js'
+  import { loadShapes, SHAPE_FACES } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
   import { put } from '../lib/ui.svelte.js'
   import Candidates from '../ui/Candidates.svelte'
@@ -20,27 +20,47 @@
   let active = $state(-1)
   /** @type {'loading' | 'ready' | 'failed'} */
   let status = $state('loading')
-  /** @type {import('../lib/shape.js').ShapeIndex | null} */
-  let index = null
+  /** One index per face; a drawing is ranked against each and keeps its best rank per character.
+   * @type {import('../lib/shape.js').ShapeIndex[]} */
+  let indexes = []
   /** @type {Uint8Array} */
   let mask = $state.raw(new Uint8Array(SIZE * SIZE))
   /** @type {Candidates | null} */
   let grid = $state(null)
 
   onMount(() => {
-    loadShapes().then(bytes => { index = indexShapes(parseShapes(bytes)); status = 'ready' }, () => { status = 'failed' })
+    // Every face is a separate file, so a face that fails to load costs only its own shapes.
+    Promise.all(SHAPE_FACES.map(face => loadShapes(face.file).catch(() => null))).then(all => {
+      indexes = all.filter(bytes => bytes !== null).map(bytes => indexShapes(parseShapes(/** @type {Uint8Array} */ (bytes))))
+      status = indexes.length ? 'ready' : 'failed'
+    })
     resize()
   })
 
+  /**
+   * The glyphs closest to the drawing across every face: each character keeps its best rank in
+   * any one face, and the list is that order.
+   * @param {Uint8Array} mask
+   */
+  function rankEveryFace(mask) {
+    const best = new Map()
+    for (const face of indexes) {
+      rankShapes(face, mask, { limit: face.chars.length }).forEach((hit, at) => {
+        const known = best.get(hit.char)
+        if (!known || at < known.at) best.set(hit.char, { hit, at })
+      })
+    }
+    return [...best.values()].sort((a, b) => a.at - b.at).map(entry => entry.hit)
+  }
+
   const hits = $derived.by(() => {
     void mask
-    if (status !== 'ready' || db.status !== 'ready' || !index || !strokes.length) return []
-    return rankShapes(index, mask, {
-      limit: 48,
-      strokes: useCount ? strokes.length : 0,
-      strokeCounts: ix.strokes,
-      only: components ? undefined : char => !/[\u{18800}-\u{18AFF}]/u.test(char),
-    })
+    if (status !== 'ready' || db.status !== 'ready' || !indexes.length || !strokes.length) return []
+    const ranked = rankEveryFace(mask).filter(hit => components || !/[\u{18800}-\u{18AFF}]/u.test(hit.char))
+    if (!useCount) return ranked.slice(0, 48)
+    // The stroke count nudge is applied after the faces are merged, so it ranks overall.
+    return ranked.map(hit => ({ ...hit, score: hit.score + 0.35 * Math.abs((ix.strokes.get(hit.char) ?? strokes.length) - strokes.length) }))
+      .sort((a, b) => a.score - b.score).slice(0, 48)
   })
   const items = $derived(hits.map(hit => ({ char: hit.char, sub: gloss(hit.char), title: `${ix.strokes.get(hit.char) ?? '?'} strokes` })))
 
@@ -147,10 +167,12 @@
       <label><input type="checkbox" bind:checked={components} onchange={update} /> Include components</label>
     </div>
     <p class="note honest">
-      <b>How rough this is.</b> No recognizer for the whole Tangut script is openly available. The pad compares where your ink lies with
-      the printed glyphs of Noto Serif Tangut and ignores stroke order and direction. Drawings made from the font itself, thinned and
-      skewed, find the right character among the first five about nine times in ten; once they are also warped as a hand would warp
-      them, about one time in five. Expect to scan the list, and use Cangjie or a reading when you have one.
+      <b>How rough this is.</b> No recognizer for the whole Tangut script is openly available. The pad compares where your ink lies
+      with the printed glyphs of five Tangut faces, taking each character's best place in any one of them, and ignores stroke order
+      and direction. Drawings made from a font, thinned and skewed, find the right character among the first five about nine times in
+      ten; once they are also warped as a hand would warp them, about one time in three. On forty characters drawn by one reader,
+      it was the first result for one in four and among the first five for six in ten. Expect to scan the list, and use Cangjie or a
+      reading when you have one.
     </p>
   </section>
 

@@ -49,5 +49,14 @@ export const loadStrokes = () => once('strokes', async () => (await readJson(new
 /** The lines of the recorded corpus and where each character stands in them. @returns {Promise<Attestation>} */
 export const loadAttestation = () => once('attestation', () => readJson(new URL('../data/tangut-attestation.json.gz', import.meta.url)))
 
-/** Glyph masks for the drawing pad. @returns {Promise<Uint8Array>} */
-export const loadShapes = () => once('shapes', () => readGz(new URL('../data/tangut-shapes.bin.gz', import.meta.url)))
+/** The faces a drawing is compared with, best first: the shapes tabulated for each face. */
+export const SHAPE_FACES = /** @type {const} */ ([
+  { key: 'noto', file: 'tangut-shapes.bin.gz' },
+  { key: 'yinchuan', file: 'tangut-shapes-yinchuan.bin.gz' },
+  { key: 'genzui', file: 'tangut-shapes-genzui.bin.gz' },
+  { key: 'mojikyo', file: 'tangut-shapes-mojikyo.bin.gz' },
+  { key: 'std', file: 'tangut-shapes-std.bin.gz' },
+])
+
+/** Glyph masks for the drawing pad, one file per face. @param {string} [file] @returns {Promise<Uint8Array>} */
+export const loadShapes = (file = 'tangut-shapes.bin.gz') => once(`shapes:${file}`, () => readGz(new URL(`../data/${file}`, import.meta.url)))
