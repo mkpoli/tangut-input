@@ -54,7 +54,9 @@ small subsets.
 `bun run quiz` serves a local quiz on <http://127.0.0.1:5411/>: it shows one Tangut character to
 copy, or two to four characters that look alike to choose between and draw, and saves each answer's
 strokes beside the prompt it answered in `data/handwriting/<timestamp>/`. Pass `--size`, `--seed`,
-`--port` and `--out` to change the round. The strokes are normalised to the pad's width, so they can
+`--port` and `--out` to change the round. `bun run quiz:score <session-dir>` ranks every saved
+drawing against all ideographs and reports where the answer came, so a change to the drawing search
+can be judged on real strokes; add `--strokes 1` to count the stroke count too. The strokes are normalised to the pad's width, so they can
 be compared with a drawing made on the site's Draw page.
 
 ## Development
