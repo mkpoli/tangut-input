@@ -18,7 +18,8 @@ import page from './page.html' with { type: 'text' }
 const CELLS = SIZE * SIZE
 const args = new Map()
 for (let i = 2; i < process.argv.length; i += 2) args.set(process.argv[i].replace(/^--/, ''), process.argv[i + 1])
-const size = Math.max(10, Number(args.get('size') ?? 40))
+// A round's length; the last prompt is always asked for rather than prefetched, so it is not missed.
+const rounds = Math.max(10, Number(args.get('size') ?? 40))
 let seed = Number(args.get('seed') ?? Date.now() % 100000)
 const out = args.get('out') ?? `data/handwriting/${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}`
 const port = Number(args.get('port') ?? 5411)
@@ -146,14 +147,14 @@ img.save(out)
   return readFileSync(png)
 }
 
-const session = { started: new Date().toISOString(), size, seed, items: [] }
+const session = { started: new Date().toISOString(), size: rounds, seed, items: [] }
 mkdirSync(out, { recursive: true })
 
 let current = null
 /** The prompt fetched ahead with `/api/peek`, shown by the next `/api/next`. */
 let pending = null
 const makeItem = async () => {
-  if (session.items.length >= size) return null
+  if (session.items.length >= rounds) return null
   const previous = session.items.at(-1)
   if (previous && session.items.length % 2 === 1) {
     const options = lookalikes(previous.char, 5)
@@ -171,22 +172,31 @@ const server = Bun.serve({
   async fetch(request) {
     const url = new URL(request.url)
     if (url.pathname === '/api/next') {
-      // A prompt fetched ahead by `/api/peek` is the next one; otherwise it is made now.
+      // The prompt the page is to show: the one fetched ahead, or a new one.
       current = pending ?? await makeItem()
       pending = null
       if (!current) return Response.json({ done: true })
-      // The answer never reaches the page.
       // The answer never reaches the page: it gets the picture to copy and nothing that names it.
       const image = current.kind === 'lookalike' ? current.images[current.options.indexOf(current.char)] : current.image
-      return Response.json({ kind: current.kind, index: session.items.length, total: size, image: image ?? null })
+      return Response.json({ kind: current.kind, index: session.items.length, total: rounds, image: image ?? null })
     }
     if (url.pathname === '/api/peek') {
       // The prompt after the current one, so the page can fetch it while the reader draws.
-      const ahead = pending ?? await makeItem()
+      const ahead = pending ?? (session.items.length + 1 >= rounds ? null : await makeItem())
       pending = ahead
       if (!ahead) return Response.json({ done: true })
       const image = ahead.kind === 'lookalike' ? ahead.images[ahead.options.indexOf(ahead.char)] : ahead.image
-      return Response.json({ index: session.items.length + 1, total: size, kind: ahead.kind, image: image ?? null })
+      // The answer stays on the server.
+      return Response.json({
+        index: session.items.length, total: rounds, kind: ahead.kind, image: image ?? null,
+      })
+    }
+    if (url.pathname === '/api/claim' && request.method === 'POST') {
+      // The page shows the prompt fetched ahead; the server makes that same prompt its current one,
+      // so the drawing is saved against what was on screen.
+      if (pending) current = pending
+      pending = null
+      return Response.json({ ok: true, has: Boolean(current) })
     }
     if (url.pathname === '/api/save' && request.method === 'POST') {
       const body = await request.json()
@@ -204,7 +214,7 @@ const server = Bun.serve({
       pending = null
       return Response.json({ skipped: true })
     }
-    if (url.pathname === '/api/session') return Response.json({ out, count: session.items.length, total: size })
+    if (url.pathname === '/api/session') return Response.json({ out, count: session.items.length, total: rounds })
     // The prompt images are the session's own files, made on first use.
     const asked = /^\/glyph-([0-9a-f]+)\.png$/i.exec(url.pathname)
     if (asked && !(await Bun.file(`${out}/glyph-${asked[1]}.png`).exists())) await glyphImage(String.fromCodePoint(parseInt(asked[1], 16)))
@@ -219,5 +229,5 @@ const server = Bun.serve({
 })
 
 // Writing every answer beside its prompt is the whole point, so the round says where it goes.
-console.log(`Tangut handwriting quiz — ${size} drawings, ${server.url.href}`)
+console.log(`Tangut handwriting quiz — ${rounds} drawings, ${server.url.href}`)
 console.log(`Answers and strokes go to ${out}`)

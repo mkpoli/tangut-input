@@ -85,6 +85,8 @@
   let current = null
   let first = null
   let live = true
+  // The number of the prompt on screen; the server's index for a prefetched one can be stale.
+  let shown = 0
 
   function paint() {
     const ratio = pad.width / pad.clientWidth
@@ -138,7 +140,7 @@
   /** A prompt as the page shows it: the image to copy, and one line of instruction. */
   function show(body) {
     item = body
-    bar.textContent = `${body.index + 1} / ${body.total}`
+    bar.textContent = `${++shown} / ${body.total}`
     // The box is the same size for every prompt and shows the image only once it is decoded.
     glyph.classList.remove('multi', 'loading')
     const picture = document.createElement('img')
@@ -182,10 +184,13 @@
     item = null
     paint()
     if (ahead) {
-      // The next prompt was fetched while drawing; it is shown without a request.
+      // The next prompt was fetched while drawing; take it and ask the server to confirm it is the
+      // one it will save against, so a stale prefetch can never shift the answers by a prompt.
       const { body } = ahead
       ahead = null
       instruction.textContent = ''
+      // The server still holds this prompt; the page asks for it as the current one.
+      fetch('/api/claim', { method: 'POST' }).catch(() => {})
       show(body)
       prefetch()
       return
@@ -218,8 +223,13 @@
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / width).toFixed(4), +(y / height).toFixed(4)])), width, height }),
     })
-    const body = await response.json()
-    status.textContent = body.error ? body.error : `Saved as ${body.saved}.`
+    const body = await response.json().catch(() => ({}))
+    if (!response.ok || !body.saved) {
+      // Nothing was written; the drawing stays on the pad to try again.
+      status.textContent = `Not saved: ${body.error ?? response.status}. Press Done again.`
+      return
+    }
+    status.textContent = `Saved as ${body.saved}.`
     await next()
   }
   document.getElementById('skip').onclick = async () => { await fetch('/api/skip', { method: 'POST' }); next() }
