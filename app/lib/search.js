@@ -116,6 +116,18 @@ export function byCodePoint(query) {
   return ix.all.filter(char => (char.codePointAt(0) ?? 0).toString(16).toUpperCase().startsWith(digits))
 }
 
+/** Characters whose four-corner code begins with the typed digits, in code order. @param {string} digits */
+export function bySijiao(digits) {
+  const typed = digits.replace(/[^0-9]/g, '')
+  if (!typed) return []
+  /** @type {CodeHit[]} */
+  const hits = []
+  for (const [code, char] of ix.sijiaoList) {
+    if (code.startsWith(typed)) hits.push({ char, code })
+  }
+  return hits
+}
+
 /** The Tangut characters in a piece of text, each once, in order. @param {string} text */
 export function tangutIn(text) {
   return [...new Set([...text].filter(isTangut))]

@@ -9,6 +9,7 @@
   import Card from './ui/Card.svelte'
   import Find from './pages/Find.svelte'
   import Cangjie from './pages/Cangjie.svelte'
+  import Sijiao from './pages/Sijiao.svelte'
   import Reading from './pages/Reading.svelte'
   import Draw from './pages/Draw.svelte'
   import Parts from './pages/Parts.svelte'
@@ -90,6 +91,7 @@
       <main class="finder" aria-label={PAGES.find(p => p.path === route.page)?.label ?? 'Sources'}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'cangjie'}<Cangjie />
+        {:else if route.page === 'sijiao'}<Sijiao />
         {:else if route.page === 'reading'}<Reading />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
@@ -153,7 +155,7 @@
     .finder{padding:16px 14px 90px}
     .card{position:fixed;inset:0;top:0;height:100dvh;z-index:40;border:0;transform:translateY(100%);transition:transform .22s ease;visibility:hidden}
     .card.open{transform:none;visibility:visible}
-    .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+    .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(6,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
     .tabs a{padding:9px 0;border-radius:8px;text-align:center;color:var(--ink-2);text-decoration:none;font-size:13px;font-weight:500}
     .tabs a.on{background:var(--ink);color:var(--bg)}
     .toast{bottom:84px}

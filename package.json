@@ -84,7 +84,8 @@
     "preview:app": "vite preview app",
     "quiz": "bun scripts/handwriting/quiz.js",
     "build:tangut-fonts": "uv run scripts/build_tangut_font_faces.py",
-    "quiz:score": "bun scripts/handwriting/score.mjs"
+    "quiz:score": "bun scripts/handwriting/score.mjs",
+    "build:tangut-sijiao": "uv run scripts/build_tangut_sijiao.py"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "6.2.4",

@@ -4,6 +4,7 @@
 export const PAGES = /** @type {const} */ ([
   { path: '', label: 'Find', hint: 'Any character, code, reading or meaning' },
   { path: 'cangjie', label: 'Cangjie', hint: 'Type glyph codes' },
+  { path: 'sijiao', label: '四角號碼', hint: 'Type the four-corner code' },
   { path: 'reading', label: 'Reading', hint: 'Type a reconstruction' },
   { path: 'draw', label: 'Draw', hint: 'Sketch the shape' },
   { path: 'parts', label: 'Parts', hint: 'Build from components' },

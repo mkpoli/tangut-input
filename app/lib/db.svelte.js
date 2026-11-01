@@ -1,6 +1,6 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao } from './data.js'
 import { indexReadings } from './reading.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
@@ -38,11 +38,13 @@ export const ix = {
   /** The parts of each description, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
   /** The characters whose description uses each part. @type {Map<string, Set<string>>} */ usedBy: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
+  /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
+  /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
 }
 
 export async function load() {
   try {
-    const [entries, pairs, strokes] = await Promise.all([loadEntries(), loadCodes(), loadStrokes()])
+    const [entries, pairs, strokes, sijiao] = await Promise.all([loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => [])])
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
     for (const [char, code] of pairs) {
@@ -67,6 +69,8 @@ export async function load() {
       }
       ix.partsOf.set(entry.char, counts)
     }
+    for (const [char, code] of sijiao) ix.sijiao.set(char, code)
+    ix.sijiaoList = [...ix.sijiao].map(([char, code]) => /** @type {[string, string]} */ ([code, char])).sort((a, b) => a[0].localeCompare(b[0]) || (a[1].codePointAt(0) ?? 0) - (b[1].codePointAt(0) ?? 0))
     ix.all = [...new Set([...ix.byChar.keys(), ...ix.codes.keys()])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
     db.status = 'ready'
   } catch (error) {
