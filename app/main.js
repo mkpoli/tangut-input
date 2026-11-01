@@ -1,5 +1,4 @@
-// Tangut Input: find and enter a Tangut character by Cangjie code, reconstruction, meaning or
-// component. The chosen character's record follows, with its description built from parts.
+// Tangut Input: find a Tangut character by any of its names, read its record, and put it to use.
 import { mount } from 'svelte'
 import App from './App.svelte'
 import './app.css'

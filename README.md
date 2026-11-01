@@ -1,51 +1,57 @@
 # Tangut Input
 
-A site for naming a Tangut character and reading what is recorded about it.
+A site for entering Tangut: name a character in whatever form you have, check its record, and put
+it into your text. <https://tangut.mkpo.li/>
 
-## Naming a character
+## Finding a character
 
-- **Cangjie**: type the Tangut Cangjie letters; the characters whose full or short code starts with
-  them follow.
-- **Reconstruction**: type a reading in any of the systems the records carry (Gong Hwang-cherng,
-  Gong Xun, Li Fanwen, Miyake, Kychanov, Sofronov, Nishida, Arakawa). Tone marks and vowel diacritics
-  are ignored.
-- **Meaning**: type an English, Japanese or Chinese word from a character's meanings.
-- **Component**: type a component; the characters whose description contains it follow.
-- **Typed character**: type a Tangut character itself to open its record.
+- **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
+  readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
+  lists code points.
+- **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
+  digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
+  keys no code continues with. Every component is listed under its own code (beginning `p`).
+- **Reading**: a reconstruction in any of eight systems (Li Fanwen, Gong Hwang-cherng, Gong Xun,
+  Arakawa, Miyake, Nishida, Kychanov, Sofronov), with or without diacritics, with an optional tone.
+- **Draw**: a drawing pad ranked by glyph shape against Noto Serif Tangut. It is rough, and the
+  page says how rough.
+- **Parts**: choose components; each choice narrows the characters and the remaining parts.
 
-Handwriting and image recognition are not built yet. A drawing has no open model for Tangut; the
-only published recognizer leaves out most of the script.
+The card of a character shows its code point, Cangjie codes, meanings in English, Japanese and
+Chinese, readings, structure, the lines of the recorded corpus where it stands with the scribe's
+form from the facsimile, and related characters. The text being written stays in the browser and
+copies as text, code points or Cangjie codes.
 
-## The record
-
-The chosen character shows its code point, stroke count and radical, its Cangjie codes, its meanings
-in English, Japanese and Chinese, its readings in every recorded system, the 文海 gloss, and its
-description built from parts, which opens the parts that stand in any one slot. The attestation
-section lists the lines of the recorded corpus where the character stands, with the source and its
-licence; a character outside the corpus says so.
+The design and its reasoning are in [`docs/design.md`](docs/design.md).
 
 ## Data
 
 - `app/data/tangut-entries.json.gz`: meanings and readings, from [Open
   Tangut](https://github.com/imlooh/open-tangut) (MIT), which merges CCAMC and Wiktionary entries.
-- `app/data/tangut-cangjie.json.gz`: Cangjie codes, from [RIME Tangut
-  Cangjie](https://github.com/tulenkius/rime_tangutcjkk) by Hulenkius, after the scheme of Kawasaki
-  Keigo (2016). The table carries a warning about wrongly encoded characters.
-- `app/data/tangut-attestation.json.gz`: lines of the corpus, built from the Glyph Atlas records of
-  Solonin and Arakawa's *Bodhicaryāvatāra in Tangut Translation* (CC BY 4.0) with line readings from
-  ぶんぽ, by `scripts/build_tangut_attestation.py`. A character outside chapter 2 shows no
-  attestation yet.
+- `app/data/tangut-cangjie.json.gz`: Cangjie codes, from
+  [rime_tangutcjkk](https://github.com/Hulenkius/rime_tangutcjkk) by Hulenkius, after the scheme of
+  Kawasaki Keigo (2016). The table warns that some characters are wrongly encoded; the repository
+  states no licence.
+- `app/data/tangut-strokes.json.gz`: stroke counts, ideographs from Unicode's TangutSources.txt,
+  components counted from their glyphs (copied from `data2/`).
+- `app/data/tangut-attestation.json.gz` and `app/public/facsimile/`: lines of the corpus and the
+  characters cut from the facsimile, built from the Glyph Atlas record of Solonin and Arakawa's
+  *Bodhicaryāvatāra in Tangut Translation*, chapter 2 (CC BY 4.0), with links to ぶんぽ's line
+  readings, by `scripts/build_tangut_attestation.py`.
+- `app/data/tangut-shapes.bin.gz`: glyph masks for the drawing pad, rendered from Noto Serif Tangut
+  2.168 by `scripts/build_tangut_shapes.py`; `scripts/eval_tangut_shapes.mjs` measures the search.
 
 ## Development
 
 ```sh
 bun install
-bun run dev        # the site
-bun run check      # types and Svelte checks
-bun run build:app  # the static site into dist/
+bun run dev                    # the site
+bun run check                  # types and Svelte checks
+bun run build:app              # the static site into dist/
+bun scripts/shoot_app.mjs      # screenshots of dist/ into docs/design/
 ```
 
-The glyphs are set in Noto Serif Tangut from Google Fonts; a browser with the font installed uses it
-first.
+The glyphs are set in Noto Serif Tangut from Google Fonts, with a small subset of the bundled
+version for the components Google's build lacks (`app/public/fonts/`, SIL OFL 1.1).
 
 The added code is MIT; see `LICENSE`.

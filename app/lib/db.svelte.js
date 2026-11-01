@@ -1,0 +1,92 @@
+// The records every page reads, loaded once and indexed for each way of finding a character.
+// The indexes are plain (not reactive) objects; only the load status is state.
+import { loadCodes, loadEntries, loadStrokes, loadAttestation } from './data.js'
+import { indexReadings } from './reading.js'
+
+/** @typedef {import('./data.js').Entry} Entry */
+
+export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
+
+/** @param {string} char */
+export const isTangut = char => /^[\u{17000}-\u{18AFF}\u{18D00}-\u{18D7F}\u{18D80}-\u{18DFF}]$/u.test(char)
+/** @param {string} char */
+export const isComponent = char => /^[\u{18800}-\u{18AFF}\u{18D80}-\u{18DFF}]$/u.test(char)
+/** Whether the bundled fonts draw the character (Noto Serif Tangut 2.168 stops at U+187F7 and U+18D08). @param {string} char */
+export const hasGlyph = char => {
+  const code = char.codePointAt(0) ?? 0
+  return (code >= 0x17000 && code <= 0x187F7) || (code >= 0x18800 && code <= 0x18AFF) || (code >= 0x18D00 && code <= 0x18D08)
+}
+/** @param {string} char */
+export const hex = char => (char.codePointAt(0) ?? 0).toString(16).toUpperCase()
+/** @param {string} char */
+export const codePoint = char => `U+${hex(char)}`
+
+export const db = $state({
+  /** @type {'loading' | 'ready' | 'failed'} */ status: 'loading',
+  /** @type {import('./data.js').Attestation | null} */ attestation: null,
+})
+
+/** The indexes, filled when the records arrive. */
+export const ix = {
+  /** @type {Entry[]} */ entries: [],
+  /** @type {Map<string, Entry>} */ byChar: new Map(),
+  /** Cangjie codes by character, shortest first. @type {Map<string, string[]>} */ codes: new Map(),
+  /** Every [code, character] pair, ordered by code. @type {[string, string][]} */ codeList: [],
+  /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
+  /** @type {import('./reading.js').Reading[]} */ readings: [],
+  /** @type {Map<string, number>} */ strokes: new Map(),
+  /** The parts of each description, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
+  /** The characters whose description uses each part. @type {Map<string, Set<string>>} */ usedBy: new Map(),
+  /** Every character the site knows, in code point order. @type {string[]} */ all: [],
+}
+
+export async function load() {
+  try {
+    const [entries, pairs, strokes] = await Promise.all([loadEntries(), loadCodes(), loadStrokes()])
+    ix.entries = entries
+    ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
+    for (const [char, code] of pairs) {
+      const list = ix.codes.get(char)
+      if (list) list.push(code)
+      else ix.codes.set(char, [code])
+    }
+    for (const list of ix.codes.values()) list.sort((a, b) => a.length - b.length || a.localeCompare(b))
+    ix.codeList = pairs.map(([char, code]) => /** @type {[string, string]} */ ([code, char])).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)
+    ix.palette = ix.codeList.filter(([code]) => code.startsWith('p'))
+    ix.readings = indexReadings(entries)
+    ix.strokes = new Map(Object.entries(strokes))
+    for (const entry of entries) {
+      /** @type {Map<string, number>} */
+      const counts = new Map()
+      for (const part of entry.composition ?? '') {
+        if (OPERATORS.has(part) || !isTangut(part)) continue
+        counts.set(part, (counts.get(part) ?? 0) + 1)
+        let users = ix.usedBy.get(part)
+        if (!users) ix.usedBy.set(part, users = new Set())
+        users.add(entry.char)
+      }
+      ix.partsOf.set(entry.char, counts)
+    }
+    ix.all = [...new Set([...ix.byChar.keys(), ...ix.codes.keys()])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
+    db.status = 'ready'
+  } catch (error) {
+    console.error(error)
+    db.status = 'failed'
+  }
+  loadAttestation().then(found => { db.attestation = found }, error => console.error(error))
+}
+
+/** The first English sense, shortened for a tile or a list row. @param {string} char */
+export function gloss(char) {
+  const entry = ix.byChar.get(char)
+  const first = entry?.definitions?.en?.[0] ?? entry?.definitions?.zh?.[0] ?? ''
+  return first.split(/[;,]/)[0].trim()
+}
+
+/** The places in the recorded corpus that attest a character. @param {string} char */
+export function attested(char) {
+  const found = db.attestation
+  if (!found) return []
+  const rows = found.rows[char] ?? {}
+  return found.sources.flatMap(source => (rows[source.id] ?? []).map(([line, position]) => ({ source, line, position, text: found.lines[line] })))
+}
