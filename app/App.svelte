@@ -23,6 +23,13 @@
 
   let fontMenu = $state(false)
   let langMenu = $state(false)
+  /** The phone's tab strip, scrolled to keep the current finder in view. @type {HTMLElement | null} */
+  let tabs = $state(null)
+
+  $effect(() => {
+    void route.page
+    tabs?.querySelector('a.on')?.scrollIntoView({ block: 'nearest', inline: 'center' })
+  })
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page */
   function nav(event, page) {
@@ -121,7 +128,7 @@
     </div>
   {/if}
 
-  <nav class="tabs" aria-label={t('nav.label')}>
+  <nav class="tabs" aria-label={t('nav.label')} bind:this={tabs}>
     {#each PAGES as page (page.path)}
       <a href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
         onclick={event => nav(event, page.path)}>{t(page.label)}</a>
@@ -171,8 +178,10 @@
     .finder{padding:16px 14px 90px}
     .card{position:fixed;inset:0;top:0;height:100dvh;z-index:40;border:0;transform:translateY(100%);transition:transform .22s ease;visibility:hidden}
     .card.open{transform:none;visibility:visible}
-    .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(6,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
-    .tabs a{padding:9px 0;border-radius:8px;text-align:center;color:var(--ink-2);text-decoration:none;font-size:13px;font-weight:500}
+    /* Seven finders do not fit a phone; the strip scrolls sideways and keeps the current one in view. */
+    .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:2px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth}
+    .tabs::-webkit-scrollbar{display:none}
+    .tabs a{flex:0 0 auto;padding:9px 11px;border-radius:8px;text-align:center;color:var(--ink-2);text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap}
     .tabs a.on{background:var(--ink);color:var(--bg)}
     .toast{bottom:84px}
   }
