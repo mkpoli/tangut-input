@@ -7,12 +7,15 @@
 /** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
 /** @typedef {{ char: string, codepoint?: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
  *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_en?: string, wenhai_text_zh?: string }} Entry */
-/** @typedef {{ id: string, title: string, author: string, year: number, publisher: string, url: string, licence: string, manuscript: string,
- *   facsimile: string, facsimileCredit: string, reading: string, readingUrl: string }} AttestationSource */
-/** @typedef {{ text: string, english: string, page: number, read: boolean, url: string }} AttestedLine */
+/** @typedef {{ id: string, kind: 'facsimile' | 'transcription', title: string, shortTitle?: string, titleTangut?: string, author: string, year?: number,
+ *   publisher: string, url: string, licence: string, licenceUrl?: string, manuscript?: string, facsimile?: string,
+ *   facsimileCredit?: string, reading?: string, readingUrl?: string, retrieved?: string, revision?: number, note?: string,
+ *   pages?: { title: string, url: string, revision: number }[] }} AttestationSource */
+/** @typedef {{ text: string, label: string, english?: string, page?: number, read?: boolean, url?: string, section?: string,
+ *   chapter?: number, revision?: number }} AttestedLine */
 /** @typedef {[line: string, position: number]} Place */
-/** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sha256: string }, sources: AttestationSource[],
- *   lines: Record<string, AttestedLine>, rows: Record<string, Record<string, Place[]>> }} Attestation */
+/** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sources: number, sha256: string },
+ *   sources: AttestationSource[], lines: Record<string, AttestedLine>, rows: Record<string, Record<string, Place[]>> }} Attestation */
 
 /**
  * Fetch a gzipped file. The dev server may hand it over already decoded, so the magic bytes decide

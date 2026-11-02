@@ -26,8 +26,25 @@
       <dd>{@html t('about.strokes')}</dd>
       <dt>{t('about.attestTitle')}</dt>
       <dd>
-        {@html t('about.attestation')}
-        {#if corpus}{@html t('about.attestCount', { lines: corpus.lines, characters: corpus.characters, distinct: corpus.distinct })}{/if}
+        <p>{t('about.attestation')}</p>
+        {#if corpus}<p>{t('about.attestCount', { sources: corpus.sources, lines: corpus.lines.toLocaleString(), characters: corpus.characters.toLocaleString(), distinct: corpus.distinct.toLocaleString() })}</p>{/if}
+        <ul class="corpus">
+          {#each db.attestation?.sources ?? [] as source (source.id)}
+            <li>
+              <p class="corpus-title"><a href={source.url}><i>{source.title}</i></a>
+                {#if source.titleTangut}<span class="ui-script" lang="txg">{source.titleTangut}</span>{/if}
+              </p>
+              <p class="corpus-meta">{source.author}{source.year ? ` ${source.year}` : ''} · {source.publisher} · {#if source.licenceUrl}<a href={source.licenceUrl}>{source.licence}</a>{:else}{source.licence}{/if}
+                {#if source.retrieved} · {t('attest.retrieved', { date: source.retrieved })}{/if}
+                {#if source.revision} · <a href={`https://wikisource.org/w/index.php?oldid=${source.revision}`}>{t('attest.revision', { revision: source.revision })}</a>{/if}
+              </p>
+              {#if source.manuscript}<p class="corpus-note">{source.manuscript}.</p>{/if}
+              {#if source.note}<p class="corpus-note">{source.note}</p>{/if}
+              {#if source.facsimileCredit}<p class="corpus-note">{source.facsimileCredit}</p>{/if}
+              {#if source.reading}<p class="corpus-note">{t('attest.lineReadings')} <a href={source.readingUrl}>{source.reading}</a></p>{/if}
+            </li>
+          {/each}
+        </ul>
       </dd>
       <dt>{t('about.glyphsTitle')}</dt>
       <dd>{@html t('about.glyphs')}</dd>
@@ -74,5 +91,12 @@
   dt:first-of-type{padding-top:0;margin-top:0;border-top:0}
   dd{margin:var(--ui-space-2xs) 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-md);line-height:var(--ui-leading-loose)}
   .about :global(.ui-script){font-size:22px;vertical-align:-3px}
+  .corpus{list-style:none;margin:var(--ui-space-lg) 0 0;padding:0;display:grid;gap:var(--ui-space-md)}
+  .corpus li{padding-top:var(--ui-space-md);border-top:1px solid var(--ui-color-border)}
+  .corpus p{margin:0}
+  .corpus-title{font-family:var(--ui-font-serif);font-size:var(--ui-text-md);line-height:1.45}
+  .corpus-title .ui-script{display:inline-block;margin-inline-start:var(--ui-space-xs)}
+  .corpus-meta{margin-top:var(--ui-space-2xs) !important;font-size:var(--ui-text-xs);line-height:1.55}
+  .corpus-note{margin-top:var(--ui-space-xs) !important;font-size:var(--ui-text-xs);line-height:1.55}
   .about-foot{font-size:var(--ui-text-xs);line-height:1.6;border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg)}
 </style>

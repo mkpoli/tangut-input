@@ -13,6 +13,8 @@ site already did.
 | [rime_tangutcjkk](https://github.com/Hulenkius/rime_tangutcjkk) | Tangut Cangjie codes, several analyses per character | none stated | `scripts/build_tangut_cangjie.py` |
 | [Tangut-rhyme-dictionaries-data](https://github.com/nkay0/Tangut-rhyme-dictionaries-data) | 文海 rhyme, tone, 同音 class, 小韻, fanqie; the 合編's fanqie; the dictionaries' own indexes | none stated | `scripts/build_tangut_rhymes.py`, `scripts/build_tangut_sijiao.py` |
 | [TangutSources.txt](https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt) | stroke counts, numeric values, dictionary indexes | Unicode Terms of Use | `scripts/build_tangut_*` |
+| [Solonin and Arakawa 2024](https://hdl.handle.net/10108/0002000647) | chapter 2 of the Tangut *Bodhicaryāvatāra*, English translation and facsimile; ぶんぽ's line readings are linked | CC BY 4.0; facsimile photographs by the Institute of Ethnology, CASS | `scripts/build_tangut_attestation.py` |
+| [Wikisource: Buddhist texts in Tangut](https://wikisource.org/wiki/Category:Buddhist_texts_in_Tangut) | five texts in running transcription, with manuscript and edition notes and revision ids | CC BY-SA 4.0 | `scripts/fetch_tangut_wikisource.py`, then `scripts/build_tangut_attestation.py` |
 | Faces: Noto Serif Tangut, Tangut Yinchuan, BabelStone Wenhai, New Tangut Std, GenZui, Mojikyo, N4694, TWU | glyphs; the drawing pad's shapes are rendered from them | per face, `app/public/fonts/FONT-LICENCES.md` | `scripts/build_tangut_shapes.py` |
 
 ## Available, not used

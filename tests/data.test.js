@@ -52,3 +52,40 @@ test('the rhyme record keeps the fields the card and the chart read', () => {
   expect(value[3]).toBe('𗃦')
   expect(value[4]).toBe('𗏟')
 })
+
+const attestation = json('tangut-attestation.json.gz')
+
+test('the attestation joins the edition and the five Wikisource texts', () => {
+  expect(attestation.corpus).toEqual({
+    lines: 321,
+    characters: 11168,
+    distinct: 967,
+    sources: 6,
+    sha256: '7a79caf2bdf3fa48aea60dbd0e243965c50d22ea341810812ffa3248069d9f1b',
+  })
+  expect(attestation.sources.map(source => source.id)).toEqual([
+    'solonin-2024',
+    'wikisource-dragon-king',
+    'wikisource-high-king',
+    'wikisource-diamond',
+    'wikisource-twenty-five-questions',
+    'wikisource-dharani',
+  ])
+  expect(attestation.sources.every(source => source.url && source.licence)).toBe(true)
+  expect(attestation.sources[0].facsimile).toContain('/facsimile/solonin-2024/')
+  expect(attestation.sources.slice(1).every(source => source.kind === 'transcription' && source.revision)).toBe(true)
+})
+
+test('every place points at the character it attests', () => {
+  const sources = new Set(attestation.sources.map(source => source.id))
+  for (const [char, bySource] of Object.entries(attestation.rows)) {
+    for (const [source, places] of Object.entries(bySource)) {
+      expect(sources.has(source)).toBe(true)
+      for (const [line, position] of places) {
+        const text = attestation.lines[line]
+        expect(text).toBeDefined()
+        expect([...text.text][position - 1]).toBe(char)
+      }
+    }
+  }
+})

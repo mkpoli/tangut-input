@@ -34,10 +34,14 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   states no licence.
 - `app/data/tangut-strokes.json.gz`: stroke counts, ideographs from Unicode's TangutSources.txt,
   components counted from their glyphs (copied from `data2/`).
-- `app/data/tangut-attestation.json.gz` and `app/public/facsimile/`: lines of the corpus and the
-  characters cut from the facsimile, built from the Glyph Atlas record of Solonin and Arakawa's
-  *Bodhicaryāvatāra in Tangut Translation*, chapter 2 (CC BY 4.0), with links to ぶんぽ's line
-  readings, by `scripts/build_tangut_attestation.py`.
+- `app/data/tangut-attestation.json.gz` and `app/public/facsimile/`: where each character stands in
+  six texts, built by `scripts/build_tangut_attestation.py`. One is the Glyph Atlas record of
+  Solonin and Arakawa's *Bodhicaryāvatāra in Tangut Translation*, chapter 2 (CC BY 4.0), with its
+  facsimile crops, English translation and links to ぶんぽ's line readings. Five are the Buddhist
+  texts in Tangut on Wikisource (CC BY-SA 4.0): the Dragon King's question, the High King
+  Avalokitesvara Sutra, the Diamond Sutra, the Twenty-five Questions and Answers, and the Great
+  Compassion Dharani. `data/wikisource/pages.json` pins their revisions; refresh it with
+  `python3 scripts/fetch_tangut_wikisource.py`.
 - `app/data/tangut-shapes.bin.gz`: glyph pen lines for the drawing pad, rendered from Noto Serif
   Tangut 2.168 by `scripts/build_tangut_shapes.py`; `scripts/handwriting/score.mjs` measures the
   search on drawings made by hand and `scripts/eval_tangut_shapes.mjs` on drawings made from a font.

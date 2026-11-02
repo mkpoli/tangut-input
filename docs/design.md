@@ -105,11 +105,12 @@ character's parts chosen.
 - 文海 gloss where the records have one (twelve entries).
 - **Built from**: the description drawn as nested frames that follow its layout (a row for ⿰, a
   column for ⿱, and so on), every part a button to its own card; the raw IDS string, click to copy.
-- **In a text**: for each place in the corpus, the scribe's form cut from the facsimile, the line
-  with the character marked (other characters open their cards), the edition's English line, the
-  line number and page, and a link to ぶんぽ's reading of the line. Then the full citation and
-  rights. Outside the corpus it reads “Not yet recorded”, with the corpus size, so absence never
-  reads as “not a character”.
+- **In a text**: for each place in the corpus, the passage with the character marked (other
+  characters open their cards). A facsimile source adds the scribe's form cut from the page, the
+  edition's English line, the page and a link to ぶんぽ's reading; a transcription adds the passage
+  label and a link to its Wikisource page. Each source prints its own citation and rights. Outside
+  the corpus it reads “Not yet recorded”, with the corpus size, so absence never reads as “not a
+  character”.
 - Characters that use this one (for components), characters described the same way, characters
   with the same Li Fanwen reading.
 - Source line for the records.
@@ -203,14 +204,18 @@ the Tangut block, and anything that is not a pick or a drawing.
   address.
 - **No meaning finder of its own.** Meanings are searched from Find; the brief lists four input
   methods and meaning search is a lookup, not an input.
-- **Attestation rebuilt from Glyph Atlas.** The old file carried only line numbers. The builder now
-  carries each line's text, English translation, page and reading link, and cuts 280 facsimile
-  crops (greyscale WebP, 128 px high, 385 KB, loaded lazily) from the edition's strips. The edition
-  is CC BY 4.0; the credit is printed under every attestation.
+- **Attestation rebuilt from Glyph Atlas and Wikisource.** The old file carried only line numbers.
+  The builder now carries each line's text, and for the edition's 40 lines its English translation,
+  page and reading link, plus 280 facsimile crops (greyscale WebP, 128 px high, 385 KB, loaded
+  lazily). To that it joins the five Buddhist texts in Tangut on Wikisource: 281 passages, pinned by
+  revision in `data/wikisource/pages.json`. There is no facsimile or translation for those pages, so
+  a place shows the passage around the character and links to the page. The edition is CC BY 4.0
+  and the Wikisource text CC BY-SA 4.0; each source prints its own credit.
 - **Unused or unattributed data left out.** `app/data/tangut-parts.json.gz` (a list of characters
   with use counts) is deleted: the counts are recomputed from the descriptions at load.
   `data2/tangut-corpus.json.gz` (21 Tangut texts) would give frequencies for ranking, but nothing in
-  the repository records its source or licence, so the site does not read it.
+  the repository records its source or licence, so the site does not read it. The Wikisource texts
+  are used for attestation, not yet for ranking.
 - **Stroke counts** come from `data2/tangut-strokes.json.gz`, copied to `app/data/` because the app
   reads only from there.
 - **No dev server in the screenshots.** `scripts/shoot_app.mjs` drives Chromium against `dist/`,
@@ -222,15 +227,15 @@ the Tangut block, and anything that is not a pick or a drawing.
 **Real, against the data:** all five finders; Cangjie prefix search over 11,805 codes with
 next-letter counts; reading search over 29,525 readings in eight systems; drawing search over
 6,913 glyphs; part search over 6,136 descriptions; the card with every field the records carry;
-attestation of 151 characters in 40 lines with 280 facsimile crops; the text buffer with three
+attestation of 967 characters in 321 passages from six texts, with 280 facsimile crops; the text buffer with three
 copy formats; shareable URLs; light and dark; phone layout.
 
 **Rough by nature:** drawing search (figures above); the reading folds are a convenience mapping,
 and the *near* tier is a heuristic.
 
 **Missing:** an IME, OCR of manuscript images, a stroke-based handwriting recognizer, frequency
-ranking (no attributed corpus yet), localisation of the interface, corrections to codes the RIME
-table marks as wrong, and an offline (service worker) mode.
+ranking over the corpus, localisation of the interface, corrections to codes the RIME table marks as
+wrong, and an offline (service worker) mode.
 
 ## Where the repository's documents and code disagreed
 
