@@ -14,6 +14,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { parseShapes, indexShapes, distanceField, SIZE } from '../../app/lib/shape.js'
 import page from './page.html' with { type: 'text' }
+import { build as buildDataset } from './dataset.mjs'
 
 const CELLS = SIZE * SIZE
 const args = new Map()
@@ -23,6 +24,9 @@ const rounds = Math.max(10, Number(args.get('size') ?? 40))
 let seed = Number(args.get('seed') ?? Date.now() % 100000)
 const out = args.get('out') ?? `data/handwriting/${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}`
 const port = Number(args.get('port') ?? 5411)
+// A drawing is also sent to the site's record, so everything the pad has seen can be read back from
+// one place. `--upload ''` keeps a round on this machine only.
+const upload = args.get('upload') ?? 'https://tangut.mkpo.li/api/record'
 
 /** A small reproducible generator, seeded from the argument. */
 const random = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648)
@@ -148,6 +152,28 @@ img.save(out)
 }
 
 const session = { started: new Date().toISOString(), size: rounds, seed, items: [] }
+
+/** Send a saved drawing to the site's record. The drawing is already on disk, so a failure is only
+ *  logged. @param {any} record */
+async function uploadDrawing(record) {
+  if (!upload) return
+  try {
+    const response = await fetch(upload, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        type: 'drawing', origin: 'quiz', session: out.split('/').pop(),
+        answer: record.char, kind: record.kind,
+        strokes: record.strokes, times: record.times, pressure: record.pressure,
+        pointer: record.pointer, writer: record.writer, device: record.device,
+        width: record.width, height: record.height,
+      }),
+    })
+    if (!response.ok) console.warn(`saved here, but ${upload} answered ${response.status}`)
+  } catch (error) {
+    console.warn(`saved here, but not sent to ${upload}: ${error}`)
+  }
+}
 mkdirSync(out, { recursive: true })
 
 let current = null
@@ -210,9 +236,17 @@ const server = Bun.serve({
       session.items.push(record)
       const name = `${String(session.items.length).padStart(3, '0')}-${current.char.codePointAt(0)?.toString(16)}.json`
       writeFileSync(`${out}/${name}`, JSON.stringify(record))
+      void uploadDrawing(record)
       writeFileSync(`${out}/session.json`, JSON.stringify(session, null, 2))
+      // The dataset is rebuilt on every save, so a round is collectable while it is being drawn.
+      let dataset = null
+      try {
+        dataset = buildDataset()
+      } catch (error) {
+        console.warn(`the drawing is saved, but the dataset was not rebuilt: ${error}`)
+      }
       current = null
-      return Response.json({ saved: name })
+      return Response.json({ saved: name, dataset })
     }
     if (url.pathname === '/api/skip' && request.method === 'POST') {
       current = null
