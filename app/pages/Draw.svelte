@@ -26,15 +26,30 @@
   let indexes = []
   /** @type {Uint8Array} */
   let mask = $state.raw(new Uint8Array(SIZE * SIZE))
+  /** Bumped as faces arrive, so a drawing made before the last face still gets ranked against it. */
+  let faceGeneration = $state(0)
   /** @type {Candidates | null} */
   let grid = $state(null)
 
   onMount(() => {
-    // Every face is a separate file, so a face that fails to load costs only its own shapes.
-    Promise.all(SHAPE_FACES.map(face => loadShapes(face.file).catch(() => null))).then(all => {
-      indexes = all.filter(bytes => bytes !== null).map(bytes => indexShapes(parseShapes(/** @type {Uint8Array} */ (bytes))))
-      status = indexes.length ? 'ready' : 'failed'
-    })
+    // The first face is enough to answer a drawing, so the pad opens on it while the rest arrive in
+    // the background; a face that fails to load costs only its own shapes.
+    loadShapes(SHAPE_FACES[0].file)
+      .then(bytes => {
+        indexes = [indexShapes(parseShapes(bytes))]
+        status = 'ready'
+        faceGeneration++
+      })
+      .catch(() => { status = 'failed' })
+    void (async () => {
+      for (const face of SHAPE_FACES.slice(1)) {
+        const bytes = await loadShapes(face.file).catch(() => null)
+        if (!bytes) continue
+        await new Promise(resolve => setTimeout(resolve, 0))
+        indexes = [...indexes, indexShapes(parseShapes(bytes))]
+        faceGeneration++
+      }
+    })()
     resize()
     // A character picked from these results is recorded with the drawing that produced it.
     attachPad(() => {
@@ -72,6 +87,7 @@
 
   const hits = $derived.by(() => {
     void mask
+    void faceGeneration
     if (status !== 'ready' || db.status !== 'ready' || !indexes.length || !strokes.length) return []
     return rankEveryFace(mask).filter(hit => components || !/[\u{18800}-\u{18AFF}]/u.test(hit.char)).slice(0, 48)
   })
