@@ -198,7 +198,7 @@
   "card.sameDescription": "同構字描述的字",
   "card.sameReading": "Li Fanwen擬音相同的字",
   "card.credit": "釋義、讀音與構字描述：Open Tangut（MIT），源自CCAMC與Wiktionary。編碼：RIME西夏倉頡，其碼表註明部分編碼有誤。",
-  "about.lead": "本站所示內容均讀取自據下列資料構建的靜態檔案。不會向任何地方傳送資料；所寫文本僅保存在目前瀏覽器中。",
+  "about.lead": "本站所示內容均讀取自據下列資料構建的靜態檔案。所寫文本僅保存在目前瀏覽器中。每次手寫與所選的每個字都會被記錄，如最後一節所述。",
   "about.records": "資料記錄",
   "about.recordsTitle": "釋義、讀音、構字描述",
   "about.cangjieTitle": "倉頡碼",

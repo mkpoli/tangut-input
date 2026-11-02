@@ -198,7 +198,7 @@
   "card.sameDescription": "Described the same way",
   "card.sameReading": "Same reading in Li Fanwen",
   "card.credit": "Meanings, readings and descriptions: Open Tangut (MIT), from CCAMC and Wiktionary. Codes: RIME Tangut Cangjie, whose table warns that some codes are wrong.",
-  "about.lead": "Everything the site shows is read from static files built from the works below. Nothing is sent anywhere; the text you write stays in this browser.",
+  "about.lead": "Everything the site shows is read from static files built from the works below. The text you write stays in this browser. Every drawing and every character you pick is recorded, as the last section says.",
   "about.records": "Records",
   "about.recordsTitle": "Meanings, readings, descriptions",
   "about.cangjieTitle": "Cangjie codes",
