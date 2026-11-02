@@ -297,6 +297,20 @@ async function checkPages(viewport, scheme) {
         .map(el => el.outerHTML.slice(0, 140))
     })
     assert.deepEqual(unnamed, [], `${path}: controls without a name:\n${unnamed.join('\n')}`)
+    const small = await page.evaluate(() => {
+      const visible = el => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden'
+      return [...document.querySelectorAll('button, input, select, textarea, a[href], [role="button"]')]
+        .filter(el => visible(el) && !(/** @type {HTMLInputElement} */ (el).disabled))
+        .filter(el => !(el.matches('a') && getComputedStyle(el).display === 'inline'))
+        .filter(el => !(el.matches('input[type="checkbox"], input[type="radio"]') && el.closest('label')))
+        .filter(el => !el.matches('.inline'))
+        .filter(el => {
+          const rect = el.getBoundingClientRect()
+          return rect.width > 0 && rect.height > 0 && (rect.height < 24 || rect.width < 24)
+        })
+        .map(el => `${Math.round(el.getBoundingClientRect().width)}x${Math.round(el.getBoundingClientRect().height)} ${el.tagName.toLowerCase()}.${typeof el.className === 'string' ? el.className.split(' ')[0] : ''}`)
+    })
+    assert.deepEqual(small, [], `${path}: targets under 24px:\n${small.join('\n')}`)
   }
   await context.close()
   assert.deepEqual(errors, [], `script errors:\n${errors.join('\n')}`)

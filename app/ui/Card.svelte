@@ -310,7 +310,7 @@
   .glyph-frame :global(.ui-script){position:relative;z-index:1;font-size:88px}
   .glyph-frame :global(.ui-nog){position:relative;z-index:1;font-size:var(--ui-text-sm);inline-size:3.4em;block-size:3.4em}
   .facts{display:grid;gap:var(--ui-space-2xs);min-inline-size:0}
-  .cp{justify-self:start;margin-inline-start:-6px;padding:2px 6px;border:0;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
+  .cp{display:inline-flex;align-items:center;justify-self:start;min-block-size:24px;margin-inline-start:-6px;padding:2px 6px;border:0;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .cp:hover{background:var(--ui-color-surface-hover);color:var(--ui-color-ink)}
   .gloss{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);line-height:var(--ui-leading-tight)}
   .meta{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs)}
@@ -329,7 +329,7 @@
   .code:hover{border-color:var(--ui-color-ink-muted)}
   .code small{font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   .code small:empty{display:none}
-  .type{font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
+  .type{display:inline-flex;align-items:center;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
   .means{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-sm);margin:0}
   .means dt{color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);font-weight:var(--ui-weight-semibold);line-height:1.9;text-transform:uppercase}
   .means dd{margin:0;font-size:var(--ui-text-md);line-height:var(--ui-leading-normal)}
@@ -344,7 +344,7 @@
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm)}
   .ids .ui-formula{font-size:20px}
-  .ids-link{font-size:var(--ui-text-xs)}
+  .ids-link{display:inline-flex;align-items:center;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}
   .rel{gap:3px}
   .rel .ui-tile-note{font-size:var(--ui-text-2xs)}
   .rel :global(.ui-script){font-size:26px}
