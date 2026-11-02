@@ -282,7 +282,7 @@
   "about.rhymeBooksTitle": "Rhyme books",
   "about.rhymeBooks": "<a href=\"https://github.com/nkay0/Tangut-rhyme-dictionaries-data\">Tangut-rhyme-dictionaries-data</a> (西夏語韻書データ) by nkay0: each character’s rhyme class in the 文海, its tone, its initial group, and the two characters its fanqie is spelt from, taken from Han Xiaomang (2021) and the editions of the 文海, 文海寶韻, 同音 and 合編. The table’s own page and index numbers are not reproduced. The repository states no licence.",
   "about.pronunciationTitle": "Pronunciations, checked",
-  "about.pronunciationCheck": "The readings are Open Tangut’s. Their GX202411 column was compared with <a href=\"https://github.com/semakosa/tangut-pronunciation-db\">Xun Gong’s Tangut Pronunciation Database</a> (2025), which is not reproduced here: once its superscript tones are folded to digits, 5,743 of 6,031 readings agree, 88 differ and 58 characters are absent there. The database is under a limited public use licence, so its readings are cited rather than copied.",
+  "about.pronunciationCheck": "The readings are Open Tangut’s. Their GX202411 column was compared with <a href=\"https://github.com/semakosa/tangut-pronunciation-db\">Xun Gong’s Tangut Pronunciation Database</a> (2025): once its superscript tones are folded to digits, 5,743 of 6,031 readings agree, 88 differ and 58 characters are absent there.",
   "about.strokes": "Ideographs from Unicode’s <a href=\"https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt\">TangutSources.txt</a> (Unicode 18.0); components counted from their glyphs in this project’s review.",
   "about.attestation": "Kirill Solonin and Shintaro Arakawa, <a href=\"https://hdl.handle.net/10108/0002000647\"><i>Śāntideva’s Bodhicaryāvatāra in Tangut Translation</i></a>, vol. 1 (ILCAA, TUFS, 2024), CC BY 4.0: chapter 2, the manuscript IOM RAS Tangut no. 781, with the edition’s English translation and facsimile. The facsimile reproduces photographs by the Institute of Ethnology, CASS. Line readings: ぶんぽ, <a href=\"https://note.com/bunpo10381227\">西夏語公開自主ゼミ</a> (note.com, 2024-12-30 to 2025-09-15), linked line by line and not reproduced. Lines, character boxes and crops recorded by Glyph Atlas.",
   "about.attestCount": "So far: {lines} lines, {characters} characters, {distinct} distinct.",
@@ -298,5 +298,17 @@
   "about.footer": "Descriptions are also composed in the <a href=\"https://ids.mkpo.li/\">IDS Workshop</a>, which runs on the same component data; <a href=\"https://github.com/mkpoli/ids-input/blob/main/data/README.md\">its data notes</a> give each file’s source and licence.",
   "card.renderings": "Faces",
   "card.showFaces": "Show in every face",
-  "card.loadingFaces": "Loading faces…"
+  "card.loadingFaces": "Loading faces…",
+  "nav.transcribe": "Transcribe",
+  "nav.transcribe.hint": "Paste a line and read it character by character",
+  "transcribe.intro": "Paste or type Tangut text. Every character appears with the reading your chosen system gives it, its rhyme and its meaning, and the line can be copied as readings or as a table of all eight systems.",
+  "transcribe.input": "The line to transcribe",
+  "transcribe.placeholder": "𗼇𗟲𘌽𗅁…",
+  "transcribe.allSystems": "All eight systems",
+  "transcribe.copyLine": "Copy the readings",
+  "transcribe.copyTable": "Copy as a table",
+  "transcribe.count": "{count} characters",
+  "transcribe.char": "Character",
+  "transcribe.meaning": "Meaning",
+  "transcribe.empty": "Type or paste Tangut text above; the readings appear here."
 }

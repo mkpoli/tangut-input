@@ -282,7 +282,7 @@
   "about.rhymeBooksTitle": "韻書",
   "about.rhymeBooks": "nkay0による<a href=\"https://github.com/nkay0/Tangut-rhyme-dictionaries-data\">Tangut-rhyme-dictionaries-data</a>（西夏語韻書データ）：韓小忙（2021）ならびに『文海』『文海宝韻』『同音』『合編』諸本に基づき、各字の『文海』における韻目・声調・声類（九音）・反切上下字を収録。元の表にある頁数や検字番号は転載していません。リポジトリにはライセンスの明記がありません。",
   "about.pronunciationTitle": "字音の照合",
-  "about.pronunciationCheck": "再構音はOpen Tangutに拠っています。そのGX202411欄を<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">龔勲の西夏語字音データベース（Xun Gong’s Tangut Pronunciation Database）</a>（2025、本サイトには非転載）と照合したところ、上付き数字の声調を通常の数字に揃えた上で6,031件のうち5,743件が一致し、88件が異なり、58字はあちらに未収録でした。同データベースは限定公開ライセンスの下にあるため、その字音は複製せず参照にとどめています。",
+  "about.pronunciationCheck": "再構音はOpen Tangutに拠っています。そのGX202411欄を<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">龔勲の西夏語字音データベース（Xun Gong’s Tangut Pronunciation Database）</a>（2025）と照合したところ、上付き数字の声調を通常の数字に揃えた上で6,031件のうち5,743件が一致し、88件が異なり、58字はあちらに未収録でした。",
   "about.strokes": "字種の画数はUnicodeの<a href=\"https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt\">TangutSources.txt</a>（Unicode 18.0）に拠り、部品の画数は本プロジェクトで字形から数えました。",
   "about.attestation": "Kirill Solonin・荒川慎太郎編<a href=\"https://hdl.handle.net/10108/0002000647\"><i>Śāntideva’s Bodhicaryāvatāra in Tangut Translation</i></a>第1巻（東京外国語大学アジア・アフリカ言語文化研究所、2024年、CC BY 4.0）：第2章、ロシア科学アカデミー東洋写本研究所蔵西夏文写本第781号（IOM RAS Tangut no. 781）、同書の英訳および影印を含む。影印は中国社会科学院民族研究所撮影の写真に基づく。行ごとの講読：ぶんぽ「<a href=\"https://note.com/bunpo10381227\">西夏語公開自主ゼミ</a>」（note.com、2024-12-30〜2025-09-15）、内容は転載せず各行からリンクしています。行・文字枠・切り出し画像はGlyph Atlasにより記録。",
   "about.attestCount": "現在の収録数：{lines}行、延べ{characters}字（異なり{distinct}字）。",
@@ -298,5 +298,17 @@
   "about.footer": "構成記述は同じ部品データで動く<a href=\"https://ids.mkpo.li/\">IDS Workshop</a>でも組み立てられており、各ファイルの出典とライセンスは<a href=\"https://github.com/mkpoli/ids-input/blob/main/data/README.md\">そのデータ注記</a>にまとめられています。",
   "card.renderings": "書体",
   "card.showFaces": "すべての書体で表示",
-  "card.loadingFaces": "書体を読み込んでいます…"
+  "card.loadingFaces": "書体を読み込んでいます…",
+  "nav.transcribe": "転写",
+  "nav.transcribe.hint": "一行貼り付けて一字ずつ読む",
+  "transcribe.intro": "西夏文を貼り付けるか入力してください。一字ごとに選択した体系の再構音・韻目・意味が表示され、行全体の再構音や八つの体系すべての対照表としてコピーできます。",
+  "transcribe.input": "転写する西夏文",
+  "transcribe.placeholder": "𗼇𗟲𘌽𗅁…",
+  "transcribe.allSystems": "八つの体系すべて",
+  "transcribe.copyLine": "再構音をコピー",
+  "transcribe.copyTable": "表としてコピー",
+  "transcribe.count": "{count}字",
+  "transcribe.char": "文字",
+  "transcribe.meaning": "意味",
+  "transcribe.empty": "上の欄に西夏文を入力するか貼り付けると、ここに再構音が表示されます。"
 }

@@ -18,6 +18,7 @@
   import Draw from './pages/Draw.svelte'
   import Fanqie from './pages/Fanqie.svelte'
   import Chart from './pages/Chart.svelte'
+  import Transcribe from './pages/Transcribe.svelte'
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
   import About from './pages/About.svelte'
@@ -34,7 +35,7 @@
   /** The phone's tab strip, scrolled to keep the current finder in view. @type {HTMLElement | null} */
   let tabs = $state(null)
   /** On a phone the strip holds the four finders a reader starts from; the rest wait in a sheet. */
-  const EXTRAS = new Set(['sijiao', 'fanqie', 'chart', 'draw', 'parts'])
+  const EXTRAS = new Set(['sijiao', 'fanqie', 'chart', 'transcribe', 'draw', 'parts'])
   let menu = $state(false)
   /** @type {HTMLDialogElement | null} */
   let sheet = $state(null)
@@ -212,6 +213,7 @@
         {:else if route.page === 'reading'}<Reading />
         {:else if route.page === 'fanqie'}<Fanqie />
         {:else if route.page === 'chart'}<Chart />
+        {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
         {:else}<About />{/if}

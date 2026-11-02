@@ -10,6 +10,7 @@ export const PAGES = /** @type {const} */ ([
   { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },
   { path: 'fanqie', label: 'nav.fanqie', hint: 'nav.fanqie.hint' },
   { path: 'chart', label: 'nav.chart', hint: 'nav.chart.hint' },
+  { path: 'transcribe', label: 'nav.transcribe', hint: 'nav.transcribe.hint' },
   { path: 'draw', label: 'nav.draw', hint: 'nav.draw.hint' },
   { path: 'parts', label: 'nav.parts', hint: 'nav.parts.hint' },
 ])

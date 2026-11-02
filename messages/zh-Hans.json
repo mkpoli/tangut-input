@@ -282,7 +282,7 @@
   "about.rhymeBooksTitle": "韵书",
   "about.rhymeBooks": "nkay0所编<a href=\"https://github.com/nkay0/Tangut-rhyme-dictionaries-data\">Tangut-rhyme-dictionaries-data</a>（西夏語韻書データ）：收录各字在《文海》中的韵部、声调、声类（九音）及反切上下字，据韩小忙（2021）及《文海》《文海宝韵》《同音》《合编》诸本整理。原表所载页码与检字编号未予转载。代码库未声明许可协议。",
   "about.pronunciationTitle": "读音校核",
-  "about.pronunciationCheck": "读音取自Open Tangut。将其GX202411栏与<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">龚勋西夏文读音数据库（Xun Gong’s Tangut Pronunciation Database）</a>（2025，本站未转载）比对：将上标声调折算为数字后，6,031条读音中有5,743条一致，88条不同，另有58字彼处未收。该数据库采用有限公共使用许可，故此处仅作引据而不加复制。",
+  "about.pronunciationCheck": "读音取自Open Tangut。将其GX202411栏与<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">龚勋西夏文读音数据库（Xun Gong’s Tangut Pronunciation Database）</a>（2025）比对：将上标声调折算为数字后，6,031条读音中有5,743条一致，88条不同，另有58字彼处未收。",
   "about.strokes": "整字笔画数取自Unicode的<a href=\"https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt\">TangutSources.txt</a>（Unicode 18.0）；部件笔画数由本项目据字形审定计出。",
   "about.attestation": "索罗宁（Kirill Solonin）、荒川慎太郎编<a href=\"https://hdl.handle.net/10108/0002000647\"><i>Śāntideva’s Bodhicaryāvatāra in Tangut Translation</i></a>第一卷（东京外国语大学亚非语言文化研究所，2024），CC BY 4.0：第二品，俄罗斯科学院东方文献研究所藏西夏文写本第781号（IOM RAS Tangut no. 781），含该书英译与影印图版。图版影印自中国社会科学院民族研究所摄制之照片。逐行研读：ぶんぽ《<a href=\"https://note.com/bunpo10381227\">西夏語公開自主ゼミ</a>》（note.com，2024-12-30至2025-09-15），按行链接而不转载原文。行次、字框与字形裁切由Glyph Atlas标录。",
   "about.attestCount": "目前已收：{lines}行，{characters}字，不重复{distinct}字。",
@@ -298,5 +298,17 @@
   "about.footer": "构字描述亦可在基于同一部件数据运行的<a href=\"https://ids.mkpo.li/\">IDS Workshop</a>中拼合；各文件的出处与许可协议见<a href=\"https://github.com/mkpoli/ids-input/blob/main/data/README.md\">其数据说明</a>。",
   "card.renderings": "字体",
   "card.showFaces": "显示全部字体",
-  "card.loadingFaces": "正在加载字体…"
+  "card.loadingFaces": "正在加载字体…",
+  "nav.transcribe": "转写",
+  "nav.transcribe.hint": "粘贴一行文本，逐字释读",
+  "transcribe.intro": "粘贴或输入西夏文。每个字都会显示所选体系的拟音、韵部与释义；整行内容可复制为拟音，或复制为八种体系的对照表。",
+  "transcribe.input": "要转写的西夏文",
+  "transcribe.placeholder": "𗼇𗟲𘌽𗅁…",
+  "transcribe.allSystems": "全部八种体系",
+  "transcribe.copyLine": "复制拟音",
+  "transcribe.copyTable": "复制为表格",
+  "transcribe.count": "{count}字",
+  "transcribe.char": "字",
+  "transcribe.meaning": "释义",
+  "transcribe.empty": "在上方输入或粘贴西夏文，此处即会显示拟音。"
 }

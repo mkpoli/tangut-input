@@ -282,7 +282,7 @@
   "about.rhymeBooksTitle": "운서",
   "about.rhymeBooks": "nkay0의 <a href=\"https://github.com/nkay0/Tangut-rhyme-dictionaries-data\">Tangut-rhyme-dictionaries-data</a> (西夏語韻書データ): 한샤오망(Han Xiaomang, 2021) 및 《문해(文海)》, 《문해보운(文海寶韻)》, 《동음(同音)》, 《합편(合編)》 판본에서 가져온 각 글자의 《문해》 운목, 성조, 성류(구음), 반절상하자를 담고 있습니다. 원래 표의 쪽수와 색인 번호는 옮기지 않았습니다. 저장소에는 라이선스가 명시되어 있지 않습니다.",
   "about.pronunciationTitle": "독음 대조",
-  "about.pronunciationCheck": "독음은 Open Tangut의 것을 따릅니다. 그중 GX202411 열을 <a href=\"https://github.com/semakosa/tangut-pronunciation-db\">궁쉰의 서하어 독음 데이터베이스(Xun Gong’s Tangut Pronunciation Database)</a>(2025, 이 사이트에는 수록하지 않음)와 대조한 결과, 위첨자 성조를 숫자로 바꾸었을 때 6,031개 독음 중 5,743개가 일치하고 88개가 다르며 58자는 해당 데이터베이스에 없습니다. 이 데이터베이스는 제한적 공개 이용 라이선스하에 있으므로 독음을 복제하지 않고 인용만 하였습니다.",
+  "about.pronunciationCheck": "독음은 Open Tangut의 것을 따릅니다. 그중 GX202411 열을 <a href=\"https://github.com/semakosa/tangut-pronunciation-db\">궁쉰의 서하어 독음 데이터베이스(Xun Gong’s Tangut Pronunciation Database)</a>(2025)와 대조한 결과, 위첨자 성조를 숫자로 바꾸었을 때 6,031개 독음 중 5,743개가 일치하고 88개가 다르며 58자는 해당 데이터베이스에 없습니다.",
   "about.strokes": "글자 획수는 유니코드의 <a href=\"https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt\">TangutSources.txt</a> (Unicode 18.0)에서 가져왔으며, 부품 획수는 이 프로젝트에서 자형을 검토하여 세었습니다.",
   "about.attestation": "키릴 솔로닌(Kirill Solonin)·아라카와 신타로(Shintaro Arakawa), <a href=\"https://hdl.handle.net/10108/0002000647\"><i>Śāntideva’s Bodhicaryāvatāra in Tangut Translation</i></a>, 제1권 (ILCAA, TUFS, 2024), CC BY 4.0: 제2장, 러시아 과학아카데미 동방필사본연구소 소장 서하문 사본 제781호(IOM RAS Tangut no. 781), 영역본 및 영인본 포함. 영인본은 중국사회과학원 민족연구소가 촬영한 사진을 복제한 것입니다. 행별 강독: ぶんぽ, <a href=\"https://note.com/bunpo10381227\">西夏語公開自主ゼミ</a> (note.com, 2024-12-30 ~ 2025-09-15), 원문을 전재하지 않고 행마다 링크로 연결하였습니다. 행과 글자 칸, 잘라낸 자형 이미지는 Glyph Atlas가 기록하였습니다.",
   "about.attestCount": "현재 수록 분량: {lines}행, 연 {characters}자, 개별 {distinct}자.",
@@ -298,5 +298,17 @@
   "about.footer": "자형 기술은 같은 부품 데이터로 작동하는 <a href=\"https://ids.mkpo.li/\">IDS Workshop</a>에서도 조합할 수 있으며, 각 파일의 출처와 라이선스는 <a href=\"https://github.com/mkpoli/ids-input/blob/main/data/README.md\">데이터 안내</a>에 정리되어 있습니다.",
   "card.renderings": "서체",
   "card.showFaces": "모든 서체로 보기",
-  "card.loadingFaces": "서체를 불러오는 중…"
+  "card.loadingFaces": "서체를 불러오는 중…",
+  "nav.transcribe": "전사",
+  "nav.transcribe.hint": "한 줄을 붙여넣고 글자별로 읽기",
+  "transcribe.intro": "서하문을 붙여넣거나 입력하세요. 글자마다 선택한 체계의 재구음, 운목, 뜻이 함께 나타나며, 한 줄 전체를 재구음으로 복사하거나 여덟 체계 전체의 표로 복사할 수 있습니다.",
+  "transcribe.input": "전사할 서하문",
+  "transcribe.placeholder": "𗼇𗟲𘌽𗅁…",
+  "transcribe.allSystems": "여덟 체계 모두",
+  "transcribe.copyLine": "재구음 복사",
+  "transcribe.copyTable": "표로 복사",
+  "transcribe.count": "{count}자",
+  "transcribe.char": "글자",
+  "transcribe.meaning": "뜻",
+  "transcribe.empty": "위에 서하문을 입력하거나 붙여넣으면 재구음이 여기에 나타납니다."
 }
