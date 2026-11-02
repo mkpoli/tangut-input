@@ -14,9 +14,10 @@ const FAR = 255
 // Distances are read in units of half a cell; past six cells a stroke is simply elsewhere, and
 // leaving it uncapped lets one stray line outweigh the rest of the character.
 const TRUNCATE = 12
+const BLOCK = 4
 
 /** @typedef {{ size: number, chars: string[], masks: Uint8Array }} Shapes */
-/** @typedef {{ chars: string[], fields: Uint8Array, inks: Uint16Array[], bins: Uint8Array[] }} ShapeIndex */
+/** @typedef {{ chars: string[], fields: Uint8Array, inks: Uint16Array[], bins: Uint8Array[], blocks: Uint8Array[] }} ShapeIndex */
 /** @typedef {[x: number, y: number][]} Stroke */
 
 /** Parse the binary shape file: a u32 header length, the JSON header, the packed masks. @param {Uint8Array} bytes @returns {Shapes} */
@@ -35,6 +36,8 @@ export function indexShapes(shapes) {
   const inks = []
   /** @type {Uint8Array[]} */
   const bins = []
+  /** @type {Uint8Array[]} */
+  const blocks = []
   const grid = new Uint8Array(CELLS)
   for (let i = 0; i < shapes.chars.length; i++) {
     const packed = shapes.masks.subarray(i * bytes, (i + 1) * bytes)
@@ -46,10 +49,12 @@ export function indexShapes(shapes) {
     const ink = new Uint16Array(count)
     for (let c = 0, k = 0; c < CELLS; c++) if (grid[c]) ink[k++] = c
     inks.push(ink)
-    bins.push(inkDirections(grid, ink))
+    const directions = inkDirections(grid, ink)
+    bins.push(directions)
+    blocks.push(blockHistogram(directions, ink))
     fields.set(distanceField(grid), i * CELLS)
   }
-  return { chars: shapes.chars, fields, inks, bins }
+  return { chars: shapes.chars, fields, inks, bins, blocks }
 }
 
 /**
@@ -135,6 +140,34 @@ export function rasterize(strokes, width = PEN) {
   return grid
 }
 
+/**
+ * The ink of each cell assigned to one of sixteen blocks, four by four, with its direction: a coarse
+ * picture of where each direction sits, which the chamfer term alone does not see.
+ * @param {Uint8Array} bins
+ * @param {ArrayLike<number>} ink
+ * @returns {Uint8Array}
+ */
+export function blockHistogram(bins, ink) {
+  const counts = new Uint8Array(BLOCK * BLOCK * DIRECTIONS)
+  for (let k = 0; k < ink.length; k++) {
+    const bin = bins[k]
+    if (bin >= DIRECTIONS) continue
+    const c = ink[k]
+    const x = c % SIZE, y = (c - x) / SIZE
+    const bx = Math.min(BLOCK - 1, (x * BLOCK / SIZE) | 0)
+    const by = Math.min(BLOCK - 1, (y * BLOCK / SIZE) | 0)
+    counts[(by * BLOCK + bx) * DIRECTIONS + bin] = Math.min(255, counts[(by * BLOCK + bx) * DIRECTIONS + bin] + 1)
+  }
+  return counts
+}
+
+/** Cosine similarity of two block histograms. @param {ArrayLike<number>} a @param {ArrayLike<number>} b */
+function similarity(a, b) {
+  let dot = 0, na = 0, nb = 0
+  for (let i = 0; i < a.length; i++) { dot += a[i] * b[i]; na += a[i] * a[i]; nb += b[i] * b[i] }
+  return na && nb ? dot / Math.sqrt(na * nb) : 0
+}
+
 /** The four directions a line can be drawn along, as the index of a 45° bin. @param {number} dx @param {number} dy */
 export function directionBin(dx, dy) {
   let angle = Math.atan2(dy, dx)
@@ -172,11 +205,11 @@ function cover(a, b, radius, visit) {
  * whose recorded count is near it upward; it never removes one.
  * @param {ShapeIndex} index
  * @param {Uint8Array} drawn
- * @param {{ limit?: number, strokes?: number, strokeCounts?: Map<string, number>, strokeWeight?: number, directionWeight?: number, only?: (char: string) => boolean }} [options]
- * @returns {{ char: string, score: number, forward: number, backward: number, direction: number, stroke: number }[]}
+ * @param {{ limit?: number, strokes?: number, strokeCounts?: Map<string, number>, strokeWeight?: number, directionWeight?: number, only?: (char: string) => boolean, rerankDepth?: number, rerankWeight?: number }} [options]
+ * @returns {{ char: string, at: number, score: number, forward: number, backward: number, direction: number, stroke: number }[]}
  */
 export function rankShapes(index, drawn, options = {}) {
-  const { limit = 60, strokes = 0, strokeCounts, strokeWeight = 0.35, directionWeight = DIRECTION_WEIGHT, only } = options
+  const { limit = 60, strokes = 0, strokeCounts, strokeWeight = 0.35, directionWeight = DIRECTION_WEIGHT, only, rerankDepth = 150, rerankWeight = 0.5 } = options
   const ink = []
   for (let c = 0; c < CELLS; c++) if (drawn[c]) ink.push(c)
   if (!ink.length) return []
@@ -189,7 +222,7 @@ export function rankShapes(index, drawn, options = {}) {
     for (let k = 0; k < ink.length; k++) if (drawnBins[k] === b) grid[ink[k]] = 1
     directionFields.push(distanceField(grid))
   }
-  /** @type {{ char: string, score: number, forward: number, backward: number, direction: number, stroke: number }[]} */
+  /** @type {{ char: string, at: number, score: number, forward: number, backward: number, direction: number, stroke: number }[]} */
   const scored = []
   for (let i = 0; i < index.chars.length; i++) {
     const char = index.chars[i]
@@ -219,8 +252,18 @@ export function rankShapes(index, drawn, options = {}) {
       stroke: strokes && strokeCounts?.get(char) ? Math.abs((strokeCounts.get(char) ?? 0) - strokes) : 0,
     }
     const score = parts.forward + parts.backward + directionWeight * parts.direction + strokeWeight * parts.stroke
-    scored.push({ char, score, ...parts })
+    scored.push({ char, at: i, score, ...parts })
   }
   scored.sort((a, b) => a.score - b.score)
+  if (rerankDepth > 0 && index.blocks) {
+    // A second look at the head of the list: characters whose ink sits in the wrong quarter of the
+    // square score well on chamfer and badly here.
+    const head = scored.slice(0, rerankDepth)
+    const own = blockHistogram(drawnBins, ink)
+    const scale = head[0]?.score || 1
+    for (const hit of head) hit.score = hit.score / scale + rerankWeight * (1 - similarity(own, index.blocks[hit.at]))
+    head.sort((a, b) => a.score - b.score)
+    scored.splice(0, rerankDepth, ...head)
+  }
   return scored.slice(0, limit)
 }
