@@ -56,19 +56,20 @@ for (const session of readdirSync(DATA).sort()) {
 function rankOf(strokes, char, config = {}) {
   const weights = { direction: config.direction ?? Number(args.get('weight') ?? 2), stroke: config.stroke ?? Number(args.get('stroke') ?? 0.35) }
   const merge = config.merge ?? args.get('merge') ?? 'rank'
+  const rerank = { rerankDepth: config.depth ?? Number(args.get('depth') ?? 150), rerankWeight: config.rerank ?? Number(args.get('rerank') ?? 0.5) }
   const mask = rasterize(strokes)
   /** @type {Map<string, number>} */
   const bestRank = new Map()
   if (merge === 'rank') {
     for (const { index } of indexes) {
-      rankShapes(index, mask, { limit: index.chars.length, strokes: strokes.length, strokeCounts, strokeWeight: weights.stroke, directionWeight: weights.direction })
+      rankShapes(index, mask, { limit: index.chars.length, strokes: strokes.length, strokeCounts, strokeWeight: weights.stroke, directionWeight: weights.direction, ...rerank })
         .forEach((hit, at) => { if (!bestRank.has(hit.char) || /** @type {number} */ (bestRank.get(hit.char)) > at) bestRank.set(hit.char, at) })
     }
   } else {
     /** @type {Map<string, number>} */
     const bestScore = new Map()
     for (const { index } of indexes) {
-      for (const hit of rankShapes(index, mask, { limit: index.chars.length, strokes: strokes.length, strokeCounts, strokeWeight: weights.stroke, directionWeight: weights.direction })) {
+      for (const hit of rankShapes(index, mask, { limit: index.chars.length, strokes: strokes.length, strokeCounts, strokeWeight: weights.stroke, directionWeight: weights.direction, ...rerank })) {
         const known = bestScore.get(hit.char)
         if (known === undefined || hit.score < known) bestScore.set(hit.char, hit.score)
       }
@@ -115,7 +116,9 @@ const sweep = args.has('sweep')
       { label: 'dir 3 stroke .35', direction: 3 },
       { label: 'dir 2 stroke .7', direction: 2, stroke: 0.7 },
       { label: 'dir 2 stroke 0', direction: 2, stroke: 0 },
-      { label: 'dir 2 by distance', direction: 2, merge: 'min' },
+      { label: 'rerank 150 w .2', direction: 2, depth: 150, rerank: 0.2 },
+      { label: 'rerank 150 w .5', direction: 2, depth: 150, rerank: 0.5 },
+      { label: 'rerank 400 w .3', direction: 2, depth: 400, rerank: 0.3 },
     ]
   : [{ label: `dir ${weights.direction} stroke ${weights.stroke}`, direction: weights.direction, stroke: weights.stroke, merge }]
 
