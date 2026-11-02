@@ -4,6 +4,7 @@
 // Each page's name and one-line hint are message keys, so the bar reads in the reader's language.
 export const PAGES = /** @type {const} */ ([
   { path: '', label: 'nav.find', hint: 'nav.find.hint' },
+  { path: 'meaning', label: 'nav.meaning', hint: 'nav.meaning.hint' },
   { path: 'cangjie', label: 'nav.cangjie', hint: 'nav.cangjie.hint' },
   { path: 'sijiao', label: 'nav.sijiao', hint: 'nav.sijiao.hint' },
   { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },

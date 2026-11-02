@@ -13,6 +13,7 @@
   import Sijiao from './pages/Sijiao.svelte'
   import Reading from './pages/Reading.svelte'
   import Draw from './pages/Draw.svelte'
+  import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
   import About from './pages/About.svelte'
 
@@ -104,6 +105,7 @@
     <div class="body" class:about={route.page === 'about'}>
       <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? 'nav.sources')}>
         {#if route.page === ''}<Find />
+        {:else if route.page === 'meaning'}<Meaning />
         {:else if route.page === 'cangjie'}<Cangjie />
         {:else if route.page === 'sijiao'}<Sijiao />
         {:else if route.page === 'reading'}<Reading />

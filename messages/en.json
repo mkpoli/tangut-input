@@ -208,5 +208,18 @@
   "about.how": "How the finders read the records",
   "about.mark": "The mark",
   "about.code": "The site’s code is MIT. Source:",
-  "find.door.sijiao": "Type the six digits of the four-corner code; candidates are numbered for quick entry. The number pad is also the key chart."
+  "find.door.sijiao": "Type the six digits of the four-corner code; candidates are numbered for quick entry. The number pad is also the key chart.",
+  "nav.meaning": "Meaning",
+  "nav.meaning.hint": "Search the glosses",
+  "meaning.intro": "Search what a character means. Every meaning is recorded in English, Japanese and Chinese, so a word in any of the three finds the characters it glosses; a gloss with several senses is searched sense by sense.",
+  "meaning.placeholder": "water, 毒, 馬…",
+  "meaning.label": "Search by meaning",
+  "meaning.languages": "Languages",
+  "meaning.all": "All three",
+  "meaning.en": "English",
+  "meaning.ja": "日本語",
+  "meaning.zh": "中文",
+  "meaning.try": "Try",
+  "meaning.none": "No meaning in the records holds “{query}”.",
+  "meaning.cut": "The first {shown} of {total}; narrow the word to see the rest."
 }

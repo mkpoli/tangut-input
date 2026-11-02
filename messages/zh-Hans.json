@@ -208,5 +208,18 @@
   "about.how": "各查字功能如何检索记录",
   "about.mark": "标志",
   "about.code": "本站代码采用MIT许可。源码：",
-  "find.door.sijiao": "输入四角号码的六位数字。候选字带有编号，便于快速选定。屏幕上的数字键同时是字根表。"
+  "find.door.sijiao": "输入四角号码的六位数字。候选字带有编号，便于快速选定。屏幕上的数字键同时是字根表。",
+  "nav.meaning": "释义",
+  "nav.meaning.hint": "检索字义训释",
+  "meaning.intro": "按字义查找。每条释义均以英、日、汉三语收录，用任一语言的词语皆可查出所训之字；含多个义项的释义会按义项分别检索。",
+  "meaning.placeholder": "water、毒、马…",
+  "meaning.label": "按释义查找",
+  "meaning.languages": "语言",
+  "meaning.all": "三语全部",
+  "meaning.en": "English",
+  "meaning.ja": "日本語",
+  "meaning.zh": "中文",
+  "meaning.try": "试试",
+  "meaning.none": "记录中没有包含“{query}”的释义。",
+  "meaning.cut": "显示{total}项中的前{shown}项；请收窄检索词以查看其余结果。"
 }

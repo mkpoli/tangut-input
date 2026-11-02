@@ -208,5 +208,18 @@
   "about.how": "各検索機能の仕組み",
   "about.mark": "標章",
   "about.code": "このサイトのコードはMITライセンスです。ソース：",
-  "find.door.sijiao": "四角号碼の六桁を入力します。候補には番号が振られ、素早く確定できます。画面の数字キーは字根表を兼ねています。"
+  "find.door.sijiao": "四角号碼の六桁を入力します。候補には番号が振られ、素早く確定できます。画面の数字キーは字根表を兼ねています。",
+  "nav.meaning": "意味検索",
+  "nav.meaning.hint": "語釈から探す",
+  "meaning.intro": "文字の意味から探します。すべての意味は英語・日本語・中国語で収録されているため、三言語のいずれの語でも該当する文字を引くことができます。複数の語義がある項目は語義ごとに検索されます。",
+  "meaning.placeholder": "water、毒、馬…",
+  "meaning.label": "意味で探す",
+  "meaning.languages": "言語",
+  "meaning.all": "三言語すべて",
+  "meaning.en": "English",
+  "meaning.ja": "日本語",
+  "meaning.zh": "中文",
+  "meaning.try": "例：",
+  "meaning.none": "「{query}」を含む意味は記録にありません。",
+  "meaning.cut": "全{total}件のうち最初の{shown}件を表示しています。語を絞り込むと残りが表示されます。"
 }

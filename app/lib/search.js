@@ -36,31 +36,38 @@ export function byCode(letters, options = {}) {
 /** @param {string} code @param {string} typed */
 const rank = (code, typed) => (code === typed ? 0 : 1000) + code.length
 
+/** The languages the meanings are recorded in. */
+export const MEANING_LANGUAGES = /** @type {const} */ (['en', 'ja', 'zh'])
+
 /**
- * Characters whose English, Japanese or Chinese meanings contain the words: a whole sense first,
- * then a whole word, then any substring.
+ * Characters whose recorded meanings contain the words: a whole sense first, then a whole word, then
+ * any substring. The glosses are Open Tangut's, in English, Japanese and Chinese; a search can keep
+ * to one of the three.
  * @param {string} query
- * @returns {{ char: string, tier: number, sense: string }[]}
+ * @param {{ languages?: string[] }} [options]
+ * @returns {{ char: string, tier: number, sense: string, lang: string }[]}
  */
-export function byMeaning(query) {
+export function byMeaning(query, options = {}) {
   const needle = query.trim().toLowerCase()
   if (!needle || (/^[a-z ]+$/.test(needle) && needle.length < 2)) return []
+  const languages = options.languages?.length ? options.languages : MEANING_LANGUAGES
   const word = new RegExp(`(^|[^\\p{L}])${needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^\\p{L}])`, 'u')
-  /** @type {{ char: string, tier: number, sense: string }[]} */
+  /** @type {{ char: string, tier: number, sense: string, lang: string }[]} */
   const hits = []
   for (const entry of ix.entries) {
     const d = entry.definitions ?? {}
-    let tier = 9, sense = ''
-    for (const text of [...(d.en ?? []), ...(d.zh ?? []), ...(d.ja ?? [])]) {
+    let tier = 9, sense = '', lang = ''
+    for (const key of languages) for (const text of /** @type {string[]} */ (/** @type {any} */ (d)[key] ?? [])) {
       const lower = text.toLowerCase()
       const senses = lower.split(/[;；,，。、]\s*/)
-      const t = senses.some(part => part.trim() === needle) ? 0 : word.test(lower) ? 1 : lower.includes(needle) ? 2 : 9
-      if (t < tier) { tier = t; sense = text }
+      const t = senses.some(/** @param {string} part */ part => part.trim() === needle) ? 0 : word.test(lower) ? 1 : lower.includes(needle) ? 2 : 9
+      if (t < tier) { tier = t; sense = text; lang = key }
     }
-    if (tier < 9) hits.push({ char: entry.char, tier, sense })
+    if (tier < 9) hits.push({ char: entry.char, tier, sense, lang })
   }
   return hits.sort((a, b) => a.tier - b.tier || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
+
 
 /**
  * Characters whose description holds every chosen part (a part chosen twice must appear twice),
