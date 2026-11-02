@@ -69,6 +69,7 @@
 
   const DOORS = /** @type {const} */ ([
     { page: 'cangjie', title: 'nav.cangjie', body: 'find.door.cangjie', glyph: '𗀀' },
+    { page: 'sijiao', title: 'nav.sijiao', body: 'find.door.sijiao', glyph: '𗩤' },
     { page: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '𗁤' },
     { page: 'draw', title: 'nav.draw', body: 'find.door.draw', glyph: '𗣳' },
     { page: 'parts', title: 'nav.parts', body: 'find.door.parts', glyph: '𘢰' },

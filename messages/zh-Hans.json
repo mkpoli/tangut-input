@@ -207,5 +207,6 @@
   "about.glyphsTitle": "字形",
   "about.how": "各查字功能如何检索记录",
   "about.mark": "标志",
-  "about.code": "本站代码采用MIT许可。源码："
+  "about.code": "本站代码采用MIT许可。源码：",
+  "find.door.sijiao": "输入四角号码的六位数字。候选字带有编号，便于快速选定。屏幕上的数字键同时是字根表。"
 }
