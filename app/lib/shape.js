@@ -7,10 +7,13 @@
 export const SIZE = 32
 const FIT = 30
 const PEN = 1.6
-const DIRECTIONS = 4
+const DIRECTIONS = 8
 const DIRECTION_WEIGHT = 2
 const CELLS = SIZE * SIZE
 const FAR = 255
+// Distances are read in units of half a cell; past six cells a stroke is simply elsewhere, and
+// leaving it uncapped lets one stray line outweigh the rest of the character.
+const TRUNCATE = 12
 
 /** @typedef {{ size: number, chars: string[], masks: Uint8Array }} Shapes */
 /** @typedef {{ chars: string[], fields: Uint8Array, inks: Uint16Array[], bins: Uint8Array[] }} ShapeIndex */
@@ -103,7 +106,7 @@ export function distanceField(grid) {
       if (x < SIZE - 1) d = Math.min(d, field[c + SIZE + 1] + 3)
       if (x > 0) d = Math.min(d, field[c + SIZE - 1] + 3)
     }
-    field[c] = d
+    field[c] = Math.min(TRUNCATE, d)
   }
   return field
 }
@@ -118,12 +121,11 @@ function placeStrokes(strokes, width = PEN) {
     minY = Math.min(minY, y); maxY = Math.max(maxY, y)
   }
   const spanX = Math.max(maxX - minX, 1e-6), spanY = Math.max(maxY - minY, 1e-6)
-  // A stroke or two drawn alone stays thin rather than being blown up into a block.
-  const scaleX = (FIT - width) / Math.max(spanX, spanY / 4)
-  const scaleY = (FIT - width) / Math.max(spanY, spanX / 4)
-  const offsetX = (SIZE - (maxX - minX) * scaleX) / 2
-  const offsetY = (SIZE - (maxY - minY) * scaleY) / 2
-  return strokes.map(stroke => stroke.map(([x, y]) => /** @type {[number, number]} */ ([(x - minX) * scaleX + offsetX, (y - minY) * scaleY + offsetY])))
+  // Fitted by the longer side, as the glyph masks are: the drawing keeps its proportions.
+  const scale = (FIT - width) / Math.max(spanX, spanY)
+  const offsetX = (SIZE - spanX * scale) / 2
+  const offsetY = (SIZE - spanY * scale) / 2
+  return strokes.map(stroke => stroke.map(([x, y]) => /** @type {[number, number]} */ ([(x - minX) * scale + offsetX, (y - minY) * scale + offsetY])))
 }
 
 /** Draw the strokes as a mask. @param {Stroke[]} strokes @param {number} [width] */
@@ -170,11 +172,11 @@ function cover(a, b, radius, visit) {
  * whose recorded count is near it upward; it never removes one.
  * @param {ShapeIndex} index
  * @param {Uint8Array} drawn
- * @param {{ limit?: number, strokes?: number, strokeCounts?: Map<string, number>, strokeWeight?: number, only?: (char: string) => boolean }} [options]
- * @returns {{ char: string, score: number }[]}
+ * @param {{ limit?: number, strokes?: number, strokeCounts?: Map<string, number>, strokeWeight?: number, directionWeight?: number, only?: (char: string) => boolean }} [options]
+ * @returns {{ char: string, score: number, forward: number, backward: number, direction: number, stroke: number }[]}
  */
 export function rankShapes(index, drawn, options = {}) {
-  const { limit = 60, strokes = 0, strokeCounts, strokeWeight = 0.35, only } = options
+  const { limit = 60, strokes = 0, strokeCounts, strokeWeight = 0.35, directionWeight = DIRECTION_WEIGHT, only } = options
   const ink = []
   for (let c = 0; c < CELLS; c++) if (drawn[c]) ink.push(c)
   if (!ink.length) return []
@@ -187,7 +189,7 @@ export function rankShapes(index, drawn, options = {}) {
     for (let k = 0; k < ink.length; k++) if (drawnBins[k] === b) grid[ink[k]] = 1
     directionFields.push(distanceField(grid))
   }
-  /** @type {{ char: string, score: number }[]} */
+  /** @type {{ char: string, score: number, forward: number, backward: number, direction: number, stroke: number }[]} */
   const scored = []
   for (let i = 0; i < index.chars.length; i++) {
     const char = index.chars[i]
@@ -209,13 +211,15 @@ export function rankShapes(index, drawn, options = {}) {
         directed++
       }
     }
-    let score = forward / ink.length + backward / Math.max(1, glyph.length)
-      + DIRECTION_WEIGHT * direction / Math.max(1, directed)
-    if (strokes && strokeCounts) {
-      const recorded = strokeCounts.get(char)
-      if (recorded) score += strokeWeight * Math.abs(recorded - strokes)
+    // The terms stay separate so a benchmark can re-weigh them without recomputing the distances.
+    const parts = {
+      forward: forward / ink.length,
+      backward: backward / Math.max(1, glyph.length),
+      direction: direction / Math.max(1, directed),
+      stroke: strokes && strokeCounts?.get(char) ? Math.abs((strokeCounts.get(char) ?? 0) - strokes) : 0,
     }
-    scored.push({ char, score })
+    const score = parts.forward + parts.backward + directionWeight * parts.direction + strokeWeight * parts.stroke
+    scored.push({ char, score, ...parts })
   }
   scored.sort((a, b) => a.score - b.score)
   return scored.slice(0, limit)

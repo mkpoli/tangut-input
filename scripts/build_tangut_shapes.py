@@ -168,9 +168,11 @@ def mask_of(canvas):
     # The line is thinned at a larger size than the file, so that a stroke comes out continuous.
     size = SIZE * THIN_SCALE
     fit = FIT * THIN_SCALE
-    # Stretched to fill the square, except that a thin glyph (a lone stroke) keeps a sliver shape.
-    w = fit if width * 4 >= height else max(1, round(fit * width * 4 / height))
-    h = fit if height * 4 >= width else max(1, round(fit * height * 4 / width))
+    # Fitted by its longer side so the proportions survive; a thin glyph (a lone stroke) would
+    # otherwise be blown up into a bar.
+    scale = fit / max(width, height, 1)
+    w = max(1, round(width * scale))
+    h = max(1, round(height * scale))
     fitted = ink.resize((w, h), Image.Resampling.LANCZOS)
     square = Image.new('L', (size, size), 0)
     square.paste(fitted, ((size - w) // 2, (size - h) // 2))
