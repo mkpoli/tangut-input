@@ -14,8 +14,13 @@ const option = (name, fallback) => {
   const i = args.indexOf(`--${name}`)
   return i < 0 ? fallback : args[i + 1]
 }
-const drawings = Number(option('drawings', 10))
-const picks = Number(option('picks', 20))
+/** A row count from the command line, kept to something a terminal can show. */
+const count = (name, fallback) => {
+  const value = Number(option(name, fallback))
+  return Number.isFinite(value) ? Math.max(1, Math.min(500, Math.floor(value))) : fallback
+}
+const drawings = count('drawings', 10)
+const picks = count('picks', 20)
 const sql = option('sql')
 
 /** @param {string} statement @returns {any[]} */
