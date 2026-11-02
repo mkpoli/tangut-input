@@ -116,7 +116,7 @@
   {#if db.status === 'failed'}
     <p class="fault">{t('app.failed')}</p>
   {:else}
-    <div class="body" class:about={route.page === 'about'}>
+    <div class="body" class:full={route.page === 'about'}>
       <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? 'nav.sources')}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'meaning'}<Meaning />
@@ -190,7 +190,7 @@
   .theme{padding:0 8px}
 
   .body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 440px;align-items:start}
-  .body.about{grid-template-columns:minmax(0,1fr)}
+  .body.full{grid-template-columns:minmax(0,1fr)}
   .finder{min-width:0;padding:22px 26px 60px}
   .card{position:sticky;top:var(--top);height:calc(100dvh - var(--top));overflow:auto;border-left:1px solid var(--line);background:var(--surface);overscroll-behavior:contain}
   .fault{margin:60px auto;max-width:36em;color:var(--accent-ink)}
