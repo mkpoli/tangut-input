@@ -11,5 +11,8 @@
     "src/**/*.svelte",
     "app/**/*.js",
     "app/**/*.svelte"
+  ],
+  "exclude": [
+    "app/worker.js"
   ]
 }

@@ -4,9 +4,13 @@
     "rootDir": ".",
     "noEmit": true,
     "declaration": false,
-    "emitDeclarationOnly": false
+    "emitDeclarationOnly": false,
+    "types": [
+      "@cloudflare/workers-types"
+    ]
   },
   "include": [
-    "worker/**/*.js"
+    "worker/**/*.js",
+    "app/worker.js"
   ]
 }

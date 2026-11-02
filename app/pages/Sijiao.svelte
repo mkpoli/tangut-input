@@ -38,7 +38,7 @@
   function commit(index) {
     const hit = shown[index]
     if (!hit) return
-    put(hit.char)
+    put(hit.char, { place: index })
     setCode('')
     input?.focus()
   }

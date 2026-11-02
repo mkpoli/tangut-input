@@ -39,7 +39,7 @@
       list?.children[active]?.scrollIntoView({ block: 'nearest' })
     } else if (event.key === 'Enter') {
       event.preventDefault()
-      put(shown[Math.max(0, active)].char)
+      put(shown[Math.max(0, active)].char, { place: Math.max(0, active) })
     } else if (event.key === 'Escape') {
       query = ''
       setQuery('')
@@ -98,7 +98,7 @@
       {#each shown as hit, i (hit.char)}
         {#if i === 0 || shown[i - 1].tier !== hit.tier}<li class="divider label" role="presentation">{t(`reading.tier.${hit.tier}`)}</li>{/if}
         <li role="option" aria-selected={i === active || (active < 0 && route.c === hit.char)} class="row">
-          <button type="button" class="pick" onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char)}>
+          <button type="button" class="pick" onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char, { place: i })}>
             <span class="tg glyph">{hit.char}</span>
             <span class="said">
               {#each hit.readings as reading (reading.system)}
@@ -107,7 +107,7 @@
             </span>
             <span class="gl">{gloss(hit.char)}</span>
           </button>
-          <button type="button" class="add btn ghost" aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char)}>
+          <button type="button" class="add btn ghost" aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
             <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
         </li>

@@ -61,8 +61,27 @@ can be judged on real strokes; add `--strokes 1` to count the stroke count too.
 
 Each drawing is saved with what a recognizer needs: the strokes, the time of every point, the pen's
 pressure, the pointer type, the browser, and the writer's name (kept in the browser, so drawings can
-be split by hand). The strokes are normalised to the pad's width, so they can
-be compared with a drawing made on the site's Draw page.
+be split by hand). The strokes are normalised to the pad's width, so they can be compared with a
+drawing made on the site's Draw page.
+
+`bun run quiz:dataset` collects every saved drawing into `data/handwriting/dataset.jsonl.gz`, one
+record per line with its session beside it, and `dataset.json` as a manifest. The quiz rebuilds both
+after each saved drawing. The folder is ignored by git, so recordings stay on the machine that made
+them; `docs/handwriting.md` describes the fields.
+
+## Records
+
+The deployed site keeps what readers drew and picked in a D1 database: `drawings` holds a pad
+drawing with the character chosen from its results, or a quiz round's prompt with the pen's timing
+and pressure; `picks` holds a character chosen from any finder with the page and the query behind it.
+A record carries a random id from the browser's local storage, no address and no account.
+`POST /api/record` is the only thing the worker answers; every page is still served from the assets.
+
+```sh
+bun run records                      # counts, the last drawings and the last picks
+bun run records --sql "select finder, count(*) from picks group by finder"
+bunx wrangler d1 migrations apply tangut-records --remote   # the schema, once
+```
 
 ## Development
 

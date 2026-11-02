@@ -1,11 +1,23 @@
 {
   "name": "tangut-input",
+  "main": "app/worker.js",
   "compatibility_date": "2026-10-30",
-  // A page-only site: the assets are the app, and a miss opens the app so a link can carry a query.
+  // The assets are the app, and a miss opens the app so a link can carry a query. Only the record
+  // endpoint wakes the worker, so a page view is served without one.
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
   },
+  // Every drawing and every character picked, kept so the record can be read back later.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tangut-records",
+      "database_id": "20ddc25e-407c-4423-9964-230bf72141a6"
+    }
+  ],
   "routes": [{ "pattern": "tangut.mkpo.li", "custom_domain": true }],
   "workers_dev": false,
   "observability": { "enabled": true },

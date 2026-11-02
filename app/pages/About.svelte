@@ -34,7 +34,7 @@
       <dt>{t('nav.reading')}</dt>
       <dd>Readings in all eight systems are folded to plain letters: diacritics dropped, IPA letters replaced by the nearest Latin letter (<span class="mono">ɨ ɪ → i</span>, <span class="mono">ə → e</span>, <span class="mono">ŋ → ng</span>), separators removed. A final digit is the tone. Near matches also ignore medial <span class="mono">j</span> and <span class="mono">y</span> and a prenasal before a stop.</dd>
       <dt>{t('nav.draw')}</dt>
-      <dd>The drawing and each glyph are stretched into the same 32-pixel square and compared by how far each one’s ink lies from the other’s. Stroke order and direction play no part; a stroke count, if used, only nudges the order. On drawings made from the font itself, thinned and skewed, the right character is among the first five about nine times in ten, and about one time in five once the drawings are also warped. Real handwriting does worse than either.</dd>
+      <dd>The drawing and each glyph are stretched into the same 32-pixel square, the glyph reduced to a one-cell line along its pen, and compared by how far each line lies from the other’s and by the direction the ink runs at each point. Stroke order plays no part. On eighty characters drawn by one reader, the right character came first about three times in ten and within the first five about one time in two.</dd>
       <dt>{t('nav.parts')}</dt>
       <dd>A character matches when its description holds every chosen part, as often as chosen. Descriptions are Open Tangut’s and use components only.</dd>
       <dt>{t('attest.title')}</dt>
@@ -45,6 +45,15 @@
   <section>
     <h2>{t('about.mark')}</h2>
     <p><span class="tg">𘅤</span> (U+18164), glossed “to write” in Open Tangut, read <i>rjar¹</i> by Li Fanwen.</p>
+  </section>
+
+  <section>
+    <h2>What is kept</h2>
+    <p class="lead">Every drawing made on the Draw page and every character picked from a finder is
+    recorded with the finder it came from, the character chosen and the place it stood in the list.
+    A drawing kept with a pick is one example the search could be measured or trained on. A record
+    carries a random id that lives in your browser, never your address, and there is no account.
+    The quiz saves the same fields for each round, with the prompt it asked for.</p>
   </section>
 
   <p class="muted small">{t('about.code')} <a href="https://github.com/mkpoli/tangut-input">github.com/mkpoli/tangut-input</a>.</p>

@@ -158,12 +158,33 @@ drawings, 98% find the character first, 90% with a warp of one cell and 32% with
 come from the lines the index holds, so these are upper bounds, and they mostly show that the search
 does not lose a shape it was given. Real hands differ far more, as the table above says.
 
+## Records
+
+`POST /api/record` takes what a reader drew and what they picked, and writes it to a D1 database
+(`migrations/0001_records.sql`). Two tables. `drawings` holds the strokes of a pad drawing with the
+character the reader then chose from the results, or, from a quiz round, the prompt that was asked
+for along with the pen's timing and pressure. `picks` holds a character chosen from any finder, with
+the page, the query that produced it and its place in the list. A record carries a random id kept in
+the browser's local storage; no address and no account.
+
+The app queues events in local storage and sends them in one batch, so a page served without the
+worker — `vite` in development — behaves the same, and an offline reader's events go out on the next
+load. A refused endpoint is not tried again until the page reloads. The quiz sends each saved drawing
+to the same endpoint, so a round is reviewable from one place. `bun run records` reads the tables
+back; nothing serves them to a visitor.
+
+The worker only wakes for `/api/*` (`run_worker_first`), so a page view is still served straight from
+the assets. It refuses a body over 60 KB, more than 400 strokes in one drawing, a character outside
+the Tangut block, and anything that is not a pick or a drawing.
+
 ## Decisions taken without asking
 
 - **Find as the landing page.** A student arriving with a reading, a meaning or a pasted line
   needs one box that takes any of them; an expert bookmarks `/cangjie`.
-- **One text, local only.** The brief allows no accounts or server state. A single buffer in local
-  storage is the simplest thing that lets a character found by any method land in one place.
+- **One text, local only.** The brief allows no accounts. A single buffer in local storage is the
+  simplest thing that lets a character found by any method land in one place. The one thing kept on
+  the server is the record of what was drawn and picked (see below), which carries no account and no
+  address.
 - **No meaning finder of its own.** Meanings are searched from Find; the brief lists four input
   methods and meaning search is a lookup, not an input.
 - **Attestation rebuilt from Glyph Atlas.** The old file carried only line numbers. The builder now

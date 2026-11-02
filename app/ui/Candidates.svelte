@@ -29,7 +29,7 @@
       return true
     }
     if (event.key === 'Enter' && active >= 0 && shown[active]) {
-      put(shown[active].char)
+      put(shown[active].char, { place: active })
       return true
     }
     return false
@@ -41,7 +41,7 @@
     {#each shown as item, i (item.char)}
       <button class="tile" type="button" role="option" aria-selected={i === active || (active < 0 && route.c === item.char)}
         title={item.title ?? item.sub ?? ''}
-        onclick={() => { active = i; choose(item.char) }} ondblclick={() => put(item.char)}>
+        onclick={() => { active = i; choose(item.char) }} ondblclick={() => put(item.char, { place: i })}>
         <G char={item.char} />{#if item.sub}<small>{item.sub}</small>{/if}
       </button>
     {/each}

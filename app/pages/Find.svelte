@@ -63,7 +63,7 @@
       document.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: 'nearest' })
     } else if (event.key === 'Enter') {
       event.preventDefault()
-      put(flat[Math.max(0, active)].char)
+      put(flat[Math.max(0, active)].char, { place: Math.max(0, active) })
     }
   }
 
@@ -118,7 +118,7 @@
             {#each group.items as item, i (item.char)}
               <li role="presentation">
                 <button type="button" role="option" data-index={offset + i} class="gl-row" aria-selected={offset + i === active || route.c === item.char}
-                  onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char)}>
+                  onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char, { place: offset + i })}>
                   <G char={item.char} />
                   <span class="r">{item.extra}</span>
                   <span class="m">{item.sub || '—'}</span>
@@ -130,7 +130,7 @@
           <div class="tiles" role="listbox" aria-label={group.title}>
             {#each group.items as item, i (item.char)}
               <button type="button" role="option" class="tile" data-index={offset + i} aria-selected={offset + i === active || (active < 0 && route.c === item.char)}
-                title={gloss(item.char)} onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char)}>
+                title={gloss(item.char)} onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char, { place: offset + i })}>
                 <G char={item.char} /><small>{item.extra ? `${item.extra} ` : ''}{item.sub}</small>
               </button>
             {/each}

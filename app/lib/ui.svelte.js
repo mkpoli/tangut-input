@@ -1,8 +1,9 @@
 // The few view states that are not worth an address: the phone's card sheet and the theme.
-import { open } from './route.svelte.js'
+import { open, route } from './route.svelte.js'
 import { insert } from './text.svelte.js'
 import { say } from './clip.svelte.js'
-import { t } from './i18n.svelte.js'
+import { i18n, t } from './i18n.svelte.js'
+import { record } from './record.js'
 
 const THEME = 'tangut-input:theme'
 const TANGUT = 'tangut-input:font'
@@ -33,8 +34,28 @@ export function choose(char) {
   if (matchMedia('(max-width: 900px)').matches) ui.sheet = true
 }
 
-/** Put a character into the text being written. @param {string} char */
-export function put(char) {
+/** The pad a page is drawing on, if any: a pick made while it has a drawing carries that drawing.
+ * @type {null | (() => { strokes: [number, number][][], width?: number, height?: number } | null)} */
+let pad = null
+
+/** Hand the page's drawing to the pick that follows. `null` when the pad goes away.
+ * @param {null | (() => { strokes: [number, number][][], width?: number, height?: number } | null)} source */
+export function attachPad(source) {
+  pad = source
+}
+
+/**
+ * Put a character into the text being written, and record where it came from.
+ * @param {string} char
+ * @param {{ place?: number }} [context]
+ */
+export function put(char, context = {}) {
+  const drawing = pad?.()
+  if (drawing?.strokes?.length) {
+    record({ type: 'drawing', origin: 'draw', strokes: drawing.strokes, picked: char, place: context.place ?? null, width: drawing.width ?? null, height: drawing.height ?? null })
+  } else {
+    record({ type: 'pick', char, finder: route.page || 'find', query: route.q || null, place: context.place ?? null, locale: i18n.locale })
+  }
   insert(char)
   say(t('toast.added', { char }))
 }

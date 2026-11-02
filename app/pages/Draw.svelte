@@ -2,11 +2,11 @@
   // Draw: sketch the character and see the glyphs closest to it in overall shape. There is no
   // recognizer for the whole script; this compares where ink lies with the printed glyphs of Noto
   // Serif Tangut, and says so beside the results.
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import { loadShapes, SHAPE_FACES } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
-  import { put } from '../lib/ui.svelte.js'
+  import { attachPad, put } from '../lib/ui.svelte.js'
   import Candidates from '../ui/Candidates.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
@@ -36,6 +36,17 @@
       status = indexes.length ? 'ready' : 'failed'
     })
     resize()
+    // A character picked from these results is recorded with the drawing that produced it.
+    attachPad(() => {
+      const box = canvas?.getBoundingClientRect()
+      if (!box || !strokes.length) return null
+      return {
+        strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / box.width).toFixed(4), +(y / box.height).toFixed(4)])),
+        width: Math.round(box.width),
+        height: Math.round(box.height),
+      }
+    })
+    onDestroy(() => attachPad(null))
   })
 
   const strokeCount = $derived(strokes.length)
@@ -138,7 +149,7 @@
     if (typing) return
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') { event.preventDefault(); undo(); return }
     if (event.key === 'Escape') { clear(); return }
-    if (event.key === 'Enter' && active < 0 && hits[0]) { put(hits[0].char); clear(); return }
+    if (event.key === 'Enter' && active < 0 && hits[0]) { put(hits[0].char, { place: 0 }); clear(); return }
     if (grid?.key(event)) event.preventDefault()
   }
 </script>
