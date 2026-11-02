@@ -53,6 +53,16 @@
     setQuery(chosen.join(''))
     active = -1
   }
+  /** Replace a part that is itself a character by the parts its own description is made of, so a
+   *  reader who picks a large component can search its inside instead. @param {number} index */
+  function split(index) {
+    const inner = partsIn(chosen[index])
+    if (!inner.length) return
+    chosen = [...chosen.slice(0, index), ...inner, ...chosen.slice(index + 1)]
+    setQuery(chosen.join(''))
+    active = -1
+  }
+
   /** @param {number} index */
   function remove(index) {
     chosen = chosen.filter((_, i) => i !== index)
@@ -82,7 +92,12 @@
   <section class="build" aria-label={t('parts.chosenLabel')}>
     <div class="chosen">
       {#each chosen as part, i (i)}
-        <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')}><G char={part} /><span class="x" aria-hidden="true">×</span><span class="sr">{t('parts.remove')}</span></button>
+        <div class="partwrap">
+          <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')}><G char={part} /><span class="x" aria-hidden="true">×</span><span class="sr">{t('parts.remove')}</span></button>
+          {#if partsIn(part).length}
+            <button type="button" class="split" onclick={() => split(i)} title={t('parts.splitTitle', { part })} aria-label={t('parts.splitTitle', { part })}>⿱</button>
+          {/if}
+        </div>
       {/each}
       {#if !chosen.length}<span class="muted ph">{t('parts.noneChosen')}</span>{/if}
       {#if chosen.length || layout}<button type="button" class="btn ghost reset" onclick={reset}>{t('parts.reset')}</button>{/if}
@@ -145,7 +160,10 @@
   .intro p{font-size:13.5px;max-width:56em}
   .build{display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
   .chosen{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:58px}
-  .part{position:relative;display:grid;place-items:center;width:58px;height:58px;border:1px solid var(--accent);border-radius:10px;background:var(--accent-soft)}
+  .partwrap{position:relative}
+  .part{display:grid;place-items:center;width:58px;height:58px;border:1px solid var(--accent);border-radius:10px;background:var(--accent-soft)}
+  .split{position:absolute;top:-7px;left:-7px;display:grid;place-items:center;width:20px;height:20px;padding:0;border:1px solid var(--accent);border-radius:50%;background:var(--surface);color:var(--accent-ink);font-size:11px;line-height:1}
+  .split:hover{background:var(--accent);color:var(--on-accent)}
   .part :global(.tg){font-size:36px}
   .part .x{position:absolute;top:1px;right:5px;font-size:13px;color:var(--accent-ink)}
   .part:hover{filter:brightness(.96)}

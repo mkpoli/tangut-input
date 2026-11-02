@@ -226,5 +226,6 @@
   "card.fanqie": "반절",
   "card.tone.level": "평성",
   "card.tone.rising": "상성",
-  "card.tone.entering": "입성"
+  "card.tone.entering": "입성",
+  "parts.splitTitle": "{part}을 이루는 부품으로 나누기"
 }

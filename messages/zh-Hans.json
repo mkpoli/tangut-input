@@ -226,5 +226,6 @@
   "card.fanqie": "反切",
   "card.tone.level": "平声",
   "card.tone.rising": "上声",
-  "card.tone.entering": "入声"
+  "card.tone.entering": "入声",
+  "parts.splitTitle": "将{part}拆分为构成它的部件"
 }

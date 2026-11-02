@@ -226,5 +226,6 @@
   "card.fanqie": "Fanqie",
   "card.tone.level": "level tone",
   "card.tone.rising": "rising tone",
-  "card.tone.entering": "entering tone"
+  "card.tone.entering": "entering tone",
+  "parts.splitTitle": "Break {part} into the parts it is built from"
 }
