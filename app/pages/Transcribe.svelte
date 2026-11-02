@@ -37,32 +37,34 @@
   }
 </script>
 
-<div class="transcribe">
-  <header>
-    <h1>{t('nav.transcribe')}</h1>
-    <p class="muted">{t('transcribe.intro')}</p>
+<div class="ui-page transcribe" data-width="wide">
+  <header class="ui-page-head">
+    <h1 class="ui-page-title">{t('nav.transcribe')}</h1>
+    <p class="ui-page-intro">{t('transcribe.intro')}</p>
   </header>
 
-  <textarea class="ui-textarea ui-script" rows="2" value={query} spellcheck="false" autocomplete="off"
+  <textarea class="ui-textarea transcribe-input ui-script" rows="2" value={query} spellcheck="false" autocomplete="off"
     aria-label={t('transcribe.input')} placeholder={t('transcribe.placeholder')} oninput={type}></textarea>
 
-  <div class="bar">
+  <div class="ui-toolbar">
     <label class="choose">
       <span class="ui-label">{t('reading.system')}</span>
-      <select class="ui-select" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)}>
-        {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
-      </select>
+      <span class="ui-select-wrap">
+        <select class="ui-select" data-size="sm" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)}>
+          {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+        </select>
+      </span>
     </label>
-    <button type="button" class="ui-button" aria-pressed={all} onclick={() => { all = !all }}>{t('transcribe.allSystems')}</button>
-    <button type="button" class="ui-button" disabled={!chars.length} onclick={() => copy(transcription)}>{t('transcribe.copyLine')}</button>
-    <button type="button" class="ui-button" disabled={!chars.length} onclick={() => copy(table)}>{t('transcribe.copyTable')}</button>
-    <span class="ui-hint">{t('transcribe.count', { count: chars.length })}</span>
+    <button type="button" class="ui-chip" aria-pressed={all} onclick={() => { all = !all }}>{t('transcribe.allSystems')}</button>
+    <button type="button" class="ui-button" data-size="sm" disabled={!chars.length} onclick={() => copy(transcription)}>{t('transcribe.copyLine')}</button>
+    <button type="button" class="ui-button" data-size="sm" disabled={!chars.length} onclick={() => copy(table)}>{t('transcribe.copyTable')}</button>
+    <span class="ui-count toolbar-end">{t('transcribe.count', { count: chars.length })}</span>
   </div>
 
   {#if chars.length}
-    <output class="line ui-script" aria-live="polite">{transcription}</output>
+    <output class="transcription ui-serif" aria-live="polite">{transcription}</output>
 
-    <div class="scroll">
+    <div class="ui-table-wrap">
     <table class="ui-table">
       <thead>
         <tr>
@@ -85,7 +87,7 @@
             {:else}
               <td class="say">{readingOf(char) || '—'}</td>
             {/if}
-            <td class="muted">{ix.rhymes.get(char)?.[0] ?? '—'}{#if ix.rhymes.get(char)?.[1]} · {t(`card.tone.${ix.rhymes.get(char)?.[1] === 1 ? 'level' : ix.rhymes.get(char)?.[1] === 2 ? 'rising' : 'entering'}`)}{/if}</td>
+            <td class="rhyme-cell">{ix.rhymes.get(char)?.[0] ?? '—'}{#if ix.rhymes.get(char)?.[1]} · {t(`card.tone.${ix.rhymes.get(char)?.[1] === 1 ? 'level' : ix.rhymes.get(char)?.[1] === 2 ? 'rising' : 'entering'}`)}{/if}</td>
             <td class="gloss">{gloss(char)}</td>
           </tr>
         {/each}
@@ -93,19 +95,25 @@
     </table>
     </div>
   {:else}
-    <p class="empty muted">{t('transcribe.empty')}</p>
+    <p class="ui-empty">{t('transcribe.empty')}</p>
   {/if}
 </div>
 
 <style>
-  .transcribe{display:grid;gap:16px;max-width:1000px;min-width:0}
-  .scroll{overflow-x:auto}
-  h1{font-family:var(--ui-font-serif);font-size:26px;font-weight:600}
-  .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .choose{display:flex;align-items:center;gap:6px}
-  .choose .ui-select{width:auto}
-  .line{display:block;padding:12px 14px;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface);font-size:18px;line-height:1.6;overflow-wrap:anywhere}
-  .glyph{padding:0;border:0;background:none;cursor:pointer;font-size:26px;line-height:1}
-  .say{font-family:var(--ui-font-serif);white-space:nowrap}
-  .gloss{max-width:22em}
+  .transcribe{min-inline-size:0}
+  .transcribe-input{min-block-size:64px;padding-block:var(--ui-space-sm);font-size:22px;line-height:1.45}
+  .choose{display:flex;align-items:center;gap:var(--ui-space-xs)}
+  .choose :global(.ui-select){inline-size:196px}
+  .transcription{display:block;padding:var(--ui-space-md) var(--ui-space-xl);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface);font-size:var(--ui-text-lg);line-height:1.6;overflow-wrap:anywhere;user-select:text}
+  .glyph{display:inline-grid;place-items:center;min-inline-size:32px;min-block-size:32px;padding:2px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;line-height:1}
+  .glyph:hover{background:var(--ui-color-surface-hover)}
+  .glyph :global(.ui-script){font-size:26px}
+  .say{font-family:var(--ui-font-serif);font-size:var(--ui-text-md);white-space:nowrap}
+  .gloss{max-inline-size:22em}
+  .rhyme-cell{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
+  @media (max-width:700px){
+    .choose{inline-size:100%}
+    .choose :global(.ui-select){flex:1;inline-size:auto}
+    .toolbar-end{margin-inline-start:0}
+  }
 </style>
