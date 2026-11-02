@@ -42,7 +42,7 @@ export const MEANING_LANGUAGES = /** @type {const} */ (['en', 'ja', 'zh'])
 /**
  * Characters whose recorded meanings contain the words: a whole sense first, then a whole word, then
  * any substring. The glosses are Open Tangut's, in English, Japanese and Chinese; a search can keep
- * to one of the three.
+ * to one of the three. The 文海 explanation of a character is searched too, after every gloss.
  * @param {string} query
  * @param {{ languages?: string[] }} [options]
  * @returns {{ char: string, tier: number, sense: string, lang: string }[]}
@@ -52,16 +52,27 @@ export function byMeaning(query, options = {}) {
   if (!needle || (/^[a-z ]+$/.test(needle) && needle.length < 2)) return []
   const languages = options.languages?.length ? options.languages : MEANING_LANGUAGES
   const word = new RegExp(`(^|[^\\p{L}])${needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^\\p{L}])`, 'u')
+  /** @param {string} text */
+  const rank = text => {
+    const lower = text.toLowerCase()
+    const senses = lower.split(/[;；,，。、]\s*/)
+    return senses.some(/** @param {string} part */ part => part.trim() === needle) ? 0 : word.test(lower) ? 1 : lower.includes(needle) ? 2 : 9
+  }
   /** @type {{ char: string, tier: number, sense: string, lang: string }[]} */
   const hits = []
   for (const entry of ix.entries) {
     const d = entry.definitions ?? {}
     let tier = 9, sense = '', lang = ''
     for (const key of languages) for (const text of /** @type {string[]} */ (/** @type {any} */ (d)[key] ?? [])) {
-      const lower = text.toLowerCase()
-      const senses = lower.split(/[;；,，。、]\s*/)
-      const t = senses.some(/** @param {string} part */ part => part.trim() === needle) ? 0 : word.test(lower) ? 1 : lower.includes(needle) ? 2 : 9
+      const t = rank(text)
       if (t < tier) { tier = t; sense = text; lang = key }
+    }
+    // A character the 文海 explains with the word, without glossing it so, still answers the search.
+    if (tier > 2) for (const key of languages) {
+      const text = /** @type {any} */ (entry)[`wenhai_text_${key}`]
+      if (typeof text !== 'string') continue
+      const t = rank(text)
+      if (t + 3 < tier) { tier = t + 3; sense = text; lang = key }
     }
     if (tier < 9) hits.push({ char: entry.char, tier, sense, lang })
   }
