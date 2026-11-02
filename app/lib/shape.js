@@ -170,11 +170,11 @@ function cover(a, b, radius, visit) {
  * whose recorded count is near it upward; it never removes one.
  * @param {ShapeIndex} index
  * @param {Uint8Array} drawn
- * @param {{ limit?: number, strokes?: number, strokeCounts?: Map<string, number>, only?: (char: string) => boolean }} [options]
+ * @param {{ limit?: number, strokes?: number, strokeCounts?: Map<string, number>, strokeWeight?: number, only?: (char: string) => boolean }} [options]
  * @returns {{ char: string, score: number }[]}
  */
 export function rankShapes(index, drawn, options = {}) {
-  const { limit = 60, strokes = 0, strokeCounts, only } = options
+  const { limit = 60, strokes = 0, strokeCounts, strokeWeight = 0.35, only } = options
   const ink = []
   for (let c = 0; c < CELLS; c++) if (drawn[c]) ink.push(c)
   if (!ink.length) return []
@@ -213,7 +213,7 @@ export function rankShapes(index, drawn, options = {}) {
       + DIRECTION_WEIGHT * direction / Math.max(1, directed)
     if (strokes && strokeCounts) {
       const recorded = strokeCounts.get(char)
-      if (recorded) score += 0.35 * Math.abs(recorded - strokes)
+      if (recorded) score += strokeWeight * Math.abs(recorded - strokes)
     }
     scored.push({ char, score })
   }

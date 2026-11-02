@@ -18,6 +18,7 @@ const option = name => { const i = args.indexOf(`--${name}`); return i < 0 ? und
 const useStrokes = option('strokes') === '1'
 const shapesFile = option('shapes')
 const penWidth = Number(option('width') ?? 1.6)
+const strokeWeight = Number(option('weight') ?? 0.35)
 
 /** The most recent session under data/handwriting, when none is named. */
 function latestSession() {
@@ -55,7 +56,7 @@ for (const record of saved) {
   // Each character keeps its best place in any one face, as the Draw page ranks them.
   const best = new Map()
   for (const index of indexes) {
-    rankShapes(index, mask, { limit: index.chars.length, strokes: useStrokes ? drawing.length : 0, strokeCounts })
+    rankShapes(index, mask, { limit: index.chars.length, strokes: useStrokes ? drawing.length : 0, strokeCounts, strokeWeight })
       .forEach((hit, at) => { const known = best.get(hit.char); if (known === undefined || at < known) best.set(hit.char, at) })
   }
   const ideographs = [...best.entries()].sort((a, b) => a[1] - b[1]).filter(([char]) => /[\u{17000}-\u{187FF}]/u.test(char))

@@ -38,15 +38,20 @@
     resize()
   })
 
+  const strokeCount = $derived(strokes.length)
+
   /**
    * The glyphs closest to the drawing across every face: each character keeps its best rank in
-   * any one face, and the list is that order.
+   * any one face, and the list is that order. The stroke count, when it is counted, is weighed
+   * inside each face's ranking, before the faces are merged; weighed afterwards it reorders a list
+   * whose scores come from five different scales.
    * @param {Uint8Array} mask
    */
   function rankEveryFace(mask) {
     const best = new Map()
+    const strokes = useCount ? strokeCount : 0
     for (const face of indexes) {
-      rankShapes(face, mask, { limit: face.chars.length }).forEach((hit, at) => {
+      rankShapes(face, mask, { limit: face.chars.length, strokes, strokeCounts: ix.strokes }).forEach((hit, at) => {
         const known = best.get(hit.char)
         if (!known || at < known.at) best.set(hit.char, { hit, at })
       })
@@ -57,11 +62,7 @@
   const hits = $derived.by(() => {
     void mask
     if (status !== 'ready' || db.status !== 'ready' || !indexes.length || !strokes.length) return []
-    const ranked = rankEveryFace(mask).filter(hit => components || !/[\u{18800}-\u{18AFF}]/u.test(hit.char))
-    if (!useCount) return ranked.slice(0, 48)
-    // The stroke count nudge is applied after the faces are merged, so it ranks overall.
-    return ranked.map(hit => ({ ...hit, score: hit.score + 0.35 * Math.abs((ix.strokes.get(hit.char) ?? strokes.length) - strokes.length) }))
-      .sort((a, b) => a.score - b.score).slice(0, 48)
+    return rankEveryFace(mask).filter(hit => components || !/[\u{18800}-\u{18AFF}]/u.test(hit.char)).slice(0, 48)
   })
   const items = $derived(hits.map(hit => ({ char: hit.char, sub: gloss(hit.char), title: `${ix.strokes.get(hit.char) ?? '?'} strokes` })))
 
