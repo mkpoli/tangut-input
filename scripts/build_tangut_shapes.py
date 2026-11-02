@@ -2,18 +2,18 @@
 # requires-python = ">=3.11"
 # dependencies = ["pillow==13.0.0", "fonttools[woff]==4.68.0", "brotli==1.2.1"]
 # ///
-"""Build the glyph masks the drawing pad compares a drawing with: one file per face.
+"""Build the pen lines the drawing pad compares a drawing with: one file per face.
 
-Every Tangut ideograph and component the face draws is rendered at 96 px, cropped to its ink and
-stretched to fill a 32×32 square, then packed as 128 bytes of bits. `--face` names the face:
-`noto` (the default, Noto Serif Tangut), `std` (new Tangut Std, 楷書-structured), `yinchuan`
-(Tangut Yinchuan), `wenhai` (BabelStone Tangut Wenhai), `n4694` (Tangut N4694), `twu` (Tangut TWU),
-`mojikyo` (Mojikyo Tangut) or `genzui` (GenZui Sans Tangut), so the drawings can be compared
-against each of the shapes a reader might write from.
-The file is a little-endian u32 header length, the header as UTF-8 JSON (format, size, font and
-the characters in order), then the masks back to back.
-The page normalises a drawing the same way, so a match compares the shape of the font's glyph with
-the shape of the drawing and nothing else.
+Every Tangut ideograph and component the face draws is rendered at 96 px, cropped to its ink,
+stretched to fill a 32×32 square and thinned to a one-cell line along the pen, then packed as 128
+bytes of bits. `--face` names the face: `noto` (the default, Noto Serif Tangut), `std` (new Tangut
+Std, 楷書-structured), `yinchuan` (Tangut Yinchuan), `wenhai` (BabelStone Tangut Wenhai), `n4694`
+(Tangut N4694), `twu` (Tangut TWU), `mojikyo` (Mojikyo Tangut) or `genzui` (GenZui Sans Tangut), so
+a drawing can be compared with each of the shapes a reader might write from.
+The file is a little-endian u32 header length, the header as UTF-8 JSON (format, size, face, font,
+sha256 and the characters in order), then the masks back to back.
+The page normalises a drawing the same way, so a match compares the line of the drawing with the
+line of the font's glyph and nothing else.
 """
 import argparse
 import gzip
@@ -40,6 +40,7 @@ FACES = {
 }
 SIZE = 32
 FIT = 30
+THIN_SCALE = 3
 RENDER = 96
 THRESHOLD = 96
 RANGES = [(0x17000, 0x187FF), (0x18800, 0x18AFF), (0x18D00, 0x18D1F)]
@@ -48,8 +49,6 @@ RANGES = [(0x17000, 0x187FF), (0x18800, 0x18AFF), (0x18D00, 0x18D1F)]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--face', choices=sorted(FACES), default='noto')
-    # Some faces hold single glyphs of many thousand contours; Pillow's text path stops there.
-    parser.add_argument('--outlines', action='store_true', help='draw from the glyph contours')
     options = parser.parse_args()
     face_name = options.face
     FONT, NAME, out = FACES[face_name]
@@ -59,16 +58,21 @@ def main():
     font.flavor = None
     with tempfile.NamedTemporaryFile(suffix='.otf') as plain:
         font.save(plain.name)
-        face = None if options.outlines else ImageFont.truetype(plain.name, RENDER)
+        face = ImageFont.truetype(plain.name, RENDER)
         chars = []
         packed = bytearray()
+        outlined = 0
         for start, end in RANGES:
             for code in range(start, end + 1):
                 if code not in cmap:
                     continue
-                ink = outline_face(font, code, chr(code)) if options.outlines else None
-                if ink is None:
-                    ink = draw(face, chr(code)) if face is not None else None
+                try:
+                    ink = draw(face, chr(code))
+                except Exception:
+                    # Some faces hold single glyphs of many thousand contours; Pillow's text path
+                    # stops there, and the contours have to be drawn by hand.
+                    ink = outline_face(font, code, chr(code))
+                    outlined += 1
                 mask = mask_of(ink) if ink is not None else None
                 if mask is None:
                     continue
@@ -86,7 +90,8 @@ def main():
     raw = len(header).to_bytes(4, 'little') + header + bytes(packed)
     with gzip.GzipFile(OUT, 'wb', mtime=0) as out:
         out.write(raw)
-    print(f'{len(chars)} glyphs, {len(raw)} bytes raw, {OUT.stat().st_size} gzipped -> {OUT.relative_to(ROOT)}')
+    print(f'{len(chars)} glyphs ({outlined} from outlines), {len(raw)} bytes raw, '
+          f'{OUT.stat().st_size} gzipped -> {OUT.relative_to(ROOT)}')
 
 
 class PolygonPen(BasePen):
@@ -154,26 +159,60 @@ def draw(face, char):
 
 
 def mask_of(canvas):
-    """The ink of a rendered glyph as packed bits, stretched to the square."""
+    """The ink of a rendered glyph as a pen line of packed bits, stretched to the square."""
     box = canvas.point(lambda v: 255 if v >= THRESHOLD else 0).getbbox()
     if not box:
         return None
     ink = canvas.crop(box)
     width, height = ink.size
+    # The line is thinned at a larger size than the file, so that a stroke comes out continuous.
+    size = SIZE * THIN_SCALE
+    fit = FIT * THIN_SCALE
     # Stretched to fill the square, except that a thin glyph (a lone stroke) keeps a sliver shape.
-    w = FIT if width * 4 >= height else max(1, round(FIT * width * 4 / height))
-    h = FIT if height * 4 >= width else max(1, round(FIT * height * 4 / width))
+    w = fit if width * 4 >= height else max(1, round(fit * width * 4 / height))
+    h = fit if height * 4 >= width else max(1, round(fit * height * 4 / width))
     fitted = ink.resize((w, h), Image.Resampling.LANCZOS)
-    square = Image.new('L', (SIZE, SIZE), 0)
-    square.paste(fitted, ((SIZE - w) // 2, (SIZE - h) // 2))
+    square = Image.new('L', (size, size), 0)
+    square.paste(fitted, ((size - w) // 2, (size - h) // 2))
     pixels = square.load()
+    # A low cutoff keeps faint joins from breaking the line before it is thinned.
+    ink_cells = {(x, y) for y in range(size) for x in range(size) if pixels[x, y] >= THRESHOLD // 4}
+    ink_cells = {(x // THIN_SCALE, y // THIN_SCALE) for x, y in thinner(ink_cells)}
     bits = bytearray(SIZE * SIZE // 8)
-    for y in range(SIZE):
-        for x in range(SIZE):
-            if pixels[x, y] >= THRESHOLD:
-                index = y * SIZE + x
-                bits[index >> 3] |= 1 << (index & 7)
+    for x, y in ink_cells:
+        index = y * SIZE + x
+        bits[index >> 3] |= 1 << (index & 7)
     return bits
+
+
+def thinner(ink):
+    """Zhang-Suen thinning: the filled glyph reduced to a one-cell-wide line along its pen."""
+    ink = set(ink)
+    while True:
+        removed = 0
+        for step in (0, 1):
+            marks = []
+            for x, y in ink:
+                p = (0 if (x, y - 1) not in ink else 1, 0 if (x + 1, y - 1) not in ink else 1,
+                     0 if (x + 1, y) not in ink else 1, 0 if (x + 1, y + 1) not in ink else 1,
+                     0 if (x, y + 1) not in ink else 1, 0 if (x - 1, y + 1) not in ink else 1,
+                     0 if (x - 1, y) not in ink else 1, 0 if (x - 1, y - 1) not in ink else 1)
+                around = sum(p)
+                if not 2 <= around <= 6:
+                    continue
+                crossings = sum(1 for k in range(8) if p[k] == 0 and p[(k + 1) % 8] == 1)
+                if crossings != 1:
+                    continue
+                if step == 0 and (p[0] * p[2] * p[4] or p[2] * p[4] * p[6]):
+                    continue
+                if step == 1 and (p[0] * p[2] * p[6] or p[0] * p[4] * p[6]):
+                    continue
+                marks.append((x, y))
+            for cell in marks:
+                ink.discard(cell)
+            removed += len(marks)
+        if not removed:
+            return ink
 
 
 if __name__ == '__main__':

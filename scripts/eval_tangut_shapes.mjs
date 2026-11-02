@@ -60,7 +60,7 @@ for (let n = 0; n < samples; n++) {
     const wx = warp * Math.sin(y * fy + px), wy = warp * Math.sin(x * fx + py)
     strokes.push([[(x + wx + shear * y) * sx + jx, (y + wy) * sy + jy]])
   }
-  const ranked = rankShapes(index, rasterize(strokes, 1.6), { limit: 60 })
+  const ranked = rankShapes(index, rasterize(strokes), { limit: 60 })
   const at = ranked.findIndex(hit => hit.char === char)
   for (const k of Object.keys(hits)) if (at >= 0 && at < Number(k)) hits[k]++
 }

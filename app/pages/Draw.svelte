@@ -124,7 +124,7 @@
   }
 
   function update() {
-    mask = rasterize(strokes, 2.4)
+    mask = rasterize(strokes)
     active = -1
     paint()
   }
