@@ -14,6 +14,7 @@
   import Sijiao from './pages/Sijiao.svelte'
   import Reading from './pages/Reading.svelte'
   import Draw from './pages/Draw.svelte'
+  import Fanqie from './pages/Fanqie.svelte'
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
   import About from './pages/About.svelte'
@@ -118,6 +119,7 @@
         {:else if route.page === 'cangjie'}<Cangjie />
         {:else if route.page === 'sijiao'}<Sijiao />
         {:else if route.page === 'reading'}<Reading />
+        {:else if route.page === 'fanqie'}<Fanqie />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
         {:else}<About />{/if}

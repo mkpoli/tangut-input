@@ -227,5 +227,13 @@
   "card.tone.level": "平聲",
   "card.tone.rising": "上聲",
   "card.tone.entering": "入聲",
-  "parts.splitTitle": "將{part}拆分為構成它的部件"
+  "parts.splitTitle": "將{part}拆分為構成它的部件",
+  "nav.fanqie": "反切",
+  "nav.fanqie.hint": "按反切二字拼查",
+  "fanqie.intro": "輸入反切所用的兩個字——表聲母的反切上字在前，表韻部的反切下字在後——即可查出所切之字。只輸入一字時，會列出所有反切中用到該字的字。",
+  "fanqie.placeholder": "輸入兩字，如𗃦𗏟",
+  "fanqie.label": "反切用字",
+  "fanqie.none": "韻書中沒有以「{text}」作切語的字。",
+  "fanqie.one": "請先選反切上字，再選反切下字。",
+  "card.fanqieFor": "反切中用到此字的字（{count}）"
 }

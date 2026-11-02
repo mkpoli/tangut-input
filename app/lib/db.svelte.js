@@ -42,6 +42,7 @@ export const ix = {
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
   /** The rhyme books' record by character. @type {Map<string, import('./data.js').RhymeChars[string]>} */ rhymes: new Map(),
   /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
+  /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
 }
 
 export async function load() {
@@ -76,6 +77,15 @@ export async function load() {
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))
       ix.rhymeSource = rhymes.source
+      // The two characters a spelling is read from, turned round: who is spelt with this one.
+      for (const [spelt, value] of ix.rhymes) {
+        for (const cell of [value[3], value[4], value[5], value[6]]) {
+          if (!cell || cell === '?' || cell === spelt) continue
+          const users = ix.fanqieUsedBy.get(cell)
+          if (users) users.add(spelt)
+          else ix.fanqieUsedBy.set(cell, new Set([spelt]))
+        }
+      }
     }
     for (const [char, code] of sijiao) ix.sijiao.set(char, code)
     ix.sijiaoList = [...ix.sijiao].map(([char, code]) => /** @type {[string, string]} */ ([code, char])).sort((a, b) => a[0].localeCompare(b[0]) || (a[1].codePointAt(0) ?? 0) - (b[1].codePointAt(0) ?? 0))

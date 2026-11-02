@@ -8,6 +8,7 @@ export const PAGES = /** @type {const} */ ([
   { path: 'cangjie', label: 'nav.cangjie', hint: 'nav.cangjie.hint' },
   { path: 'sijiao', label: 'nav.sijiao', hint: 'nav.sijiao.hint' },
   { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },
+  { path: 'fanqie', label: 'nav.fanqie', hint: 'nav.fanqie.hint' },
   { path: 'draw', label: 'nav.draw', hint: 'nav.draw.hint' },
   { path: 'parts', label: 'nav.parts', hint: 'nav.parts.hint' },
 ])

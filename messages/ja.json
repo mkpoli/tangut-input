@@ -227,5 +227,13 @@
   "card.tone.level": "平声",
   "card.tone.rising": "上声",
   "card.tone.entering": "入声",
-  "parts.splitTitle": "{part}を構成部品に分解する"
+  "parts.splitTitle": "{part}を構成部品に分解する",
+  "nav.fanqie": "反切",
+  "nav.fanqie.hint": "反切の二字から引く",
+  "fanqie.intro": "反切をなす二字――声母を示す反切上字、続いて韻を示す反切下字――を入力すると、その反切で注音される文字が表示されます。一字だけ入力すると、その文字を反切に含むすべての文字が引けます。",
+  "fanqie.placeholder": "二字を入力、例：𗃦𗏟",
+  "fanqie.label": "反切用字",
+  "fanqie.none": "韻書に「{text}」で反切される文字はありません。",
+  "fanqie.one": "まず反切上字を選び、続けて反切下字を選んでください。",
+  "card.fanqieFor": "この字を反切に含む文字（{count}）"
 }

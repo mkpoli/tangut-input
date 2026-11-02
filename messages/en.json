@@ -227,5 +227,13 @@
   "card.tone.level": "level tone",
   "card.tone.rising": "rising tone",
   "card.tone.entering": "entering tone",
-  "parts.splitTitle": "Break {part} into the parts it is built from"
+  "parts.splitTitle": "Break {part} into the parts it is built from",
+  "nav.fanqie": "Fanqie",
+  "nav.fanqie.hint": "Spell out a fanqie",
+  "fanqie.intro": "Type the two characters a fanqie is spelt with — the upper, which gives the initial, and then the lower, which gives the rhyme — and the characters they spell appear. One character finds every character whose spelling uses it.",
+  "fanqie.placeholder": "two characters, e.g. 𗃦𗏟",
+  "fanqie.label": "Fanqie characters",
+  "fanqie.none": "No character in the rhyme books is spelt with “{text}”.",
+  "fanqie.one": "Choose the upper character first, then the lower.",
+  "card.fanqieFor": "Spelt with it ({count})"
 }

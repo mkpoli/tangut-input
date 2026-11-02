@@ -50,6 +50,8 @@
     return ix.entries.filter(other => other.char !== char && other.pronunciations?.li_fanwen?.trim() === li).map(other => other.char)
   })
   const users = $derived(ready && char ? [...(ix.usedBy.get(char) ?? [])] : [])
+  // The characters whose own spelling is read from this one, either as its upper or its lower.
+  const spells = $derived(ready && char ? [...(ix.fanqieUsedBy.get(char) ?? [])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)) : [])
   const parts = $derived(ready && char ? partsIn(char) : [])
 
   const first = $derived(ready && char ? gloss(char) : '')
@@ -178,6 +180,15 @@
         <h3 class="label">{t('card.sameDescription')}</h3>
         <div class="tiles small">
           {#each same as other (other)}<button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} /></button>{/each}
+        </div>
+      </section>
+    {/if}
+
+    {#if spells.length}
+      <section>
+        <h3 class="label">{t('card.fanqieFor', { count: spells.length })}</h3>
+        <div class="tiles small">
+          {#each spells.slice(0, 48) as other (other)}<button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} /><small>{gloss(other)}</small></button>{/each}
         </div>
       </section>
     {/if}

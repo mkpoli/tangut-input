@@ -8,7 +8,7 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*", "/", "/meaning", "/cangjie", "/sijiao", "/reading", "/draw", "/parts", "/about"]
+    "run_worker_first": ["/api/*", "/", "/meaning", "/cangjie", "/sijiao", "/reading", "/fanqie", "/draw", "/parts", "/about"]
   },
   // Every drawing and every character picked, kept so the record can be read back later.
   // An open write endpoint needs a ceiling: each address may send this many batches a minute.
