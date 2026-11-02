@@ -124,23 +124,34 @@ Google Fonts' Noto Serif Tangut lacks the newest components (U+18AF3–18AFF, U+
 ## Drawing search
 
 Every glyph in Noto Serif Tangut 2.168 (6,913: ideographs and components) is rendered, cropped to
-its ink and stretched to fill a 32×32 mask (`scripts/build_tangut_shapes.py`,
-`app/data/tangut-shapes.bin.gz`, 540 KB, fetched only by the Draw page). A drawing is stretched the
-same way and drawn with a fixed pen. Each glyph is scored by a two-way chamfer distance: the mean
-distance from the drawing's ink to the glyph's ink plus the reverse. A lone stroke keeps a sliver
-shape instead of being blown up into a block. Ranking 6,913 glyphs takes a few milliseconds.
+its ink, stretched to fill a 32×32 square and thinned to a one-cell line along the pen
+(`scripts/build_tangut_shapes.py`, `app/data/tangut-shapes.bin.gz`, 484 KB, fetched only by the Draw
+page). The four other faces are built from their fonts the same way. A drawing is stretched the same
+way and drawn with a fixed pen.
 
-`scripts/eval_tangut_shapes.mjs` measures it on synthetic drawings: a glyph thinned to a skeleton,
-stretched and sheared at random, and optionally warped along a slow wave. On 1,000 drawings:
+Each glyph is scored by two chamfer distances. The first is the mean distance from the drawing's ink
+to the glyph's line plus the reverse. The second reads the direction the ink runs at each cell, in
+four bins of 45° taken from the second moments of the ink within two cells, on both sides: each glyph
+cell adds the distance from itself to drawing ink drawn along its own direction, and the mean is
+doubled. Comparing lines with lines and directions with directions is what a drawing is: it has no
+stroke width to match. A lone stroke keeps a sliver shape instead of being blown up into a block.
+Ranking 6,913 glyphs takes a few tens of milliseconds; the five faces together about a tenth of a
+second.
 
-| Drawing | Top 1 | Top 5 | Top 20 |
+`bun run quiz:score <session>` ranks the drawings saved by `bun run quiz` against both matchers. On
+80 characters drawn by one writer, 38 of them lookalikes chosen to be confusable and 42 at random,
+each character keeping its best place in any of the five faces:
+
+| Matcher | Top 1 | Top 5 | Top 20 |
 | --- | ---: | ---: | ---: |
-| thinned, skewed | 79% | 90% | 95% |
-| + warp of 1 cell (3% of the square) | 57% | 75% | 84% |
-| + warp of 2 cells | 10% | 19% | 26% |
+| filled masks, ink only | 11% | 24% | 30% |
+| pen lines and direction | 22% | 40% | 50% |
 
-The test input comes from the same font, so these are upper bounds. Real handwriting will usually
-sit nearer the last row. The page states the first and last figures in plain words.
+`scripts/eval_tangut_shapes.mjs` measures the same matcher on drawings made from the font itself: a
+glyph's line, stretched and sheared at random, and optionally warped along a slow wave. On 1,000
+drawings, 98% find the character first, 90% with a warp of one cell and 32% with two. The drawings
+come from the lines the index holds, so these are upper bounds, and they mostly show that the search
+does not lose a shape it was given. Real hands differ far more, as the table above says.
 
 ## Decisions taken without asking
 

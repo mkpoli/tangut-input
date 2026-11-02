@@ -38,8 +38,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   characters cut from the facsimile, built from the Glyph Atlas record of Solonin and Arakawa's
   *Bodhicaryāvatāra in Tangut Translation*, chapter 2 (CC BY 4.0), with links to ぶんぽ's line
   readings, by `scripts/build_tangut_attestation.py`.
-- `app/data/tangut-shapes.bin.gz`: glyph masks for the drawing pad, rendered from Noto Serif Tangut
-  2.168 by `scripts/build_tangut_shapes.py`; `scripts/eval_tangut_shapes.mjs` measures the search.
+- `app/data/tangut-shapes.bin.gz`: glyph pen lines for the drawing pad, rendered from Noto Serif
+  Tangut 2.168 by `scripts/build_tangut_shapes.py`; `scripts/handwriting/score.mjs` measures the
+  search on drawings made by hand and `scripts/eval_tangut_shapes.mjs` on drawings made from a font.
 
 ## Faces
 
