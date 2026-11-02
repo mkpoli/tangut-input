@@ -12,6 +12,7 @@
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
   import Attest from './Attest.svelte'
+  import Peek from './Peek.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
 
   const char = $derived(route.c)
@@ -56,6 +57,16 @@
   // The characters whose own spelling is read from this one, either as its upper or its lower.
   const spells = $derived(ready && char ? [...(ix.fanqieUsedBy.get(char) ?? [])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)) : [])
   const parts = $derived(ready && char ? partsIn(char) : [])
+
+  /** The hover panel of a character in one of the lists. */
+  let peek = $state(/** @type {{ char: string, x: number, y: number } | null} */ (null))
+  /** @param {MouseEvent | FocusEvent} event @param {string} other */
+  function peekAt(event, other) {
+    const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
+    peek = { char: other, x: box.left, y: box.bottom + 6 }
+  }
+  /** @param {string} other */
+  const readingOf = other => (ix.byChar.get(other)?.pronunciations ?? {})[ui.reading]?.trim() ?? ''
 
   const first = $derived(ready && char ? gloss(char) : '')
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
@@ -190,7 +201,12 @@
       <section>
         <h3 class="label">{t('card.sameDescription')}</h3>
         <div class="tiles small">
-          {#each same as other (other)}<button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} /></button>{/each}
+          {#each same as other (other)}
+            <button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}
+              onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
+              {#if readingOf(other)}<small class="say">{readingOf(other)}</small>{/if}<G char={other} />
+            </button>
+          {/each}
         </div>
       </section>
     {/if}
@@ -199,7 +215,12 @@
       <section>
         <h3 class="label">{t('card.fanqieFor', { count: spells.length })}</h3>
         <div class="tiles small">
-          {#each spells.slice(0, 48) as other (other)}<button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} /><small>{gloss(other)}</small></button>{/each}
+          {#each spells.slice(0, 48) as other (other)}
+            <button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}
+              onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
+              {#if readingOf(other)}<small class="say">{readingOf(other)}</small>{/if}<G char={other} /><small>{gloss(other)}</small>
+            </button>
+          {/each}
         </div>
       </section>
     {/if}
@@ -208,10 +229,17 @@
       <section>
         <h3 class="label">{t('card.sameReading')}</h3>
         <div class="tiles small">
-          {#each homophones.slice(0, 48) as other (other)}<button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} /><small>{gloss(other)}</small></button>{/each}
+          {#each homophones.slice(0, 48) as other (other)}
+            <button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}
+              onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
+              {#if readingOf(other)}<small class="say">{readingOf(other)}</small>{/if}<G char={other} /><small>{gloss(other)}</small>
+            </button>
+          {/each}
         </div>
       </section>
     {/if}
+
+    {#if peek}<Peek char={peek.char} x={peek.x} y={peek.y} />{/if}
 
     <footer class="credit muted">
       {t('card.credit')}
@@ -265,6 +293,7 @@
   .ids .btn.small{min-height:26px;padding:0 8px;font-size:12px}
   .tiles.small{--tile:48px}
   .tiles.small .tile{background:var(--raised);box-shadow:none;border-color:var(--line)}
+  .tiles.small .tile .say{display:block;font-family:var(--serif);font-size:11px;color:var(--ink-2);line-height:1.1}
   .tiles.small .tile:hover{border-color:var(--accent)}
   .more{font-size:13px}
   .credit{font-size:12px;line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
