@@ -56,7 +56,10 @@
     The quiz saves the same fields for each round, with the prompt it asked for.</p>
   </section>
 
-  <p class="muted small">{t('about.code')} <a href="https://github.com/mkpoli/tangut-input">github.com/mkpoli/tangut-input</a>.</p>
+  <p class="muted small">{t('about.code')} <a href="https://github.com/mkpoli/tangut-input">github.com/mkpoli/tangut-input</a>.
+  Descriptions are also composed in the <a href="https://ids.mkpo.li/">IDS Workshop</a>, which runs
+  on the same component data; <a href="https://github.com/mkpoli/ids-input/blob/main/data/README.md">its data notes</a>
+  give each file's source and licence.</p>
 </article>
 
 <style>
