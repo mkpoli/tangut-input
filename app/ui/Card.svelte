@@ -9,7 +9,8 @@
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS } from '../lib/reading.js'
   import { partsIn } from '../lib/search.js'
-  import Ids from './Ids.svelte'
+  import Ids, { LAYOUTS } from './Ids.svelte'
+  import Layout from './Layout.svelte'
   import Attest from './Attest.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
@@ -154,8 +155,15 @@
       <h3 class="label">{t('card.builtFrom')}</h3>
       {#if entry?.composition}
         <Ids composition={entry.composition} />
-        <p class="ids"><button class="inline" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}><span class="tg">{entry.composition}</span></button>
-          {#if parts.length}<a href={link('parts', char, parts.join(''))}>{t('card.withTheseParts')}</a>{/if}</p>
+        <p class="ids">
+          <span class="formula" title={entry.composition}>
+            {#each [...entry.composition] as piece, i (i)}
+              {#if LAYOUTS[piece]}<span class="op"><Layout op={piece} size={13} /></span>{:else}<span class="tg">{piece}</span>{/if}
+            {/each}
+          </span>
+          <button class="btn ghost small" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}>{t('common.copy')}</button>
+          {#if parts.length}<a href={link('parts', char, parts.join(''))}>{t('card.withTheseParts')}</a>{/if}
+        </p>
       {:else if isComponent(char)}
         <p class="empty">{t('card.isComponent')}</p>
       {:else}
@@ -247,8 +255,11 @@
   .readings td{padding:4px 0;font-family:var(--serif);font-size:15px}
   .readings td.cjk{font-family:var(--ui);font-size:13.5px}
   .readings tr+tr{border-top:1px solid var(--line)}
-  .ids{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:13px}
-  .ids :global(.tg){font-size:20px}
+  .ids{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px}
+  .formula{display:inline-flex;align-items:center;gap:1px;padding:3px 7px;border:1px solid var(--line);border-radius:8px;background:var(--bg);user-select:text;cursor:text}
+  .formula .tg{font-size:20px;line-height:1}
+  .formula .op{display:inline-flex;color:var(--muted)}
+  .ids .btn.small{min-height:26px;padding:0 8px;font-size:12px}
   .tiles.small{--tile:48px}
   .tiles.small .tile{background:var(--raised);box-shadow:none;border-color:var(--line)}
   .tiles.small .tile:hover{border-color:var(--accent)}
