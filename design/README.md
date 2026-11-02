@@ -1,16 +1,17 @@
 # Tangut Input UI
 
 The design system behind the site. Plain CSS over native HTML elements, so a page, a Svelte
-component or a static form shares one palette, one type scale and one set of states without a
-runtime.
+component or a static form shares one type scale, one set of states and a palette drawn from
+Tangut-period works without a runtime.
 
 ```
 design/
-  tokens.css     colour, type, space, shape, motion and layer tokens
+  tokens.css     the semantic tokens and the default paper palette
+  palettes.css   Yulin, Indigo and Khara, as overrides of the palette primitives
   base.css       reset, document face, one focus ring, scrollbars, selection
   controls.css   buttons, chips, fields, checkbox, radio, switch, segmented, menu, toast
   patterns.css   page frame, index, tiles, rows, candidate bar, keys, formula, popover
-  index.css      the four layers, in order
+  index.css      the layers, in order
 ```
 
 The reference page is `app/design.html`, served at `/design.html`: every token and pattern in both
@@ -38,7 +39,14 @@ the root:
 <html data-theme="dark">
 ```
 
-Every token is a `light-dark()` pair, so `color-scheme` picks the side. A host page points the
+Every token is a `light-dark()` pair, so `color-scheme` picks the side. A palette is a second
+attribute on the same root:
+
+```html
+<html data-palette="mineral">
+```
+
+The site uses `mineral`; `paper` is the default when no attribute is set. A host page points the
 script tokens at its own faces; everything else is the system's:
 
 ```css
@@ -53,10 +61,13 @@ states alone:
 
 ```css
 :root {
-  --ui-color-accent: light-dark(#8c2a13, #ffa387);
+  --ui-color-accent: light-dark(#2f6f96, #8fb8d4);
   --ui-font-sans: 'Inter', system-ui, sans-serif;
 }
 ```
+
+A new palette is a block of `--p-*` primitives under a `data-palette` value; the semantic tokens
+and every component follow it. The built-in palettes are the shortest reference.
 
 Use the classes rather than writing a local button or field:
 
@@ -72,6 +83,31 @@ Use the classes rather than writing a local button or field:
 
 Variants are data attributes: `data-variant="primary" | "quiet" | "danger" | "toast"`, `data-size="sm" | "lg" | "icon" | "icon-sm"`. A toggle button takes `aria-pressed="true"`; a chip takes
 the same. A disabled control takes the `disabled` attribute, never a class.
+
+## Palettes
+
+The colours come from Tangut-period works. They are design readings sampled from photographs and
+published images, not pigment measurements.
+
+| Palette | Root value | Ground and accent | Reference |
+| --- | --- | --- | --- |
+| Paper | none, or `paper` | Warm paper, ink and one vermilion | The site's first palette |
+| Yulin | `mineral` (the site's default) | Chalk and plaster, azurite blue, malachite green, cinnabar | Yulin Cave 3, west wall, Mañjuśrī (Western Xia) |
+| Indigo | `indigo` | Indigo paper, gold ink, cinnabar; the dark scheme is the manuscript | Khara-Khoto manuscript XT-180, IOM RAS |
+| Khara | `sand` | Sand and gravel, desert sky, buff silk and brick red | Khara-Khoto and the Hermitage's Moon-Water Bodhisattva |
+
+The reference page has a palette switch and measures the chosen palette live. Comparison sheets for
+the Cangjie page are in [`docs/design/palette-light.webp`](../docs/design/palette-light.webp) and
+[`palette-dark.webp`](../docs/design/palette-dark.webp). A page that wants another palette sets it
+before paint:
+
+```html
+<html data-palette="indigo">
+```
+
+`tokens.css` keeps the palette primitives (`--p-canvas`, `--p-accent`, …) and maps them onto the
+semantic `--ui-color-*` tokens. `palettes.css` overrides only the primitives. Text and boundary
+contrast is the same contract in every palette.
 
 ## Tokens
 
@@ -120,7 +156,7 @@ page itself is flat.
 | `--ui-duration-fast` / `--ui-duration` | 110 ms / 160 ms |
 | `--ui-z-chrome` … `--ui-z-toast` | 30, 40, 50, 60, 70 |
 
-Three surfaces, and only the accent as a colour of action: warm paper, ink and one vermilion. A
+Three surfaces and one colour of action. Each palette names its own ground, ink and accent; a
 component reads semantic tokens, never a raw colour.
 
 ## Which control
@@ -196,6 +232,9 @@ Pass `DESIGN_SHOTS=docs/design/check` to write screenshots of the reference page
 
 ## References
 
+- [Yulin Cave 3, west wall, Mañjuśrī (Western Xia)](https://commons.wikimedia.org/wiki/File:Yulin_Cave_3_w_wall_Manjusri_(Western_Xia).jpg), Wikimedia Commons
+- Alexander Zorin, [“On a ‘Golden’ Khara-Khoto Manuscript Preserved in the Institute of Oriental Manuscripts, RAS”](http://www.orientalstudies.ru/eng/images/pdf/a_zorin_2020_ret_56_06.pdf), *Revue d’Études Tibétaines* 56 (2020), 161–169
+- [Khara-Khoto](https://commons.wikimedia.org/wiki/File:Khara-khoto.jpg) and the [Moon-Water Bodhisattva, detail](https://commons.wikimedia.org/wiki/File:Moon-Water_Bodhisattva_Kuanyin,_detail_of_entertainers._China,_Tangut_State_of_Xi-Xia,_Khara_Khoto._10-13th_century._State_Hermitage_Museum.jpg), Wikimedia Commons
 - [WCAG 2.2 — Contrast (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
 - [WCAG 2.2 — Non-text Contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html)
 - [WCAG 2.2 — Target Size (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)

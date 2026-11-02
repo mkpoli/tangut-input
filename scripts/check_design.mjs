@@ -186,6 +186,8 @@ async function checkPalette(page) {
 
 /** Text and control boundaries in the page, as the browser paints them. @param {import('playwright-core').Page} page */
 async function checkContrast(page) {
+  // A mouse click leaves the page in pointer modality; Tab restores the keyboard's focus ring.
+  await page.keyboard.press('Tab')
   const results = await page.evaluate(() => {
     const { parse, backdrop, ratio } = window.__colour
     const text = (selector, threshold, against) => {
@@ -247,6 +249,9 @@ async function checkTargets(page) {
  * @param {import('playwright-core').Page} page @param {'light' | 'dark'} scheme
  */
 async function checkTheme(page, scheme) {
+  // The palette tests leave another palette chosen; the paper canvas is the one named below.
+  await page.getByRole('radio', { name: 'Paper', exact: true }).click()
+  await page.waitForTimeout(80)
   const other = scheme === 'light' ? 'Dark' : 'Light'
   await page.getByRole('radio', { name: other, exact: true }).click()
   await page.waitForTimeout(120)
@@ -259,6 +264,9 @@ async function checkTheme(page, scheme) {
   await page.getByRole('radio', { name: 'System', exact: true }).click()
   await page.waitForTimeout(120)
   assert.equal(await page.evaluate(() => document.documentElement.dataset.theme ?? ''), '', 'System removes data-theme')
+  // Leave the site's own palette selected for the screenshot and the rest of the run.
+  await page.getByRole('radio', { name: 'Yulin', exact: true }).click()
+  await page.waitForTimeout(80)
 }
 
 /** A page never scrolls sideways: wide tables scroll inside their own frame. @param {import('playwright-core').Page} page */
@@ -323,6 +331,15 @@ await step('design page renders without script errors', async () => {
 await step('every control has an accessible name', () => checkNames(LIGHT.page))
 await step('the palette clears its contrast targets', () => checkPalette(LIGHT.page))
 await step('text and control boundaries clear their targets', () => checkContrast(LIGHT.page))
+await step('every palette clears its contrast targets', async () => {
+  for (const [label, key] of [['Paper', 'paper'], ['Yulin', 'mineral'], ['Indigo', 'indigo'], ['Khara', 'sand']]) {
+    await LIGHT.page.getByRole('radio', { name: label, exact: true }).click()
+    await LIGHT.page.waitForTimeout(80)
+    assert.equal(await LIGHT.page.evaluate(() => document.documentElement.dataset.palette), key, `${label} sets data-palette`)
+    await checkPalette(LIGHT.page)
+    await checkContrast(LIGHT.page)
+  }
+})
 await step('keyboard reaches and operates every control', () => checkKeyboard(LIGHT.page))
 await step('every control meets the 24px target', () => checkTargets(LIGHT.page))
 await step('the theme control changes the palette', () => checkTheme(LIGHT.page, 'light'))
@@ -331,6 +348,15 @@ await LIGHT.context.close()
 
 const DARK = await openDesign({ scheme: 'dark' })
 await step('the palette clears its targets in the dark scheme', () => checkPalette(DARK.page))
+await step('every palette clears its targets in the dark scheme', async () => {
+  for (const [label, key] of [['Paper', 'paper'], ['Yulin', 'mineral'], ['Indigo', 'indigo'], ['Khara', 'sand']]) {
+    await DARK.page.getByRole('radio', { name: label, exact: true }).click()
+    await DARK.page.waitForTimeout(80)
+    assert.equal(await DARK.page.evaluate(() => document.documentElement.dataset.palette), key, `${label} sets data-palette in dark`)
+    await checkPalette(DARK.page)
+    await checkContrast(DARK.page)
+  }
+})
 await step('text and boundaries clear their targets in the dark scheme', () => checkContrast(DARK.page))
 if (SHOTS) await DARK.page.screenshot({ path: join(SHOTS, 'design-dark.png'), fullPage: true })
 await DARK.context.close()

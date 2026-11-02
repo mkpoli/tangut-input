@@ -4,6 +4,7 @@ import './app.css'
 import './design-preview.css'
 
 const KEY = 'tangut-input:theme'
+const PALETTE_KEY = 'tangut-input:palette'
 
 /** @param {string} token */
 function read(token) {
@@ -141,6 +142,53 @@ function render() {
   }
 }
 
+/* ---------- Palettes ---------- */
+
+/** @type {Record<string, { name: string, source: string }>} */
+const PALETTES = {
+  paper: {
+    name: 'Paper',
+    source: 'Warm paper and ink, the site\u2019s first palette; one vermilion marks what acts.',
+  },
+  mineral: {
+    name: 'Yulin',
+    source: 'Yulin Cave 3, Western Xia: chalk and plaster ground, azurite blue, malachite green and cinnabar, read from the west-wall Mañjuśrī photograph on Wikimedia Commons.',
+  },
+  indigo: {
+    name: 'Indigo',
+    source: 'Khara-Khoto manuscript XT-180, Institute of Oriental Manuscripts, RAS: indigo-dyed paper and gold ink, with cinnabar. Zorin, Revue d\u2019Études Tibétaines 56 (2020).',
+  },
+  sand: {
+    name: 'Khara',
+    source: 'Khara-Khoto\u2019s sand, gravel and desert sky, with the buff silk and brick reds of the Hermitage\u2019s Moon-Water Bodhisattva painting.',
+  },
+}
+
+const paletteRadios = /** @type {NodeListOf<HTMLInputElement>} */ (document.querySelectorAll('input[name="palette"]'))
+const sourceNote = /** @type {HTMLElement | null} */ (document.getElementById('palette-source'))
+
+function currentPalette() {
+  try {
+    const kept = localStorage.getItem(PALETTE_KEY)
+    return kept && kept in PALETTES ? kept : 'mineral'
+  } catch {
+    return 'mineral'
+  }
+}
+
+/** @param {string} palette */
+function setPalette(palette) {
+  const key = palette in PALETTES ? palette : 'mineral'
+  document.documentElement.dataset.palette = key
+  try { localStorage.setItem(PALETTE_KEY, key) } catch {}
+  for (const radio of paletteRadios) radio.checked = radio.value === key
+  if (sourceNote) sourceNote.textContent = `${PALETTES[key].name}: ${PALETTES[key].source}`
+  // Tokens resolve against the new primitives; the measured palette has to be read again.
+  render()
+}
+
+for (const radio of paletteRadios) radio.addEventListener('change', () => { if (radio.checked) setPalette(radio.value) })
+
 /* ---------- Theme ---------- */
 
 const radios = /** @type {NodeListOf<HTMLInputElement>} */ (document.querySelectorAll('input[name="theme"]'))
@@ -174,3 +222,4 @@ for (const radio of radios) radio.addEventListener('change', () => { if (radio.c
 // `indeterminate` is a property, not an attribute; the third sample shows the mixed state.
 for (const box of document.querySelectorAll('.ui-checkbox')) if (box.hasAttribute('indeterminate') && box instanceof HTMLInputElement) box.indeterminate = true
 setTheme(current())
+setPalette(currentPalette())

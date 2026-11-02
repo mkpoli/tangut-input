@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-palette="mineral">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#f4efe5" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#141210" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ece4d3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151814" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
   <link rel="icon" href="/icon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -29,6 +29,17 @@
   <meta name="twitter:title" content="Tangut Input — look up a Tangut character">
   <meta name="twitter:description" content="Look up a Tangut character by its Cangjie code, its four-corner code, its reconstruction, its meaning or the shape you draw.">
   <meta name="twitter:image" content="https://tangut.mkpo.li/og.png">
+  <script>
+    // The palette is a design-system choice. `?palette=` previews one without a rebuild and
+    // without changing the reader's next visit; the design page keeps its own pick.
+    try {
+      const known = ['paper', 'mineral', 'indigo', 'sand']
+      const asked = new URLSearchParams(location.search).get('palette')
+      const kept = localStorage.getItem('tangut-input:palette')
+      const palette = known.includes(asked) ? asked : known.includes(kept) ? kept : 'mineral'
+      document.documentElement.dataset.palette = palette
+    } catch {}
+  </script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebSite","name":"Tangut Input","url":"https://tangut.mkpo.li/",
      "description":"Enter Tangut characters by Cangjie code, reconstruction, meaning, four-corner code, drawing or components.",

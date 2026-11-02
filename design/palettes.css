@@ -1,0 +1,119 @@
+/* Tangut Input palettes.
+
+   Each palette changes the `--p-*` primitives only; the semantic tokens in tokens.css stay the
+   same, so every control and pattern follows without a second set of classes.
+
+   The colours are design readings, sampled from photographs of Tangut-period works, not pigment
+   measurements. The light scheme of `indigo` is an analogue: the manuscript itself is dark.
+
+   Set a palette on the root:
+     <html data-palette="mineral">                                     */
+
+/* ---------- Yulin: the mineral wall ---------- */
+
+/* Yulin Cave 3 (榆林窟第3窟), Western Xia. Aged plaster and chalk ground, azurite blue in the
+   halos and the lion, malachite green in the drapery, cinnabar and ink in the outlines.
+   Reference: the west-wall Mañjuśrī photograph on Wikimedia Commons, "Yulin Cave 3 w wall
+   Manjusri (Western Xia)". */
+:root[data-palette='mineral'] {
+  --p-canvas: light-dark(#ece4d3, #151814);
+  --p-surface: light-dark(#faf5e9, #1d211c);
+  --p-sunken: light-dark(#e3d9c6, #10130f);
+  --p-hover: light-dark(#f0e8d8, #262b24);
+  --p-active: light-dark(#e5d9c3, #2e342b);
+  --p-ink: light-dark(#2b2620, #e8e0cf);
+  --p-soft: light-dark(#544b3e, #c4baa5);
+  --p-muted: light-dark(#635949, #a49a84);
+  --p-border: light-dark(#d9cdb8, #343a30);
+  --p-border-strong: light-dark(#b9aa90, #4b5344);
+  --p-control: light-dark(#84765f, #7d8770);
+  --p-control-hover: light-dark(#685c49, #9aa48a);
+  --p-accent: light-dark(#2f6f96, #8fb8d4);
+  --p-accent-hover: light-dark(#265d7e, #a8c9e0);
+  --p-accent-active: light-dark(#1f4d69, #c0d9e9);
+  --p-accent-soft: light-dark(#dbe7ee, #21333d);
+  --p-accent-ink: light-dark(#225a79, #a8c9e0);
+  --p-on-accent: light-dark(#f8f3e7, #0e1a22);
+  --p-danger: light-dark(#a5442f, #e08a72);
+  --p-danger-hover: light-dark(#8a3524, #f0a28c);
+  --p-danger-soft: light-dark(#f3e1db, #3b211b);
+  --p-on-danger: light-dark(#fbf3ec, #2a0f09);
+  --p-inverse-surface: light-dark(#2b2620, #e8e0cf);
+  --p-inverse-ink: light-dark(#faf5e9, #151814);
+  --p-selection: light-dark(#d5e3ec, #28414e);
+  --p-scrollbar: light-dark(#b9aa90, #4b5344);
+  --p-scrollbar-hover: light-dark(#84765f, #7d8770);
+}
+
+/* ---------- Indigo: the golden manuscript ---------- */
+
+/* Khara-Khoto manuscript XT-180, Institute of Oriental Manuscripts, RAS: indigo-dyed paper,
+   gold ink, one surviving example of such a book from Kozlov's excavation. The dark scheme is
+   the object; the light scheme takes the cool paper and the bronze of the ink.
+   Reference: Alexander Zorin, "On a 'Golden' Khara-Khoto Manuscript", Revue d'Etudes Tibétaines
+   56 (2020), 161–169. */
+:root[data-palette='indigo'] {
+  --p-canvas: light-dark(#e9e9e6, #0e1526);
+  --p-surface: light-dark(#f7f6f1, #141d33);
+  --p-sunken: light-dark(#dfdfdc, #0a1020);
+  --p-hover: light-dark(#efefeb, #1b2742);
+  --p-active: light-dark(#e4e4e0, #23324f);
+  --p-ink: light-dark(#151b29, #e8dfc7);
+  --p-soft: light-dark(#3d4657, #c5bda9);
+  --p-muted: light-dark(#596170, #948d79);
+  --p-border: light-dark(#d3d4d7, #26324b);
+  --p-border-strong: light-dark(#b3b6bd, #3a4866);
+  --p-control: light-dark(#7a8090, #6c7894);
+  --p-control-hover: light-dark(#606776, #8a96b1);
+  --p-accent: light-dark(#8a6417, #d4aa4e);
+  --p-accent-hover: light-dark(#6f4f10, #e6c063);
+  --p-accent-active: light-dark(#5a3f0b, #f0d27c);
+  --p-accent-soft: light-dark(#efe5cc, #2b2514);
+  --p-accent-ink: light-dark(#6f4f10, #e6c063);
+  --p-on-accent: light-dark(#fffaef, #1a1408);
+  --p-danger: light-dark(#a13c2b, #e08a72);
+  --p-danger-hover: light-dark(#863021, #f0a28c);
+  --p-danger-soft: light-dark(#f3e2de, #3b211b);
+  --p-on-danger: light-dark(#fdf5ef, #2a0f09);
+  --p-inverse-surface: light-dark(#151b29, #e8dfc7);
+  --p-inverse-ink: light-dark(#f7f6f1, #0e1526);
+  --p-selection: light-dark(#e6ddc6, #3a3016);
+  --p-scrollbar: light-dark(#b3b6bd, #3a4866);
+  --p-scrollbar-hover: light-dark(#7a8090, #6c7894);
+}
+
+/* ---------- Khara: the ruined city ---------- */
+
+/* Khara-Khoto (黑水城): the sand and gravel of the Ejin delta, the deep sky above the stupas,
+   and the buff silk of the Moon-Water Bodhisattva painting in the Hermitage, with its earth
+   and brick reds. Reference: the Khara-khoto photographs on Wikimedia Commons and the
+   "Moon-Water Bodhisattva Kuanyin, detail of entertainers" (State Hermitage Museum). */
+:root[data-palette='sand'] {
+  --p-canvas: light-dark(#efe3cc, #101820);
+  --p-surface: light-dark(#fbf3e3, #18222c);
+  --p-sunken: light-dark(#e5d6bd, #0c1218);
+  --p-hover: light-dark(#f1e5d0, #202c37);
+  --p-active: light-dark(#e7d6be, #283643);
+  --p-ink: light-dark(#2f271d, #e8ddc7);
+  --p-soft: light-dark(#5a4d3c, #c4b69f);
+  --p-muted: light-dark(#6a5b45, #a2957f);
+  --p-border: light-dark(#ddccb1, #2a3540);
+  --p-border-strong: light-dark(#c3ad8d, #3f4d59);
+  --p-control: light-dark(#8a765c, #6e7c88);
+  --p-control-hover: light-dark(#6d5c46, #8b98a3);
+  --p-accent: light-dark(#1f6f9f, #6fb3d9);
+  --p-accent-hover: light-dark(#185a83, #8fc7e6);
+  --p-accent-active: light-dark(#124968, #a9d6ee);
+  --p-accent-soft: light-dark(#dce8f0, #1a3040);
+  --p-accent-ink: light-dark(#1a5a82, #8fc7e6);
+  --p-on-accent: light-dark(#fbf7ed, #0a141c);
+  --p-danger: light-dark(#a5442f, #e08a72);
+  --p-danger-hover: light-dark(#8a3524, #f0a28c);
+  --p-danger-soft: light-dark(#f3e1db, #3b211b);
+  --p-on-danger: light-dark(#fbf3ec, #2a0f09);
+  --p-inverse-surface: light-dark(#2f271d, #e8ddc7);
+  --p-inverse-ink: light-dark(#fbf3e3, #101820);
+  --p-selection: light-dark(#d8e5ee, #1d3a4b);
+  --p-scrollbar: light-dark(#c3ad8d, #3f4d59);
+  --p-scrollbar-hover: light-dark(#8a765c, #6e7c88);
+}

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-palette="mineral">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -8,10 +8,12 @@
   <title>Tangut Input — design system</title>
   <meta name="description" content="The colours, type, states and patterns behind Tangut Input, measured in the browser.">
   <script>
-    // The theme kept from the last visit, set before the page paints.
+    // The theme and palette kept from the last visit, set before the page paints.
     try {
       const theme = localStorage.getItem('tangut-input:theme')
       if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+      const palette = localStorage.getItem('tangut-input:palette')
+      document.documentElement.dataset.palette = ['paper', 'mineral', 'indigo', 'sand'].includes(palette) ? palette : 'mineral'
     } catch {}
   </script>
 </head>
@@ -20,25 +22,45 @@
     <header class="doc-head">
       <div>
         <p class="ui-label">Design system</p>
-        <h1 class="doc-title">Paper, ink, and one vermilion</h1>
+        <h1 class="doc-title">The design system</h1>
         <p class="doc-intro">
-          The colours, type, states and patterns behind Tangut Input. Every sample below is the
-          shipped CSS, not a copy, so a regression here is a regression in the site.
+          The colours, type, states and patterns behind Tangut Input, built from the grounds,
+          pigments and inks of Tangut-period works. Four palettes, measured from this page.
         </p>
       </div>
-      <div class="ui-segmented theme-pick" role="group" aria-label="Theme">
-        <label class="ui-segment">
-          <input type="radio" name="theme" value="auto" />
-          <span class="ui-segment-face">System</span>
-        </label>
-        <label class="ui-segment">
-          <input type="radio" name="theme" value="light" />
-          <span class="ui-segment-face">Light</span>
-        </label>
-        <label class="ui-segment">
-          <input type="radio" name="theme" value="dark" />
-          <span class="ui-segment-face">Dark</span>
-        </label>
+      <div class="doc-picks">
+        <div class="ui-segmented" role="radiogroup" aria-label="Palette">
+          <label class="ui-segment">
+            <input type="radio" name="palette" value="paper" />
+            <span class="ui-segment-face">Paper</span>
+          </label>
+          <label class="ui-segment">
+            <input type="radio" name="palette" value="mineral" />
+            <span class="ui-segment-face">Yulin</span>
+          </label>
+          <label class="ui-segment">
+            <input type="radio" name="palette" value="indigo" />
+            <span class="ui-segment-face">Indigo</span>
+          </label>
+          <label class="ui-segment">
+            <input type="radio" name="palette" value="sand" />
+            <span class="ui-segment-face">Khara</span>
+          </label>
+        </div>
+        <div class="ui-segmented theme-pick" role="group" aria-label="Theme">
+          <label class="ui-segment">
+            <input type="radio" name="theme" value="auto" />
+            <span class="ui-segment-face">System</span>
+          </label>
+          <label class="ui-segment">
+            <input type="radio" name="theme" value="light" />
+            <span class="ui-segment-face">Light</span>
+          </label>
+          <label class="ui-segment">
+            <input type="radio" name="theme" value="dark" />
+            <span class="ui-segment-face">Dark</span>
+          </label>
+        </div>
       </div>
     </header>
 
@@ -48,12 +70,14 @@
       <a href="#controls">Controls</a>
       <a href="#patterns">Patterns</a>
       <a href="#rules">Rules</a>
+      <a href="#sources">Sources</a>
     </nav>
 
     <section id="colour" class="doc-section">
       <header class="doc-section-head">
         <h2>Colour</h2>
         <p class="doc-note">Ratios are measured from the rendered page against the surface named beside each token. Text needs 4.5:1; a control boundary needs 3:1.</p>
+        <p class="doc-note" id="palette-source"></p>
       </header>
       <div id="palette" class="palette"></div>
     </section>
@@ -253,7 +277,7 @@
       <div class="doc-group">
         <h3>A description and a notice</h3>
         <p><span class="ui-formula">⿰𗀀𗁤</span></p>
-        <p class="ui-notice">Not yet recorded. The corpus so far is one chapter of the Tangut <i>Bodhicaryāvatāra</i> (280 characters, 151 distinct), so most characters have no attestation here yet.</p>
+        <p class="ui-notice">Not yet recorded. The corpus holds 11,168 characters (967 distinct) from six texts, so a character missing here has no attestation yet.</p>
       </div>
 
       <div class="doc-group">
@@ -273,6 +297,16 @@
           <div class="ui-toast"><span>Copied 𘅤</span><button class="ui-button" data-size="sm" data-variant="toast" type="button">Undo</button></div>
         </div>
       </div>
+    </section>
+
+    <section id="sources" class="doc-section">
+      <h2>Sources</h2>
+      <ul class="doc-rules">
+        <li><a href="https://commons.wikimedia.org/wiki/File:Yulin_Cave_3_w_wall_Manjusri_(Western_Xia).jpg">Yulin Cave 3, west wall, Mañjuśrī (Western Xia)</a>, photograph on Wikimedia Commons. The mineral palette is read from its plaster, azurite, malachite and cinnabar.</li>
+        <li>Alexander Zorin, <a href="http://www.orientalstudies.ru/eng/images/pdf/a_zorin_2020_ret_56_06.pdf">“On a ‘Golden’ Khara-Khoto Manuscript Preserved in the Institute of Oriental Manuscripts, RAS”</a>, <i>Revue d’Études Tibétaines</i> 56 (2020), 161–169. Manuscript XT-180: indigo paper, gold ink.</li>
+        <li><a href="https://commons.wikimedia.org/wiki/File:Khara-khoto.jpg">Khara-Khoto</a>, photograph on Wikimedia Commons, and the <a href="https://commons.wikimedia.org/wiki/File:Moon-Water_Bodhisattva_Kuanyin,_detail_of_entertainers._China,_Tangut_State_of_Xi-Xia,_Khara_Khoto._10-13th_century._State_Hermitage_Museum.jpg">Moon-Water Bodhisattva, detail</a> (State Hermitage Museum). The Khara palette is read from the sand, sky and silk.</li>
+        <li>Contrast and target rules: <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">WCAG 2.2 Contrast (Minimum)</a>, <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html">Non-text Contrast</a>, <a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html">Target Size (Minimum)</a>.</li>
+      </ul>
     </section>
 
     <section id="rules" class="doc-section">

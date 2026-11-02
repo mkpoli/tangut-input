@@ -1,8 +1,9 @@
 /* Tangut Input design tokens.
 
-   One palette for the site: warm paper, ink, and a single vermilion for what acts. Every
-   colour is a light-dark() pair, so `color-scheme` alone picks the side; a page that offers
-   a switch sets `data-theme="light"` or `data-theme="dark"` on the root.
+   The semantic layer and the default paper primitives. A palette from palettes.css replaces the
+   `--p-*` primitives; `data-palette` on the root chooses one. Every colour is a light-dark() pair,
+   so `color-scheme` alone picks the side; a page that offers a switch sets `data-theme="light"`
+   or `data-theme="dark"` on the root.
 
    Rules:
    - Components read semantic tokens, never a raw colour.
@@ -22,53 +23,83 @@
 }
 
 :root {
+  /* Palette primitives. A palette changes these; the semantic tokens below stay put. `paper`
+     is the default here; design/palettes.css carries the alternatives. */
+  --p-canvas: light-dark(#f4efe5, #141210);
+  --p-surface: light-dark(#fffcf6, #1c1a17);
+  --p-sunken: light-dark(#ece5d8, #100f0d);
+  --p-hover: light-dark(#efe7d9, #26231f);
+  --p-active: light-dark(#e4dbca, #302c27);
+  --p-ink: light-dark(#1e1b17, #ece6dc);
+  --p-soft: light-dark(#4a443b, #c4bcae);
+  --p-muted: light-dark(#6d6456, #9a9184);
+  --p-border: light-dark(#e3dbcc, #2e2a25);
+  --p-border-strong: light-dark(#cbbfab, #48423a);
+  --p-control: light-dark(#8b7d68, #807565);
+  --p-control-hover: light-dark(#6f6353, #9a8e7d);
+  --p-accent: light-dark(#a83418, #f08a6b);
+  --p-accent-hover: light-dark(#8c2a13, #ffa387);
+  --p-accent-active: light-dark(#721f0d, #ffb8a1);
+  --p-accent-soft: light-dark(#f6e3da, #3a2219);
+  --p-accent-ink: light-dark(#8c2a13, #ffa387);
+  --p-on-accent: light-dark(#fffaf2, #1d110c);
+  --p-danger: light-dark(#b42318, #ff8a80);
+  --p-danger-hover: light-dark(#971c13, #ffa59d);
+  --p-danger-soft: light-dark(#fdecea, #3a1e1c);
+  --p-on-danger: light-dark(#fffaf2, #2a0b08);
+  --p-inverse-surface: light-dark(#1e1b17, #ece6dc);
+  --p-inverse-ink: light-dark(#fffaf2, #141210);
+  --p-selection: light-dark(#f3ddd2, #4a2a1f);
+  --p-scrollbar: light-dark(#cbbfab, #48423a);
+  --p-scrollbar-hover: light-dark(#8b7d68, #807565);
+
   /* Surfaces. There are three: the page, the panel, and the inset. Hover and pressed are the
      only other fills, so a page does not grow a stack of near-identical greys. */
-  --ui-color-canvas: light-dark(#f4efe5, #141210);
-  --ui-color-surface: light-dark(#fffcf6, #1c1a17);
-  --ui-color-surface-sunken: light-dark(#ece5d8, #100f0d);
-  --ui-color-surface-hover: light-dark(#efe7d9, #26231f);
-  --ui-color-surface-active: light-dark(#e4dbca, #302c27);
+  --ui-color-canvas: var(--p-canvas);
+  --ui-color-surface: var(--p-surface);
+  --ui-color-surface-sunken: var(--p-sunken);
+  --ui-color-surface-hover: var(--p-hover);
+  --ui-color-surface-active: var(--p-active);
   --ui-color-overlay: light-dark(rgb(35 27 18 / 0.32), rgb(0 0 0 / 0.62));
 
   /* Text */
-  --ui-color-ink: light-dark(#1e1b17, #ece6dc);
-  --ui-color-ink-soft: light-dark(#4a443b, #c4bcae);
-  --ui-color-ink-muted: light-dark(#6d6456, #9a9184);
+  --ui-color-ink: var(--p-ink);
+  --ui-color-ink-soft: var(--p-soft);
+  --ui-color-ink-muted: var(--p-muted);
 
   /* Lines. `border` and `border-strong` are decoration; `control-border` is the 3:1 boundary
      that identifies a field or an unchecked box. */
-  --ui-color-border: light-dark(#e3dbcc, #2e2a25);
-  --ui-color-border-strong: light-dark(#cbbfab, #48423a);
-  --ui-color-control-border: light-dark(#8b7d68, #807565);
-  --ui-color-control-border-hover: light-dark(#6f6353, #9a8e7d);
+  --ui-color-border: var(--p-border);
+  --ui-color-border-strong: var(--p-border-strong);
+  --ui-color-control-border: var(--p-control);
+  --ui-color-control-border-hover: var(--p-control-hover);
 
-  /* Accent: the one vermilion. Used for the mark, the primary action, selection and focus. */
-  --ui-color-accent: light-dark(#a83418, #f08a6b);
-  --ui-color-accent-hover: light-dark(#8c2a13, #ffa387);
-  --ui-color-accent-active: light-dark(#721f0d, #ffb8a1);
-  --ui-color-accent-soft: light-dark(#f6e3da, #3a2219);
-  --ui-color-accent-ink: light-dark(#8c2a13, #ffa387);
-  --ui-color-on-accent: light-dark(#fffaf2, #1d110c);
-  /* Focus is ink, not the accent: a vermilion ring around every field reads as an error, and ink
-     keeps its contrast on every surface in both schemes. */
-  --ui-color-focus: light-dark(#1e1b17, #ece6dc);
+  /* Accent: the one colour of action. Used for the mark, the primary action and selection. */
+  --ui-color-accent: var(--p-accent);
+  --ui-color-accent-hover: var(--p-accent-hover);
+  --ui-color-accent-active: var(--p-accent-active);
+  --ui-color-accent-soft: var(--p-accent-soft);
+  --ui-color-accent-ink: var(--p-accent-ink);
+  --ui-color-on-accent: var(--p-on-accent);
+  /* Focus is ink: a coloured ring around every field reads as an error, and ink keeps its
+     contrast on every surface in both schemes. */
+  --ui-color-focus: var(--p-ink);
 
   /* Danger */
-  --ui-color-danger: light-dark(#b42318, #ff8a80);
-  --ui-color-danger-hover: light-dark(#971c13, #ffa59d);
-  --ui-color-danger-soft: light-dark(#fdecea, #3a1e1c);
-  --ui-color-on-danger: light-dark(#fffaf2, #2a0b08);
+  --ui-color-danger: var(--p-danger);
+  --ui-color-danger-hover: var(--p-danger-hover);
+  --ui-color-danger-soft: var(--p-danger-soft);
+  --ui-color-on-danger: var(--p-on-danger);
 
   /* Selection and scrollbars */
-  --ui-color-selection: light-dark(#f3ddd2, #4a2a1f);
-  --ui-color-selection-ink: var(--ui-color-ink);
-  --ui-color-scrollbar: light-dark(#cbbfab, #48423a);
-  --ui-color-scrollbar-hover: light-dark(#8b7d68, #807565);
+  --ui-color-selection: var(--p-selection);
+  --ui-color-selection-ink: var(--p-ink);
+  --ui-color-scrollbar: var(--p-scrollbar);
+  --ui-color-scrollbar-hover: var(--p-scrollbar-hover);
 
-  /* Inverted surfaces: the toast and the phone's tab bar label. */
-  --ui-color-inverse-surface: light-dark(#1e1b17, #ece6dc);
-  --ui-color-inverse-ink: light-dark(#fffaf2, #141210);
+  /* Inverted surfaces: the toast. */
+  --ui-color-inverse-surface: var(--p-inverse-surface);
+  --ui-color-inverse-ink: var(--p-inverse-ink);
 
   /* Shadow: only overlays cast one. The page itself is flat. */
   --ui-shadow-color-2: light-dark(rgb(46 32 20 / 0.18), rgb(0 0 0 / 0.6));

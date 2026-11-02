@@ -21,6 +21,13 @@ body {
   flex-wrap: wrap;
 }
 
+.doc-picks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--ui-space-sm);
+}
+
 .doc-title {
   margin-top: var(--ui-space-2xs);
   font-family: var(--ui-font-serif);
@@ -246,6 +253,10 @@ body {
 
   body {
     padding: var(--ui-space-2xl) var(--ui-space-xl) 72px;
+  }
+
+  .doc-picks {
+    align-items: flex-start;
   }
 
   .type-row {
