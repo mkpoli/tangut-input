@@ -70,10 +70,26 @@
   const DOORS = /** @type {const} */ ([
     { page: 'cangjie', title: 'nav.cangjie', body: 'find.door.cangjie', glyph: '𗀀' },
     { page: 'sijiao', title: 'nav.sijiao', body: 'find.door.sijiao', glyph: '𗩤' },
-    { page: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '𗁤' },
     { page: 'draw', title: 'nav.draw', body: 'find.door.draw', glyph: '𗣳' },
     { page: 'parts', title: 'nav.parts', body: 'find.door.parts', glyph: '𘢰' },
+    { page: 'fanqie', title: 'nav.fanqie', body: 'find.door.fanqie', glyph: '𘓐' },
+    { page: 'chart', title: 'nav.chart', body: 'find.door.chart', glyph: '𘛽' },
+    { page: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '𗁤' },
+    { page: 'transcribe', title: 'nav.transcribe', body: 'find.door.transcribe', glyph: '𗹱' },
+    { page: 'meaning', title: 'nav.meaning', body: 'find.door.meaning', glyph: '𗼇' },
   ])
+
+  /** @type {{ value: string, script?: boolean, lang?: string, mono?: boolean }[]} */
+  const EXAMPLES = [
+    { value: '𗋕𘏨𘜶𗤶𗜈𗧯𘔼', script: true },
+    { value: 'tiger', lang: 'en' },
+    { value: '水', lang: 'zh-Hant' },
+    { value: 'みず', lang: 'ja' },
+    { value: 'wind', lang: 'en' },
+    { value: 'msb', mono: true },
+    { value: 'ndzi', mono: true },
+    { value: 'U+1736', mono: true },
+  ]
 </script>
 
 <div class="ui-page find">
@@ -84,6 +100,14 @@
   </div>
 
   {#if !text}
+    <section class="try" aria-label={t('find.try')}>
+      <span class="ui-hint">{t('find.try')}</span>
+      {#each EXAMPLES as example (example.value)}
+        <button type="button" class="ui-chip" class:ui-script={example.script} class:ui-mono={example.mono}
+          lang={example.lang ?? (example.script ? 'txg' : undefined)}
+          onclick={() => { query = example.value; setQuery(query) }}>{example.value}</button>
+      {/each}
+    </section>
     <section aria-label={t('nav.label')}>
       <div class="ui-index">
         {#each DOORS as door (door.page)}
@@ -98,15 +122,7 @@
         {/each}
       </div>
     </section>
-    <section class="tips">
-      <p>{t('find.tip')}</p>
-      <p class="examples"><span class="ui-hint">{t('find.try')}</span>
-        <button type="button" class="ui-chip ui-script" lang="txg" onclick={() => { query = '𗋕𘏨𘜶𗤶𗜈𗧯𘔼'; setQuery(query) }}>𗋕𘏨𘜶𗤶𗜈𗧯𘔼</button>
-        <button type="button" class="ui-chip" onclick={() => { query = 'tiger'; setQuery(query) }}>tiger</button>
-        <button type="button" class="ui-chip" lang="zh-Hant" onclick={() => { query = '水'; setQuery(query) }}>水</button>
-        <button type="button" class="ui-chip ui-mono" onclick={() => { query = 'U+1736'; setQuery(query) }}>U+1736</button>
-      </p>
-    </section>
+    <p class="tip">{t('find.tip')}</p>
   {:else if !ready}
     <p class="ui-empty">{t('common.loading')}</p>
   {:else if !groups.length}
@@ -149,10 +165,10 @@
 </div>
 
 <style>
-  .find{gap:var(--ui-space-3xl)}
-  .tips{display:grid;gap:var(--ui-space-xs);font-size:var(--ui-text-sm)}
-  .examples{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
-  .examples .ui-script{font-size:17px}
+  .find{gap:var(--ui-space-2xl)}
+  .try{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs);margin-top:calc(-1 * var(--ui-space-lg))}
+  .try .ui-script{font-size:17px}
+  .tip{font-size:var(--ui-text-sm);color:var(--ui-color-ink-soft)}
   .gloss-row{grid-template-columns:44px 9rem minmax(0,1fr)}
   .gloss-row :global(.ui-script){font-size:32px;text-align:center}
   .gloss-row .ui-row-said{font-size:var(--ui-text-md)}
