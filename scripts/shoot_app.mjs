@@ -39,11 +39,11 @@ const SCREENS = [
   { name: 'card-attested', path: '/cangjie?c=172D5', act: async (page, phone) => {
     if (phone) await page.goto(`${ORIGIN}/?q=%F0%97%8B%95`).then(() => page.locator('.ui-row-pick').first().click())
     await page.waitForTimeout(400)
-    await page.evaluate(() => {
+    await page.evaluate(offset => {
       const card = document.querySelector('.card')
-      const heading = [...document.querySelectorAll('.card h3')].find(h => h.textContent?.trim() === 'Built from')
-      if (card && heading) card.scrollTop += heading.getBoundingClientRect().top - card.getBoundingClientRect().top - 60
-    })
+      const section = document.querySelector('.attest')
+      if (card && section) card.scrollTop += section.getBoundingClientRect().top - card.getBoundingClientRect().top - offset
+    }, phone ? 72 : 18)
   } },
   { name: 'sources', path: '/about' },
 ]

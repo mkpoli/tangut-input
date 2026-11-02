@@ -2,6 +2,19 @@
 
 Each file keeps its own licence; the MIT licence of the code does not cover them.
 
+## `wikisource/pages.json`
+
+The 37 pages of Wikisource's [Category:Buddhist texts in
+Tangut](https://wikisource.org/wiki/Category:Buddhist_texts_in_Tangut), read 2026-11-03: the
+wikitext, each page's revision id, timestamp and editor, and the category order. The five texts are
+the Dragon King's question, the High King Avalokitesvara Sutra, the Diamond Sutra (32 chapter pages
+and a front-matter page), the Twenty-five Questions and Answers, and the Great Compassion Dharani.
+`scripts/fetch_tangut_wikisource.py` refreshes it; `scripts/build_tangut_attestation.py` reads the
+snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
+
+Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
+underlying editions are in `wikisource/README.md` and in the source records of the built file.
+
 ## `yi-bai-ids.tsv.gz`
 
 Standard IDS descriptions from Yi Bai's level-1 IDS dataset at commit
