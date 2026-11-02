@@ -135,12 +135,19 @@
   const uppers = $derived.by(() => {
     const uses = new Map()
     for (const row of spelling.values()) for (const [upper, column] of row) uses.set(upper, (uses.get(upper) ?? 0) + column.length)
-    return [...uses.entries()].sort((a, b) => b[1] - a[1] || (a[0].codePointAt(0) ?? 0) - (b[0].codePointAt(0) ?? 0)).map(([char]) => char)
+    // In the Chinese grid the columns keep their class together — 喉音 beside 喉音, 齒音 beside 齒音 —
+    // so a reader can run down one sound at a time.
+    const order = /** @type {Map<string, number>} */ (new Map(CLASSES.map((entry, index) => [entry.roman, index])))
+    const classOf = (/** @type {string} */ upper) => order.get(upperClasses.get(upper)?.roman ?? '') ?? CLASSES.length
+    return [...uses.entries()]
+      .sort((a, b) => (String(view.mode) === 'han' ? classOf(a[0]) - classOf(b[0]) : 0)
+        || b[1] - a[1] || (a[0].codePointAt(0) ?? 0) - (b[0].codePointAt(0) ?? 0))
+      .map(([char]) => char)
   })
   /** For a Chinese upper character, the Tangut initial class it most often spells — its own label,
    *  read from the data rather than from a Chinese rhyme dictionary. */
   const upperClasses = $derived.by(() => {
-    /** @type {Map<string, string>} */
+    /** @type {Map<string, { roman: string, zh: string }>} */
     const found = new Map()
     if (String(view.mode) !== 'han') return found
     /** @type {Map<string, Map<string, number>>} */
@@ -156,7 +163,7 @@
     for (const [upper, tally] of counts) {
       const best = [...tally.entries()].sort((a, b) => b[1] - a[1])[0]
       const named = CLASSES.find(entry => entry.roman === best?.[0])
-      if (named) found.set(upper, named.zh)
+      if (named) found.set(upper, named)
     }
     return found
   })
@@ -258,7 +265,7 @@
           <tr>
             <th class="corner" scope="col"><span>{t('chart.lower')}</span> / {t('chart.upper')}</th>
             {#each shownUppers as upper (upper)}
-              <th scope="col" class="group tg" title={upperClasses.get(upper) ?? ''}>{upper}{#if upperClasses.get(upper)}<small lang="zh-Hant">{upperClasses.get(upper)}</small>{/if}</th>
+              <th scope="col" class="group tg" title={upperClasses.get(upper)?.zh ?? ''}>{upper}{#if upperClasses.get(upper)}<small lang="zh-Hant">{upperClasses.get(upper)?.zh}</small>{/if}</th>
             {/each}
           </tr>
         </thead>
