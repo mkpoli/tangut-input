@@ -287,7 +287,7 @@
   .glyph-frame::before{left:50%;top:9px;bottom:9px;width:1px}
   .glyph-frame::after{top:50%;left:9px;right:9px;height:1px}
   .glyph-frame :global(.ui-script){position:relative;z-index:1;font-size:88px}
-  .glyph-frame :global(.ui-nog){position:relative;z-index:1}
+  .glyph-frame :global(.ui-nog){position:relative;z-index:1;font-size:var(--ui-text-sm);inline-size:3.4em;block-size:3.4em}
   .facts{display:grid;gap:var(--ui-space-2xs);min-inline-size:0}
   .cp{justify-self:start;margin-inline-start:-6px;padding:2px 6px;border:0;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .cp:hover{background:var(--ui-color-surface-hover);color:var(--ui-color-ink)}

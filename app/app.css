@@ -5,9 +5,11 @@
 
 /* A field can hold Tangut, Latin or Chinese; the faces claim only their own blocks, so one stack
    serves all three. */
+.ui-input,
+.ui-textarea,
 .field,
 .menu-input {
-  font-family: var(--tg-font);
+  font-family: var(--ui-font-script);
 }
 
 /* The reader picks one face; the others are fallbacks for what it lacks. */
