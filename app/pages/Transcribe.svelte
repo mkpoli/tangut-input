@@ -11,6 +11,7 @@
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { t, i18n } from '../lib/i18n.svelte.js'
   import G from '../ui/G.svelte'
+  import MiniIme from '../ui/MiniIme.svelte'
 
   /** @type {HTMLTextAreaElement | null} */
   let box = $state(null)
@@ -77,6 +78,7 @@
     aria-label={t('transcribe.input')} placeholder={t('transcribe.placeholder')} oninput={type}></textarea>
 
   <div class="ui-toolbar">
+    <MiniIme align="start" />
     <label class="choose">
       <span class="ui-label">{t('reading.system')}</span>
       <span class="ui-select-wrap">

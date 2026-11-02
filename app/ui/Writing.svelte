@@ -7,6 +7,7 @@
   import { isTangut } from '../lib/db.svelte.js'
   import { preview } from '../lib/ui.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
+  import MiniIme from './MiniIme.svelte'
 
   /** @type {HTMLTextAreaElement | null} */
   let field = $state(null)
@@ -96,6 +97,7 @@
     oninput={event => { setText(event.currentTarget.value); remember() }}
     onkeyup={remember} onclick={caret} onselect={remember} onblur={remember}></textarea>
   <div class="actions">
+    <MiniIme />
     {#if count}<span class="count ui-count">{count}</span>{/if}
     <button class="ui-button" data-size="sm" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}>{t('common.copy')}</button>
     <div class="more" bind:this={more} onfocusout={closeMenu}>
