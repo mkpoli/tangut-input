@@ -7,6 +7,8 @@
   import { preview, choose, put, autofocus, ui, setReading } from '../lib/ui.svelte.js'
   import { byFanqie } from '../lib/search.js'
   import { i18n, t } from '../lib/i18n.svelte.js'
+  import { record } from '../lib/record.js'
+  import MiniFinder from '../ui/MiniFinder.svelte'
 
   let query = $state(route.q)
   // Which reconstruction the results are read in: the reader's choice, remembered across pages.
@@ -34,6 +36,21 @@
     }
     return map
   })
+
+  /**
+   * Put a character into the fanqie: the first picks the upper, the second the lower, and a later
+   * pick replaces the lower so another rhyme can be tried without clearing both.
+   * @param {string} char
+   */
+  function placeFanqie(char) {
+    const chars = [...text]
+    const next = chars.length >= 2 ? `${chars[0]}${char}` : `${chars.join('')}${char}`
+    // The candidate's rank belongs to the mini finder's list, not to this page's list.
+    record({ type: 'pick', char, finder: 'fanqie', query: route.q || null, locale: i18n.locale })
+    query = next
+    setQuery(next)
+    return [...next].length >= 2
+  }
 </script>
 
 <div class="ui-page fanqie">
@@ -43,10 +60,13 @@
   </header>
 
   <div class="search">
-    <input class="ui-input fanqie-input ui-script" data-size="xl" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
-      aria-label={t('fanqie.label')} placeholder={t('fanqie.placeholder')}
-      oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { query = event.currentTarget.value; setQuery(query) }}
-      use:autofocus />
+    <div class="fanqie-field">
+      <input class="ui-input fanqie-input ui-script" data-size="xl" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
+        aria-label={t('fanqie.label')} placeholder={t('fanqie.placeholder')}
+        oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { query = event.currentTarget.value; setQuery(query) }}
+        use:autofocus />
+      <MiniFinder selected={text} onpick={placeFanqie} />
+    </div>
     <label class="choose">
       <span class="ui-label">{t('fanqie.reading')}</span>
       <span class="ui-select-wrap">
@@ -61,7 +81,7 @@
     <section class="own-card" aria-label={t('fanqie.ownLabel')}>
       <span class="ui-script own">{text}</span>
       <span class="cuts">
-        {#each [own[3] ?? own[5], own[4] ?? own[6]] as cut (cut)}
+        {#each [own[3] ?? own[5], own[4] ?? own[6]] as cut, i (i)}
           {#if cut}<span class="cut"><span class="ui-script">{cut}</span>{#if reading(cut)}<small>{reading(cut)}</small>{/if}</span>{/if}
         {/each}
         {#if !ownSpelling}<span class="ui-hint">—</span>{/if}
@@ -117,7 +137,8 @@
 
 <style>
   .search{display:flex;align-items:flex-end;gap:var(--ui-space-md);flex-wrap:wrap}
-  .search .ui-input{flex:1;min-inline-size:240px}
+  .fanqie-field{position:relative;display:flex;flex:1;min-inline-size:240px}
+  .fanqie-field .ui-input{flex:1;min-inline-size:0;padding-inline-end:52px}
   .fanqie-input{font-size:26px}
   .choose{display:flex;align-items:center;gap:var(--ui-space-sm);padding-bottom:10px}
   .choose .ui-label{white-space:nowrap}

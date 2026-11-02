@@ -17,9 +17,11 @@ The site has three parts.
   bar. Every finder inserts into it at the caret, so a character found by Cangjie and one found by
   drawing land in the same place. It can be typed or pasted into directly, and copied as text, as
   code points or as Cangjie codes. Clicking beside a character in it opens that character's card.
-- **The finders.** One page for each way of naming a character: Find, Cangjie, Reading, Draw and
-  Parts. Their inputs differ in kind (letters, a reconstruction, a drawing, a set of components),
-  so each page is laid out for its own input; there is no shared box with tabs.
+- **The finders.** One page for each way of naming a character: Find, Meaning, Cangjie,
+  Four-corner, Reading, Fanqie, Chart, Transcribe, Draw and Parts. Their inputs differ in kind
+  (letters, a reconstruction, a drawing, a set of components), so each page is laid out for its own
+  input. The one shared box with tabs is the Fanqie picker, where the point is to choose two
+  characters without leaving the field.
 - **The card.** Everything recorded about one character, with the actions first: add to the text,
   copy the character, copy the link, copy the code point (click it) or a Cangjie code (click it).
   Below them come the things that help a reader confirm the character is the one they mean:
@@ -93,6 +95,13 @@ somewhere. An outer layout (side by side, above and below, three across …) nar
 palette is ordered by stroke count, then by use, and can be filtered by Cangjie code. Choosing a
 part also opens it in the card. A card's “Characters with these parts” link opens Parts with that
 character's parts chosen.
+
+**Fanqie** (`/fanqie`) goes the other way: it takes the upper and lower characters a rhyme book
+spells a word with and lists what they spell. The two characters can be typed, or picked from a
+compact panel beside the field that keeps the Find, Meaning, Cangjie, Four-corner, Reading, Draw
+and Parts finders in miniature. The first pick fills the upper, the second the lower; the panel
+closes when both are in, and a later pick replaces the lower while keeping the upper. Each pick is
+recorded with the fanqie it was made for.
 
 ## The card
 
