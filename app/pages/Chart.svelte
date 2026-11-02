@@ -16,7 +16,36 @@
   const PER_PAGE = 20
   const HAN = /([\u4e00-\u9fff])([\u4e00-\u9fff])切/
 
-  const GROUPS = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ']
+  // The nine initial classes of the 同音, as the rhyme books name them: the Roman numeral is the
+  // class, the Chinese word is the class's own name.
+  const CLASSES = [
+    { roman: 'Ⅰ', zh: '重唇音' }, { roman: 'Ⅱ', zh: '輕唇音' }, { roman: 'Ⅲ', zh: '舌頭音' },
+    { roman: 'Ⅳ', zh: '舌上音' }, { roman: 'Ⅴ', zh: '牙音' }, { roman: 'Ⅵ', zh: '齒頭音' },
+    { roman: 'Ⅶ', zh: '正齒音' }, { roman: 'Ⅷ', zh: '喉音' }, { roman: 'Ⅸ', zh: '來日音' },
+  ]
+  const GROUPS = CLASSES.map(entry => entry.roman)
+  /** The initials the readings in each class begin with, most common first: the class's sound. */
+  const onsets = $derived.by(() => {
+    /** @type {Map<string, string[]>} */
+    const found = new Map()
+    if (!ready) return found
+    /** @type {Map<string, Map<string, number>>} */
+    const counts = new Map()
+    for (const entry of ix.entries) {
+      const roman = ix.rhymes.get(entry.char)?.[2]
+      const reading = entry.pronunciations?.gong_huangcheng?.trim() ?? ''
+      if (!roman || !reading) continue
+      const head = /^[^aeiouəɨ]+/.exec(reading)?.[0]
+      if (!head) continue
+      const row = counts.get(roman) ?? new Map()
+      counts.set(roman, row)
+      row.set(head, (row.get(head) ?? 0) + 1)
+    }
+    for (const [roman, row] of counts) {
+      found.set(roman, [...row.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4).map(([head]) => head))
+    }
+    return found
+  })
   const TONES = [1, 2, 4, 0]
   /** @type {Record<number, string>} */
   const TONE_KEY = { 1: 'card.tone.level', 2: 'card.tone.rising', 4: 'card.tone.entering', 0: 'chart.tone.unknown' }
@@ -161,7 +190,13 @@
         <thead>
           <tr>
             <th class="corner" scope="col"><span>{t('chart.rhyme')}</span> / {t('chart.group')}</th>
-            {#each GROUPS as group (group)}<th scope="col" class="group">{group}</th>{/each}
+            {#each CLASSES as group (group.roman)}
+              <th scope="col" class="group" title={`${group.roman} · ${group.zh}${onsets.get(group.roman)?.length ? ` · ${onsets.get(group.roman)?.join(' ')}` : ''}`}>
+                <span class="roman">{group.roman}</span>
+                <span class="name" lang="zh-Hant">{group.zh}</span>
+                {#if onsets.get(group.roman)?.length}<small>{onsets.get(group.roman)?.join(' ')}</small>{/if}
+              </th>
+            {/each}
           </tr>
         </thead>
         <tbody>
@@ -199,6 +234,9 @@
   thead th{position:sticky;top:0;z-index:2;background:var(--raised);border-bottom:1px solid var(--line-strong);padding:7px 6px;font:600 12px var(--mono);color:var(--muted)}
   thead th.corner{left:0;z-index:3;text-align:left;white-space:nowrap;font-family:var(--ui);font-weight:500}
   thead th.group{text-align:center;width:84px}
+  thead th.group .roman{display:block;font-size:12px}
+  thead th.group .name{display:block;font-family:var(--ui);font-size:11.5px;color:var(--ink-2);letter-spacing:0;text-transform:none}
+  thead th.group small{display:block;font-size:10px;color:var(--muted);font-weight:400}
   tbody th.rhyme{position:sticky;left:0;z-index:1;background:var(--raised);border-right:1px solid var(--line-strong);padding:4px 8px;text-align:right;font:600 13px var(--mono);white-space:nowrap;min-width:52px}
   tbody th.rhyme small{display:block;font-weight:400;font-size:10px}
   tr.tone th{position:sticky;left:0;background:var(--sunk);color:var(--muted);text-align:left;padding:5px 10px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border-top:1px solid var(--line-strong)}
