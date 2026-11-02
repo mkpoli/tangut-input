@@ -1,0 +1,31 @@
+# Materials
+
+Every source this site draws on, every one found while looking for more, and the ones that do not
+exist anywhere yet. A source is listed with what it actually gives and the terms it comes under; a
+source with no licence stated is not free to redistribute at scale, and is used here only where the
+site already did.
+
+## In use
+
+| Source | Gives | Terms | Built by |
+| --- | --- | --- | --- |
+| [Open Tangut](https://github.com/imlooh/open-tangut) | meanings in English, Japanese and Chinese; eight reconstructions; two sound glosses | MIT | `scripts/compact_tangut_entries.py` re-packs the export |
+| [rime_tangutcjkk](https://github.com/Hulenkius/rime_tangutcjkk) | Tangut Cangjie codes, several analyses per character | none stated | `scripts/build_tangut_cangjie.py` |
+| [Tangut-rhyme-dictionaries-data](https://github.com/nkay0/Tangut-rhyme-dictionaries-data) | 文海 rhyme, tone, 同音 class, 小韻, fanqie; the 合編's fanqie; the dictionaries' own indexes | none stated | `scripts/build_tangut_rhymes.py`, `scripts/build_tangut_sijiao.py` |
+| [TangutSources.txt](https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt) | stroke counts, numeric values, dictionary indexes | Unicode Terms of Use | `scripts/build_tangut_*` |
+| Faces: Noto Serif Tangut, Tangut Yinchuan, BabelStone Wenhai, New Tangut Std, GenZui, Mojikyo, N4694, TWU | glyphs; the drawing pad's shapes are rendered from them | per face, `app/public/fonts/FONT-LICENCES.md` | `scripts/build_tangut_shapes.py` |
+
+## Available, not used
+
+- [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db) — GHC, GX2021, GX202404 and GX202411 for each character, with a homophone count and a rank column. Xun Gong's data, DOI 10.25365/phaidra.654. Its licence permits citing single points and publishing derived counts, and forbids bulk redistribution, so it is used here as a check rather than a source: 5,743 of 6,031 readings agree with Open Tangut's GX202411 once the superscript tones are folded, 88 differ, 58 characters are absent.
+- [CCAMC](http://ccamc.org/) — per-character pages with 音（李范文）and its fanqie and 直音, 音（聂历山）, a 藏文對音 field, 聲韻, 同音 and 擬音. HTTP only: the host serves no TLS, which is why `https://www.ccamc.co` refuses the connection. It blocks bursts — after sampling it answers 「访问速度过快」 for a while. No licence stated. In a 40-page sample, 李范文 had 10, 聂历山 7, 藏文對音 1.
+- [TangutSeg](https://github.com/jiangli-va/TangutSeg) — word segmentation over 2,750 annotated sentences, a 19,000-entry lexicon and 320,000 characters of unlabelled text. Its README states the full data will not be published; the repository carries code and three example files only.
+- [西夏語韻図](https://repository.kulib.kyoto-u.ac.jp/dspace/bitstream/2433/73009/1/KJ00000077717.pdf), Nishida Tatsuo — a printed rhyme chart of exactly the kind the site's Chart page draws; worth checking the axes against.
+- [Digital Silk Road, 東洋文庫](https://dsr.nii.ac.jp/toyobunko/) — manuscript images, for attestation rather than data.
+- [Tibetan three dialects G2P](https://khepa-nyima.github.io/tibetan-three-dialects-g2p/) — not Tangut, but the nearest thing to a system for reading a Tibetan transcription aloud if one is ever collected.
+
+## Missing
+
+- **番漢合時掌中珠 as data.** The 1190 glossary's three columns — Tangut character, Chinese transcription, Chinese gloss — exist in printed editions and in a study of its computer processing ([CiNii](https://cir.nii.ac.jp/crid/1040000781685614592)); no dataset is published, and Unicode's sources file does not index it. About a thousand entries would have to be transcribed from an edition, cited to that edition.
+- **藏文對音 as a table.** Tibetan transcriptions of Tangut survive in fragments and are discussed one article at a time; CCAMC has a field for them, empty on almost every page seen.
+- **Tangut seal and cursive forms.** Seal script is confined to the headings of a few steles and cursive to manuscripts; no face and no per-character table exists, so the site shows the regular script only.

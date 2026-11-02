@@ -69,6 +69,12 @@ record per line with its session beside it, and `dataset.json` as a manifest. Th
 after each saved drawing. The folder is ignored by git, so recordings stay on the machine that made
 them; `docs/handwriting.md` describes the fields.
 
+## Materials
+
+`docs/materials.md` lists every source the site draws on — what each actually gives, the terms it
+comes under, and what is still missing: 掌中珠's entries, a per-character 藏文對音 table, and any
+seal or cursive forms.
+
 ## Records
 
 The deployed site keeps what readers drew and picked in a D1 database: `drawings` holds a pad
