@@ -289,7 +289,7 @@
   .pos{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
   .pos .chip{min-height:24px;padding:0 8px;font-size:12px}
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px}
-  .formula{font-family:var(--tangut);font-size:21px;line-height:1.2;padding:3px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);user-select:text;cursor:text}
+  .formula{font-family:var(--ids);font-size:21px;line-height:1.2;padding:3px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);user-select:text;cursor:text}
   .ids .btn.small{min-height:26px;padding:0 8px;font-size:12px}
   .tiles.small{--tile:48px}
   .tiles.small .tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:5px 2px 4px;background:var(--raised);box-shadow:none;border-color:var(--line)}

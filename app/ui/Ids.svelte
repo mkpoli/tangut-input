@@ -32,7 +32,6 @@
   import { choose } from '../lib/ui.svelte.js'
   import G from './G.svelte'
   import { gloss } from '../lib/db.svelte.js'
-  import Layout from './Layout.svelte'
 
   /** @type {{ composition: string }} */
   let { composition } = $props()
@@ -44,7 +43,7 @@
     <button class="leaf" type="button" title={gloss(node) || 'Open this part'} onclick={() => choose(node)}><G char={node} /></button>
   {:else}
     <div class="box" data-op={node.op} title={LAYOUTS[node.op]}>
-      <span class="op"><Layout op={node.op} /></span>
+      <span class="op" aria-hidden="true">{node.op}</span>
       <div class="inner">
         {#each node.parts as part, i (i)}{@render draw(part)}{/each}
       </div>
@@ -59,7 +58,7 @@
 <style>
   .ids{display:flex;gap:8px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
   .box{position:relative;display:flex;padding:18px 8px 8px;border:1px dashed var(--line-strong);border-radius:9px;flex:1}
-  .op{position:absolute;top:4px;left:6px;color:var(--muted);display:flex}
+  .op{position:absolute;top:3px;left:5px;font-family:var(--ids);font-size:14px;line-height:1;color:var(--ink-2)}
   .inner{display:flex;gap:6px;flex:1;align-items:stretch;justify-content:center}
   [data-op="⿱"]>.inner,[data-op="⿳"]>.inner{flex-direction:column}
   [data-op="⿵"]>.inner,[data-op="⿶"]>.inner,[data-op="⿴"]>.inner{flex-direction:column}

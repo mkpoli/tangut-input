@@ -13,6 +13,11 @@
   characters Noto lacks (`BabelStoneTangut-complement.woff2`): the components and the newest
   ideographs. The full font is in this directory for rebuilding that subset.
 
+- **IDS Operators** (`IDS.woff2`). The sixteen ideographic description characters U+2FF0–2FFF,
+  subset from **GenZui Sans** (Source Han Sans-based, SIL Open Font License 1.1; `OFL-GenZuiSans.txt`
+  in `fonts/`). 2 KB, so a description can always be shown as its own text. Rebuild it with
+  `pyftsubset fonts/GenZuiSans-Regular.woff2 --unicodes=U+2FF0-2FFF --flavor=woff2`.
+
 Rebuild the Noto supplement and the BabelStone complement with `bun run build:tangut-fonts`.
 
 - **New Tangut Std** (新西夏字體), from the 古今文字集成 font page (ccamc.org/fonts_tangut.php),
