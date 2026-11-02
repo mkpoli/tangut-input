@@ -532,9 +532,11 @@
 .ui-nog {
   display: inline-grid;
   place-items: center;
-  inline-size: 2.1em;
+  inline-size: auto;
+  min-inline-size: 2.1em;
+  max-inline-size: 100%;
   block-size: 2.1em;
-  padding: 0.15em;
+  padding: 0.15em 0.3em;
   border: 1px dashed var(--ui-color-border-strong);
   border-radius: var(--ui-radius-xs);
   color: var(--ui-color-ink-muted);
@@ -543,5 +545,7 @@
   font-weight: var(--ui-weight-semibold);
   line-height: 1.15;
   text-align: center;
-  word-break: break-all;
+  /* A code point stays on one line; the box widens for it rather than stacking its letters. */
+  white-space: nowrap;
+  overflow: hidden;
 }
