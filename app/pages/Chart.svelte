@@ -128,6 +128,48 @@
     for (const row of spelling.values()) for (const [upper, column] of row) uses.set(upper, (uses.get(upper) ?? 0) + column.length)
     return [...uses.entries()].sort((a, b) => b[1] - a[1] || (a[0].codePointAt(0) ?? 0) - (b[0].codePointAt(0) ?? 0)).map(([char]) => char)
   })
+  /** For a Chinese upper character, the Tangut initial class it most often spells — its own label,
+   *  read from the data rather than from a Chinese rhyme dictionary. */
+  const upperClasses = $derived.by(() => {
+    /** @type {Map<string, string>} */
+    const found = new Map()
+    if (String(view.mode) !== 'han') return found
+    /** @type {Map<string, Map<string, number>>} */
+    const counts = new Map()
+    for (const row of spelling.values()) for (const [upper, column] of row) {
+      const tally = counts.get(upper) ?? new Map()
+      counts.set(upper, tally)
+      for (const item of column) {
+        const group = ix.rhymes.get(item.char)?.[2]
+        if (group) tally.set(group, (tally.get(group) ?? 0) + 1)
+      }
+    }
+    for (const [upper, tally] of counts) {
+      const best = [...tally.entries()].sort((a, b) => b[1] - a[1])[0]
+      const named = CLASSES.find(entry => entry.roman === best?.[0])
+      if (named) found.set(upper, named.zh)
+    }
+    return found
+  })
+
+  /** The rhyme a Chinese lower character most often spells, the counterpart of the upper's class. */
+  const lowerRhymes = $derived.by(() => {
+    /** @type {Map<string, string>} */
+    const found = new Map()
+    if (String(view.mode) !== 'han') return found
+    for (const [lower, row] of spelling) {
+      /** @type {Map<string, number>} */
+      const tally = new Map()
+      for (const column of row.values()) for (const item of column) {
+        const rhyme = ix.rhymes.get(item.char)?.[0]
+        if (typeof rhyme === 'number') tally.set(String(rhyme), (tally.get(String(rhyme)) ?? 0) + 1)
+      }
+      const best = [...tally.entries()].sort((a, b) => b[1] - a[1])[0]
+      if (best) found.set(lower, best[0])
+    }
+    return found
+  })
+
   const pages = $derived(Math.max(1, Math.ceil(uppers.length / PER_PAGE)))
   const shownUppers = $derived(uppers.slice(page * PER_PAGE, (page + 1) * PER_PAGE))
   /** The lowers that have a character under one of the uppers on this page. */
@@ -176,13 +218,15 @@
         <thead>
           <tr>
             <th class="corner" scope="col"><span>{t('chart.lower')}</span> / {t('chart.upper')}</th>
-            {#each shownUppers as upper (upper)}<th scope="col" class="group tg">{upper}</th>{/each}
+            {#each shownUppers as upper (upper)}
+              <th scope="col" class="group tg" title={upperClasses.get(upper) ?? ''}>{upper}{#if upperClasses.get(upper)}<small lang="zh-Hant">{upperClasses.get(upper)}</small>{/if}</th>
+            {/each}
           </tr>
         </thead>
         <tbody>
           {#each spellRows as row (row.lower)}
             <tr>
-              <th scope="row" class="rhyme tg">{row.lower}</th>
+              <th scope="row" class="rhyme tg">{row.lower}{#if lowerRhymes.get(row.lower)}<small>{t('card.rhyme')} {lowerRhymes.get(row.lower)}</small>{/if}</th>
               {#each row.cells as cell, i (i)}
                 <td>
                   {#each cell as item (item.char)}<button type="button" class="tg cell" title={detail(item.char)} onclick={() => choose(item.char)} ondblclick={() => put(item.char)}>{item.char}{#if item.zhiyin}<small>{item.zhiyin}</small>{/if}</button>{/each}
