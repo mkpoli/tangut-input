@@ -92,6 +92,31 @@
       : (a, b) => TONES.indexOf(a.tone) - TONES.indexOf(b.tone) || a.rhyme - b.rhyme)
   })
 
+  /**
+   * The Chinese fanqie records, each naming the character it spells, its two characters and the
+   * 直音 it is glossed with. @type {{ char: string, upper: string, lower: string, zhiyin: string }[]}
+   */
+  const hanRecords = $derived.by(() => {
+    /** @type {{ char: string, upper: string, lower: string, zhiyin: string }[]} */
+    const list = []
+    if (!ready) return list
+    for (const entry of ix.entries) {
+      const text = entry.pronunciations?.sound_li_fanwen ?? ''
+      const found = HAN.exec(text)
+      if (!found) continue
+      const zhiyin = /[，,]\s*音([^，,。]+)/.exec(text)?.[1]?.replace(/[（(].*?[)）]/g, '').trim() ?? ''
+      list.push({ char: entry.char, upper: found[1], lower: found[2], zhiyin })
+    }
+    return list
+  })
+
+  /**
+   * Two spellings that give one 直音 are one syllable, whatever their two characters, so the
+   * characters that spell it are joined. Returns each symbol's group, labelled with its members.
+   * @param {'upper' | 'lower'} side
+   */
+
+
   /** A spelling grid: columns are the upper characters, rows the lower ones. */
   const spelling = $derived.by(() => {
     /** @type {Map<string, Map<string, { char: string, zhiyin: string }[]>>} */
@@ -99,20 +124,16 @@
     if (!ready) return grid
     if (String(view.mode) === 'han') {
       // The Chinese fanqie of Li Fanwen's sound gloss, e.g. 正齒音，奢餘切，音叔.
-      for (const entry of ix.entries) {
-        const text = entry.pronunciations?.sound_li_fanwen ?? ''
-        const found = HAN.exec(text)
-        if (!found) continue
-        const [, upper, lower] = found
-        // 音X is the gloss's direct sound: the Chinese character this one sounds like.
-        const zhiyin = /[，,]\s*音([^，,。]+)/.exec(text)?.[1]?.replace(/[（(].*?[)）]/g, '').trim() ?? ''
-        // Two upper characters that stand for one initial are one column, labelled with both.
-        const joined = (ix.fanqieAliases.get(upper) ?? [upper]).join('')
+      for (const record of hanRecords) {
+        // Characters known to spell one syllable share a column or a row; the list is curated,
+        // because the glosses reuse a 直音 across syllables and cannot be trusted to derive it.
+        const upper = (ix.fanqieAliases.get(record.upper) ?? [record.upper]).join('')
+        const lower = (ix.fanqieAliases.get(record.lower) ?? [record.lower]).join('')
         const row = grid.get(lower) ?? new Map()
         grid.set(lower, row)
-        const column = row.get(joined) ?? []
-        column.push({ char: entry.char, zhiyin })
-        row.set(joined, column)
+        const column = row.get(upper) ?? []
+        column.push({ char: record.char, zhiyin: record.zhiyin })
+        row.set(upper, column)
       }
     } else {
       for (const [char, value] of ix.rhymes) {
