@@ -2,20 +2,44 @@
 // and the page's own query in `?q=`. Every state worth sharing is in the address.
 
 // Each page's name and one-line hint are message keys, so the bar reads in the reader's language.
-export const PAGES = /** @type {const} */ ([
-  { path: '', label: 'nav.find', hint: 'nav.find.hint' },
-  { path: 'meaning', label: 'nav.meaning', hint: 'nav.meaning.hint' },
-  { path: 'cangjie', label: 'nav.cangjie', hint: 'nav.cangjie.hint' },
-  { path: 'sijiao', label: 'nav.sijiao', hint: 'nav.sijiao.hint' },
-  { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },
-  { path: 'fanqie', label: 'nav.fanqie', hint: 'nav.fanqie.hint' },
-  { path: 'chart', label: 'nav.chart', hint: 'nav.chart.hint' },
-  { path: 'transcribe', label: 'nav.transcribe', hint: 'nav.transcribe.hint' },
-  { path: 'draw', label: 'nav.draw', hint: 'nav.draw.hint' },
-  { path: 'parts', label: 'nav.parts', hint: 'nav.parts.hint' },
+// The finders are grouped by what the reader already has: a text, a shape, a sound, a meaning.
+export const GROUPS = /** @type {const} */ ([
+  {
+    label: 'nav.group.text',
+    pages: [
+      { path: '', label: 'nav.find', hint: 'nav.find.hint' },
+      { path: 'transcribe', label: 'nav.transcribe', hint: 'nav.transcribe.hint' },
+    ],
+  },
+  {
+    label: 'nav.group.shape',
+    pages: [
+      { path: 'cangjie', label: 'nav.cangjie', hint: 'nav.cangjie.hint' },
+      { path: 'sijiao', label: 'nav.sijiao', hint: 'nav.sijiao.hint' },
+      { path: 'draw', label: 'nav.draw', hint: 'nav.draw.hint' },
+      { path: 'parts', label: 'nav.parts', hint: 'nav.parts.hint' },
+    ],
+  },
+  {
+    label: 'nav.group.sound',
+    pages: [
+      { path: 'fanqie', label: 'nav.fanqie', hint: 'nav.fanqie.hint' },
+      { path: 'chart', label: 'nav.chart', hint: 'nav.chart.hint' },
+      { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },
+    ],
+  },
+  {
+    label: 'nav.group.sense',
+    pages: [{ path: 'meaning', label: 'nav.meaning', hint: 'nav.meaning.hint' }],
+  },
 ])
 
-/** @typedef {typeof PAGES[number]['path'] | 'about'} Page */
+/** @typedef {typeof GROUPS[number]['pages'][number]} PageEntry */
+
+/** @type {PageEntry[]} */
+export const PAGES = GROUPS.flatMap(group => /** @type {PageEntry[]} */ ([...group.pages]))
+
+/** @typedef {typeof GROUPS[number]['pages'][number]['path'] | 'about'} Page */
 
 /** @returns {{ page: Page, q: string, c: string }} */
 function read() {

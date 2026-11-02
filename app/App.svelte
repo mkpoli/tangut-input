@@ -3,7 +3,7 @@
   // card of the open character beside it (a sheet over it on a phone).
   import { tick } from 'svelte'
   import { db, load } from './lib/db.svelte.js'
-  import { route, go, PAGES } from './lib/route.svelte.js'
+  import { route, go, PAGES, GROUPS } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, cycleTheme, setTangut, setReading, TANGUT_FACES } from './lib/ui.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
@@ -139,12 +139,14 @@
       <span class="name">{t('app.name')}</span>
     </a>
     <nav class="finders" aria-label={t('nav.label')}>
-      {#each PAGES as page (page.path)}
-        <a href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
-          title={t(page.hint)} onclick={event => nav(event, page.path)}>{t(page.label)}</a>
+      {#each GROUPS as group (group.label)}
+        <div class="group" role="group" aria-label={t(group.label)}>
+          {#each group.pages as page (page.path)}
+            <a href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
+              title={t(page.hint)} onclick={event => nav(event, page.path)}>{t(page.label)}</a>
+          {/each}
+        </div>
       {/each}
-      <a class="sources" href="/about" class:on={route.page === 'about'} aria-current={route.page === 'about' ? 'page' : undefined}
-        onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
     </nav>
     <div class="aside">
       <label class="reading" title={t('reading.system')}>
@@ -217,6 +219,12 @@
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
         {:else}<About />{/if}
+        {#if route.page !== 'about'}
+          <footer class="foot ui-hint">
+            †
+            <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
+          </footer>
+        {/if}
       </main>
       {#if route.page !== 'about'}
         <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
@@ -245,16 +253,18 @@
         onclick={() => { menu = false }}>×</button>
     </div>
     <div class="sheet-links">
-      {#each PAGES.filter(page => EXTRAS.has(page.path)) as page (page.path)}
-        <a class="sheet-link" href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
-          onclick={event => { menu = false; nav(event, page.path) }}>
-          <span class="sheet-name">{t(page.label)}</span><span class="ui-hint">{t(page.hint)}</span>
-        </a>
+      {#each GROUPS as group (group.label)}
+        {@const extras = group.pages.filter(page => EXTRAS.has(page.path))}
+        {#if extras.length}
+          <p class="ui-label sheet-group">{t(group.label)}</p>
+          {#each extras as page (page.path)}
+            <a class="sheet-link" href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
+              onclick={event => { menu = false; nav(event, page.path) }}>
+              <span class="sheet-name">{t(page.label)}</span><span class="ui-hint">{t(page.hint)}</span>
+            </a>
+          {/each}
+        {/if}
       {/each}
-      <a class="sheet-link" href="/about" class:on={route.page === 'about'} aria-current={route.page === 'about' ? 'page' : undefined}
-        onclick={event => { menu = false; nav(event, 'about') }}>
-        <span class="sheet-name">{t('nav.sources')}</span><span class="ui-hint">{t('nav.sources.hint')}</span>
-      </a>
     </div>
     <hr class="ui-menu-separator" />
     <label class="sheet-lang">
@@ -283,7 +293,8 @@
   .finders a:hover{color:var(--ui-color-ink);background:var(--ui-color-surface-hover)}
   .finders a.on{color:var(--ui-color-ink);font-weight:var(--ui-weight-semibold)}
   .finders a.on::after{content:'';position:absolute;inset-inline:var(--ui-space-sm);bottom:0;block-size:2px;background:var(--ui-color-accent)}
-  .finders .sources{margin-inline-start:var(--ui-space-sm);padding-inline-start:var(--ui-space-lg);border-inline-start:1px solid var(--ui-color-border)}
+  .finders .group{display:flex;align-items:stretch;gap:2px}
+  .finders .group + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
   .aside{margin-inline-start:auto;display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .reading :global(.ui-select){inline-size:154px}
   .lang :global(.ui-select){inline-size:104px}
@@ -299,19 +310,24 @@
   .finder{min-inline-size:0;padding:var(--ui-space-3xl) var(--ui-space-4xl) 72px}
   .card{position:sticky;top:var(--topbar-h);block-size:calc(100dvh - var(--topbar-h));overflow:auto;border-inline-start:1px solid var(--ui-color-border);background:var(--ui-color-surface);overscroll-behavior:contain}
   .fault{margin:64px auto;max-inline-size:36em;color:var(--ui-color-danger)}
+  .foot{margin-top:var(--ui-space-4xl);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
+  .foot a{color:inherit;text-underline-offset:2px}
   .tabs{display:none}
 
   .toast{position:fixed;left:50%;bottom:var(--ui-space-3xl);transform:translateX(-50%);z-index:var(--ui-z-toast);pointer-events:none}
 
   .sheet{position:fixed;inset:auto 0 0 0;margin:0;padding:var(--ui-space-lg) var(--ui-space-xl) calc(var(--ui-space-2xl) + env(safe-area-inset-bottom));inline-size:100%;max-inline-size:none;max-block-size:82dvh;border:0;border-top:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-2xl) var(--ui-radius-2xl) 0 0;background:var(--ui-color-surface);color:var(--ui-color-ink)}
   .sheet::backdrop{background:var(--ui-color-overlay)}
-  .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--ui-space-sm)}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--ui-space-sm);padding-inline:var(--ui-space-sm)}
   .sheet-links{display:grid;gap:1px}
+  .sheet-group{padding:var(--ui-space-sm) var(--ui-space-sm) var(--ui-space-2xs);color:var(--ui-color-ink-soft)}
+  .sheet-group:not(:first-child){margin-top:var(--ui-space-xs)}
   .sheet-link{display:flex;align-items:baseline;gap:var(--ui-space-md);padding:var(--ui-space-md) var(--ui-space-sm);border-radius:var(--ui-radius-sm);color:var(--ui-color-ink);text-decoration:none}
   .sheet-link:hover,.sheet-link.on{background:var(--ui-color-surface-hover)}
   .sheet-link.on .sheet-name{color:var(--ui-color-accent-ink)}
   .sheet-name{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold);white-space:nowrap}
-  .sheet-lang{display:grid;gap:var(--ui-space-xs);margin-top:var(--ui-space-md)}
+  .sheet-lang{display:grid;gap:var(--ui-space-xs);margin-top:var(--ui-space-md);padding-inline:var(--ui-space-sm)}
+  .sheet .ui-menu-separator{margin-inline:var(--ui-space-sm)}
 
   @media (max-width:1180px){
     .top{gap:var(--ui-space-md);padding-inline:var(--ui-space-xl)}
@@ -319,20 +335,20 @@
     .finders a.on::after{inset-inline:var(--ui-space-xs)}
     .reading :global(.ui-select){inline-size:154px}
   }
-  /* A tablet keeps every finder: the bar takes a second row instead of hiding Sources in a
-     sideways scroller. The sticky chrome below it follows the new height. */
+  /* A tablet keeps every finder: the bar takes a second row, and its rule runs the width of the
+     page like the row above. The sticky chrome below it follows the new height. */
   @media (min-width:901px) and (max-width:1180px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
     .mark,.aside{block-size:55px}
-    .finders{order:3;flex:0 0 100%;block-size:40px;margin-inline:calc(-1 * var(--ui-space-xl));padding-inline:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
+    .finders{order:3;flex:0 0 100%;block-size:40px;border-top:1px solid var(--ui-color-border)}
     .finders a{padding-inline:var(--ui-space-sm);font-size:var(--ui-text-sm)}
     .finders a.on::after{inset-inline:var(--ui-space-sm)}
   }
   @media (max-width:900px){
     .shell{--topbar-h:54px}
     .top{gap:var(--ui-space-sm);padding-inline:var(--ui-space-lg)}
-    .finders,.sources,.lang{display:none}
+    .finders,.lang{display:none}
     .aside{gap:2px}
     .reading :global(.ui-select){inline-size:142px;font-size:var(--ui-text-2xs)}
     .body{grid-template-columns:minmax(0,1fr)}
