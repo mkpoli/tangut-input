@@ -273,5 +273,7 @@
   "nav.menuClose": "Close the menu",
   "chart.order": "Keep a rhyme’s tones together",
   "chart.system": "Read the axes in",
-  "fanqie.hint": "Choose the upper character first, then the lower."
+  "fanqie.hint": "Choose the upper character first, then the lower.",
+  "chart.mode.sound": "By sound (直音)",
+  "chart.soundIntro": "The {sounds} sounds the glosses record, each with the characters that sound so and the fanqie written for them. A character can stand under more than one sound."
 }

@@ -2,7 +2,7 @@
 // 「正齒音，奢餘切，音叔」: the initial's class, the two characters that spell it, and the 直音 — the
 // Chinese character the Tangut one sounds like. Nevsky's gloss gives a sound without the spelling.
 
-/** @typedef {{ char: string, upper: string, lower: string, zhiyin: string, sound: string }} HanFanqie */
+/** @typedef {{ char: string, upper: string, lower: string, zhiyin: string }} HanFanqie */
 
 /** The two characters before 切. */
 const SPELLING = /([\u4e00-\u9fff])([\u4e00-\u9fff])切/
@@ -22,7 +22,7 @@ export function hanFanqie(entries) {
     const spelling = SPELLING.exec(text)
     if (!spelling) continue
     const sound = SOUND.exec(text)?.[1]?.replace(/[（(].*?[)）]/g, '').trim() ?? ''
-    found.push({ char: entry.char, upper: spelling[1], lower: spelling[2], zhiyin: sound, sound: text })
+    found.push({ char: entry.char, upper: spelling[1], lower: spelling[2], zhiyin: sound })
   }
   return found
 }

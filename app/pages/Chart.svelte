@@ -6,7 +6,7 @@
   import { choose, put, ui, setReading } from '../lib/ui.svelte.js'
   import { t, i18n } from '../lib/i18n.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
-  import { hanFanqie } from '../lib/fanqie.js'
+  import { hanFanqie, sounds } from '../lib/fanqie.js'
 
   // The chart can be read two ways: by the rhyme books' own classes, or by the characters the
   // spellings are read from — the upper down one axis, the lower down the other — and each of those
@@ -97,6 +97,21 @@
    * 直音 it is glossed with. @type {{ char: string, upper: string, lower: string, zhiyin: string }[]}
    */
   const hanRecords = $derived(ready ? hanFanqie(ix.entries) : [])
+
+  /** The sounds the glosses record, each with the characters that sound so and every spelling
+   *  written for it — 音勒 has twenty. The characters are not merged across sounds: one 直音 is one
+   *  syllable, and a character that spells two sounds belongs to both. */
+  const soundGroups = $derived.by(() => {
+    if (String(view.mode) !== 'sound') return []
+    const by = sounds(hanRecords)
+    return [...by.entries()]
+      .map(([sound, group]) => ({
+        sound,
+        characters: group.chars.sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)),
+        spellings: [...group.spellings].sort(),
+      }))
+      .sort((a, b) => b.characters.length - a.characters.length || (a.sound.codePointAt(0) ?? 0) - (b.sound.codePointAt(0) ?? 0))
+  })
 
   /**
    * Two spellings that give one 直音 are one syllable, whatever their two characters, so the
@@ -247,6 +262,7 @@
       <button type="button" class="chip" aria-pressed={String(view.mode) === 'rhyme'} onclick={() => { view.mode = 'rhyme'; page = 0 }}>{t('chart.mode.rhyme')}</button>
       <button type="button" class="chip" aria-pressed={String(view.mode) === 'tangut'} onclick={() => { view.mode = 'tangut'; page = 0 }}>{t('chart.mode.tangut')}</button>
       <button type="button" class="chip" aria-pressed={String(view.mode) === 'han'} onclick={() => { view.mode = 'han'; page = 0 }}>{t('chart.mode.han')}</button>
+      <button type="button" class="chip" aria-pressed={String(view.mode) === 'sound'} onclick={() => { view.mode = 'sound'; page = 0 }}>{t('chart.mode.sound')}</button>
       {#if String(view.mode) === 'rhyme'}
         <button type="button" class="chip" aria-pressed={view2.adjacent} onclick={() => { view2.adjacent = !view2.adjacent }}>{t('chart.order')}</button>
       {/if}
@@ -261,6 +277,30 @@
 
   {#if !ready}
     <p class="empty">{t('common.loading')}</p>
+  {:else if String(view.mode) === 'sound'}
+    <p class="muted legend">{t('chart.soundIntro', { sounds: soundGroups.length })}</p>
+    <div class="sounds">
+      {#each soundGroups as group (group.sound)}
+        <section class="sound">
+          <h3 class="sound-head">
+            <span class="zh">{group.sound}</span>
+            <small class="muted">{t('common.characters', { count: group.characters.length })}</small>
+          </h3>
+          <div class="tiles small">
+            {#each group.characters as char (char)}
+              {#if ix.rhymes.get(char)}
+                <button class="tile" type="button" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>
+                  <span class="tg">{char}</span>
+                  <small class="muted">{(ix.rhymes.get(char)?.[3] ?? '') + (ix.rhymes.get(char)?.[4] ?? '')}</small>
+                </button>
+              {:else}
+                <button class="tile" type="button" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}><span class="tg">{char}</span></button>
+              {/if}
+            {/each}
+          </div>
+        </section>
+      {/each}
+    </div>
   {:else if String(view.mode) !== 'rhyme'}
     <div class="pager">
       <span class="muted">{t('chart.page', { page: page + 1, pages })}</span>
@@ -360,6 +400,11 @@
   .cell small{display:block;font-family:var(--ui);font-size:9.5px;color:var(--muted);line-height:1.1}
   .legend{font-size:12.5px;max-width:60em}
   .pager{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .sounds{display:grid;gap:14px;max-height:calc(100dvh - 300px);overflow:auto}
+  .sound{display:grid;gap:6px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+  .sound-head{display:flex;align-items:baseline;gap:8px;margin:0}
+  .sound-head .zh{font-size:20px;font-weight:600}
+  .sound .tile small{font-family:var(--tangut);font-size:12px}
   .choose{display:flex;align-items:center;gap:6px;font-size:12.5px;margin-left:auto}
   .choose .label{white-space:nowrap}
   .choose select{padding:4px 8px;font-size:12.5px}

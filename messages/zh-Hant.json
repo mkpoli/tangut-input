@@ -273,5 +273,7 @@
   "nav.menuClose": "關閉選單",
   "chart.order": "將同韻的聲調排在一起",
   "chart.system": "縱橫軸擬音",
-  "fanqie.hint": "請先選反切上字，再選反切下字。"
+  "fanqie.hint": "請先選反切上字，再選反切下字。",
+  "chart.mode.sound": "按音注（直音）",
+  "chart.soundIntro": "音注所載的{sounds}種讀音，各列同音之字及其所注反切。一字可分見於多個讀音之下。"
 }
