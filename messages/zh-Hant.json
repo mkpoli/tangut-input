@@ -254,5 +254,22 @@
   "chart.prev": "上一頁上字",
   "chart.next": "下一頁上字",
   "chart.lower": "下字",
-  "chart.upper": "上字"
+  "chart.upper": "上字",
+  "card.posSource": "標於漢文釋義中，依原資料自身分類。",
+  "pos.noun": "名詞",
+  "pos.verb": "動詞",
+  "pos.adjective": "形容詞",
+  "pos.adverb": "副詞",
+  "pos.numeral": "數詞",
+  "pos.pronoun": "代詞",
+  "pos.classifier": "量詞",
+  "pos.particle": "助詞",
+  "pos.preposition": "介詞",
+  "pos.conjunction": "連詞",
+  "pos.interjection": "嘆詞",
+  "pos.copula": "繫詞",
+  "pos.loanword": "漢語借詞",
+  "nav.more": "更多",
+  "nav.sources.hint": "所收記錄的出處",
+  "nav.menuClose": "關閉選單"
 }

@@ -9,6 +9,7 @@
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { partsIn } from '../lib/search.js'
+  import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
   import Attest from './Attest.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
@@ -19,6 +20,8 @@
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
+  // The part of speech the Chinese gloss marks, where it marks one.
+  const wordClass = $derived(partsOfSpeech(meanings.zh))
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   const fanqie = $derived([
     { name: 'Li Fanwen', zh: '李範文', value: entry?.pronunciations?.sound_li_fanwen?.trim() ?? '' },
@@ -112,6 +115,11 @@
     {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length}
       <section>
         <h3 class="label">{t('card.meaning')}</h3>
+        {#if wordClass.length}
+          <p class="pos" title={t('card.posSource')}>
+            {#each wordClass as key (key)}<span class="chip small">{t(`pos.${key}`)}</span>{/each}
+          </p>
+        {/if}
         <dl class="means">
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
@@ -250,6 +258,8 @@
   .readings td{padding:4px 0;font-family:var(--serif);font-size:15px}
   .readings td.cjk{font-family:var(--ui);font-size:13.5px}
   .readings tr+tr{border-top:1px solid var(--line)}
+  .pos{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+  .pos .chip{min-height:24px;padding:0 8px;font-size:12px}
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px}
   .formula{font-family:var(--tangut);font-size:21px;line-height:1.2;padding:3px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);user-select:text;cursor:text}
   .ids .btn.small{min-height:26px;padding:0 8px;font-size:12px}

@@ -254,5 +254,22 @@
   "chart.prev": "Previous page of initials",
   "chart.next": "Next page of initials",
   "chart.lower": "Lower",
-  "chart.upper": "Upper"
+  "chart.upper": "Upper",
+  "card.posSource": "Marked in the Chinese gloss; the source’s own classification.",
+  "pos.noun": "noun",
+  "pos.verb": "verb",
+  "pos.adjective": "adjective",
+  "pos.adverb": "adverb",
+  "pos.numeral": "numeral",
+  "pos.pronoun": "pronoun",
+  "pos.classifier": "classifier",
+  "pos.particle": "particle",
+  "pos.preposition": "preposition",
+  "pos.conjunction": "conjunction",
+  "pos.interjection": "interjection",
+  "pos.copula": "copula",
+  "pos.loanword": "Chinese loanword",
+  "nav.more": "More",
+  "nav.sources.hint": "Where the records come from",
+  "nav.menuClose": "Close the menu"
 }

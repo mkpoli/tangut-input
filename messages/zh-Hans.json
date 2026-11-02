@@ -254,5 +254,22 @@
   "chart.prev": "上一页上字",
   "chart.next": "下一页上字",
   "chart.lower": "下字",
-  "chart.upper": "上字"
+  "chart.upper": "上字",
+  "card.posSource": "标于汉文释义中，依原资料自身分类。",
+  "pos.noun": "名词",
+  "pos.verb": "动词",
+  "pos.adjective": "形容词",
+  "pos.adverb": "副词",
+  "pos.numeral": "数词",
+  "pos.pronoun": "代词",
+  "pos.classifier": "量词",
+  "pos.particle": "助词",
+  "pos.preposition": "介词",
+  "pos.conjunction": "连词",
+  "pos.interjection": "叹词",
+  "pos.copula": "系词",
+  "pos.loanword": "汉语借词",
+  "nav.more": "更多",
+  "nav.sources.hint": "所收记录的出处",
+  "nav.menuClose": "关闭菜单"
 }
