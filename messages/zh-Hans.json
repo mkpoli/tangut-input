@@ -276,5 +276,8 @@
   "fanqie.hint": "请先选反切上字，再选反切下字。",
   "chart.mode.sound": "按音注（直音）",
   "chart.soundIntro": "音注所载的{sounds}种读音，各列同音之字及其所注反切。一字可分见于多个读音之下。",
-  "reading.system": "拟音"
+  "reading.system": "拟音",
+  "card.renderings": "字体",
+  "card.showFaces": "显示全部字体",
+  "card.loadingFaces": "正在加载字体…"
 }

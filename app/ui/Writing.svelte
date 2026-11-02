@@ -1,6 +1,7 @@
 <script>
   // The text being written. Every finder inserts here at the caret; it can also be typed or pasted
   // into directly. Clicking beside a character opens that character in the card.
+  import { tick } from 'svelte'
   import { text, attach, setText, remember, asCodePoints, asCodes } from '../lib/text.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { isTangut } from '../lib/db.svelte.js'
@@ -10,6 +11,12 @@
   /** @type {HTMLTextAreaElement | null} */
   let field = $state(null)
   let menu = $state(false)
+  /** @type {HTMLElement | null} */
+  let more = $state(null)
+  /** @type {HTMLButtonElement | null} */
+  let trigger = $state(null)
+  /** @type {HTMLElement | null} */
+  let list = $state(null)
   const count = $derived([...text.value].filter(isTangut).length)
 
   $effect(() => {
@@ -36,6 +43,45 @@
     if (char) preview(char)
   }
 
+  async function open() {
+    menu = true
+    await tick()
+    ;/** @type {HTMLElement | null} */ (list?.querySelector('button:not(:disabled)') ?? null)?.focus()
+  }
+
+  /** @param {boolean} [restore] */
+  function close(restore = true) {
+    menu = false
+    if (restore) trigger?.focus()
+  }
+
+  /** @param {KeyboardEvent} event */
+  function keys(event) {
+    const entries = [...(list?.querySelectorAll('button') ?? [])].filter(button => !button.disabled)
+    const at = entries.indexOf(/** @type {HTMLButtonElement} */ (document.activeElement))
+    const step = { ArrowDown: 1, ArrowUp: -1 }[event.key]
+    if (step) {
+      event.preventDefault()
+      entries[(at + step + entries.length) % entries.length]?.focus()
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      close()
+    } else if (event.key === 'Tab') {
+      menu = false
+    }
+  }
+
+  /** @param {PointerEvent} event */
+  function outside(event) {
+    if (menu && !more?.contains(/** @type {Node} */ (event.target))) menu = false
+  }
+
+  $effect(() => {
+    if (!menu) return
+    addEventListener('pointerdown', outside)
+    return () => removeEventListener('pointerdown', outside)
+  })
+
   /** @param {FocusEvent} event */
   function closeMenu(event) {
     const next = /** @type {Node | null} */ (event.relatedTarget)
@@ -44,24 +90,26 @@
 </script>
 
 <section class="writing" aria-label={t('writing.label')}>
-  <label class="label" for="writing">{t('writing.text')}</label>
-  <textarea id="writing" bind:this={field} class="tg" rows="1" spellcheck="false" autocomplete="off"
+  <label class="ui-label writing-label" for="writing">{t('writing.text')}</label>
+  <textarea id="writing" bind:this={field} class="ui-input writing-field ui-script" rows="1" spellcheck="false" autocomplete="off"
     value={text.value} placeholder={t('writing.placeholder')}
     oninput={event => { setText(event.currentTarget.value); remember() }}
     onkeyup={remember} onclick={caret} onselect={remember} onblur={remember}></textarea>
   <div class="actions">
-    {#if count}<span class="count muted">{count}</span>{/if}
-    <button class="btn" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}>{t('common.copy')}</button>
-    <div class="more" onfocusout={closeMenu}>
-      <button class="btn ghost" type="button" aria-haspopup="menu" aria-expanded={menu} aria-label={t('writing.more')}
-        onclick={() => { menu = !menu }}>
+    {#if count}<span class="count ui-count">{count}</span>{/if}
+    <button class="ui-button" data-size="sm" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}>{t('common.copy')}</button>
+    <div class="more" bind:this={more} onfocusout={closeMenu}>
+      <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" bind:this={trigger}
+        aria-haspopup="menu" aria-expanded={menu} aria-label={t('writing.more')}
+        onclick={() => { menu ? close(false) : open() }}>
         <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><g fill="currentColor"><circle cx="4" cy="10" r="1.7"/><circle cx="10" cy="10" r="1.7"/><circle cx="16" cy="10" r="1.7"/></g></svg>
       </button>
       {#if menu}
-        <div class="menu" role="menu">
-          <button role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodePoints(text.value), t('writing.codePoints')); menu = false }}>{t('writing.copyCodePoints')}</button>
-          <button role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodes(text.value), t('writing.cangjieCodes')); menu = false }}>{t('writing.copyCangjie')}</button>
-          <button role="menuitem" type="button" disabled={!text.value} onclick={() => { setText(''); menu = false; field?.focus() }}>{t('writing.clear')}</button>
+        <div class="ui-menu writing-menu" role="menu" tabindex="-1" bind:this={list} onkeydown={keys}>
+          <button class="ui-menu-item" role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodePoints(text.value), t('writing.codePoints')); close() }}>{t('writing.copyCodePoints')}</button>
+          <button class="ui-menu-item" role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodes(text.value), t('writing.cangjieCodes')); close() }}>{t('writing.copyCangjie')}</button>
+          <hr class="ui-menu-separator" />
+          <button class="ui-menu-item" role="menuitem" type="button" disabled={!text.value} onclick={() => { setText(''); close(false); field?.focus() }}>{t('writing.clear')}</button>
         </div>
       {/if}
     </div>
@@ -69,22 +117,19 @@
 </section>
 
 <style>
-  .writing{position:sticky;top:var(--top);z-index:15;display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--surface);border-bottom:1px solid var(--line)}
-  .label{flex:none;width:44px}
-  textarea{flex:1;min-width:0;resize:none;overflow:auto;padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);font-size:28px;line-height:1.35;letter-spacing:.04em}
-  textarea::placeholder{font-family:var(--ui);font-size:14px;letter-spacing:0;color:var(--muted);line-height:2.4}
-  textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-  .actions{display:flex;align-items:center;gap:4px}
-  .count{font-size:12px;margin-right:6px;font-variant-numeric:tabular-nums}
+  .writing{position:sticky;top:var(--topbar-h);z-index:14;display:flex;align-items:center;gap:var(--ui-space-lg);padding:var(--ui-space-sm) var(--ui-space-2xl);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border)}
+  .writing-label{flex:none;inline-size:44px}
+  .writing-field{flex:1;min-inline-size:0;min-block-size:var(--ui-control-h-lg);max-block-size:150px;padding:var(--ui-space-xs) var(--ui-space-lg);border-color:var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface-sunken);font-size:26px;line-height:1.3;letter-spacing:.04em;resize:none;overflow:auto}
+  .writing-field:hover:not(:disabled){border-color:var(--ui-color-control-border)}
+  .writing-field::placeholder{font-family:var(--ui-font-sans);font-size:var(--ui-text-md);letter-spacing:0;color:var(--ui-color-ink-muted);line-height:2.4}
+  .actions{display:flex;align-items:center;gap:var(--ui-space-2xs)}
+  .count{margin-inline-end:var(--ui-space-xs)}
   .more{position:relative}
-  .menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;display:grid;min-width:210px;padding:5px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:var(--lift)}
-  .menu button{padding:8px 10px;border:0;border-radius:6px;background:none;text-align:left;font-size:13px}
-  .menu button:hover:not(:disabled){background:var(--hover)}
-  .menu button:disabled{opacity:.45;cursor:default}
+  .writing-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);min-inline-size:220px}
   @media (max-width:900px){
-    .writing{gap:8px;padding:8px 12px}
-    .label{display:none}
-    textarea{font-size:24px;padding:6px 10px}
-    textarea::placeholder{line-height:2.1}
+    .writing{gap:var(--ui-space-sm);padding:var(--ui-space-xs) var(--ui-space-lg)}
+    .writing-label{display:none}
+    .writing-field{font-size:22px;padding:6px var(--ui-space-md);min-block-size:36px}
+    .writing-field::placeholder{line-height:2.1}
   }
 </style>

@@ -1,121 +1,33 @@
-/* The script's main face is served from the site: a stylesheet fetched from another origin could
-   hold the first paint for as long as that origin takes to answer. */
-@font-face{font-family:"Noto Serif Tangut";src:url("/fonts/NotoSerifTangut-Regular.woff2") format("woff2");font-display:swap;
-  /* The description operators (⿰ ⿱ …) are in this face too; without them in the range the browser
-     falls through to a face that has none. */
-  unicode-range:U+17000-18AFF,U+18D00-18DFF,U+2FF0-2FFF}
-/* The ideographic description characters the records are written with: sixteen glyphs, 2 KB, so a
-   description can be shown as its own text whatever face the script is set in. */
-@font-face{font-family:"IDS Operators";src:url("/fonts/IDS.woff2") format("woff2");font-display:swap;
-  unicode-range:U+2FF0-2FFF}
-/* The bundled 2.168 lacks the newest components; this subset draws them. */
-@font-face{font-family:"Tangut Supplement";src:url("/fonts/NotoSerifTangut-supplement.woff2") format("woff2");unicode-range:U+18AF3-18AFF,U+18D00-18D08;font-display:swap}
-/* Three faces a reader may set Tangut in: Yinchuan (景永時's design, completed by Andrew West),
-   Wenhai (a subset of BabelStone Tangut Wenhai holding only the characters Noto lacks) and New
-   Tangut Std. Their licences are in FONT-LICENCES.md. */
-@font-face{font-family:"Tangut Yinchuan";src:url("/fonts/TangutYinchuan.ttf") format("truetype");font-display:swap;
-  unicode-range:U+17000-18AFF,U+18D00-18DFF}
-@font-face{font-family:"BabelStone Wenhai";src:url("/fonts/BabelStoneTangutWenhai.ttf") format("truetype");font-display:swap;
-  unicode-range:U+17000-187FF}
-@font-face{font-family:"New Tangut Std";src:url("/fonts/NewTangutStd.ttf") format("truetype");font-display:swap;
-  unicode-range:U+17000-187FF}
-@font-face{font-family:"New Tangut Std Complement";src:url("/fonts/NewTangutStd-complement.woff2") format("woff2");font-display:swap;
-  unicode-range:U+17000-18DFF}
-@font-face{font-family:"BabelStone Complement";src:url("/fonts/BabelStoneTangut-complement.woff2") format("woff2");font-display:swap;
-  unicode-range:U+18800-18DFF}
+/* The app layer: the design system, the faces, and the one thing the system cannot know — which
+   family draws Tangut. Everything else lives in design/. */
+@import '../design/index.css';
+@import './fonts.css';
 
-/* Tangut Input: warm paper and ink, with one vermilion accent for what acts. Every colour is a
-   light-dark() pair, so color-scheme (or the theme switch) picks the side. */
-:root{color-scheme:light dark}
-:root[data-theme="light"]{color-scheme:light}
-:root[data-theme="dark"]{color-scheme:dark}
-:root{
-  --bg:light-dark(#f4efe5,#121110);
-  --surface:light-dark(#fffcf6,#1b1a17);
-  --sunk:light-dark(#ece5d8,#0d0c0b);
-  --raised:light-dark(#f8f3ea,#23211d);
-  --hover:light-dark(#efe7d9,#2a2823);
-  --ink:light-dark(#1e1b17,#ece6dc);
-  --ink-2:light-dark(#4a443b,#c4bcae);
-  --muted:light-dark(#776f63,#958d80);
-  --line:light-dark(#e3dbcc,#2d2a25);
-  --line-strong:light-dark(#cbbfab,#48433b);
-  --accent:light-dark(#b0391d,#f08a6b);
-  --accent-ink:light-dark(#8e2c14,#ffb39c);
-  --accent-soft:light-dark(#f7e4dc,#3a2219);
-  --on-accent:light-dark(#fffaf2,#1d110c);
-  --good:light-dark(#2f6b45,#86c79c);
-  --focus:light-dark(#b0391d,#f08a6b);
-  --shadow:light-dark(0 1px 2px rgb(60 40 20 / .08),0 1px 2px rgb(0 0 0 / .5));
-  --lift:light-dark(0 8px 30px rgb(60 40 20 / .14),0 10px 30px rgb(0 0 0 / .6));
-  --r:10px;
-  /* The reader picks one face; the others are fallbacks for what it lacks. */
-  --tangut:"Noto Serif Tangut","Tangut Supplement","Tangut Yinchuan",serif;
-  /* A description's operators first, then whatever the script is set in. */
-  --ids:"IDS Operators",var(--tangut);
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
-  --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
-  --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans JP","Noto Sans SC",sans-serif;
-  --top:52px;
+/* A field can hold Tangut, Latin or Chinese; the faces claim only their own blocks, so one stack
+   serves all three. */
+.field,
+.menu-input {
+  font-family: var(--tg-font);
 }
-:root[data-tangut="serif"]{--tangut:"Noto Serif Tangut","Tangut Supplement","Tangut Yinchuan",serif}
-:root[data-tangut="yinchuan"]{--tangut:"Tangut Yinchuan","Tangut Supplement","Noto Serif Tangut",serif}
-:root[data-tangut="wenhai"]{--tangut:"BabelStone Wenhai","BabelStone Complement","Tangut Supplement",serif}
-:root[data-tangut="kai"]{--tangut:"New Tangut Std","New Tangut Std Complement","Tangut Supplement",serif}
-*,*::before,*::after{box-sizing:border-box}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-button,input,textarea,select{font:inherit;color:inherit}
-button{cursor:pointer}
-a{color:var(--accent-ink);text-underline-offset:2px}
-:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-::selection{background:var(--accent-soft)}
-/* Scrollbars drawn in the palette: a thin thumb inset from the edge, no track, so a long list or the
-   card reads as one surface rather than a window with a grey bar bolted to it. */
-html{scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
-::-webkit-scrollbar{width:14px;height:14px}
-::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent}
-::-webkit-scrollbar-thumb{background-color:var(--line-strong);background-clip:content-box;border:4px solid transparent;border-radius:999px}
-::-webkit-scrollbar-thumb:hover{background-color:var(--muted)}
-::-webkit-scrollbar-thumb:active{background-color:var(--ink-2)}
-h1,h2,h3{margin:0;font-weight:600}
-p{margin:0}
 
-.tg{font-family:var(--tangut);font-weight:400;line-height:1}
-.mono{font-family:var(--mono);font-size:.92em;letter-spacing:.01em}
-.muted{color:var(--muted)}
-.label{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+/* The reader picks one face; the others are fallbacks for what it lacks. */
+:root {
+  --tg-font: 'Noto Serif Tangut', 'Tangut Supplement', 'Tangut Yinchuan', serif;
+  --tg-ids: 'IDS Operators', var(--tg-font);
+  --ui-font-script: var(--tg-font);
+  --ui-font-ids: var(--tg-ids);
+  --topbar-h: 54px;
+  --writing-h: 62px;
+}
 
-/* Buttons: quiet by default, the accent only for the one action a view is for. */
-.btn{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);font-size:13px;font-weight:500;white-space:nowrap}
-.btn:hover{background:var(--hover)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-.btn.primary:hover{filter:brightness(1.06)}
-.btn.ghost{border-color:transparent;background:transparent}
-.btn.ghost:hover{background:var(--hover)}
-.btn:disabled{opacity:.45;cursor:default}
+:root[data-tangut='yinchuan'] {
+  --tg-font: 'Tangut Yinchuan', 'Tangut Supplement', 'Noto Serif Tangut', serif;
+}
 
-.chip{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:12.5px;color:var(--ink-2)}
-.chip:hover{border-color:var(--line-strong)}
-.chip[aria-pressed="true"],.chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+:root[data-tangut='wenhai'] {
+  --tg-font: 'BabelStone Wenhai', 'BabelStone Complement', 'Tangut Supplement', serif;
+}
 
-kbd{display:inline-block;min-width:1.6em;padding:0 .4em;border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:4px;background:var(--surface);font:500 11px/1.5 var(--mono);text-align:center;color:var(--ink-2)}
-
-.field{width:100%;min-width:0;padding:10px 14px;border:1px solid var(--line-strong);border-radius:var(--r);background:var(--surface);font-size:16px}
-.field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-.field::placeholder{color:var(--muted);opacity:.8}
-
-/* A candidate: the glyph, with an optional line under it. */
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tile,64px),1fr));gap:6px}
-.tile{position:relative;display:grid;grid-template-rows:1fr auto;place-items:center;aspect-ratio:1/1.08;padding:6px 2px 4px;border:1px solid transparent;border-radius:9px;background:var(--surface);box-shadow:var(--shadow);min-width:0}
-.tile:hover{border-color:var(--line-strong)}
-.tile[aria-selected="true"],.tile.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-.tile .tg{font-size:calc(var(--tile,64px) * .5)}
-.tile small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px;color:var(--muted);padding:0 3px}
-
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px}
-.note{padding:10px 12px;border-radius:9px;background:var(--raised);border:1px solid var(--line);color:var(--ink-2);font-size:13px}
-.empty{color:var(--muted);font-size:13.5px}
-/* A code point no font draws yet stands as its number in a dashed box. */
-.nog{display:inline-grid;place-items:center;width:36px;height:36px;padding:2px;border:1px dashed var(--line-strong);border-radius:5px;font:600 9px/1.15 var(--mono);color:var(--muted);word-break:break-all;text-align:center}
+:root[data-tangut='kai'] {
+  --tg-font: 'New Tangut Std', 'New Tangut Std Complement', 'Tangut Supplement', serif;
+}

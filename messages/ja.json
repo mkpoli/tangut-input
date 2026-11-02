@@ -276,5 +276,8 @@
   "fanqie.hint": "まず反切上字を選び、続けて反切下字を選んでください。",
   "chart.mode.sound": "音注（直音）",
   "chart.soundIntro": "音注に記録された{sounds}種の音ごとに、その音を持つ文字と付された反切を一覧します。一つの文字が複数の音のもとに並ぶこともあります。",
-  "reading.system": "再構音"
+  "reading.system": "再構音",
+  "card.renderings": "書体",
+  "card.showFaces": "すべての書体で表示",
+  "card.loadingFaces": "書体を読み込んでいます…"
 }

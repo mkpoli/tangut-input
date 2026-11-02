@@ -5,75 +5,74 @@
   const corpus = $derived(db.attestation?.corpus)
 </script>
 
-<article class="about">
-  <h1>{t('nav.sources')}</h1>
-  <p class="lead">{t('about.lead')}</p>
+<article class="ui-page about" data-width="narrow">
+  <header class="ui-page-head">
+    <h1 class="ui-page-title">{t('nav.sources')}</h1>
+    <p class="ui-page-intro">{t('about.lead')}</p>
+  </header>
 
-  <section>
-    <h2>{t('about.records')}</h2>
+  <section class="ui-section">
+    <h2 class="about-heading">{t('about.records')}</h2>
     <dl>
       <dt>{t('about.recordsTitle')}</dt>
-      <dd><a href="https://github.com/imlooh/open-tangut">Open Tangut</a> by imlooh (MIT), a dictionary of the Tangut block in English, Japanese and Chinese scraped from CCAMC and Wiktionary. 6,144 entries, each with readings in Li Fanwen 2008, Gong Hwang-cherng, Gong Xun 2024-11, Arakawa Shintarō, Miyake, Nishida 1966, Kychanov 2006 and Sofronov 1968, and sound glosses after Li Fanwen and Nie Lishan. The 文海 gloss is present for few entries.</dd>
+      <dd>{@html t('about.openTangut')}</dd>
       <dt>{t('about.cangjieTitle')}</dt>
-      <dd><a href="https://github.com/Hulenkius/rime_tangutcjkk">rime_tangutcjkk</a> by Hulenkius, the Tangut Cangjie scheme of Kawasaki Keigo (2016) for RIME: 11,805 full and short codes, components under codes beginning <span class="mono">p</span>. The table itself warns that some characters are wrongly encoded, and the repository states no licence. This is the repository's 2026.02.02 revision: 4,725 of its 7,058 characters carry more than one code, because a glyph can be analysed more than one way, and every code is accepted and shown. A proposal to standardise the analyses that disagree with each other is still open upstream, so 250 characters hold no code that their parts alone would predict. Tutorial and practice tables: <a href="https://tlistlil.github.io/sps/Tang/cj/">tlistlil.github.io/sps/Tang/cj</a>.</dd>
-      <dt>Rhyme books</dt>
-      <dd><a href="https://github.com/nkay0/Tangut-rhyme-dictionaries-data">Tangut-rhyme-dictionaries-data</a> (西夏語韻書データ) by nkay0: each character's rhyme class in the 文海, its tone, its initial group, and the two characters its fanqie is spelt from, taken from Han Xiaomang (2021) and the editions of the 文海, 文海寶韻, 同音 and 合編. The table's own page and index numbers are not reproduced. The repository states no licence.</dd>
-      <dt>Pronunciations, checked</dt>
-      <dd>The readings are Open Tangut's. Their GX202411 column was compared with <a href="https://github.com/semakosa/tangut-pronunciation-db">Xun Gong's Tangut Pronunciation Database</a> (2025), which is not reproduced here: once its superscript tones are folded to digits, 5,743 of 6,031 readings agree, 88 differ and 58 characters are absent there. The database is under a limited public use licence, so its readings are cited rather than copied.</dd>
+      <dd>{@html t('about.cangjieSource')}</dd>
+      <dt>{t('about.rhymeBooksTitle')}</dt>
+      <dd>{@html t('about.rhymeBooks')}</dd>
+      <dt>{t('about.pronunciationTitle')}</dt>
+      <dd>{@html t('about.pronunciationCheck')}</dd>
       <dt>{t('about.strokesTitle')}</dt>
-      <dd>Ideographs from Unicode’s <a href="https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt">TangutSources.txt</a> (Unicode 18.0); components counted from their glyphs in this project’s review.</dd>
+      <dd>{@html t('about.strokes')}</dd>
       <dt>{t('about.attestTitle')}</dt>
-      <dd>Kirill Solonin and Shintaro Arakawa, <a href="https://hdl.handle.net/10108/0002000647"><i>Śāntideva’s Bodhicaryāvatāra in Tangut Translation</i></a>, vol. 1 (ILCAA, TUFS, 2024), CC BY 4.0: chapter 2, the manuscript IOM RAS Tangut no. 781, with the edition’s English translation and facsimile. The facsimile reproduces photographs by the Institute of Ethnology, CASS. Line readings: ぶんぽ, <a href="https://note.com/bunpo10381227">西夏語公開自主ゼミ</a> (note.com, 2024-12-30 to 2025-09-15), linked line by line and not reproduced. Lines, character boxes and crops recorded by Glyph Atlas.
-        {#if corpus}So far: {corpus.lines} lines, {corpus.characters} characters, {corpus.distinct} distinct.{/if}</dd>
+      <dd>
+        {@html t('about.attestation')}
+        {#if corpus}{@html t('about.attestCount', { lines: corpus.lines, characters: corpus.characters, distinct: corpus.distinct })}{/if}
+      </dd>
       <dt>{t('about.glyphsTitle')}</dt>
-      <dd>Noto Serif Tangut (SIL OFL 1.1), from Google Fonts. The drawing pad’s glyph masks are rendered from the same font.</dd>
+      <dd>{@html t('about.glyphs')}</dd>
     </dl>
   </section>
 
-  <section>
-    <h2>{t('about.how')}</h2>
+  <section class="ui-section">
+    <h2 class="about-heading">{t('about.how')}</h2>
     <dl>
       <dt>{t('nav.cangjie')}</dt>
-      <dd>A typed code lists every character whose full or short code begins with it: an exact code first, then shorter codes. Wrong codes in the table are found as the table has them.</dd>
+      <dd>{@html t('about.howCangjie')}</dd>
       <dt>{t('nav.reading')}</dt>
-      <dd>Readings in all eight systems are folded to plain letters: diacritics dropped, IPA letters replaced by the nearest Latin letter (<span class="mono">ɨ ɪ → i</span>, <span class="mono">ə → e</span>, <span class="mono">ŋ → ng</span>), separators removed. A final digit is the tone. Near matches also ignore medial <span class="mono">j</span> and <span class="mono">y</span> and a prenasal before a stop.</dd>
+      <dd>{@html t('about.howReading')}</dd>
       <dt>{t('nav.draw')}</dt>
-      <dd>The drawing and each glyph are stretched into the same 32-pixel square, the glyph reduced to a one-cell line along its pen, and compared by how far each line lies from the other’s and by the direction the ink runs at each point. Stroke order plays no part. On eighty characters drawn by one reader, the right character came first about three times in ten and within the first five about one time in two.</dd>
+      <dd>{@html t('about.howDraw')}</dd>
       <dt>{t('nav.parts')}</dt>
-      <dd>A character matches when its description holds every chosen part, as often as chosen. Descriptions are Open Tangut’s and use components only.</dd>
+      <dd>{@html t('about.howParts')}</dd>
       <dt>{t('attest.title')}</dt>
-      <dd>A character outside the corpus has no attestation <em>yet</em>: the corpus is one chapter, and absence says nothing about the character.</dd>
+      <dd>{@html t('about.howAttest')}</dd>
     </dl>
   </section>
 
-  <section>
-    <h2>{t('about.mark')}</h2>
-    <p><span class="tg">𘅤</span> (U+18164), glossed “to write” in Open Tangut, read <i>rjar¹</i> by Li Fanwen.</p>
+  <section class="ui-section">
+    <h2 class="about-heading">{t('about.mark')}</h2>
+    <p class="ui-prose">{@html t('about.markText')}</p>
   </section>
 
-  <section>
-    <h2>What is kept</h2>
-    <p class="lead">Every drawing made on the Draw page and every character picked from a finder is
-    recorded with the finder it came from, the character chosen and the place it stood in the list.
-    A drawing kept with a pick is one example the search could be measured or trained on. A record
-    carries a random id that lives in your browser, never your address, and there is no account.
-    The quiz saves the same fields for each round, with the prompt it asked for.</p>
+  <section class="ui-section">
+    <h2 class="about-heading">{t('about.keptTitle')}</h2>
+    <p class="ui-prose">{@html t('about.kept')}</p>
   </section>
 
-  <p class="muted small">{t('about.code')} <a href="https://github.com/mkpoli/tangut-input">github.com/mkpoli/tangut-input</a>.
-  Descriptions are also composed in the <a href="https://ids.mkpo.li/">IDS Workshop</a>, which runs
-  on the same component data; <a href="https://github.com/mkpoli/ids-input/blob/main/data/README.md">its data notes</a>
-  give each file's source and licence.</p>
+  <footer class="about-foot ui-hint">
+    {t('about.code')} <a href="https://github.com/mkpoli/tangut-input">github.com/mkpoli/tangut-input</a>.
+    {@html t('about.footer')}
+  </footer>
 </article>
 
 <style>
-  .about{max-width:760px;display:grid;gap:22px;padding-bottom:40px}
-  h1{font-family:var(--serif);font-size:30px;font-weight:600}
-  h2{font-family:var(--serif);font-size:19px;margin-bottom:8px}
-  .lead{font-size:15px;color:var(--ink-2)}
-  dl{display:grid;gap:12px;margin:0}
-  dt{font-weight:600;font-size:13.5px}
-  dd{margin:2px 0 0;font-size:14px;line-height:1.6;color:var(--ink-2)}
-  .tg{font-size:22px;vertical-align:-3px}
-  .small{font-size:12.5px}
+  .about{gap:var(--ui-space-3xl);padding-bottom:var(--ui-space-5xl)}
+  .about-heading{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold)}
+  dl{display:grid;margin:0}
+  dt{padding-top:var(--ui-space-lg);margin-top:var(--ui-space-lg);border-top:1px solid var(--ui-color-border);font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold)}
+  dt:first-of-type{padding-top:0;margin-top:0;border-top:0}
+  dd{margin:var(--ui-space-2xs) 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-md);line-height:var(--ui-leading-loose)}
+  .about :global(.ui-script){font-size:22px;vertical-align:-3px}
+  .about-foot{font-size:var(--ui-text-xs);line-height:1.6;border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg)}
 </style>

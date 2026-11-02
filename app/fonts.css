@@ -1,0 +1,74 @@
+/* The faces this site serves. Kept in the app, not the design system: a host page brings its own
+   fonts. The system only needs to know which family draws the script. */
+
+/* The script's main face is served from the site: a stylesheet fetched from another origin could
+   hold the first paint for as long as that origin takes to answer. */
+@font-face {
+  font-family: 'Noto Serif Tangut';
+  src: url('/fonts/NotoSerifTangut-Regular.woff2') format('woff2');
+  font-display: swap;
+  /* The description operators (⿰ ⿱ …) are in this face too; without them in the range the
+     browser falls through to a face that has none. */
+  unicode-range: U+17000-18AFF, U+18D00-18DFF, U+2FF0-2FFF;
+}
+
+/* The ideographic description characters the records are written with: sixteen glyphs, 2 KB, so a
+   description can be shown as its own text whatever face the script is set in. */
+@font-face {
+  font-family: 'IDS Operators';
+  src: url('/fonts/IDS.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+2FF0-2FFF;
+}
+
+/* The bundled 2.168 lacks the newest components; this subset draws them. */
+@font-face {
+  font-family: 'Tangut Supplement';
+  src: url('/fonts/NotoSerifTangut-supplement.woff2') format('woff2');
+  unicode-range: U+18AF3-18AFF, U+18D00-18D08;
+  font-display: swap;
+}
+
+/* Three further faces a reader may set Tangut in: Yinchuan (景永時's design, completed by Andrew
+   West), Wenhai (a subset of BabelStone Tangut Wenhai holding only the characters Noto lacks) and
+   New Tangut Std. Their licences are in FONT-LICENCES.md. */
+@font-face {
+  font-family: 'Tangut Yinchuan';
+  src: url('/fonts/TangutYinchuan.ttf') format('truetype');
+  font-display: swap;
+  unicode-range: U+17000-18AFF, U+18D00-18DFF;
+}
+
+@font-face {
+  font-family: 'BabelStone Wenhai';
+  src: url('/fonts/BabelStoneTangutWenhai.ttf') format('truetype');
+  font-display: swap;
+  unicode-range: U+17000-187FF;
+}
+
+@font-face {
+  font-family: 'New Tangut Std';
+  src: url('/fonts/NewTangutStd.ttf') format('truetype');
+  font-display: swap;
+  unicode-range: U+17000-187FF;
+}
+
+@font-face {
+  font-family: 'New Tangut Std Complement';
+  src: url('/fonts/NewTangutStd-complement.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+17000-18DFF;
+}
+
+@font-face {
+  font-family: 'BabelStone Complement';
+  src: url('/fonts/BabelStoneTangut-complement.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+18800-18DFF;
+}
+
+/* Faces a reader can compare a character in, fetched only when the card asks for them. */
+@font-face { font-family: 'GenZui Sans'; src: url('/fonts/GenZuiSansTangut.ttf') format('truetype'); font-display: swap; unicode-range: U+17000-18DFF; }
+@font-face { font-family: 'Mojikyo Tangut'; src: url('/fonts/MojikyoTangut.ttf') format('truetype'); font-display: swap; unicode-range: U+17000-18DFF; }
+@font-face { font-family: 'Tangut N4694'; src: url('/fonts/TangutN4694.ttf') format('truetype'); font-display: swap; unicode-range: U+17000-18DFF; }
+@font-face { font-family: 'Tangut TWU'; src: url('/fonts/TangutTWU.ttf') format('truetype'); font-display: swap; unicode-range: U+17000-18DFF; }
