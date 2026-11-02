@@ -234,7 +234,6 @@
   "fanqie.placeholder": "二字を入力、例：𗃦𗏟",
   "fanqie.label": "反切用字",
   "fanqie.none": "韻書に「{text}」で反切される文字はありません。",
-  "fanqie.one": "まず反切上字を選び、続けて反切下字を選んでください。",
   "card.fanqieFor": "この字を反切に含む文字（{count}）",
   "fanqie.reading": "再構音",
   "fanqie.ownLabel": "この字自身の反切",
@@ -273,5 +272,6 @@
   "nav.sources.hint": "収録データの出典",
   "nav.menuClose": "メニューを閉じる",
   "chart.order": "同じ韻の声調をまとめる",
-  "chart.system": "軸の再構音"
+  "chart.system": "軸の再構音",
+  "fanqie.hint": "まず反切上字を選び、続けて反切下字を選んでください。"
 }

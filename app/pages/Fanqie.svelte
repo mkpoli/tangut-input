@@ -74,7 +74,7 @@
   {/if}
 
   {#if !text}
-    <p class="muted hint">{t('fanqie.one')}</p>
+    <p class="muted hint">{t('fanqie.hint')}</p>
   {:else if !ready}
     <p class="empty">{t('common.loading')}</p>
   {:else if !hits.length}

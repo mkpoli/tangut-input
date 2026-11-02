@@ -234,7 +234,6 @@
   "fanqie.placeholder": "two characters, e.g. 𗃦𗏟",
   "fanqie.label": "Fanqie characters",
   "fanqie.none": "No character in the rhyme books is spelt with “{text}”.",
-  "fanqie.one": "Choose the upper character first, then the lower.",
   "card.fanqieFor": "Spelt with it ({count})",
   "fanqie.reading": "Reconstruction",
   "fanqie.ownLabel": "This character’s own fanqie",
@@ -273,5 +272,6 @@
   "nav.sources.hint": "Where the records come from",
   "nav.menuClose": "Close the menu",
   "chart.order": "Keep a rhyme’s tones together",
-  "chart.system": "Read the axes in"
+  "chart.system": "Read the axes in",
+  "fanqie.hint": "Choose the upper character first, then the lower."
 }

@@ -6,6 +6,7 @@
   import { choose, put, ui, setReading } from '../lib/ui.svelte.js'
   import { t, i18n } from '../lib/i18n.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
+  import { hanFanqie } from '../lib/fanqie.js'
 
   // The chart can be read two ways: by the rhyme books' own classes, or by the characters the
   // spellings are read from — the upper down one axis, the lower down the other — and each of those
@@ -15,7 +16,6 @@
   const view = $state(/** @type {{ mode: string }} */ ({ mode: 'rhyme' }))
   let page = $state(0)
   const PER_PAGE = 20
-  const HAN = /([\u4e00-\u9fff])([\u4e00-\u9fff])切/
 
   // The nine initial classes of the 同音, as the rhyme books name them: the Roman numeral is the
   // class, the Chinese word is the class's own name.
@@ -96,19 +96,7 @@
    * The Chinese fanqie records, each naming the character it spells, its two characters and the
    * 直音 it is glossed with. @type {{ char: string, upper: string, lower: string, zhiyin: string }[]}
    */
-  const hanRecords = $derived.by(() => {
-    /** @type {{ char: string, upper: string, lower: string, zhiyin: string }[]} */
-    const list = []
-    if (!ready) return list
-    for (const entry of ix.entries) {
-      const text = entry.pronunciations?.sound_li_fanwen ?? ''
-      const found = HAN.exec(text)
-      if (!found) continue
-      const zhiyin = /[，,]\s*音([^，,。]+)/.exec(text)?.[1]?.replace(/[（(].*?[)）]/g, '').trim() ?? ''
-      list.push({ char: entry.char, upper: found[1], lower: found[2], zhiyin })
-    }
-    return list
-  })
+  const hanRecords = $derived(ready ? hanFanqie(ix.entries) : [])
 
   /**
    * Two spellings that give one 直音 are one syllable, whatever their two characters, so the

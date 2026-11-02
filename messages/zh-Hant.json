@@ -234,7 +234,6 @@
   "fanqie.placeholder": "輸入兩字，如𗃦𗏟",
   "fanqie.label": "反切用字",
   "fanqie.none": "韻書中沒有以「{text}」作切語的字。",
-  "fanqie.one": "請先選反切上字，再選反切下字。",
   "card.fanqieFor": "反切中用到此字的字（{count}）",
   "fanqie.reading": "擬音",
   "fanqie.ownLabel": "此字自身的反切",
@@ -273,5 +272,6 @@
   "nav.sources.hint": "所收記錄的出處",
   "nav.menuClose": "關閉選單",
   "chart.order": "將同韻的聲調排在一起",
-  "chart.system": "縱橫軸擬音"
+  "chart.system": "縱橫軸擬音",
+  "fanqie.hint": "請先選反切上字，再選反切下字。"
 }

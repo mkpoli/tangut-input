@@ -2,16 +2,44 @@
   "$schema": "https://x18n.dev/schema/config.json",
   "sourceLocale": "en",
   "resources": [
-    { "pattern": "messages/{locale}.json", "namespace": "core" },
-    { "pattern": "demo/messages/{locale}.json", "namespace": "demo" }
+    {
+      "pattern": "messages/{locale}.json",
+      "namespace": "core"
+    }
   ],
-  "namespace": { "separator": ":", "default": "core", "byFile": { "demo/**": "demo" }, "fallback": ["core"] },
-  "keyStyle": "flat",
-  "plugins": ["./.x18n/placeholders.x18n-plugin.yml"],
-  "usage": {
-    "include": ["src/svelte/**", "demo/*.svelte", "demo/ui/**", "demo/lib/**"],
-    "calls": [{ "callee": "t" }, { "callee": "editor.t" }],
-    "derivedKeys": ["{key}.{plural}"]
+  "namespace": {
+    "separator": ":",
+    "default": "core",
+    "byFile": {
+      "demo/**": "demo",
+      "src/svelte/**": "demo"
+    },
+    "fallback": [
+      "core"
+    ]
   },
-  "checks": { "missing-translation": "error", "empty-translation": "error" }
+  "keyStyle": "flat",
+  "plugins": [
+    "./.x18n/placeholders.x18n-plugin.yml"
+  ],
+  "usage": {
+    "include": [
+      "app/**"
+    ],
+    "calls": [
+      {
+        "callee": "t"
+      },
+      {
+        "callee": "editor.t"
+      }
+    ],
+    "derivedKeys": [
+      "{key}.{plural}"
+    ]
+  },
+  "checks": {
+    "missing-translation": "error",
+    "empty-translation": "error"
+  }
 }
