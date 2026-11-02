@@ -271,5 +271,6 @@
   "pos.loanword": "漢語借用語",
   "nav.more": "その他",
   "nav.sources.hint": "収録データの出典",
-  "nav.menuClose": "メニューを閉じる"
+  "nav.menuClose": "メニューを閉じる",
+  "chart.order": "同じ韻の声調をまとめる"
 }

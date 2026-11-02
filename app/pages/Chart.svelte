@@ -72,19 +72,23 @@
     return byRhyme
   })
 
-  /** The rows, in the order the rhyme books keep them: by tone, then by rhyme number. */
+  /** Whether the two tones of a rhyme sit together, or the rhymes come in the tone sections the
+   *  rhyme books keep. NGWU YOH's reading of the chart is the first, and the default. */
+  const view2 = $state({ adjacent: true })
   const rows = $derived.by(() => {
     const list = [...table.entries()].map(([key, columns]) => {
       const [rhyme, tone] = key.split('·').map(Number)
       const count = [...columns.values()].reduce((sum, column) => sum + column.length, 0)
       return { key, rhyme, tone, columns, count }
     })
-    return list.sort((a, b) => TONES.indexOf(a.tone) - TONES.indexOf(b.tone) || a.rhyme - b.rhyme)
+    return list.sort(view2.adjacent
+      ? (a, b) => a.rhyme - b.rhyme || TONES.indexOf(a.tone) - TONES.indexOf(b.tone)
+      : (a, b) => TONES.indexOf(a.tone) - TONES.indexOf(b.tone) || a.rhyme - b.rhyme)
   })
 
   /** A spelling grid: columns are the upper characters, rows the lower ones. */
   const spelling = $derived.by(() => {
-    /** @type {Map<string, Map<string, string[]>>} */
+    /** @type {Map<string, Map<string, { char: string, zhiyin: string }[]>>} */
     const grid = new Map()
     if (!ready) return grid
     if (String(view.mode) === 'han') {
@@ -94,10 +98,12 @@
         const found = HAN.exec(text)
         if (!found) continue
         const [, upper, lower] = found
+        // 音X is the gloss's direct sound: the Chinese character this one sounds like.
+        const zhiyin = /[，,]\s*音([^，,。]+)/.exec(text)?.[1]?.replace(/[（(].*?[)）]/g, '').trim() ?? ''
         const row = grid.get(lower) ?? new Map()
         grid.set(lower, row)
         const column = row.get(upper) ?? []
-        column.push(entry.char)
+        column.push({ char: entry.char, zhiyin })
         row.set(upper, column)
       }
     } else {
@@ -108,11 +114,11 @@
         const row = grid.get(lower) ?? new Map()
         grid.set(lower, row)
         const column = row.get(upper) ?? []
-        column.push(char)
+        column.push({ char, zhiyin: '' })
         row.set(upper, column)
       }
     }
-    for (const row of grid.values()) for (const column of row.values()) column.sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
+    for (const row of grid.values()) for (const column of row.values()) column.sort((a, b) => (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
     return grid
   })
 
@@ -151,6 +157,9 @@
       <button type="button" class="chip" aria-pressed={String(view.mode) === 'rhyme'} onclick={() => { view.mode = 'rhyme'; page = 0 }}>{t('chart.mode.rhyme')}</button>
       <button type="button" class="chip" aria-pressed={String(view.mode) === 'tangut'} onclick={() => { view.mode = 'tangut'; page = 0 }}>{t('chart.mode.tangut')}</button>
       <button type="button" class="chip" aria-pressed={String(view.mode) === 'han'} onclick={() => { view.mode = 'han'; page = 0 }}>{t('chart.mode.han')}</button>
+      {#if String(view.mode) === 'rhyme'}
+        <button type="button" class="chip" aria-pressed={view2.adjacent} onclick={() => { view2.adjacent = !view2.adjacent }}>{t('chart.order')}</button>
+      {/if}
     </div>
   </header>
 
@@ -176,7 +185,7 @@
               <th scope="row" class="rhyme tg">{row.lower}</th>
               {#each row.cells as cell, i (i)}
                 <td>
-                  {#each cell as char (char)}<button type="button" class="tg cell" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}</button>{/each}
+                  {#each cell as item (item.char)}<button type="button" class="tg cell" title={detail(item.char)} onclick={() => choose(item.char)} ondblclick={() => put(item.char)}>{item.char}{#if item.zhiyin}<small>{item.zhiyin}</small>{/if}</button>{/each}
                 </td>
               {/each}
             </tr>
@@ -200,12 +209,16 @@
           </tr>
         </thead>
         <tbody>
-          {#each rows as row (row.key)}
-            {#if row.tone !== rows[rows.indexOf(row) - 1]?.tone}
+          {#each rows as row, index (row.key)}
+            {#if !view2.adjacent && row.tone !== rows[index - 1]?.tone}
               <tr class="tone"><th colspan={GROUPS.length + 1}>{t(TONE_KEY[row.tone])}</th></tr>
             {/if}
             <tr>
-              <th scope="row" class="rhyme"><span>{row.rhyme}</span><small class="muted">{row.count}</small></th>
+              <th scope="row" class="rhyme">
+                <span>{row.rhyme}</span>
+                {#if view2.adjacent}<span class="tone-label">{t(TONE_KEY[row.tone])}</span>{/if}
+                <small class="muted">{row.count}</small>
+              </th>
               {#each GROUPS as group (group)}
                 <td>
                   {#if row.columns.get(group)?.length}
@@ -239,10 +252,12 @@
   thead th.group small{display:block;font-size:10px;color:var(--muted);font-weight:400}
   tbody th.rhyme{position:sticky;left:0;z-index:1;background:var(--raised);border-right:1px solid var(--line-strong);padding:4px 8px;text-align:right;font:600 13px var(--mono);white-space:nowrap;min-width:52px}
   tbody th.rhyme small{display:block;font-weight:400;font-size:10px}
+  tbody th.rhyme .tone-label{display:block;font-family:var(--ui);font-size:10.5px;font-weight:400;color:var(--muted);white-space:nowrap}
   tr.tone th{position:sticky;left:0;background:var(--sunk);color:var(--muted);text-align:left;padding:5px 10px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border-top:1px solid var(--line-strong)}
   td{vertical-align:top;border-top:1px solid var(--line);border-left:1px solid var(--line);padding:3px;min-width:84px}
   .cell{font-family:var(--tangut);font-size:19px;line-height:1.12;border:0;background:none;padding:1px 2px;border-radius:5px;color:var(--ink)}
   .cell:hover{background:var(--accent-soft);color:var(--accent-ink)}
+  .cell small{display:block;font-family:var(--ui);font-size:9.5px;color:var(--muted);line-height:1.1}
   .legend{font-size:12.5px;max-width:60em}
   .pager{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .pager .muted{font-size:12.5px;margin-left:auto}

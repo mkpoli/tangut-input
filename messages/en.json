@@ -271,5 +271,6 @@
   "pos.loanword": "Chinese loanword",
   "nav.more": "More",
   "nav.sources.hint": "Where the records come from",
-  "nav.menuClose": "Close the menu"
+  "nav.menuClose": "Close the menu",
+  "chart.order": "Keep a rhyme’s tones together"
 }

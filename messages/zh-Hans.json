@@ -271,5 +271,6 @@
   "pos.loanword": "汉语借词",
   "nav.more": "更多",
   "nav.sources.hint": "所收记录的出处",
-  "nav.menuClose": "关闭菜单"
+  "nav.menuClose": "关闭菜单",
+  "chart.order": "将同韵的声调排在一起"
 }
