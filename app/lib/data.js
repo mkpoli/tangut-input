@@ -86,6 +86,9 @@ export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/t
 /** The rhyme books' class for each character, with its fanqie. @returns {Promise<Rhymes>} */
 export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/tangut-rhymes.json.gz', import.meta.url)))
 
+/** Groups of Chinese fanqie characters that stand for one initial. @returns {Promise<{ note: string, groups: string[][] }>} */
+export const loadFanqieAliases = () => once('fanqie-aliases', () => readJson(new URL('../data/tangut-fanqie-aliases.json', import.meta.url)))
+
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */
 export const loadStrokes = () => once('strokes', async () => (await readJson(new URL('../data/tangut-strokes.json.gz', import.meta.url))).values)
 

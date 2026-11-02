@@ -100,11 +100,13 @@
         const [, upper, lower] = found
         // 音X is the gloss's direct sound: the Chinese character this one sounds like.
         const zhiyin = /[，,]\s*音([^，,。]+)/.exec(text)?.[1]?.replace(/[（(].*?[)）]/g, '').trim() ?? ''
+        // Two upper characters that stand for one initial are one column, labelled with both.
+        const joined = (ix.fanqieAliases.get(upper) ?? [upper]).join('')
         const row = grid.get(lower) ?? new Map()
         grid.set(lower, row)
-        const column = row.get(upper) ?? []
+        const column = row.get(joined) ?? []
         column.push({ char: entry.char, zhiyin })
-        row.set(upper, column)
+        row.set(joined, column)
       }
     } else {
       for (const [char, value] of ix.rhymes) {

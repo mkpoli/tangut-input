@@ -1,0 +1,6 @@
+{
+  "note": "Chinese fanqie upper characters that spell the same initial and stand for one another. Curated, not read from a Chinese rhyme book: each group is one initial written several ways. Add a group when two characters are known to be the same 聲母 in 文海's usage.",
+  "groups": [
+    ["名", "梅"]
+  ]
+}

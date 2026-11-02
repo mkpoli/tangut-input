@@ -1,6 +1,6 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao, loadRhymes } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao, loadRhymes, loadFanqieAliases } from './data.js'
 import { indexReadings } from './reading.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
@@ -43,12 +43,14 @@ export const ix = {
   /** The rhyme books' record by character. @type {Map<string, import('./data.js').RhymeChars[string]>} */ rhymes: new Map(),
   /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
+  /** The several characters that stand for one Chinese fanqie initial: each maps to its group. @type {Map<string, string[]>} */ fanqieAliases: new Map(),
 }
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, aliases] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
+      loadFanqieAliases().catch(() => null),
     ])
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
@@ -74,6 +76,7 @@ export async function load() {
       }
       ix.partsOf.set(entry.char, counts)
     }
+    if (aliases) for (const group of aliases.groups) for (const char of group) ix.fanqieAliases.set(char, group)
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))
       ix.rhymeSource = rhymes.source
