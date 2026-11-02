@@ -22,6 +22,20 @@
   const ownSpelling = $derived(own ? (own[3] || own[4] ? `${own[3] ?? ''}${own[4] ?? ''}` : `${own[5] ?? ''}${own[6] ?? ''}`) : '')
   /** @param {string} char */
   const reading = char => (ix.byChar.get(char)?.pronunciations ?? {})[system]?.trim() ?? ''
+
+  // A fanqie is a spelling: two characters fix one reading. So where a character has no reading of
+  // its own recorded, the spelling it shares with a character that has one still gives it — taken
+  // from that character, and marked as inferred because no source states it for this one.
+  const inferred = $derived.by(() => {
+    /** @type {Map<string, { value: string, from: string }>} */
+    const map = new Map()
+    for (const hit of hits) {
+      if (!hit.spelling || map.has(hit.spelling)) continue
+      const value = reading(hit.char)
+      if (value) map.set(hit.spelling, { value, from: hit.char })
+    }
+    return map
+  })
 </script>
 
 <div class="fanqie">
@@ -55,7 +69,8 @@
       <span class="own-meta">
         {#if own[0]}<span class="muted">{t('card.rhyme')} {own[0]}</span>{/if}
         {#if own[1]}<span class="muted"> · {t(`card.tone.${own[1] === 1 ? 'level' : own[1] === 2 ? 'rising' : 'entering'}`)}</span>{/if}
-        {#if reading(text)}<span class="own-reading">{reading(text)}</span>{/if}
+        {#if reading(text)}<span class="own-reading">{reading(text)}</span>
+        {:else if inferred.get(ownSpelling)}<span class="own-reading guess" title={t('fanqie.inferred', { char: inferred.get(ownSpelling)?.from ?? '' })}>{inferred.get(ownSpelling)?.value}</span>{/if}
       </span>
     </section>
   {/if}
@@ -78,8 +93,12 @@
               {#if hit.lower}<span class="cut"><span class="tg">{hit.lower}</span>{#if reading(hit.lower)}<small>{reading(hit.lower)}</small>{/if}</span>{/if}
             </span>
             <span class="meta">
-              {#if reading(hit.char)}<span class="say">{reading(hit.char)}</span>{/if}
-              {#if hit.rhyme}<span class="muted">{#if reading(hit.char)} · {/if}{t('card.rhyme')} {hit.rhyme}</span>{/if}
+              {#if reading(hit.char)}
+                <span class="say">{reading(hit.char)}</span>
+              {:else if inferred.get(hit.spelling)}
+                <span class="say guess" title={t('fanqie.inferred', { char: inferred.get(hit.spelling)?.from ?? '' })}>{inferred.get(hit.spelling)?.value}</span>
+              {/if}
+              {#if hit.rhyme}<span class="muted">{#if reading(hit.char) || inferred.get(hit.spelling)} · {/if}{t('card.rhyme')} {hit.rhyme}</span>{/if}
             </span>
             <span class="gl">{gloss(hit.char)}</span>
           </button>
@@ -106,6 +125,7 @@
   .own-meta{display:flex;align-items:center;gap:6px;font-size:13px;margin-left:auto}
   .own-reading{font-family:var(--serif);font-size:15px;padding-left:8px}
   .say{font-family:var(--serif)}
+  .guess{color:var(--muted);font-style:italic;border-bottom:1px dotted var(--line-strong);cursor:help}
   .hint{font-size:13.5px}
   .summary{font-size:12.5px}
   .rows{list-style:none;margin:0;padding:0;display:grid;gap:2px}

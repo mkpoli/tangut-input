@@ -244,5 +244,15 @@
   "chart.rhyme": "Rhyme",
   "chart.group": "Initial",
   "chart.tone.unknown": "Tone unrecorded",
-  "chart.legend": "The 105 rhymes and nine initial groups are the rhyme books’ own; the crossings are read from the 同音 and 文海 tables. Tibetan transcriptions are not recorded in this data, so the cells hold the characters, their fanqie and the Chinese sound gloss."
+  "chart.legend": "The 105 rhymes and nine initial groups are the rhyme books’ own; the crossings are read from the 同音 and 文海 tables. Tibetan transcriptions are not recorded in this data, so the cells hold the characters, their fanqie and the Chinese sound gloss.",
+  "fanqie.inferred": "No source gives this character a reading; inferred from the spelling it shares with {char}.",
+  "chart.axis": "Axes",
+  "chart.mode.rhyme": "By rhyme and initial",
+  "chart.mode.tangut": "By Tangut fanqie",
+  "chart.mode.han": "By Chinese fanqie",
+  "chart.page": "Page {page} of {pages}",
+  "chart.prev": "Previous page of initials",
+  "chart.next": "Next page of initials",
+  "chart.lower": "Lower",
+  "chart.upper": "Upper"
 }

@@ -244,5 +244,15 @@
   "chart.rhyme": "韻部",
   "chart.group": "聲類",
   "chart.tone.unknown": "聲調未詳",
-  "chart.legend": "一百零五韻與九音皆依韻書原有之目；縱橫相交據《同音》與《文海》諸表排出。本資料未收錄藏文對音，故各格僅列字形、反切及漢字音注。"
+  "chart.legend": "一百零五韻與九音皆依韻書原有之目；縱橫相交據《同音》與《文海》諸表排出。本資料未收錄藏文對音，故各格僅列字形、反切及漢字音注。",
+  "fanqie.inferred": "諸資料均未載此字讀音；據其與{char}共用的反切推得。",
+  "chart.axis": "縱橫軸",
+  "chart.mode.rhyme": "按韻部與聲類",
+  "chart.mode.tangut": "按西夏文反切",
+  "chart.mode.han": "按漢字反切",
+  "chart.page": "第{page}頁，共{pages}頁",
+  "chart.prev": "上一頁上字",
+  "chart.next": "下一頁上字",
+  "chart.lower": "下字",
+  "chart.upper": "上字"
 }
