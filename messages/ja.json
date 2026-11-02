@@ -272,5 +272,6 @@
   "nav.more": "その他",
   "nav.sources.hint": "収録データの出典",
   "nav.menuClose": "メニューを閉じる",
-  "chart.order": "同じ韻の声調をまとめる"
+  "chart.order": "同じ韻の声調をまとめる",
+  "chart.system": "軸の再構音"
 }

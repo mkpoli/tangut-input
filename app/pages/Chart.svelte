@@ -4,7 +4,8 @@
   // stand at that crossing — the place a dictionary of the 文海 would put them.
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import { choose, put } from '../lib/ui.svelte.js'
-  import { t } from '../lib/i18n.svelte.js'
+  import { t, i18n } from '../lib/i18n.svelte.js'
+  import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
 
   // The chart can be read two ways: by the rhyme books' own classes, or by the characters the
   // spellings are read from — the upper down one axis, the lower down the other — and each of those
@@ -24,6 +25,12 @@
     { roman: 'Ⅶ', zh: '正齒音' }, { roman: 'Ⅷ', zh: '喉音' }, { roman: 'Ⅸ', zh: '來日音' },
   ]
   const GROUPS = CLASSES.map(entry => entry.roman)
+  // Which reconstruction the axes are read in: 龔勛 (GX202411) unless the reader picks another.
+  const view3 = $state({ system: 'gong_xun_202411' })
+  /** @param {string} reading */
+  const toneOff = reading => reading.replace(/[¹²³⁴⁵⁰?\d]+$/g, '')
+  /** The initial a reading begins with: everything before its first vowel. @param {string} reading */
+  const initialOf = reading => /^[^aeiouəɨɐɛɔɑ]+/i.exec(toneOff(reading))?.[0] ?? ''
   /** The initials the readings in each class begin with, most common first: the class's sound. */
   const onsets = $derived.by(() => {
     /** @type {Map<string, string[]>} */
@@ -33,9 +40,9 @@
     const counts = new Map()
     for (const entry of ix.entries) {
       const roman = ix.rhymes.get(entry.char)?.[2]
-      const reading = entry.pronunciations?.gong_huangcheng?.trim() ?? ''
+      const reading = entry.pronunciations?.[view3.system]?.trim() ?? ''
       if (!roman || !reading) continue
-      const head = /^[^aeiouəɨ]+/.exec(reading)?.[0]
+      const head = initialOf(reading)
       if (!head) continue
       const row = counts.get(roman) ?? new Map()
       counts.set(roman, row)
@@ -154,6 +161,30 @@
     return found
   })
 
+  /** The final each rhyme is read with in the chosen system, most common first. */
+  const finals = $derived.by(() => {
+    /** @type {Map<string, string[]>} */
+    const found = new Map()
+    if (!ready) return found
+    /** @type {Map<string, Map<string, number>>} */
+    const counts = new Map()
+    for (const [char, value] of ix.rhymes) {
+      const [rhyme, tone] = value
+      if (typeof rhyme !== 'number') continue
+      const reading = ix.byChar.get(char)?.pronunciations?.[view3.system]?.trim() ?? ''
+      const initial = initialOf(reading)
+      if (!reading || !initial) continue
+      const final = toneOff(reading).slice(initial.length)
+      if (!final) continue
+      const key = `${rhyme}·${tone ?? 0}`
+      const row = counts.get(key) ?? new Map()
+      counts.set(key, row)
+      row.set(final, (row.get(final) ?? 0) + 1)
+    }
+    for (const [key, row] of counts) found.set(key, [...row.entries()].sort((a, b) => b[1] - a[1]).slice(0, 2).map(([final]) => final))
+    return found
+  })
+
   /** The rhyme a Chinese lower character most often spells, the counterpart of the upper's class. */
   const lowerRhymes = $derived.by(() => {
     /** @type {Map<string, string>} */
@@ -204,6 +235,12 @@
       {#if String(view.mode) === 'rhyme'}
         <button type="button" class="chip" aria-pressed={view2.adjacent} onclick={() => { view2.adjacent = !view2.adjacent }}>{t('chart.order')}</button>
       {/if}
+      <label class="choose">
+        <span class="label">{t('chart.system')}</span>
+        <select class="field" bind:value={view3.system} aria-label={t('chart.system')}>
+          {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+        </select>
+      </label>
     </div>
   </header>
 
@@ -263,6 +300,7 @@
               <th scope="row" class="rhyme">
                 <span>{row.rhyme}</span>
                 {#if view2.adjacent}<span class="tone-label">{t(TONE_KEY[row.tone])}</span>{/if}
+                {#if finals.get(row.key)?.length}<span class="final">{finals.get(row.key)?.join(' ')}</span>{/if}
                 <small class="muted">{row.count}</small>
               </th>
               {#each GROUPS as group (group)}
@@ -298,6 +336,7 @@
   thead th.group small{display:block;font-size:10px;color:var(--muted);font-weight:400}
   tbody th.rhyme{position:sticky;left:0;z-index:1;background:var(--raised);border-right:1px solid var(--line-strong);padding:4px 8px;text-align:right;font:600 13px var(--mono);white-space:nowrap;min-width:52px}
   tbody th.rhyme small{display:block;font-weight:400;font-size:10px}
+  tbody th.rhyme .final{display:block;font-family:var(--serif);font-size:11.5px;font-weight:400;color:var(--ink-2);white-space:nowrap}
   tbody th.rhyme .tone-label{display:block;font-family:var(--ui);font-size:10.5px;font-weight:400;color:var(--muted);white-space:nowrap}
   tr.tone th{position:sticky;left:0;background:var(--sunk);color:var(--muted);text-align:left;padding:5px 10px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border-top:1px solid var(--line-strong)}
   td{vertical-align:top;border-top:1px solid var(--line);border-left:1px solid var(--line);padding:3px;min-width:84px}
@@ -306,6 +345,9 @@
   .cell small{display:block;font-family:var(--ui);font-size:9.5px;color:var(--muted);line-height:1.1}
   .legend{font-size:12.5px;max-width:60em}
   .pager{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .choose{display:flex;align-items:center;gap:6px;font-size:12.5px;margin-left:auto}
+  .choose .label{white-space:nowrap}
+  .choose select{padding:4px 8px;font-size:12.5px}
   .pager .muted{font-size:12.5px;margin-left:auto}
   .modes{display:flex;gap:5px}
   .chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}

@@ -272,5 +272,6 @@
   "nav.more": "더보기",
   "nav.sources.hint": "수록된 기록의 출처",
   "nav.menuClose": "메뉴 닫기",
-  "chart.order": "같은 운의 성조를 모아 보기"
+  "chart.order": "같은 운의 성조를 모아 보기",
+  "chart.system": "축의 재구음"
 }

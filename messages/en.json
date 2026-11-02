@@ -272,5 +272,6 @@
   "nav.more": "More",
   "nav.sources.hint": "Where the records come from",
   "nav.menuClose": "Close the menu",
-  "chart.order": "Keep a rhyme’s tones together"
+  "chart.order": "Keep a rhyme’s tones together",
+  "chart.system": "Read the axes in"
 }
