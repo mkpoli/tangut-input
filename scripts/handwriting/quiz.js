@@ -201,7 +201,12 @@ const server = Bun.serve({
     if (url.pathname === '/api/save' && request.method === 'POST') {
       const body = await request.json()
       if (!current) return Response.json({ error: 'no prompt' }, { status: 409 })
-      const record = { char: current.char, lookalikes: current.options ?? null, kind: current.kind, strokes: body.strokes, width: body.width, height: body.height, at: new Date().toISOString() }
+      const record = {
+        char: current.char, lookalikes: current.options ?? null, kind: current.kind,
+        strokes: body.strokes, times: body.times ?? null, pressure: body.pressure ?? null,
+        pointer: body.pointer ?? null, writer: body.writer ?? null, device: body.device ?? null,
+        width: body.width, height: body.height, at: new Date().toISOString(),
+      }
       session.items.push(record)
       const name = `${String(session.items.length).padStart(3, '0')}-${current.char.codePointAt(0)?.toString(16)}.json`
       writeFileSync(`${out}/${name}`, JSON.stringify(record))

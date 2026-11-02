@@ -56,7 +56,11 @@ copy, or two to four characters that look alike to choose between and draw, and 
 strokes beside the prompt it answered in `data/handwriting/<timestamp>/`. Pass `--size`, `--seed`,
 `--port` and `--out` to change the round. `bun run quiz:score <session-dir>` ranks every saved
 drawing against all ideographs and reports where the answer came, so a change to the drawing search
-can be judged on real strokes; add `--strokes 1` to count the stroke count too. The strokes are normalised to the pad's width, so they can
+can be judged on real strokes; add `--strokes 1` to count the stroke count too.
+
+Each drawing is saved with what a recognizer needs: the strokes, the time of every point, the pen's
+pressure, the pointer type, the browser, and the writer's name (kept in the browser, so drawings can
+be split by hand). The strokes are normalised to the pad's width, so they can
 be compared with a drawing made on the site's Draw page.
 
 ## Development

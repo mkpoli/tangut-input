@@ -20,6 +20,8 @@
   h1{margin:0;font-size:16px;font-weight:650;letter-spacing:.01em}
   header p{margin:0;color:var(--ink-2);font-size:13px}
   header .bar{margin-left:auto;color:var(--ink-2);font-variant-numeric:tabular-nums;font-size:13px}
+  .writer{display:flex;align-items:center;gap:6px;color:var(--ink-2);font-size:13px}
+  .writer input{width:150px;padding:4px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px}
   main{max-width:960px;margin:0 auto;padding:24px 20px 80px}
   .prompt{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
   /* The prompt and the pad keep their boxes whatever is loading, so nothing moves between prompts. */
@@ -52,6 +54,7 @@
 <header>
   <h1>Tangut handwriting quiz</h1>
   <p>Draw the character; your strokes are saved with the answer on the server.</p>
+  <label class="writer">Writer <input id="writer" placeholder="a name or initials" autocomplete="off" spellcheck="false" /></label>
   <span class="bar" id="bar"></span>
 </header>
 <main>
@@ -81,6 +84,12 @@
 
   let item = null
   let chosen = null
+  // Who is drawing, kept in this browser: a recognizer is judged on writers it has not seen.
+  let writer = localStorage.getItem('tangut-quiz:writer') ?? ''
+  // Each point's time and pressure, per stroke, for a recognizer that reads the pen's path.
+  let times = []
+  let pressure = []
+  let pointer = ''
   let strokes = []
   let current = null
   let first = null
@@ -114,14 +123,23 @@
     if (!item || (item.kind === 'lookalike' && !chosen)) return
     pad.setPointerCapture(event.pointerId)
     first = event.pointerId
+    pointer = event.pointerType || 'mouse'
     current = [point(event)]
+    times = [[Math.round(event.timeStamp)]]
+    pressure = [[event.pressure ?? 0]]
     live = true
     strokes = [...strokes, current]
     paint()
   })
   pad.addEventListener('pointermove', event => {
     if (event.pointerId !== first || !current) return
-    current.push(point(event))
+    // Coalesced events carry the pen's full sample rate, which a recognizer wants.
+    const samples = event.getCoalescedEvents?.() ?? [event]
+    for (const sample of samples) {
+      current.push(point(sample))
+      times.at(-1).push(Math.round(sample.timeStamp))
+      pressure.at(-1).push(sample.pressure ?? 0)
+    }
     strokes = [...strokes.slice(0, -1), current]
     paint()
   })
@@ -134,8 +152,11 @@
   pad.addEventListener('pointerup', end)
   pad.addEventListener('pointercancel', end)
 
-  document.getElementById('undo').onclick = () => { if (!strokes.length) return; strokes = strokes.slice(0, -1); paint() }
-  document.getElementById('clear').onclick = () => { strokes = []; paint() }
+  document.getElementById('undo').onclick = () => {
+    if (!strokes.length) return
+    strokes = strokes.slice(0, -1); times = times.slice(0, -1); pressure = pressure.slice(0, -1); paint()
+  }
+  document.getElementById('clear').onclick = () => { strokes = []; times = []; pressure = []; paint() }
 
   /** A prompt as the page shows it: the image to copy, and one line of instruction. */
   function show(body) {
@@ -180,6 +201,8 @@
 
   async function next() {
     strokes = []
+    times = []
+    pressure = []
     chosen = null
     item = null
     paint()
@@ -221,7 +244,12 @@
     const response = await fetch('/api/save', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / width).toFixed(4), +(y / height).toFixed(4)])), width, height }),
+      body: JSON.stringify({
+        strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / width).toFixed(4), +(y / height).toFixed(4)])),
+        times, pressure, pointer, writer: writer || null,
+        device: `${navigator.platform ?? ''} ${navigator.userAgent.match(/(Chrome|Firefox|Safari|Edge)\/[\d.]+/)?.[0] ?? ''}`.trim(),
+        width, height,
+      }),
     })
     const body = await response.json().catch(() => ({}))
     if (!response.ok || !body.saved) {
@@ -233,6 +261,10 @@
     await next()
   }
   document.getElementById('skip').onclick = async () => { await fetch('/api/skip', { method: 'POST' }); next() }
+
+  const writerField = document.getElementById('writer')
+  writerField.value = writer
+  writerField.oninput = () => { writer = writerField.value.trim(); localStorage.setItem('tangut-quiz:writer', writer) }
 
   next()
 </script>
