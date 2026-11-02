@@ -235,5 +235,7 @@
   "fanqie.label": "反切用字",
   "fanqie.none": "韻書に「{text}」で反切される文字はありません。",
   "fanqie.one": "まず反切上字を選び、続けて反切下字を選んでください。",
-  "card.fanqieFor": "この字を反切に含む文字（{count}）"
+  "card.fanqieFor": "この字を反切に含む文字（{count}）",
+  "fanqie.reading": "再構音",
+  "fanqie.ownLabel": "この字自身の反切"
 }

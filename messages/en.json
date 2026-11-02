@@ -235,5 +235,7 @@
   "fanqie.label": "Fanqie characters",
   "fanqie.none": "No character in the rhyme books is spelt with “{text}”.",
   "fanqie.one": "Choose the upper character first, then the lower.",
-  "card.fanqieFor": "Spelt with it ({count})"
+  "card.fanqieFor": "Spelt with it ({count})",
+  "fanqie.reading": "Reconstruction",
+  "fanqie.ownLabel": "This character’s own fanqie"
 }

@@ -235,5 +235,7 @@
   "fanqie.label": "反切用字",
   "fanqie.none": "韵书中没有以“{text}”作切语的字。",
   "fanqie.one": "请先选反切上字，再选反切下字。",
-  "card.fanqieFor": "反切中用到此字的字（{count}）"
+  "card.fanqieFor": "反切中用到此字的字（{count}）",
+  "fanqie.reading": "拟音",
+  "fanqie.ownLabel": "此字自身的反切"
 }

@@ -235,5 +235,7 @@
   "fanqie.label": "반절 글자",
   "fanqie.none": "운서에 “{text}”로 반절되는 글자가 없습니다.",
   "fanqie.one": "먼저 반절상자를 고른 다음 반절하자를 고르세요.",
-  "card.fanqieFor": "반절에 이 글자가 쓰인 글자 ({count})"
+  "card.fanqieFor": "반절에 이 글자가 쓰인 글자 ({count})",
+  "fanqie.reading": "재구음",
+  "fanqie.ownLabel": "이 글자 자체의 반절"
 }
