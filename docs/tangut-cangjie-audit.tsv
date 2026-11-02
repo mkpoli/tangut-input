@@ -1,271 +1,251 @@
 kind	character	composition	parts	expected	found
 short	𗧌	⿰𘢌⿱𘡎𘡱		asmmnk	asmx
 short	𗴥	⿱𘣋𘡱		vxmnk	vxwx
-spelling	𗀏	⿱𘠀⿲𘠒𘫺𘡆	𘠀𘠒𘫺𘡆	mbxhp	mbxp
-spelling	𗀓	⿱𘡳⿰𘠈𘣴	𘡳𘠈𘣴	mzvydq	mzvydmm
-spelling	𗁈	⿲𘠁𘡱𘠴	𘠁𘡱𘠴	lmnko	lmneo
-spelling	𗁓	⿲𘠁𘡱𘢞	𘠁𘡱𘢞	lmnkyp	lmneyp
+spelling	𗀏	⿱𘠀⿲𘠒𘫺𘡆	𘠀𘠒𘫺𘡆	mbxhp	mbxp mxhp
+spelling	𗀓	⿱𘡳⿰𘠈𘣴	𘡳𘠈𘣴	mzvydq	mzvm mzvydmm
+spelling	𗁈	⿲𘠁𘡱𘠴	𘠁𘡱𘠴	lmnko	lmeo lmneo
+spelling	𗁓	⿲𘠁𘡱𘢞	𘠁𘡱𘢞	lmnkyp	lmep lmneyp
 spelling	𗁘	⿰𘠁⿰𘡃⿰𘠌𘡃	𘠁𘡃𘠌𘡃	lxmlx	lxox
-spelling	𗁚	⿲𘠁𘤕𘡔	𘠁𘤕𘡔	lyxnll	lyxhll
-spelling	𗁩	⿲𘠁𘡱𘥁	𘠁𘡱𘥁	lmnknw	lmenw
-spelling	𗂍	⿰𘠁𘫙	𘠁𘫙	lmtbxm	lmtbam
-spelling	𗂺	⿲𘠁𘦳𘧁	𘠁𘦳𘧁	lrxsbwu	lcxsbwu
-spelling	𗃄	⿲𘠁𘤷𘪽	𘠁𘤷𘪽	lsbtntjbw	lsbtntjhbw
-spelling	𗃊	⿲𘠁𘦳𘪴	𘠁𘦳𘪴	lrxrcx	lrxrocx
-spelling	𗃋	⿲𘠁𘦳𘪷	𘠁𘦳𘪷	lrxsbam	lcxsbam
+spelling	𗁚	⿲𘠁𘤕𘡔	𘠁𘤕𘡔	lyxnll	lyxl lyxhll
+spelling	𗁩	⿲𘠁𘡱𘥁	𘠁𘡱𘥁	lmnknw	lmew lmenw
+spelling	𗂍	⿰𘠁𘫙	𘠁𘫙	lmtbxm	lmtm lmtbam
+spelling	𗂺	⿲𘠁𘦳𘧁	𘠁𘦳𘧁	lrxsbwu	lxsbu lcxsbwu
+spelling	𗃄	⿲𘠁𘤷𘪽	𘠁𘤷𘪽	lsbtntjbw	lstw lsbtntjhbw
+spelling	𗃊	⿲𘠁𘦳𘪴	𘠁𘦳𘪴	lrxrcx	lxrcx lrxrocx
+spelling	𗃋	⿲𘠁𘦳𘪷	𘠁𘦳𘪷	lrxsbam	lxsbm lcxsbam
 spelling	𗃐	⿱𘠂⿻𘠀𘡃	𘠂𘠀𘡃	hmx	hkk
-spelling	𗃮	⿲𘠈𘦳𘡑	𘠈𘦳𘡑	vrxsnn	vcnxsnn
-spelling	𗄅	⿱𘠊⿰𘡃𘣑	𘠊𘡃𘣑	wxwx	wxmnk
-spelling	𗄇	⿱𘠊⿰𘡃𘤾	𘠊𘡃𘤾	wxdjpi	wxdqpi
-spelling	𗄨	⿱𘠀⿲𘠁𘧪𘧦	𘠀𘠁𘧪𘧦	mlmxxlmlebtu	mlmzlmlebtu
+spelling	𗃮	⿲𘠈𘦳𘡑	𘠈𘦳𘡑	vrxsnn	vcxn vcnxsnn
+spelling	𗄅	⿱𘠊⿰𘡃𘣑	𘠊𘡃𘣑	wxwx	wxmk wxmnk
+spelling	𗄇	⿱𘠊⿰𘡃𘤾	𘠊𘡃𘤾	wxdjpi	wxdi wxdqpi
+spelling	𗄨	⿱𘠀⿲𘠁𘧪𘧦	𘠀𘠁𘧪𘧦	mlmxxlmlebtu	mlmlu mlmzlmlebtu
 spelling	𗄫	⿰𘠐𘢓	𘠐𘢓	llxnn	llznn
 spelling	𗄲	⿲𘠐𘢌𘠂	𘠐𘢌𘠂	llah	llai
-spelling	𗄳	⿰𘠐𘤧	𘠐𘤧	llfd	llfvd
 spelling	𗄹	⿲𘠐𘢌𘠌	𘠐𘢌𘠌	llaml	llao
-spelling	𗅐	⿰𘠐⿱𘠛𘣡	𘠐𘠛𘣡	llsmbtmu	llsmbtu
-spelling	𗅮	⿰𘠐⿱𘡩𘣦	𘠐𘡩𘣦	lltjmxl	lltjmhkl
-spelling	𗅽	⿲𘠐⿱𘠚𘠳𘢯	𘠐𘠚𘠳𘢯	llcmsdjk	llcmssk
-spelling	𗅿	⿰𘠐𘪴	𘠐𘪴	llrcx	llrocx
-spelling	𗆇	⿲𘠐𘣩𘤾	𘠐𘣩𘤾	llmsbdjpi	llmsbjpi
-spelling	𗆋	⿲𘠐𘢌𘦺	𘠐𘢌𘦺	lladjpi	lladqpi
-spelling	𗆛	⿲𘠐𘢌𘧪	𘠐𘢌𘧪	llamxxl	llamzl
-spelling	𗆞	⿲𘠐𘫺𘩁	𘠐𘫺𘩁	llxmtjyd	llxmtjmb
-spelling	𗆽	⿲𘠐⿱𘠙⿰𘠁𘫙	𘠐𘠙𘠁𘫙	llylmtbxm	llylmtbam
-spelling	𗆿	⿰𘠐⿱𘧉⿰𘤬𘠢	𘠐𘧉𘤬𘠢	llntjmrkp	llntjmtxp
-spelling	𗇁	⿲𘠐⿱𘡩𘡃𘪴	𘠐𘡩𘡃𘪴	lltjxrcx	lltjxrocx
-spelling	𗈇	⿱𘠛⿲𘡘𘢌𘠴	𘠛𘡘𘢌𘠴	snnllao	snnlao
-spelling	𗈏	⿱𘠛⿰𘤋𘦧	𘠛𘤋𘦧	sxycbqu	sxicbqu
-spelling	𗈨	⿱𘠛⿰𘦳𘫙	𘠛𘦳𘫙	srxmtbxm	srxmtbam
-spelling	𗈻	⿰𘠠𘡧	𘠠𘡧	nnvy	nnnvy
-spelling	𗈽	⿲𘠠𘡗𘠅	𘠠𘡗𘠅	nnvnnjnnn	nnnvnnjnnn
-spelling	𗈾	⿰𘠠𘤕	𘠠𘤕	nnvyx	nnnvyx
-spelling	𗉆	⿲𘠠𘦱𘡰	𘠠𘦱𘡰	nnvrbtmx	nnnvrbtmx
-spelling	𗉇	⿰𘠠𘫙	𘠠𘫙	nnvmtbxm	nnnvmtbam
-spelling	𗉸	⿲𘠣𘠌𘠅	𘠣𘠌𘠅	emlnnn	eonnn
+spelling	𗅐	⿰𘠐⿱𘠛𘣡	𘠐𘠛𘣡	llsmbtmu	llsmu llsmbtu
+spelling	𗅮	⿰𘠐⿱𘡩𘣦	𘠐𘡩𘣦	lltjmxl	lltjl lltjmhkl
+spelling	𗅽	⿲𘠐⿱𘠚𘠳𘢯	𘠐𘠚𘠳𘢯	llcmsdjk	llcsk llcmssk
+spelling	𗆇	⿲𘠐𘣩𘤾	𘠐𘣩𘤾	llmsbdjpi	llmbi llmsbjpi
+spelling	𗆋	⿲𘠐𘢌𘦺	𘠐𘢌𘦺	lladjpi	lladi lladqpi
+spelling	𗆛	⿲𘠐𘢌𘧪	𘠐𘢌𘧪	llamxxl	llaml llamzl
+spelling	𗆞	⿲𘠐𘫺𘩁	𘠐𘫺𘩁	llxmtjyd	llxmb llxmtjmb
+spelling	𗆽	⿲𘠐⿱𘠙⿰𘠁𘫙	𘠐𘠙𘠁𘫙	llylmtbxm	llylm llylmtbam
+spelling	𗆿	⿰𘠐⿱𘧉⿰𘤬𘠢	𘠐𘧉𘤬𘠢	llntjmrkp	llnmp llntjmtxp
+spelling	𗇁	⿲𘠐⿱𘡩𘡃𘪴	𘠐𘡩𘡃𘪴	lltjxrcx	lltxx lltjxrocx
+spelling	𗈇	⿱𘠛⿲𘡘𘢌𘠴	𘠛𘡘𘢌𘠴	snnllao	snlo snnlao
+spelling	𗈨	⿱𘠛⿰𘦳𘫙	𘠛𘦳𘫙	srxmtbxm	srxm srxmtbam
+spelling	𗈻	⿰𘠠𘡧	𘠠𘡧	nnvy	nvy nnnvy
+spelling	𗈽	⿲𘠠𘡗𘠅	𘠠𘡗𘠅	nnvnnjnnn	nvnjn nnnvnnjnnn
+spelling	𗈾	⿰𘠠𘤕	𘠠𘤕	nnvyx	nvyx nnnvyx
+spelling	𗉆	⿲𘠠𘦱𘡰	𘠠𘦱𘡰	nnvrbtmx	nvrtx nnnvrbtmx
+spelling	𗉇	⿰𘠠𘫙	𘠠𘫙	nnvmtbxm	nvmtm nnnvmtbam
+spelling	𗉸	⿲𘠣𘠌𘠅	𘠣𘠌𘠅	emlnnn	eonn eonnn
 spelling	𗊄	⿲𘠣𘠌𘡃	𘠣𘠌𘡃	emlx	eox
 spelling	𗊤	⿲𘠣𘫿𘠉	𘠣𘫿𘠉	esxo	esxv
-spelling	𗊩	⿲𘠣𘠌𘤏	𘠣𘠌𘤏	emlymb	eoymb
-spelling	𗋐	⿲𘠣𘦻𘠢	𘠣𘦻𘠢	eslmbp	esmlbp
-spelling	𗋤	⿰𘠣𘪴	𘠣𘪴	ercx	erocx
-spelling	𗌪	⿲𘠣𘤷𘪽	𘠣𘤷𘪽	esbtntjbw	esbtntjhbw
-spelling	𗌬	⿰𘠣⿰𘦛⿰𘠁𘪾	𘠣𘦛𘠁𘪾	etxlntsx	etxlnrsx
+spelling	𗊩	⿲𘠣𘠌𘤏	𘠣𘠌𘤏	emlymb	eoyb eoymb
+spelling	𗋐	⿲𘠣𘦻𘠢	𘠣𘦻𘠢	eslmbp	esbp esmlbp
+spelling	𗌪	⿲𘠣𘤷𘪽	𘠣𘤷𘪽	esbtntjbw	estw esbtntjhbw
+spelling	𗌬	⿰𘠣⿰𘦛⿰𘠁𘪾	𘠣𘦛𘠁𘪾	etxlntsx	etxx etxlnrsx
 spelling	𗌼	⿲𘠨𘢌𘠌	𘠨𘢌𘠌	gaml	gao
-spelling	𗍰	⿲𘠭𘥁𘢌	𘠭𘥁𘢌	jlnwa	jlnlqa
-spelling	𗍱	⿰𘠭⿱𘠊⿰𘡸𘤾	𘠭𘠊𘡸𘤾	jlwlyddjpi	jlwlydspi
-spelling	𗍴	⿲𘠭𘤬𘩊	𘠭𘤬𘩊	jlrktjnq	jltxtjnq
+spelling	𗍱	⿰𘠭⿱𘠊⿰𘡸𘤾	𘠭𘠊𘡸𘤾	jlwlyddjpi	jlwli jlwlydspi
+spelling	𗍴	⿲𘠭𘤬𘩊	𘠭𘤬𘩊	jlrktjnq	jltxq jltxtjnq
 spelling	𗏘	⿰𘫺𘨷	𘫺𘨷	xnta	xntx
-spelling	𗏪	⿰𘡃⿰𘠁⿰𘡒𘤔	𘡃𘠁𘡒𘤔	xlsnvyr	xlsvyr
-spelling	𗏽	⿲𘡃𘤱𘧪	𘡃𘤱𘧪	xsqmxxl	xsqmzl
+spelling	𗏪	⿰𘡃⿰𘠁⿰𘡒𘤔	𘡃𘠁𘡒𘤔	xlsnvyr	xlsr xlsvyr
+spelling	𗏽	⿲𘡃𘤱𘧪	𘡃𘤱𘧪	xsqmxxl	xsql xsqmzl
 spelling	𗐄	⿺𘡄𘡷	𘡄𘡷	xydt	xydj
-spelling	𗐑	⿱𘡅⿰𘤧𘠢	𘡅𘤧𘠢	xfdp	xfvdp
-spelling	𗐕	⿱𘡅⿰𘣂𘥓	𘡅𘣂𘥓	xnnlllzq	xnnllzq
-spelling	𗐺	⿱𘡊⿻⿰𘠒𘠒𘠊	𘡊𘠒𘠒𘠊	tbbw	tbqqb
-spelling	𗑆	⿱𘡊⿲𘠐𘠌𘡃	𘡊𘠐𘠌𘡃	tllmlx	tllox
-spelling	𗑗	⿱𘡊⿲𘠐𘤜𘠅	𘡊𘠐𘤜𘠅	tlltbnnn	tlltbnn
-spelling	𗑺	⿱𘡊⿰𘠁𘩢	𘡊𘠁𘩢	tltmqb	tltmb
-spelling	𗒀	⿱𘡊⿰𘢌𘣵	𘡊𘢌𘣵	taydqu	taydwu
-spelling	𗒮	⿱𘡊⿰𘢉𘦌	𘡊𘢉𘦌	tholylx	tholtlx
-spelling	𗓡	⿱𘡊⿲𘤅𘢌𘠌	𘡊𘤅𘢌𘠌	talaml	talao
-spelling	𗔖	⿱𘡊⿲𘠁𘪲𘠴	𘡊𘠁𘪲𘠴	tlrtjxo	tlrtao
-spelling	𗔙	⿱𘡊⿰𘢌𘪴	𘡊𘢌𘪴	tarcx	tarocx
+spelling	𗐕	⿱𘡅⿰𘣂𘥓	𘡅𘣂𘥓	xnnlllzq	xnlq xnnllzq
+spelling	𗐺	⿱𘡊⿻⿰𘠒𘠒𘠊	𘡊𘠒𘠒𘠊	tbbw	tbqb tbqqb
+spelling	𗑆	⿱𘡊⿲𘠐𘠌𘡃	𘡊𘠐𘠌𘡃	tllmlx	tllx tllox
+spelling	𗑗	⿱𘡊⿲𘠐𘤜𘠅	𘡊𘠐𘤜𘠅	tlltbnnn	tlln tlltbnn
+spelling	𗑺	⿱𘡊⿰𘠁𘩢	𘡊𘠁𘩢	tltmqb	tltb tltmb
+spelling	𗒀	⿱𘡊⿰𘢌𘣵	𘡊𘢌𘣵	taydqu	tayu taydwu
+spelling	𗒮	⿱𘡊⿰𘢉𘦌	𘡊𘢉𘦌	tholylx	thlx tholtlx
+spelling	𗓡	⿱𘡊⿲𘤅𘢌𘠌	𘡊𘤅𘢌𘠌	talaml	talo talao
+spelling	𗔖	⿱𘡊⿲𘠁𘪲𘠴	𘡊𘠁𘪲𘠴	tlrtjxo	tlro tlrtao
+spelling	𗔙	⿱𘡊⿰𘢌𘪴	𘡊𘢌𘪴	tarcx	tarx tarocx
 spelling	𗕄	⿱𘡍⿲𘡃𘠌𘡃	𘡍𘡃𘠌𘡃	fxmlx	fxox
-spelling	𗕅	⿱𘡍⿲𘡃𘠌𘣹	𘡍𘡃𘠌𘣹	fxmlbqj	fxobqj
-spelling	𗕤	⿱𘡎⿰𘢏𘦔	𘡎𘢏𘦔	smacws	smaicws
-spelling	𗕰	⿱𘡎⿰𘠁𘫙	𘡎𘠁𘫙	smlmtbxm	smlmtbam
-spelling	𗖅	⿰𘡒⿱𘫺𘠘	𘡒𘫺𘠘	snvxk	snvz
-spelling	𗖦	⿲𘡒𘠞𘫽	𘡒𘠞𘫽	snvfz	snvfgz
-spelling	𗖹	⿰𘡒⿺𘢲⿱𘠀𘣣	𘡒𘢲𘠀𘣣	snvsbummlne	snvsbumlne
-spelling	𗖾	⿰𘡒𘫙	𘡒𘫙	snvmtbxm	snvmtbam
-spelling	𗗝	⿰𘡔𘩢	𘡔𘩢	nlltmqb	nllcsqb
-spelling	𗗼	⿲𘡖𘢈𘤃	𘡖𘢈𘤃	nkholhhbt	nkhhllhhbt
-spelling	𗘤	⿱𘡛⿰𘠁𘣣	𘡛𘠁𘣣	zlmlne	zllmne
-spelling	𗙡	⿲𘡢𘪴𘠅	𘡢𘪴𘠅	wllrcxnnn	wllrocxnnn
-spelling	𗙱	⿰𘡤𘦧	𘡤𘦧	wbcbqu	wllcbqu
-spelling	𗚎	⿱𘡩⿲𘠣𘠌𘠅	𘡩𘠣𘠌𘠅	tjemlnnn	tjeonnn
-spelling	𗚡	⿳𘡩𘠀⿰𘠐𘢓	𘡩𘠀𘠐𘢓	tjmllxnn	tjyllxnn
+spelling	𗕅	⿱𘡍⿲𘡃𘠌𘣹	𘡍𘡃𘠌𘣹	fxmlbqj	fxoj fxobqj
+spelling	𗕤	⿱𘡎⿰𘢏𘦔	𘡎𘢏𘦔	smacws	smais smaicws
+spelling	𗕰	⿱𘡎⿰𘠁𘫙	𘡎𘠁𘫙	smlmtbxm	smlmm smlmtbam
+spelling	𗖅	⿰𘡒⿱𘫺𘠘	𘡒𘫺𘠘	snvxk	svz snvz
+spelling	𗖦	⿲𘡒𘠞𘫽	𘡒𘠞𘫽	snvfz	svfgz snvfgz
+spelling	𗖹	⿰𘡒⿺𘢲⿱𘠀𘣣	𘡒𘢲𘠀𘣣	snvsbummlne	svsue snvsbumlne
+spelling	𗖾	⿰𘡒𘫙	𘡒𘫙	snvmtbxm	svmtm snvmtbam
+spelling	𗗝	⿰𘡔𘩢	𘡔𘩢	nlltmqb	nlcsb nllcsqb
+spelling	𗗼	⿲𘡖𘢈𘤃	𘡖𘢈𘤃	nkholhhbt	nkhlt nkhhllhhbt
+spelling	𗘤	⿱𘡛⿰𘠁𘣣	𘡛𘠁𘣣	zlmlne	zlle zllmne
+spelling	𗙡	⿲𘡢𘪴𘠅	𘡢𘪴𘠅	wllrcxnnn	wlrxn wllrocxnnn
+spelling	𗙱	⿰𘡤𘦧	𘡤𘦧	wbcbqu	wlcbu wllcbqu
+spelling	𗚎	⿱𘡩⿲𘠣𘠌𘠅	𘡩𘠣𘠌𘠅	tjemlnnn	tjeon tjeonnn
 spelling	𗚹	⿱𘡩⿲𘠣𘠌𘡃	𘡩𘠣𘠌𘡃	tjemlx	tjeox
-spelling	𗜢	⿱𘡩⿲𘢈𘠁𘤬	𘡩𘢈𘠁𘤬	tjhollrk	tjhhlllrk
-spelling	𗝊	⿱𘡩⿰𘥔⿱𘫺𘠘	𘡩𘥔𘫺𘠘	tjzlllxk	tjzlllz
-spelling	𗝟	⿱𘡩⿰𘢌𘧭	𘡩𘢌𘧭	tjamzmlll	tjamzoll
-spelling	𗝹	⿱𘡩⿰𘧙𘤾	𘡩𘧙𘤾	tjvnlqdjpi	tjvnlqspi
-spelling	𗞝	⿱𘡩⿲𘡤𘢌𘤾	𘡩𘡤𘢌𘤾	tjwbadjpi	tjwbaspi
-spelling	𗞳	⿱𘡩⿰𘪦𘤾	𘡩𘪦𘤾	tjatjmdjpi	tjatjmspi
-spelling	𗟇	⿱𘡩⿰𘫽⿱𘡊⿰𘣜𘠢	𘡩𘫽𘡊𘣜𘠢	tjztmqbp	tjztmbqp
-spelling	𗟓	⿱𘡩⿰𘪽𘫵	𘡩𘪽𘫵	tjntjbwsgp	tjhntjhbwsgp
-spelling	𗟖	⿱𘡩⿰𘠁𘫲	𘡩𘠁𘫲	tjlrtjxgx	tjnrtjxgx
-spelling	𗟦	⿲𘡫𘠌𘢌	𘡫𘠌𘢌	mbtmla	mbtoa
-spelling	𗟸	⿰𘡮𘦚	𘡮𘦚	mbdfd	mbdfjd
-spelling	𗠾	⿲𘡯𘠌𘧳	𘡯𘠌𘧳	mlemlxa	mleoxa
-spelling	𗡄	⿲𘡯𘦞𘠴	𘡯𘦞𘠴	mlefmbo	mlefybo
-spelling	𗡆	⿰𘡯𘪴	𘡯𘪴	mlercx	mlerocx
-spelling	𗡋	⿲𘡯𘢌𘦺	𘡯𘢌𘦺	mleadjpi	mleadqpi
-spelling	𗡐	⿰𘡯𘫙	𘡯𘫙	mlemtbxm	mlemtbam
-spelling	𗡛	⿲𘡯𘦱𘩢	𘡯𘦱𘩢	mlerbttmqb	mlerbttmb
-spelling	𗢓	⿰𘢈⿱𘠀⿰𘠁𘢓	𘢈𘠀𘠁𘢓	holmlxnn	hollmxnn
+spelling	𗜢	⿱𘡩⿲𘢈𘠁𘤬	𘡩𘢈𘠁𘤬	tjhollrk	tjhlk tjhhlllrk
+spelling	𗝊	⿱𘡩⿰𘥔⿱𘫺𘠘	𘡩𘥔𘫺𘠘	tjzlllxk	tjzlz tjzlllz
+spelling	𗝟	⿱𘡩⿰𘢌𘧭	𘡩𘢌𘧭	tjamzmlll	tjaml tjamzoll
+spelling	𗝹	⿱𘡩⿰𘧙𘤾	𘡩𘧙𘤾	tjvnlqdjpi	tjvqi tjvnlqspi
+spelling	𗞝	⿱𘡩⿲𘡤𘢌𘤾	𘡩𘡤𘢌𘤾	tjwbadjpi	tjwbi tjwbaspi
+spelling	𗞳	⿱𘡩⿰𘪦𘤾	𘡩𘪦𘤾	tjatjmdjpi	tjami tjatjmspi
+spelling	𗟇	⿱𘡩⿰𘫽⿱𘡊⿰𘣜𘠢	𘡩𘫽𘡊𘣜𘠢	tjztmqbp	tjztp tjztmbqp
+spelling	𗟓	⿱𘡩⿰𘪽𘫵	𘡩𘪽𘫵	tjntjbwsgp	tjnwp tjhntjhbwsgp
+spelling	𗟖	⿱𘡩⿰𘠁𘫲	𘡩𘠁𘫲	tjlrtjxgx	tjnrx tjnrtjxgx
+spelling	𗟦	⿲𘡫𘠌𘢌	𘡫𘠌𘢌	mbtmla	mtoa mbtoa
+spelling	𗟸	⿰𘡮𘦚	𘡮𘦚	mbdfd	mdfjd mbdfjd
+spelling	𗠾	⿲𘡯𘠌𘧳	𘡯𘠌𘧳	mlemlxa	meoxa mleoxa
+spelling	𗡄	⿲𘡯𘦞𘠴	𘡯𘦞𘠴	mlefmbo	mefbo mlefybo
+spelling	𗡆	⿰𘡯𘪴	𘡯𘪴	mlercx	mercx mlerocx
+spelling	𗡋	⿲𘡯𘢌𘦺	𘡯𘢌𘦺	mleadjpi	meadi mleadqpi
+spelling	𗡐	⿰𘡯𘫙	𘡯𘫙	mlemtbxm	memtm mlemtbam
+spelling	𗡛	⿲𘡯𘦱𘩢	𘡯𘦱𘩢	mlerbttmqb	mertb mlerbttmb
+spelling	𗢓	⿰𘢈⿱𘠀⿰𘠁𘢓	𘢈𘠀𘠁𘢓	holmlxnn	hllmn hollmxnn
 spelling	𗣐	⿰𘢌⿰𘠌⿰𘠁𘠢	𘢌𘠌𘠁𘠢	amllp	aolp
 spelling	𗤀	⿲𘢌𘠌𘡼	𘢌𘠌𘡼	amlqbu	aoqbu
 spelling	𗤁	⿲𘢌𘠌𘢓	𘢌𘠌𘢓	amlxnn	aoxnn
 spelling	𗤖	⿲𘢌𘢌𘠌	𘢌𘢌𘠌	aaml	aao
-spelling	𗥂	⿰𘢌⿰𘠌⿰𘠁𘢓	𘢌𘠌𘠁𘢓	amllxnn	aolxnn
+spelling	𗥂	⿰𘢌⿰𘠌⿰𘠁𘢓	𘢌𘠌𘠁𘢓	amllxnn	aolxn aolxnn
 spelling	𗥄	⿲𘢌𘠌𘤏	𘢌𘠌𘤏	amlymb	aoymb
-spelling	𗥅	⿲𘢌𘠌⿱𘠙𘠰	𘢌𘠌𘠙𘠰	amlymbu	aoymbu
+spelling	𗥅	⿲𘢌𘠌⿱𘠙𘠰	𘢌𘠌𘠙𘠰	amlymbu	aoymu aoymbu
 spelling	𗥆	⿲𘢌𘠌𘤭	𘢌𘠌𘤭	amlcsi	aocsi
 spelling	𗥇	⿲𘢌𘠌𘤳	𘢌𘠌𘤳	amlsmb	aosmb
-spelling	𗥙	⿲𘢌𘡀𘢓	𘢌𘡀𘢓	ahllxnn	ahlxnn
+spelling	𗥙	⿲𘢌𘡀𘢓	𘢌𘡀𘢓	ahllxnn	ahln ahlxnn
 spelling	𗦋	⿲𘢌𘠧⿱𘫺𘠘	𘢌𘠧𘫺𘠘	amoxk	amoz
-spelling	𗦕	⿰𘢌⿰𘠌⿰𘠁𘤃	𘢌𘠌𘠁𘤃	amllhhbt	aolhhbt
-spelling	𗦖	⿲𘢌𘠌𘦁	𘢌𘠌𘦁	amlxbtu	aoxbtu
-spelling	𗦗	⿲𘢌𘠌𘦆	𘢌𘠌𘦆	amlymbt	aoymbt
-spelling	𗦘	⿲𘢌𘠌⿱𘠙𘢓	𘢌𘠌𘠙𘢓	amlyxnn	aoyxnn
-spelling	𗦙	⿲𘢌𘠌𘦲	𘢌𘠌𘦲	amlrbtu	aorbtu
-spelling	𗦟	⿲𘢌𘠌𘧓	𘢌𘠌𘧓	amlfjdq	aofjdq
+spelling	𗦕	⿰𘢌⿰𘠌⿰𘠁𘤃	𘢌𘠌𘠁𘤃	amllhhbt	aolht aolhhbt
+spelling	𗦖	⿲𘢌𘠌𘦁	𘢌𘠌𘦁	amlxbtu	aoxbu aoxbtu
+spelling	𗦗	⿲𘢌𘠌𘦆	𘢌𘠌𘦆	amlymbt	aoymt aoymbt
+spelling	𗦘	⿲𘢌𘠌⿱𘠙𘢓	𘢌𘠌𘠙𘢓	amlyxnn	aoyxn aoyxnn
+spelling	𗦙	⿲𘢌𘠌𘦲	𘢌𘠌𘦲	amlrbtu	aorbu aorbtu
+spelling	𗦟	⿲𘢌𘠌𘧓	𘢌𘠌𘧓	amlfjdq	aofjq aofjdq
 spelling	𗦮	⿲𘢌𘠁𘨃	𘢌𘠁𘨃	alfgb	alfb
-spelling	𗧏	⿲𘢌𘦻𘠢	𘢌𘦻𘠢	aslmbp	asmlbp
-spelling	𗧩	⿰𘢌⿱𘡩𘣧	𘢌𘡩𘣧	atjmxnn	atjxnn
-spelling	𗧫	⿰𘢌⿰𘠌⿰𘠁𘦔	𘢌𘠌𘠁𘦔	amllcws	aolcws
+spelling	𗧏	⿲𘢌𘦻𘠢	𘢌𘦻𘠢	aslmbp	asbp asmlbp
+spelling	𗧩	⿰𘢌⿱𘡩𘣧	𘢌𘡩𘣧	atjmxnn	atjn atjxnn
+spelling	𗧫	⿰𘢌⿰𘠌⿰𘠁𘦔	𘢌𘠌𘠁𘦔	amllcws	aolcs aolcws
 spelling	𗧮	⿲𘢌𘠌⿱𘢷𘡃	𘢌𘠌𘢷𘡃	amlnqx	aonqx
-spelling	𗧲	⿲𘢌𘠁𘫶	𘢌𘠁𘫶	alwwbp	aowwbp
+spelling	𗧲	⿲𘢌𘠁𘫶	𘢌𘠁𘫶	alwwbp	aowwp aowwbp
 spelling	𗧼	⿰𘢌⿱𘡅⿰𘢌𘠌	𘢌𘡅𘢌𘠌	axaml	axao
-spelling	𗨚	⿰𘢌𘪴	𘢌𘪴	arcx	arocx
-spelling	𗨵	⿲𘢌𘠣𘧺	𘢌𘠣𘧺	aeye	aenye
-spelling	𗨸	⿲𘢌𘠨𘧪	𘢌𘠨𘧪	agmxxl	agmzl
-spelling	𗩂	⿲𘢌𘠌𘩗	𘢌𘠌𘩗	amllsbw	aolsbw
+spelling	𗨸	⿲𘢌𘠨𘧪	𘢌𘠨𘧪	agmxxl	agml agmzl
+spelling	𗩂	⿲𘢌𘠌𘩗	𘢌𘠌𘩗	amllsbw	aolsw aolsbw
 spelling	𗩉	⿲𘢌𘠌⿱𘡅𘤅	𘢌𘠌𘡅𘤅	amlxal	aoxal
 spelling	𗩊	⿲𘢌𘠌𘩰	𘢌𘠌𘩰	amltz	aotz
-spelling	𗩋	⿲𘢌𘠌𘪄	𘢌𘠌𘪄	amlroa	aoroa
-spelling	𗩏	⿲𘢌𘡰⿱𘠛⿰𘠁𘡖	𘢌𘡰𘠛𘠁𘡖	amxslnk	amxslne
-spelling	𗩘	⿲𘢌𘤏𘣮	𘢌𘤏𘣮	aymbmw	aymbyw
-spelling	𗩰	⿲𘢌𘢰𘦢	𘢌𘢰𘦢	asbclx	asbcx
-spelling	𗩵	⿰𘢌⿱𘢸⿰𘠌𘢌	𘢌𘢸𘠌𘢌	antmla	antoa
-spelling	𗩶	⿰𘢌⿱𘥄𘤜	𘢌𘥄𘤜	antjtb	antjclb
-spelling	𗪃	⿰𘢌𘫙	𘢌𘫙	amtbxm	amtbam
-spelling	𗪍	⿲𘢌𘠌𘪣	𘢌𘠌𘪣	amlmbua	aombua
-spelling	𗪑	⿰𘢌⿰𘠌⿰𘠁𘪁	𘢌𘠌𘠁𘪁	amllcscb	aolcscb
-spelling	𗪒	⿰𘢌⿰𘠌⿰𘡃𘧀	𘢌𘠌𘡃𘧀	amlxsbw	aoxsbw
-spelling	𗪓	⿰𘢌⿰𘠌⿰𘤩⿰𘠁𘠳	𘢌𘠌𘤩𘠁𘠳	amlcxlms	aocxlms
-spelling	𗪲	⿰𘢌⿱𘢸⿰𘠞⿱𘫺𘠘	𘢌𘢸𘠞𘫺𘠘	antfxk	antfz
-spelling	𗫗	⿰𘢌⿰𘠌⿰𘠁⿱𘡩𘧀	𘢌𘠌𘠁𘡩𘧀	amlltjsbw	aoltjsbw
-spelling	𗫪	⿰𘢌⿰𘠈⿰𘪴𘠴	𘢌𘠈𘪴𘠴	avrcxo	avrocxo
-spelling	𗫮	⿲𘢌𘦈𘪽	𘢌𘦈𘪽	aymxntjbw	aymxntjhbw
+spelling	𗩋	⿲𘢌𘠌𘪄	𘢌𘠌𘪄	amlroa	aora aoroa
+spelling	𗩏	⿲𘢌𘡰⿱𘠛⿰𘠁𘡖	𘢌𘡰𘠛𘠁𘡖	amxslnk	amxe amxslne
+spelling	𗩘	⿲𘢌𘤏𘣮	𘢌𘤏𘣮	aymbmw	aybw aymbyw
+spelling	𗩰	⿲𘢌𘢰𘦢	𘢌𘢰𘦢	asbclx	asbx asbcx
+spelling	𗩵	⿰𘢌⿱𘢸⿰𘠌𘢌	𘢌𘢸𘠌𘢌	antmla	anta antoa
+spelling	𗩶	⿰𘢌⿱𘥄𘤜	𘢌𘥄𘤜	antjtb	anjb antjclb
+spelling	𗪃	⿰𘢌𘫙	𘢌𘫙	amtbxm	amtm amtbam
+spelling	𗪍	⿲𘢌𘠌𘪣	𘢌𘠌𘪣	amlmbua	aomua aombua
+spelling	𗪑	⿰𘢌⿰𘠌⿰𘠁𘪁	𘢌𘠌𘠁𘪁	amllcscb	aolcb aolcscb
+spelling	𗪒	⿰𘢌⿰𘠌⿰𘡃𘧀	𘢌𘠌𘡃𘧀	amlxsbw	aoxsw aoxsbw
+spelling	𗪓	⿰𘢌⿰𘠌⿰𘤩⿰𘠁𘠳	𘢌𘠌𘤩𘠁𘠳	amlcxlms	aocxs aocxlms
+spelling	𗪲	⿰𘢌⿱𘢸⿰𘠞⿱𘫺𘠘	𘢌𘢸𘠞𘫺𘠘	antfxk	antz antfz
+spelling	𗫗	⿰𘢌⿰𘠌⿰𘠁⿱𘡩𘧀	𘢌𘠌𘠁𘡩𘧀	amlltjsbw	aoltw aoltjsbw
+spelling	𗫪	⿰𘢌⿰𘠈⿰𘪴𘠴	𘢌𘠈𘪴𘠴	avrcxo	avro avrocxo
+spelling	𗫮	⿲𘢌𘦈𘪽	𘢌𘦈𘪽	aymxntjbw	ayxw aymxntjhbw
 spelling	𗫹	⿺𘢍⿱𘡊𘠃	𘢍𘡊𘠃	atn	atd
-spelling	𗬋	⿺𘢍𘫙	𘢍𘫙	amtbxm	amtbam
-spelling	𗭅	⿵𘢗𘫙	𘢗𘫙	ollmtbxm	ollmtbam
-spelling	𗭎	⿲𘢚𘠁𘤧	𘢚𘠁𘤧	yblfd	yblfvd
+spelling	𗬋	⿺𘢍𘫙	𘢍𘫙	amtbxm	amtm amtbam
+spelling	𗭅	⿵𘢗𘫙	𘢗𘫙	ollmtbxm	olmtm ollmtbam
 spelling	𗭏	⿲𘢚𘢌𘠌	𘢚𘢌𘠌	ybaml	ybao
-spelling	𗭐	⿰𘢚𘦑	𘢚𘦑	ybya	ybyala
-spelling	𗭙	⿰𘢚⿱𘠊𘥫	𘢚𘠊𘥫	ybwmsbt	ybwmubt
-spelling	𗮐	⿰𘢤𘪤	𘢤𘪤	cllmzydmm	cllmzvydmm
-spelling	𗮑	⿰𘢤𘪤	𘢤𘪤	cllmzydmm	cllmzvydq
-spelling	𗮶	⿺𘢦⿱𘡓𘢓	𘢦𘡓𘢓	cbufmxnn	cbudmxnn
-spelling	𗯑	⿰𘢨𘣞	𘢨𘣞	fvmbqu	fvmbu
+spelling	𗭙	⿰𘢚⿱𘠊𘥫	𘢚𘠊𘥫	ybwmsbt	ybwmt ybwmubt
+spelling	𗮐	⿰𘢤𘪤	𘢤𘪤	cllmzydmm	clmzm cllmzvydmm
+spelling	𗮑	⿰𘢤𘪤	𘢤𘪤	cllmzydmm	clmzq cllmzvydq
+spelling	𗮶	⿺𘢦⿱𘡓𘢓	𘢦𘡓𘢓	cbufmxnn	cudmn cbudmxnn
+spelling	𗯑	⿰𘢨𘣞	𘢨𘣞	fvmbqu	fvmu fvmbu
 spelling	𗰈	⿲𘢭𘠌𘠡	𘢭𘠌𘠡	csmls	csos
-spelling	𗰩	⿲𘢰𘦏𘧈	𘢰𘦏𘧈	sbybwsw	sbybwsyw
-spelling	𗱅	⿲𘢷𘢌𘣮	𘢷𘢌𘣮	nqamw	nqamww
+spelling	𗰩	⿲𘢰𘦏𘧈	𘢰𘦏𘧈	sbybwsw	sbyww sbybwsyw
 spelling	𗱢	⿱𘢸⿰𘠞⿱𘫺𘠘	𘢸𘠞𘫺𘠘	ntfxk	ntfz
-spelling	𗱬	⿱𘢸⿲𘢆𘠌𘠡	𘢸𘢆𘠌𘠡	nthbtmls	nthbtos
-spelling	𗱺	⿱𘢸⿰𘡫⿱𘫺𘠘	𘢸𘡫𘫺𘠘	ntmbtxk	ntmbtz
-spelling	𗲃	⿱𘢸⿰𘧶𘠢	𘢸𘧶𘠢	ntxixp	ntxixo
+spelling	𗱬	⿱𘢸⿲𘢆𘠌𘠡	𘢸𘢆𘠌𘠡	nthbtmls	nthts nthbtos
+spelling	𗱺	⿱𘢸⿰𘡫⿱𘫺𘠘	𘢸𘡫𘫺𘠘	ntmbtxk	ntmtz ntmbtz
+spelling	𗲃	⿱𘢸⿰𘧶𘠢	𘢸𘧶𘠢	ntxixp	ntxxo ntxixo
 spelling	𗲟	⿱𘢸⿲𘢌𘠌𘫽	𘢸𘢌𘠌𘫽	ntamlz	ntaoz
 spelling	𗲢	⿱𘢸⿰𘤊𘥿	𘢸𘤊𘥿	ntzhqk	ntzak
-spelling	𗲫	⿱𘢸⿰𘥁𘨆	𘢸𘥁𘨆	ntnwtlx	nthwylx
-spelling	𗲴	⿱𘢸⿰𘨷𘦕	𘢸𘨷𘦕	ntntatjp	ntntxtjp
+spelling	𗲫	⿱𘢸⿰𘥁𘨆	𘢸𘥁𘨆	ntnwtlx	nthwx nthwylx
+spelling	𗲴	⿱𘢸⿰𘨷𘦕	𘢸𘨷𘦕	ntntatjp	ntnxp ntntxtjp
 spelling	𗳀	⿱𘢻⿲𘠡𘠌𘡃	𘢻𘠡𘠌𘡃	gfsmlx	gfsox
-spelling	𗳂	⿱𘢻⿲𘡔𘡱𘠢	𘢻𘡔𘡱𘠢	gfnllmnkp	gfnllwxp
-spelling	𗴋	⿰𘣅𘠢	𘣅𘠢	fdp	fjdp
-spelling	𗴌	⿲𘣅𘠁𘢌	𘣅𘠁𘢌	fdla	fjdla
-spelling	𗵂	⿱𘣍⿲𘠨𘢌𘠌	𘣍𘠨𘢌𘠌	mtjgaml	mtjgao
-spelling	𗵅	⿱𘣍⿲𘠌𘢐𘠨	𘣍𘠌𘢐𘠨	mtjmlxlg	mtjoxlg
-spelling	𗵙	⿱𘣍⿲𘡰𘠁𘣣	𘣍𘡰𘠁𘣣	mtjmxlmlne	mtjnklmlne
-spelling	𗵷	⿰𘣎𘪼	𘣎𘪼	wbtntjmx	wbtntjnk
-spelling	𗶚	⿰𘣖𘧪	𘣖𘧪	mlqmxxl	mlqmzl
-spelling	𗶮	⿱⿰𘫿⿱𘠀𘣣𘣗	𘫿𘠀𘣣𘣗	sxmmlnetjm	sxwlnetjm
-spelling	𗷨	⿰𘣝𘦦	𘣝𘦦	mbqcbq	mbqcbw
-spelling	𗹄	⿰𘣩𘧪	𘣩𘧪	msbmxxl	msbmzl
-spelling	𗹝	⿰𘣱𘧪	𘣱𘧪	lgjmxxl	lgjmzl
+spelling	𗳂	⿱𘢻⿲𘡔𘡱𘠢	𘢻𘡔𘡱𘠢	gfnllmnkp	gfnlp gfnllwxp
+spelling	𗵂	⿱𘣍⿲𘠨𘢌𘠌	𘣍𘠨𘢌𘠌	mtjgaml	mjgao mtjgao
+spelling	𗵅	⿱𘣍⿲𘠌𘢐𘠨	𘣍𘠌𘢐𘠨	mtjmlxlg	mjoxg mtjoxlg
+spelling	𗵙	⿱𘣍⿲𘡰𘠁𘣣	𘣍𘡰𘠁𘣣	mtjmxlmlne	mjnke mtjnklmlne
+spelling	𗵷	⿰𘣎𘪼	𘣎𘪼	wbtntjmx	wtnjk wbtntjnk
+spelling	𗶚	⿰𘣖𘧪	𘣖𘧪	mlqmxxl	mqmzl mlqmzl
+spelling	𗶮	⿱⿰𘫿⿱𘠀𘣣𘣗	𘫿𘠀𘣣𘣗	sxmmlnetjm	setjm sxwlnetjm
+spelling	𗷨	⿰𘣝𘦦	𘣝𘦦	mbqcbq	mqcbw mbqcbw
+spelling	𗹄	⿰𘣩𘧪	𘣩𘧪	msbmxxl	mbmzl msbmzl
+spelling	𗹝	⿰𘣱𘧪	𘣱𘧪	lgjmxxl	ljmzl lgjmzl
 spelling	𗹭	𘣴	𘣴	ydq	ydqu
-spelling	𗺔	⿰𘤂𘧐	𘤂𘧐	hhlllnknk	hhlllnkx
-spelling	𗺺	⿲𘤃𘤷𘠉	𘤃𘤷𘠉	hhbtsbto	hhbtsbo
-spelling	𗻄	⿰𘤃⿰𘢌⿰𘠌𘠁	𘤃𘢌𘠌𘠁	hhbtamll	hhbtaol
-spelling	𗻡	⿰𘤃⿱𘡛⿰𘠌𘡃	𘤃𘡛𘠌𘡃	hhbtzmlx	hhbtzox
-spelling	𗻩	⿰𘤃⿱𘡎𘦲	𘤃𘡎𘦲	hhbtsmrbtu	hhbtsmcnbtu
-spelling	𗻬	⿰𘤃𘪽	𘤃𘪽	hhbtntjbw	hhbtntjhbw
-spelling	𗻶	⿲𘤃𘢈𘨱	𘤃𘢈𘨱	hhbtholsyw	hhbthhllsyw
-spelling	𗻹	⿰𘤃⿱⿰𘢾𘡖𘣗	𘤃𘢾𘡖𘣗	hhbtnbtnktjm	hhbtntnktjm
+spelling	𗺔	⿰𘤂𘧐	𘤂𘧐	hhlllnknk	hllnx hhlllnkx
+spelling	𗺺	⿲𘤃𘤷𘠉	𘤃𘤷𘠉	hhbtsbto	htsbo hhbtsbo
+spelling	𗻄	⿰𘤃⿰𘢌⿰𘠌𘠁	𘤃𘢌𘠌𘠁	hhbtamll	htaol hhbtaol
+spelling	𗻡	⿰𘤃⿱𘡛⿰𘠌𘡃	𘤃𘡛𘠌𘡃	hhbtzmlx	htzox hhbtzox
+spelling	𗻩	⿰𘤃⿱𘡎𘦲	𘤃𘡎𘦲	hhbtsmrbtu	htsmu hhbtsmcnbtu
+spelling	𗻬	⿰𘤃𘪽	𘤃𘪽	hhbtntjbw	htnjw hhbtntjhbw
+spelling	𗻶	⿲𘤃𘢈𘨱	𘤃𘢈𘨱	hhbtholsyw	hthlw hhbthhllsyw
+spelling	𗻹	⿰𘤃⿱⿰𘢾𘡖𘣗	𘤃𘢾𘡖𘣗	hhbtnbtnktjm	htnkm hhbtntnktjm
 spelling	𗼃	⿲𘡂𘠁𘠁	𘡂𘠁𘠁	hhhll	al
 spelling	𗼕	⿲𘤅𘢌𘠌	𘤅𘢌𘠌	alaml	alao
 spelling	𗼞	⿰𘤅𘨉	𘤅𘨉	alta	alrx
-spelling	𗽧	⿲𘤆⿱𘥃𘠢	𘤆𘥃𘠢	aintmp	aintmbp
+spelling	𗽧	⿲𘤆⿱𘥃𘠢	𘤆𘥃𘠢	aintmp	ainbp aintmbp
 spelling	𗾆	⿱𘡃𘠘	𘡃𘠘	xk	z
-spelling	𗾩	⿲𘤊𘣅𘠢	𘤊𘣅𘠢	zfdp	zfjdp
-spelling	𗿮	⿰𘫽⿱𘢸⿰𘠌𘢌	𘫽𘢸𘠌𘢌	zntmla	zntoa
-spelling	𗿳	⿲𘫽𘠁⿱𘡊⿰𘥔𘠢	𘫽𘠁𘡊𘥔𘠢	zltzlllp	ztlzlllp
-spelling	𗿿	⿲𘤋𘠁𘢌	𘤋𘠁𘢌	xyla	xivla
+spelling	𗿮	⿰𘫽⿱𘢸⿰𘠌𘢌	𘫽𘢸𘠌𘢌	zntmla	znta zntoa
 spelling	𘀀	⿰𘤌𘦸	𘤌𘦸	xvllb	xllb
-spelling	𘀦	⿰𘤒𘠵	𘤒𘠵	ybts	ybtky
-spelling	𘁖	⿱𘤛⿰𘠮𘩢	𘤛𘠮𘩢	ctmbtmqb	ctmbtmb
-spelling	𘁡	⿲𘤜𘠁𘤾	𘤜𘠁𘤾	tbldjpi	tblsdjpi
-spelling	𘁷	⿰𘤝𘢓	𘤝𘢓	tvlxnn	tblxnn
-spelling	𘃅	⿰𘤩⿱𘢸⿰𘠁𘤾	𘤩𘢸𘠁𘤾	cxntldjpi	cxntlspi
-spelling	𘃈	⿲𘤩𘤱𘧪	𘤩𘤱𘧪	cxsqmxxl	cxsqmzl
+spelling	𘀦	⿰𘤒𘠵	𘤒𘠵	ybts	ytky ybtky
+spelling	𘁖	⿱𘤛⿰𘠮𘩢	𘤛𘠮𘩢	ctmbtmqb	ctmbb ctmbtmb
+spelling	𘁡	⿲𘤜𘠁𘤾	𘤜𘠁𘤾	tbldjpi	tbldi tblsdjpi
+spelling	𘁷	⿰𘤝𘢓	𘤝𘢓	tvlxnn	tlxnn tblxnn
+spelling	𘃅	⿰𘤩⿱𘢸⿰𘠁𘤾	𘤩𘢸𘠁𘤾	cxntldjpi	cxnti cxntlspi
+spelling	𘃈	⿲𘤩𘤱𘧪	𘤩𘤱𘧪	cxsqmxxl	cxsql cxsqmzl
 spelling	𘃖	⿲𘦛𘫽𘠴	𘦛𘫽𘠴	txzo	rkzo
-spelling	𘃘	⿰𘤬𘫙	𘤬𘫙	rkmtbxm	rkmtbam
-spelling	𘃟	⿰𘤮𘣅	𘤮𘣅	czllfd	czllfjd
-spelling	𘄎	⿰𘤳𘪴	𘤳𘪴	smbrcx	smbrocx
-spelling	𘄣	⿲𘤷𘢌𘠌	𘤷𘢌𘠌	sbtaml	sbtao
-spelling	𘄼	⿰𘫿⿱𘠀𘣣	𘫿𘠀𘣣	sxmmlne	sxwlne
-spelling	𘅫	⿰𘫿𘪴	𘫿𘪴	sxrcx	sxrocx
-spelling	𘅭	⿰𘤻𘪾	𘤻𘪾	sxntsx	nkntsx
-spelling	𘅴	⿰𘫿𘫙	𘫿𘫙	sxmtbxm	sxmtbam
-spelling	𘅻	⿲𘫿𘪴𘣩	𘫿𘪴𘣩	sxrcxmsb	sxrocxmsb
-spelling	𘅽	⿲𘫿𘪴𘩁	𘫿𘪴𘩁	sxrcxmtjyd	sxrocxmtjyd
-spelling	𘆊	⿲𘥀𘦏𘧈	𘥀𘦏𘧈	nqjybwsw	nqjybwsyw
-spelling	𘆓	⿱𘥄⿲𘡰𘠁𘣦	𘥄𘡰𘠁𘣦	ntjmxlmxl	ntjxlmxl
-spelling	𘆔	⿱𘥄⿲𘠐𘢌𘫴	𘥄𘠐𘢌𘫴	ntjllantsbu	ntjmllantsbu
-spelling	𘆖	⿰𘥆𘢌	𘥆𘢌	fsya	fysa
-spelling	𘆰	⿲𘥇𘠁𘣮	𘥇𘠁𘣮	nlqlmw	nlqmlw
-spelling	𘇭	⿰𘥔⿱𘫺𘠘	𘥔𘫺𘠘	zlllxk	zlllz
-spelling	𘈱	⿰𘥫⿸𘡋𘠳	𘥫𘡋𘠳	msbtclms	msbtcmls
-spelling	𘈺	⿰𘥯𘢌	𘥯𘢌	mlqja	lgqa
-spelling	𘉊	⿰𘥶𘩢	𘥶𘩢	btjtmqb	btjtmb
-spelling	𘉣	⿰𘥺𘨹	𘥺𘨹	hqbfsbt	hqbgsbt
-spelling	𘊔	⿰𘥿𘦜	𘥿𘦜	hqktpi	hkxtpi
-spelling	𘊕	⿰𘥿𘧓	𘥿𘧓	hqkfjdq	hkfjdq
+spelling	𘃘	⿰𘤬𘫙	𘤬𘫙	rkmtbxm	rkmtm rkmtbam
+spelling	𘃟	⿰𘤮𘣅	𘤮𘣅	czllfd	clfjd czllfjd
+spelling	𘄎	⿰𘤳𘪴	𘤳𘪴	smbrcx	sbrcx smbrocx
+spelling	𘄣	⿲𘤷𘢌𘠌	𘤷𘢌𘠌	sbtaml	stao sbtao
+spelling	𘄼	⿰𘫿⿱𘠀𘣣	𘫿𘠀𘣣	sxmmlne	sxwle sxwlne
+spelling	𘅭	⿰𘤻𘪾	𘤻𘪾	sxntsx	nkntx nkntsx
+spelling	𘅴	⿰𘫿𘫙	𘫿𘫙	sxmtbxm	sxmtm sxmtbam
+spelling	𘅻	⿲𘫿𘪴𘣩	𘫿𘪴𘣩	sxrcxmsb	sxrxb sxrocxmsb
+spelling	𘅽	⿲𘫿𘪴𘩁	𘫿𘪴𘩁	sxrcxmtjyd	sxrxd sxrocxmtjyd
+spelling	𘆊	⿲𘥀𘦏𘧈	𘥀𘦏𘧈	nqjybwsw	njyww nqjybwsyw
+spelling	𘆓	⿱𘥄⿲𘡰𘠁𘣦	𘥄𘡰𘠁𘣦	ntjmxlmxl	njmxl ntjxlmxl
+spelling	𘆔	⿱𘥄⿲𘠐𘢌𘫴	𘥄𘠐𘢌𘫴	ntjllantsbu	njllu ntjmllantsbu
+spelling	𘆖	⿰𘥆𘢌	𘥆𘢌	fsya	fya fysa
+spelling	𘆰	⿲𘥇𘠁𘣮	𘥇𘠁𘣮	nlqlmw	nqmlw nlqmlw
+spelling	𘇭	⿰𘥔⿱𘫺𘠘	𘥔𘫺𘠘	zlllxk	zlz zlllz
+spelling	𘈱	⿰𘥫⿸𘡋𘠳	𘥫𘡋𘠳	msbtclms	mtcls msbtcmls
+spelling	𘈺	⿰𘥯𘢌	𘥯𘢌	mlqja	lqa lgqa
+spelling	𘉊	⿰𘥶𘩢	𘥶𘩢	btjtmqb	bjtmb btjtmb
+spelling	𘉣	⿰𘥺𘨹	𘥺𘨹	hqbfsbt	hbgst hqbgsbt
+spelling	𘊔	⿰𘥿𘦜	𘥿𘦜	hqktpi	hktpi hkxtpi
+spelling	𘊕	⿰𘥿𘧓	𘥿𘧓	hqkfjdq	hkfjq hkfjdq
 spelling	𘊩	⿰𘦈𘦳	𘦈𘦳	ymxrx	yxrx
-spelling	𘊺	⿰𘦌𘧦	𘦌𘧦	ylxmlebtu	ylxmebtu
-spelling	𘋣	⿰𘦘𘩢	𘦘𘩢	fjbtmqb	fjbtmwb
+spelling	𘊺	⿰𘦌𘧦	𘦌𘧦	ylxmlebtu	yxmeu ylxmebtu
+spelling	𘋣	⿰𘦘𘩢	𘦘𘩢	fjbtmqb	fbtmb fjbtmwb
 spelling	𘌢	𘦠	𘦠	fbt	fbtu
-spelling	𘌤	⿰𘦠⿱𘫺𘠘	𘦠𘫺𘠘	fbtxk	fbtz
+spelling	𘌤	⿰𘦠⿱𘫺𘠘	𘦠𘫺𘠘	fbtxk	ftz fbtz
 spelling	𘍐	𘦦	𘦦	cbq	cbqu
 spelling	𘍰	⿰𘦭𘠡	𘦭𘠡	ckks	cks
-spelling	𘎒	⿱𘦯𘫜	𘦯𘫜	rtmbuclx	rtbuclx
-spelling	𘐭	⿲𘦳𘠁⿱𘡩𘢷	𘦳𘠁𘡩𘢷	rxltjnq	rxtjlnq
-spelling	𘑉	⿰𘦳𘫙	𘦳𘫙	rxmtbxm	rxmtbam
-spelling	𘒹	⿲𘧐𘠁𘦳	𘧐𘠁𘦳	nknklrx	mxnklrx
-spelling	𘔢	⿲𘧪𘠁𘤩	𘧪𘠁𘤩	mxxllcx	mzllcx
-spelling	𘔣	⿰𘧪𘨱	𘧪𘨱	mxxlsyw	mzlsyw
-spelling	𘔩	⿲𘧭𘢈𘨱	𘧭𘢈𘨱	mzmlllholsyw	mzmlllhhllsyw
+spelling	𘎒	⿱𘦯𘫜	𘦯𘫜	rtmbuclx	ruclx rtbuclx
+spelling	𘐭	⿲𘦳𘠁⿱𘡩𘢷	𘦳𘠁𘡩𘢷	rxltjnq	rxtjq rxtjlnq
+spelling	𘑉	⿰𘦳𘫙	𘦳𘫙	rxmtbxm	rxmtm rxmtbam
+spelling	𘔢	⿲𘧪𘠁𘤩	𘧪𘠁𘤩	mxxllcx	mllcx mzllcx
+spelling	𘔣	⿰𘧪𘨱	𘧪𘨱	mxxlsyw	mlsyw mzlsyw
+spelling	𘔩	⿲𘧭𘢈𘨱	𘧭𘢈𘨱	mzmlllholsyw	mlhlw mzmlllhhllsyw
 spelling	𘔼	⿲𘧴𘠁𘢌	𘧴𘠁𘢌	xxlla	xlla
-spelling	𘕅	⿰𘧹𘤧	𘧹𘤧	ylafd	ylafvd
-spelling	𘖁	⿲𘨓𘠌𘫽	𘨓𘠌𘫽	fdqmlz	fdqoz
-spelling	𘖗	⿰𘨚𘫙	𘨚𘫙	csxmtbxm	csxmtbam
-spelling	𘖨	⿱𘨞⿲𘠨𘢰𘠆	𘨞𘠨𘢰𘠆	rtjgsbu	rtjgsbp
+spelling	𘕅	⿰𘧹𘤧	𘧹𘤧	ylafd	yafd ylafvd
+spelling	𘖁	⿲𘨓𘠌𘫽	𘨓𘠌𘫽	fdqmlz	fqoz fdqoz
+spelling	𘖗	⿰𘨚𘫙	𘨚𘫙	csxmtbxm	cxmtm csxmtbam
+spelling	𘖨	⿱𘨞⿲𘠨𘢰𘠆	𘨞𘠨𘢰𘠆	rtjgsbu	rjgsp rtjgsbp
 spelling	𘗴	⿱𘫿𘠘	𘫿𘠘	sxk	sz
-spelling	𘘞	⿰𘨴𘦚	𘨴𘦚	ntmbfd	ntmbfjd
-spelling	𘚊	⿰𘩂⿱𘡍⿰𘠌𘡃	𘩂𘡍𘠌𘡃	mtjxfmlx	mtjxfox
-spelling	𘚕	⿰𘩍𘧪	𘩍𘧪	mbmbmxxl	mbmbmzl
-spelling	𘛔	⿰𘩨𘧀	𘩨𘧀	tlmnksbw	tlnksbw
-spelling	𘛕	⿰𘩩𘪶	𘩩𘪶	tlxlsmzllll	tlxsmlzllll
-spelling	𘜍	⿰𘪐𘠢	𘪐𘠢	ntjbtp	ntjhbtp
-spelling	𘝮	⿰𘪴𘠅	𘪴𘠅	rcxnnn	rocxnnn
-spelling	𘝯	⿰𘪴𘠾	𘪴𘠾	rcxr	rocxr
-spelling	𘝰	⿰𘪴𘤳	𘪴𘤳	rcxsmb	rocxsmb
-spelling	𘝱	⿰𘪴𘥾	𘪴𘥾	rcxhhlne	rocxhhlne
-spelling	𘝲	⿲𘪴𘢒𘠢	𘪴𘢒𘠢	rcxxip	riixxip
-spelling	𘝳	⿰𘪴𘦘	𘪴𘦘	rcxfjb	rocxfjb
-spelling	𘝴	⿲𘪴𘢬𘠢	𘪴𘢬𘠢	rcxcsp	rocxcsp
-spelling	𘞅	⿰𘪼⿱𘡎⿰𘠶𘢌	𘪼𘡎𘠶𘢌	ntjmxsmyda	ntjnksmyda
-spelling	𘞆	𘪽	𘪽	ntjbw	ntjhbw
-spelling	𘞇	⿰𘪽𘤮	𘪽𘤮	ntjbwczll	ntjhbwczll
-spelling	𘞈	⿰𘪽𘫵	𘪽𘫵	ntjbwsgp	ntjhbwsgp
-spelling	𘟈	⿰𘫙𘦳	𘫙𘦳	mtbxmrx	mtbamrx
-spelling	𘟉	⿲𘫙𘦂𘠢	𘫙𘦂𘠢	mtbxmxxp	mtbamxxp
+spelling	𘘞	⿰𘨴𘦚	𘨴𘦚	ntmbfd	nbfjd ntmbfjd
+spelling	𘚊	⿰𘩂⿱𘡍⿰𘠌𘡃	𘩂𘡍𘠌𘡃	mtjxfmlx	mxfox mtjxfox
+spelling	𘚕	⿰𘩍𘧪	𘩍𘧪	mbmbmxxl	mbmzl mbmbmzl
+spelling	𘛔	⿰𘩨𘧀	𘩨𘧀	tlmnksbw	tksbw tlnksbw
+spelling	𘜍	⿰𘪐𘠢	𘪐𘠢	ntjbtp	ntp ntjhbtp
+spelling	𘝮	⿰𘪴𘠅	𘪴𘠅	rcxnnn	rxnnn rocxnnn
+spelling	𘝯	⿰𘪴𘠾	𘪴𘠾	rcxr	rxr rocxr
+spelling	𘝰	⿰𘪴𘤳	𘪴𘤳	rcxsmb	rxsmb rocxsmb
+spelling	𘝱	⿰𘪴𘥾	𘪴𘥾	rcxhhlne	rxhle rocxhhlne
+spelling	𘝲	⿲𘪴𘢒𘠢	𘪴𘢒𘠢	rcxxip	rxxip riixxip
+spelling	𘝳	⿰𘪴𘦘	𘪴𘦘	rcxfjb	rxfjb rocxfjb
+spelling	𘝴	⿲𘪴𘢬𘠢	𘪴𘢬𘠢	rcxcsp	rxcsp rocxcsp
+spelling	𘞅	⿰𘪼⿱𘡎⿰𘠶𘢌	𘪼𘡎𘠶𘢌	ntjmxsmyda	nksma ntjnksmyda
+spelling	𘞆	𘪽	𘪽	ntjbw	njhbw ntjhbw
+spelling	𘞇	⿰𘪽𘤮	𘪽𘤮	ntjbwczll	nwczl ntjhbwczll
+spelling	𘞈	⿰𘪽𘫵	𘪽𘫵	ntjbwsgp	nwsgp ntjhbwsgp
+spelling	𘟈	⿰𘫙𘦳	𘫙𘦳	mtbxmrx	mmrx mtbamrx
+spelling	𘟉	⿲𘫙𘦂𘠢	𘫙𘦂𘠢	mtbxmxxp	mmxxp mtbamxxp

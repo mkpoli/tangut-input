@@ -37,7 +37,9 @@ def main():
     for char, code in pairs:
         codes.setdefault(char, []).append(code)
     entries = json.loads(gzip.decompress((ROOT / 'app/data/tangut-entries.json.gz').read_bytes()))
-    by_char = {entry['char']: entry for entry in entries}
+    # The records are packed, one row per character; the description is the second value.
+    rows_in = entries['rows'] if isinstance(entries, dict) else entries
+    by_char = {row[0]: {'composition': row[1]} for row in rows_in}
 
     def part_code(part):
         held = codes.get(part)
@@ -62,10 +64,12 @@ def main():
             if all(pieces):
                 checked += 1
                 expected = ''.join(pieces)
-                longest = max(held, key=len)
-                if longest != expected:
-                    kinds[classify(longest, expected)] += 1
-                    rows.append(('spelling', char, composition, ''.join(parts), expected, longest))
+                # A character may carry several analyses; it is suspect only if none of them is the
+                # one its parts predict.
+                if expected not in held:
+                    nearest = min(held, key=lambda code: (abs(len(code) - len(expected)), code))
+                    kinds[classify(nearest, expected)] += 1
+                    rows.append(('spelling', char, composition, ''.join(parts), expected, ' '.join(held)))
         if len(held) > 1:
             short, long = min(held, key=len), max(held, key=len)
             if not deleted_from(short, long):
