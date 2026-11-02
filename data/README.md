@@ -15,6 +15,16 @@ snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
 underlying editions are in `wikisource/README.md` and in the source records of the built file.
 
+## `tangut-samples.json`
+
+Eight passages copied from `app/data/tangut-attestation.json.gz` for the Samples picker: three from
+the Diamond Sutra (the opening, the mark passage, and the closing gāthā), the Great Compassion
+Dharani's opening, the High King Avalokitesvara Sutra, the Twenty-five Questions, the Dragon King's
+question, and the Bodhicaryāvatāra's opening. Each record names its source, licence, line ids and
+the exact text; the five famous passages carry `famous: true`. Built by
+`scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the five
+Wikisource texts and CC BY 4.0 for the Bodhicaryāvatāra edition.
+
 ## `yi-bai-ids.tsv.gz`
 
 Standard IDS descriptions from Yi Bai's level-1 IDS dataset at commit

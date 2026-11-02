@@ -8,7 +8,10 @@
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { t, i18n } from '../lib/i18n.svelte.js'
   import G from '../ui/G.svelte'
+  import SamplePicker from '../ui/SamplePicker.svelte'
 
+  /** @type {HTMLTextAreaElement | null} */
+  let box = $state(null)
   const query = $derived(route.q)
   // The records are a plain object filled after they load, so the reading has to hang off the
   // store's status to be recomputed once they arrive.
@@ -43,10 +46,11 @@
     <p class="ui-page-intro">{t('transcribe.intro')}</p>
   </header>
 
-  <textarea class="ui-textarea transcribe-input ui-script" rows="2" value={query} spellcheck="false" autocomplete="off"
+  <textarea bind:this={box} class="ui-textarea transcribe-input ui-script" rows="2" value={query} spellcheck="false" autocomplete="off"
     aria-label={t('transcribe.input')} placeholder={t('transcribe.placeholder')} oninput={type}></textarea>
 
   <div class="ui-toolbar">
+    <SamplePicker align="start" syncQuery onpick={() => box?.focus()} />
     <label class="choose">
       <span class="ui-label">{t('reading.system')}</span>
       <span class="ui-select-wrap">

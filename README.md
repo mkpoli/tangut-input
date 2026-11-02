@@ -42,6 +42,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   Avalokitesvara Sutra, the Diamond Sutra, the Twenty-five Questions and Answers, and the Great
   Compassion Dharani. `data/wikisource/pages.json` pins their revisions; refresh it with
   `python3 scripts/fetch_tangut_wikisource.py`.
+- `app/data/tangut-samples.json`: eight passages copied from the six texts, five of them famous
+  sutras or dhāraṇī, offered by the Samples button in the text strip and on Transcribe; built by
+  `scripts/build_tangut_samples.py` from the attestation file.
 - `app/data/tangut-shapes.bin.gz`: glyph pen lines for the drawing pad, rendered from Noto Serif
   Tangut 2.168 by `scripts/build_tangut_shapes.py`; `scripts/handwriting/score.mjs` measures the
   search on drawings made by hand and `scripts/eval_tangut_shapes.mjs` on drawings made from a font.
