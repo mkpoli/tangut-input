@@ -5,7 +5,7 @@
 /** A character's place in the rhyme books: `[rhyme, tone, group, upper, lower, upperB, lowerB]`.
  * @typedef {{ [char: string]: [number | null, number | null, string | null, string | null, string | null, string | null, string | null] }} RhymeChars */
 /** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
-/** @typedef {{ char: string, codepoint: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
+/** @typedef {{ char: string, codepoint?: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
  *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_en?: string, wenhai_text_zh?: string }} Entry */
 /** @typedef {{ id: string, title: string, author: string, year: number, publisher: string, url: string, licence: string, manuscript: string,
  *   facsimile: string, facsimileCredit: string, reading: string, readingUrl: string }} AttestationSource */
@@ -41,7 +41,41 @@ const once = (key, load) => {
 }
 
 /** Meanings, readings and descriptions, from Open Tangut. @returns {Promise<Entry[]>} */
-export const loadEntries = () => once('entries', () => readJson(new URL('../data/tangut-entries.json.gz', import.meta.url)))
+export const loadEntries = () => once('entries', async () => {
+  const data = await readJson(new URL('../data/tangut-entries.json.gz', import.meta.url))
+  return Array.isArray(data) ? data : expandEntries(data)
+})
+
+/**
+ * A packed record, one row of values per character, as `compact_tangut_entries.py` writes it. The
+ * names of the readings are in the header once instead of in every row.
+ * @param {{ systems: string[], rows: any[][] }} packed
+ * @returns {Entry[]}
+ */
+function expandEntries(packed) {
+  return packed.rows.map(([char, composition, strokes, radical, en, ja, zh, readings, wenhaiEn, wenhaiZh]) => {
+    /** @type {Record<string, string>} */
+    const pronunciations = {}
+    packed.systems.forEach((key, i) => {
+      const value = readings?.[i]
+      if (value) pronunciations[key] = value
+    })
+    const definitions = {}
+    if (en?.length) definitions.en = en
+    if (ja?.length) definitions.ja = ja
+    if (zh?.length) definitions.zh = zh
+    return {
+      char,
+      composition: composition ?? undefined,
+      total_strokes: strokes ?? undefined,
+      radical: radical ?? undefined,
+      definitions,
+      pronunciations,
+      wenhai_text_en: wenhaiEn ?? undefined,
+      wenhai_text_zh: wenhaiZh ?? undefined,
+    }
+  })
+}
 
 /** Cangjie codes as [character, code] pairs, from the RIME Tangut Cangjie table. @returns {Promise<[string, string][]>} */
 export const loadCodes = () => once('codes', () => readJson(new URL('../data/tangut-cangjie.json.gz', import.meta.url)))
