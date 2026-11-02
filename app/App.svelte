@@ -3,7 +3,8 @@
   // card of the open character beside it (a sheet over it on a phone).
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES } from './lib/route.svelte.js'
-  import { ui, applyTangut, applyTheme, cycleTheme, setTangut, TANGUT_FACES } from './lib/ui.svelte.js'
+  import { ui, applyTangut, applyTheme, cycleTheme, setTangut, setReading, TANGUT_FACES } from './lib/ui.svelte.js'
+  import { SYSTEMS, systemName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
   import { i18n, LOCALES, setLocale, t } from './lib/i18n.svelte.js'
   import { applySeo } from './lib/seo.js'
@@ -86,6 +87,14 @@
             {/each}
           </ul>
         {/if}
+      </div>
+      <div class="font-pick">
+        <label class="reading" title={t('reading.system')}>
+          <span class="sr">{t('reading.system')}</span>
+          <select value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)}>
+            {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+          </select>
+        </label>
       </div>
       <div class="font-pick">
         <button class="btn ghost face" type="button" aria-haspopup="listbox" aria-expanded={fontMenu}
@@ -174,6 +183,8 @@
   .badge{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;background:var(--accent);color:var(--on-accent);font-size:21px}
   .name{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:.005em}
   .finders{display:flex;gap:2px}
+  .reading select{max-width:160px;padding:5px 8px;border:1px solid transparent;border-radius:7px;background:none;color:var(--ink-2);font-size:13px}
+  .reading select:hover{background:var(--hover);color:var(--ink)}
   .finders a,.about{padding:6px 11px;border-radius:7px;color:var(--ink-2);text-decoration:none;font-size:13.5px;font-weight:500}
   .finders a:hover,.about:hover{background:var(--hover);color:var(--ink)}
   .finders a.on,.about.on{background:var(--ink);color:var(--bg)}
@@ -208,6 +219,9 @@
     .card{position:fixed;inset:0;top:0;height:100dvh;z-index:40;border:0;transform:translateY(100%);transition:transform .22s ease;visibility:hidden}
     .card.open{transform:none;visibility:visible}
     /* Seven finders do not fit a phone; the strip scrolls sideways and keeps the current one in view. */
+    /* The mark carries the name on a phone; the reconstruction keeps its room. */
+    .name{display:none}
+    .reading select{max-width:150px;font-size:12px}
     .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:2px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
     .tabs a,.tabs .more{flex:1 1 0;padding:9px 4px;border:0;border-radius:8px;text-align:center;color:var(--ink-2);background:none;text-decoration:none;font-size:12.5px;font-weight:500;white-space:nowrap}
     .tabs a.extra{display:none}
