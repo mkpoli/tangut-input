@@ -218,7 +218,7 @@
           {#each spells.slice(0, 48) as other (other)}
             <button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              {#if readingOf(other)}<small class="say">{readingOf(other)}</small>{/if}<G char={other} /><small>{gloss(other)}</small>
+              <small class="say">{readingOf(other)}</small><G char={other} /><small>{gloss(other)}</small>
             </button>
           {/each}
         </div>
@@ -232,7 +232,7 @@
           {#each homophones.slice(0, 48) as other (other)}
             <button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              {#if readingOf(other)}<small class="say">{readingOf(other)}</small>{/if}<G char={other} /><small>{gloss(other)}</small>
+              <small class="say">{readingOf(other)}</small><G char={other} /><small>{gloss(other)}</small>
             </button>
           {/each}
         </div>
@@ -292,8 +292,10 @@
   .formula{font-family:var(--tangut);font-size:21px;line-height:1.2;padding:3px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);user-select:text;cursor:text}
   .ids .btn.small{min-height:26px;padding:0 8px;font-size:12px}
   .tiles.small{--tile:48px}
-  .tiles.small .tile{background:var(--raised);box-shadow:none;border-color:var(--line)}
-  .tiles.small .tile .say{display:block;font-family:var(--serif);font-size:11px;color:var(--ink-2);line-height:1.1}
+  .tiles.small .tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:5px 2px 4px;background:var(--raised);box-shadow:none;border-color:var(--line)}
+  /* The reading sits above the glyph as a quiet gloss: smaller than the meaning, in the muted ink,
+     and always present so the glyphs line up whether a sound is recorded or not. */
+  .tiles.small .tile .say{display:block;min-height:11px;font-family:var(--serif);font-size:10px;line-height:1.1;color:var(--muted);letter-spacing:.01em}
   .tiles.small .tile:hover{border-color:var(--accent)}
   .more{font-size:13px}
   .credit{font-size:12px;line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
