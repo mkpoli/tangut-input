@@ -92,6 +92,7 @@
               {#if hit.upper}<span class="cut"><span class="tg">{hit.upper}</span>{#if reading(hit.upper)}<small>{reading(hit.upper)}</small>{/if}</span>{/if}
               {#if hit.lower}<span class="cut"><span class="tg">{hit.lower}</span>{#if reading(hit.lower)}<small>{reading(hit.lower)}</small>{/if}</span>{/if}
             </span>
+            <span class="text">
             <span class="meta">
               {#if reading(hit.char)}
                 <span class="say">{reading(hit.char)}</span>
@@ -101,6 +102,7 @@
               {#if hit.rhyme}<span class="muted">{#if reading(hit.char) || inferred.get(hit.spelling)} · {/if}{t('card.rhyme')} {hit.rhyme}</span>{/if}
             </span>
             <span class="gl">{gloss(hit.char)}</span>
+            </span>
           </button>
           <button type="button" class="add btn ghost" aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
             <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -131,7 +133,8 @@
   .rows{list-style:none;margin:0;padding:0;display:grid;gap:2px}
   .row{display:grid;grid-template-columns:1fr auto;align-items:center;border-radius:9px}
   .row:hover,.row[aria-selected="true"]{background:var(--hover)}
-  .pick{display:grid;grid-template-columns:40px 120px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:12px;padding:6px 8px;border:0;background:none;text-align:left;width:100%}
+  .pick{display:grid;grid-template-columns:40px 120px minmax(0,1fr);align-items:center;gap:12px;padding:6px 8px;border:0;background:none;text-align:left;width:100%}
+  .text{display:grid;gap:2px;min-width:0}
   .glyph{font-family:var(--tangut);font-size:30px;line-height:1}
   .cuts{display:flex;gap:10px;color:var(--accent-ink)}
   .cut{display:grid;justify-items:center;line-height:1}
@@ -140,6 +143,7 @@
   .record .cuts .tg{font-size:24px}
   .meta{font-size:12.5px}
   .gl{font-size:13px;color:var(--muted);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:700px){.gl{text-align:left}.cuts{gap:6px}}
   .add{opacity:0}
   .row:hover .add,.row:focus-within .add{opacity:1}
   .empty{padding:18px 0;color:var(--muted);font-size:14px}
