@@ -165,11 +165,12 @@
         </span>
       </label>
       <div class="font-pick">
-        <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" bind:this={fontTrigger}
+        <button class="ui-button" data-variant="quiet" data-size="sm" type="button" bind:this={fontTrigger}
           aria-label={t('font.label')} aria-haspopup="listbox" aria-expanded={fontMenu}
           title={t(TANGUT_FACES.find(face => face.key === ui.tangut)?.label ?? 'font.serif')}
           onclick={() => { fontMenu ? closeFont(false) : openFont() }}>
           <span class="ui-script sample" aria-hidden="true">𘅤</span>
+          <span class="face-name">{t(TANGUT_FACES.find(face => face.key === ui.tangut)?.label ?? 'font.serif')}</span>
         </button>
         {#if fontMenu}
           <ul class="ui-menu font-menu" role="listbox" aria-label={t('font.label')} bind:this={fontList} onkeydown={fontKeys}>
@@ -242,7 +243,7 @@
         onclick={() => { menu = false }}>×</button>
     </div>
     <div class="sheet-links">
-      {#each PAGES.filter(page => EXTRAS.has(page.path) || page.path === '') as page (page.path)}
+      {#each PAGES.filter(page => EXTRAS.has(page.path)) as page (page.path)}
         <a class="sheet-link" href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
           onclick={event => { menu = false; nav(event, page.path) }}>
           <span class="sheet-name">{t(page.label)}</span><span class="ui-hint">{t(page.hint)}</span>
@@ -286,6 +287,8 @@
   .lang :global(.ui-select){inline-size:104px}
   .font-pick{position:relative}
   .sample{font-size:18px;line-height:1}
+  .face-name{display:none;font-size:var(--ui-text-xs);color:var(--ui-color-ink-soft)}
+  @media (min-width:1181px){.face-name{display:inline}}
   .font-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);min-inline-size:200px}
   .font-menu .sample{font-size:19px;inline-size:22px;text-align:center}
 
@@ -298,7 +301,7 @@
 
   .toast{position:fixed;left:50%;bottom:var(--ui-space-3xl);transform:translateX(-50%);z-index:var(--ui-z-toast);pointer-events:none}
 
-  .sheet{margin:0;padding:var(--ui-space-lg) var(--ui-space-xl) calc(var(--ui-space-2xl) + env(safe-area-inset-bottom));inline-size:100%;max-inline-size:none;max-block-size:82dvh;border:0;border-top:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-2xl) var(--ui-radius-2xl) 0 0;background:var(--ui-color-surface);color:var(--ui-color-ink)}
+  .sheet{position:fixed;inset:auto 0 0 0;margin:0;padding:var(--ui-space-lg) var(--ui-space-xl) calc(var(--ui-space-2xl) + env(safe-area-inset-bottom));inline-size:100%;max-inline-size:none;max-block-size:82dvh;border:0;border-top:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-2xl) var(--ui-radius-2xl) 0 0;background:var(--ui-color-surface);color:var(--ui-color-ink)}
   .sheet::backdrop{background:var(--ui-color-overlay)}
   .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--ui-space-sm)}
   .sheet-links{display:grid;gap:1px}
@@ -312,10 +315,20 @@
     .top{gap:var(--ui-space-md);padding-inline:var(--ui-space-xl)}
     .finders a{padding-inline:var(--ui-space-xs);font-size:var(--ui-text-xs)}
     .finders a.on::after{inset-inline:var(--ui-space-xs)}
-    .lang{display:none}
-    .reading :global(.ui-select){inline-size:140px}
+    .reading :global(.ui-select){inline-size:154px}
+  }
+  /* A tablet keeps every finder: the bar takes a second row instead of hiding Sources in a
+     sideways scroller. The sticky chrome below it follows the new height. */
+  @media (min-width:901px) and (max-width:1180px){
+    .shell{--topbar-h:96px}
+    .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
+    .mark,.aside{block-size:55px}
+    .finders{order:3;flex:0 0 100%;block-size:40px;margin-inline:calc(-1 * var(--ui-space-xl));padding-inline:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
+    .finders a{padding-inline:var(--ui-space-sm);font-size:var(--ui-text-sm)}
+    .finders a.on::after{inset-inline:var(--ui-space-sm)}
   }
   @media (max-width:900px){
+    .shell{--topbar-h:54px}
     .top{gap:var(--ui-space-sm);padding-inline:var(--ui-space-lg)}
     .finders,.sources,.lang{display:none}
     .aside{gap:2px}

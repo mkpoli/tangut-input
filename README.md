@@ -95,9 +95,14 @@ bunx wrangler d1 migrations apply tangut-records --remote   # the schema, once
 bun install
 bun run dev                    # the site
 bun run check                  # types and Svelte checks
+bun run check:design           # the design system and every page in Chromium
 bun run build:app              # the static site into dist/
 bun scripts/shoot_app.mjs      # screenshots of dist/ into docs/design/
 ```
+
+The design system is in [`design/`](design/); its reference page is served at `/design.html` in
+development and built beside the site. `bun run check:design` expects the dev server on
+`http://localhost:5180`; set `DESIGN_URL` for another address.
 
 The glyphs are set in Noto Serif Tangut from Google Fonts, with a small subset of the bundled
 version for the components Google's build lacks (`app/public/fonts/`, SIL OFL 1.1).

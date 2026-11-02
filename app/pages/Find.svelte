@@ -76,62 +76,69 @@
   ])
 </script>
 
-<div class="find">
+<div class="ui-page find">
   <div class="search">
-    <input class="field big" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
+    <input class="ui-input" data-size="xl" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
       aria-label={t('find.label')} placeholder={t('find.placeholder')}
       oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { query = event.currentTarget.value; setQuery(query) }} onkeydown={keys} use:autofocus />
   </div>
 
   {#if !text}
-    <section class="doors" aria-label={t('nav.label')}>
-      {#each DOORS as door (door.page)}
-        <a class="door" href={link(door.page)} onclick={event => { if (event.button === 0 && !event.metaKey && !event.ctrlKey) { event.preventDefault(); go(door.page) } }}>
-          <span class="tg big-glyph" aria-hidden="true">{door.glyph}</span>
-          <span class="title">{t(door.title)}</span>
-          <span class="body">{t(door.body)}</span>
-        </a>
-      {/each}
+    <section aria-label={t('nav.label')}>
+      <div class="ui-index">
+        {#each DOORS as door (door.page)}
+          <a class="ui-index-link" href={link(door.page)} onclick={event => { if (event.button === 0 && !event.metaKey && !event.ctrlKey) { event.preventDefault(); go(door.page) } }}>
+            <span class="ui-index-glyph" aria-hidden="true">{door.glyph}</span>
+            <span class="ui-index-text">
+              <span class="ui-index-title">{t(door.title)}</span>
+              <span class="ui-index-body">{t(door.body)}</span>
+            </span>
+            <span class="ui-index-arrow" aria-hidden="true">→</span>
+          </a>
+        {/each}
+      </div>
     </section>
     <section class="tips">
       <p>{t('find.tip')}</p>
-      <p class="muted">{t('find.try')} <button type="button" class="chip" onclick={() => { query = '𗋕𘏨𘜶𗤶𗜈𗧯𘔼'; setQuery(query) }}><span class="tg">𗋕𘏨𘜶𗤶𗜈𗧯𘔼</span></button>
-        <button type="button" class="chip" onclick={() => { query = 'tiger'; setQuery(query) }}>tiger</button>
-        <button type="button" class="chip" onclick={() => { query = '水'; setQuery(query) }}>水</button>
-        <button type="button" class="chip mono" onclick={() => { query = 'U+1736'; setQuery(query) }}>U+1736</button></p>
+      <p class="examples"><span class="ui-hint">{t('find.try')}</span>
+        <button type="button" class="ui-chip ui-script" lang="txg" onclick={() => { query = '𗋕𘏨𘜶𗤶𗜈𗧯𘔼'; setQuery(query) }}>𗋕𘏨𘜶𗤶𗜈𗧯𘔼</button>
+        <button type="button" class="ui-chip" onclick={() => { query = 'tiger'; setQuery(query) }}>tiger</button>
+        <button type="button" class="ui-chip" lang="zh-Hant" onclick={() => { query = '水'; setQuery(query) }}>水</button>
+        <button type="button" class="ui-chip ui-mono" onclick={() => { query = 'U+1736'; setQuery(query) }}>U+1736</button>
+      </p>
     </section>
   {:else if !ready}
-    <p class="empty">{t('common.loading')}</p>
+    <p class="ui-empty">{t('common.loading')}</p>
   {:else if !groups.length}
-    <p class="empty">{t('find.none', { text })}</p>
+    <p class="ui-empty">{t('find.none', { text })}</p>
   {:else}
     {#each groups as group, g (group.key)}
       {@const offset = groups.slice(0, g).reduce((sum, other) => sum + other.items.length, 0)}
-      <section class="group" aria-label={group.title}>
-        <header>
-          <h2 class="label">{group.title}</h2>
-          <span class="muted">{group.total > group.items.length ? t('common.of', { shown: group.items.length, total: group.total }) : group.total}</span>
-          {#if group.page}<a class="more" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}</a>{/if}
+      <section class="ui-section" aria-label={group.title}>
+        <header class="ui-section-head">
+          <h2 class="ui-label">{group.title}</h2>
+          <span class="ui-count">{group.total > group.items.length ? t('common.of', { shown: group.items.length, total: group.total }) : group.total}</span>
+          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}</a>{/if}
         </header>
         {#if group.key === 'text'}
-          <ol class="gloss-list" role="listbox" aria-label={group.title}>
+          <ol class="ui-rows">
             {#each group.items as item, i (item.char)}
-              <li role="presentation">
-                <button type="button" role="option" data-index={offset + i} class="gl-row" aria-selected={offset + i === active || route.c === item.char}
+              <li class="ui-row" data-selected={offset + i === active || route.c === item.char}>
+                <button type="button" data-index={offset + i} class="ui-row-pick gloss-row" aria-current={offset + i === active || route.c === item.char ? 'true' : undefined}
                   onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char, { place: offset + i })}>
                   <G char={item.char} />
-                  <span class="r">{item.extra}</span>
-                  <span class="m">{item.sub || '—'}</span>
+                  <span class="ui-row-said">{item.extra}</span>
+                  <span class="ui-row-title">{item.sub || '—'}</span>
                 </button>
               </li>
             {/each}
           </ol>
         {:else}
-          <div class="tiles" role="listbox" aria-label={group.title}>
+          <div class="ui-tiles" role="listbox" aria-label={group.title} style:--ui-tile-size="72px">
             {#each group.items as item, i (item.char)}
-              <button type="button" role="option" class="tile" data-index={offset + i} aria-selected={offset + i === active || (active < 0 && route.c === item.char)}
+              <button type="button" role="option" class="ui-tile" data-index={offset + i} aria-selected={offset + i === active || (active < 0 && route.c === item.char)}
                 title={gloss(item.char)} onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char, { place: offset + i })}>
-                <G char={item.char} /><small>{item.extra ? `${item.extra} ` : ''}{item.sub}</small>
+                <G char={item.char} /><span class="ui-tile-note">{item.extra ? `${item.extra} ` : ''}{item.sub}</span>
               </button>
             {/each}
           </div>
@@ -142,34 +149,17 @@
 </div>
 
 <style>
-  .find{display:grid;gap:22px;max-width:980px}
-  .big{font-size:20px;padding:14px 18px;border-radius:14px}
-  .doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .door{position:relative;display:grid;gap:4px;padding:18px 20px 18px 96px;min-height:108px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);text-decoration:none;box-shadow:var(--shadow)}
-  .door:hover{border-color:var(--accent)}
-  .big-glyph{position:absolute;left:20px;top:18px;display:grid;place-items:center;width:58px;height:58px;border-radius:10px;background:var(--bg);font-size:40px;color:var(--ink-2)}
-  .door:hover .big-glyph{background:var(--accent-soft);color:var(--accent-ink)}
-  .title{font-family:var(--serif);font-size:19px;font-weight:600}
-  .body{font-size:13px;color:var(--ink-2)}
-  .tips{display:grid;gap:8px;font-size:13.5px}
-  .tips .muted{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-  .tips :global(.tg){font-size:17px}
-  .group{display:grid;gap:10px}
-  .group header{display:flex;align-items:baseline;gap:10px}
-  .group header span{font-size:12px}
-  .more{margin-left:auto;font-size:13px}
-  .tiles{--tile:72px}
-  .gloss-list{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-  .gl-row{width:100%;display:grid;grid-template-columns:56px 110px 1fr;align-items:center;gap:14px;padding:6px 10px;border:1px solid transparent;border-radius:10px;background:var(--surface);text-align:left}
-  .gl-row:hover{background:var(--raised)}
-  .gl-row[aria-selected="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-  .gl-row :global(.tg){font-size:36px;text-align:center}
-  .gl-row .r{font-family:var(--serif);font-size:15px;color:var(--ink-2)}
-  .gl-row .m{font-size:14px}
+  .find{gap:var(--ui-space-3xl)}
+  .tips{display:grid;gap:var(--ui-space-xs);font-size:var(--ui-text-sm)}
+  .examples{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
+  .examples .ui-script{font-size:17px}
+  .gloss-row{grid-template-columns:44px 9rem minmax(0,1fr)}
+  .gloss-row :global(.ui-script){font-size:32px;text-align:center}
+  .gloss-row .ui-row-said{font-size:var(--ui-text-md)}
+  .gloss-row .ui-row-title{font-size:var(--ui-text-md)}
+  .ui-tile :global(.ui-script){font-size:calc(var(--ui-tile-size) * .52)}
   @media (max-width:900px){
-    .doors{grid-template-columns:1fr}
-    .door{padding:14px 14px 14px 84px;min-height:0}
-    .big-glyph{left:14px;top:14px;width:54px;height:54px}
-    .gl-row{grid-template-columns:44px 80px 1fr;gap:10px}
+    .gloss-row{grid-template-columns:38px 6.5rem minmax(0,1fr);gap:var(--ui-space-sm)}
+    .gloss-row :global(.ui-script){font-size:28px}
   }
 </style>

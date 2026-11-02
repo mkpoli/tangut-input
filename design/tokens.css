@@ -1,0 +1,158 @@
+/* Tangut Input design tokens.
+
+   One palette for the site: warm paper, ink, and a single vermilion for what acts. Every
+   colour is a light-dark() pair, so `color-scheme` alone picks the side; a page that offers
+   a switch sets `data-theme="light"` or `data-theme="dark"` on the root.
+
+   Rules:
+   - Components read semantic tokens, never a raw colour.
+   - A page may override a token on :root; it may not restyle the control classes.
+   - Text tokens clear 4.5:1 on the surfaces they sit on; control boundaries clear 3:1. */
+
+:root {
+  color-scheme: light dark;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+:root {
+  /* Surfaces. There are three: the page, the panel, and the inset. Hover and pressed are the
+     only other fills, so a page does not grow a stack of near-identical greys. */
+  --ui-color-canvas: light-dark(#f4efe5, #141210);
+  --ui-color-surface: light-dark(#fffcf6, #1c1a17);
+  --ui-color-surface-sunken: light-dark(#ece5d8, #100f0d);
+  --ui-color-surface-hover: light-dark(#efe7d9, #26231f);
+  --ui-color-surface-active: light-dark(#e4dbca, #302c27);
+  --ui-color-overlay: light-dark(rgb(35 27 18 / 0.32), rgb(0 0 0 / 0.62));
+
+  /* Text */
+  --ui-color-ink: light-dark(#1e1b17, #ece6dc);
+  --ui-color-ink-soft: light-dark(#4a443b, #c4bcae);
+  --ui-color-ink-muted: light-dark(#6d6456, #9a9184);
+
+  /* Lines. `border` and `border-strong` are decoration; `control-border` is the 3:1 boundary
+     that identifies a field or an unchecked box. */
+  --ui-color-border: light-dark(#e3dbcc, #2e2a25);
+  --ui-color-border-strong: light-dark(#cbbfab, #48423a);
+  --ui-color-control-border: light-dark(#8b7d68, #807565);
+  --ui-color-control-border-hover: light-dark(#6f6353, #9a8e7d);
+
+  /* Accent: the one vermilion. Used for the mark, the primary action, selection and focus. */
+  --ui-color-accent: light-dark(#a83418, #f08a6b);
+  --ui-color-accent-hover: light-dark(#8c2a13, #ffa387);
+  --ui-color-accent-active: light-dark(#721f0d, #ffb8a1);
+  --ui-color-accent-soft: light-dark(#f6e3da, #3a2219);
+  --ui-color-accent-ink: light-dark(#8c2a13, #ffa387);
+  --ui-color-on-accent: light-dark(#fffaf2, #1d110c);
+  /* Focus is ink, not the accent: a vermilion ring around every field reads as an error, and ink
+     keeps its contrast on every surface in both schemes. */
+  --ui-color-focus: light-dark(#1e1b17, #ece6dc);
+
+  /* Danger */
+  --ui-color-danger: light-dark(#b42318, #ff8a80);
+  --ui-color-danger-hover: light-dark(#971c13, #ffa59d);
+  --ui-color-danger-soft: light-dark(#fdecea, #3a1e1c);
+  --ui-color-on-danger: light-dark(#fffaf2, #2a0b08);
+
+  /* Selection and scrollbars */
+  --ui-color-selection: light-dark(#f3ddd2, #4a2a1f);
+  --ui-color-selection-ink: var(--ui-color-ink);
+  --ui-color-scrollbar: light-dark(#cbbfab, #48423a);
+  --ui-color-scrollbar-hover: light-dark(#8b7d68, #807565);
+
+  /* Inverted surfaces: the toast and the phone's tab bar label. */
+  --ui-color-inverse-surface: light-dark(#1e1b17, #ece6dc);
+  --ui-color-inverse-ink: light-dark(#fffaf2, #141210);
+
+  /* Shadow: only overlays cast one. The page itself is flat. */
+  --ui-shadow-color-2: light-dark(rgb(46 32 20 / 0.18), rgb(0 0 0 / 0.6));
+  --ui-shadow-1: 0 1px 2px light-dark(rgb(46 32 20 / 0.08), rgb(0 0 0 / 0.45));
+  --ui-shadow-2: 0 10px 28px var(--ui-shadow-color-2);
+
+  /* Type */
+  --ui-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans JP',
+    'Noto Sans SC', sans-serif;
+  --ui-font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia,
+    'Noto Serif JP', 'Songti SC', serif;
+  --ui-font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', Menlo, Consolas,
+    monospace;
+  /* The script this site is about, and the face its structure operators come from. A host page
+     points these at its own faces; everything else falls back to the serif. */
+  --ui-font-script: var(--ui-font-serif);
+  --ui-font-ids: var(--ui-font-script);
+  --ui-text-2xs: 11px;
+  --ui-text-xs: 12px;
+  --ui-text-sm: 13px;
+  --ui-text-md: 14px;
+  --ui-text-lg: 16px;
+  --ui-text-xl: 20px;
+  --ui-text-2xl: 26px;
+  --ui-text-3xl: 32px;
+  --ui-leading-tight: 1.25;
+  --ui-leading-normal: 1.5;
+  --ui-leading-loose: 1.65;
+  --ui-weight-normal: 400;
+  --ui-weight-medium: 500;
+  --ui-weight-semibold: 600;
+  --ui-weight-bold: 650;
+  --ui-tracking-caps: 0.08em;
+
+  /* Space */
+  --ui-space-3xs: 2px;
+  --ui-space-2xs: 4px;
+  --ui-space-xs: 6px;
+  --ui-space-sm: 8px;
+  --ui-space-md: 10px;
+  --ui-space-lg: 12px;
+  --ui-space-xl: 16px;
+  --ui-space-2xl: 20px;
+  --ui-space-3xl: 24px;
+  --ui-space-4xl: 32px;
+  --ui-space-5xl: 40px;
+
+  /* Shape */
+  --ui-radius-xs: 4px;
+  --ui-radius-sm: 6px;
+  --ui-radius-md: 8px;
+  --ui-radius-lg: 10px;
+  --ui-radius-xl: 12px;
+  --ui-radius-2xl: 14px;
+  --ui-radius-pill: 999px;
+
+  /* Controls */
+  --ui-control-h-sm: 28px;
+  --ui-control-h-md: 32px;
+  --ui-control-h-lg: 38px;
+  --ui-control-h-xl: 50px;
+  --ui-target-min: 24px;
+  --ui-checkbox-size: 18px;
+  --ui-radio-size: 18px;
+  --ui-switch-width: 40px;
+  --ui-switch-height: 24px;
+  --ui-switch-thumb: 18px;
+  --ui-switch-travel: 16px;
+  --ui-color-switch-thumb: light-dark(#fffcf6, #f4efe5);
+  --ui-disabled-opacity: 0.45;
+
+  /* Focus: one ring, everywhere. */
+  --ui-ring-width: 2px;
+  --ui-ring-offset: 2px;
+
+  /* Motion. Short, and only on colour and opacity. */
+  --ui-duration-fast: 110ms;
+  --ui-duration: 160ms;
+  --ui-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Layers */
+  --ui-z-chrome: 30;
+  --ui-z-menu: 40;
+  --ui-z-hint: 50;
+  --ui-z-modal: 60;
+  --ui-z-toast: 70;
+}

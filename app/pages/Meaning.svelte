@@ -50,79 +50,74 @@
   const EXAMPLES = ['water', '毒', 'horse']
 </script>
 
-<div class="meaning">
-  <header class="intro">
-    <h1>{t('nav.meaning')}</h1>
-    <p class="muted">{t('meaning.intro')}</p>
+<div class="ui-page meaning">
+  <header class="ui-page-head">
+    <h1 class="ui-page-title">{t('nav.meaning')}</h1>
+    <p class="ui-page-intro">{t('meaning.intro')}</p>
   </header>
 
   <div class="controls">
-    <input class="field big" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
+    <input class="ui-input" data-size="xl" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
       aria-label={t('meaning.label')} placeholder={t('meaning.placeholder')}
       oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { query = event.currentTarget.value; setQuery(query) }}
       onkeydown={keys} use:autofocus />
-    <div class="group" role="group" aria-label={t('meaning.languages')}>
-      <span class="label">{t('meaning.languages')}</span>
-      <button type="button" class="chip" aria-pressed={!languages.length} onclick={() => { languages = [] }}>{t('meaning.all')}</button>
-      {#each MEANING_LANGUAGES as key (key)}
-        <button type="button" class="chip" aria-pressed={languages.includes(key)} onclick={() => toggle(key)}>{t(`meaning.${key}`)}</button>
-      {/each}
+    <div class="filter-row" role="group" aria-label={t('meaning.languages')}>
+      <span class="ui-label">{t('meaning.languages')}</span>
+      <div class="ui-chip-row">
+        <button type="button" class="ui-chip" aria-pressed={!languages.length} onclick={() => { languages = [] }}>{t('meaning.all')}</button>
+        {#each MEANING_LANGUAGES as key (key)}
+          <button type="button" class="ui-chip" aria-pressed={languages.includes(key)} onclick={() => toggle(key)}>{t(`meaning.${key}`)}</button>
+        {/each}
+      </div>
     </div>
   </div>
 
   {#if !text}
-    <div class="tips">
-      <p class="muted">{t('meaning.try')}
-        {#each EXAMPLES as example (example)}
-          <button type="button" class="chip" onclick={() => { query = example; setQuery(example) }}>{example}</button>
-        {/each}
-      </p>
+    <div class="start">
+      <span class="ui-hint">{t('meaning.try')}</span>
+      {#each EXAMPLES as example (example)}
+        <button type="button" class="ui-chip" onclick={() => { query = example; setQuery(example) }}>{example}</button>
+      {/each}
     </div>
   {:else if !ready}
-    <p class="empty">{t('common.loading')}</p>
+    <p class="ui-empty">{t('common.loading')}</p>
   {:else if !hits.length}
-    <p class="empty">{t('meaning.none', { query: text })}</p>
+    <p class="ui-empty">{t('meaning.none', { query: text })}</p>
   {:else}
-    <p class="summary muted" role="status">{t('common.characters', { count: hits.length })}</p>
-    <ol class="rows" bind:this={list} role="listbox" aria-label={t('common.charactersLabel')}>
+    <p class="ui-count" role="status">{t('common.characters', { count: hits.length })}</p>
+    <ol class="ui-rows" bind:this={list}>
       {#each shown as hit, i (hit.char)}
-        <li role="option" aria-selected={i === active || (active < 0 && route.c === hit.char)} class="row">
-          <button type="button" class="pick" onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char, { place: i })}>
-            <span class="tg glyph">{hit.char}</span>
-            <span class="sense" lang={hit.lang}><span class="tag" aria-hidden="true">{hit.lang}</span>{hit.sense}</span>
-            <span class="gl">{gloss(hit.char)}</span>
+        <li class="ui-row" data-selected={i === active || (active < 0 && route.c === hit.char)}>
+          <button type="button" class="ui-row-pick meaning-row" aria-current={i === active || (active < 0 && route.c === hit.char) ? 'true' : undefined}
+            onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char, { place: i })}>
+            <G char={hit.char} />
+            <span class="sense" lang={hit.lang}><span class="ui-tag" aria-hidden="true">{hit.lang}</span>{hit.sense}</span>
+            <span class="ui-row-gloss">{gloss(hit.char)}</span>
           </button>
-          <button type="button" class="add btn ghost" aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
+          <button type="button" class="ui-row-action ui-button" data-variant="quiet" data-size="icon-sm"
+            aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
             <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
         </li>
       {/each}
     </ol>
-    {#if hits.length > shown.length}<p class="muted cut">{t('meaning.cut', { shown: shown.length, total: hits.length })}</p>{/if}
+    {#if hits.length > shown.length}<p class="ui-hint">{t('meaning.cut', { shown: shown.length, total: hits.length })}</p>{/if}
   {/if}
 </div>
 
 <style>
-  .meaning{display:grid;gap:16px;max-width:900px}
-  .intro{display:grid;gap:6px}
-  h1{font-family:var(--serif);font-size:26px;font-weight:600}
-  .intro p{font-size:13.5px;max-width:52em}
-  .controls{display:grid;gap:10px}
-  .big{font-size:22px;padding:12px 16px;font-family:var(--serif)}
-  .group{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
-  .group .label{width:auto;margin-right:4px}
-  .chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
-  .summary{font-size:12.5px}
-  .rows{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-  .row{display:grid;grid-template-columns:1fr auto;align-items:center;border-radius:9px}
-  .row:hover,.row[aria-selected="true"]{background:var(--hover)}
-  .pick{display:grid;grid-template-columns:38px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:12px;padding:6px 8px;border:0;background:none;text-align:left;width:100%}
-  .glyph{font-family:var(--tangut);font-size:30px;line-height:1}
-  .sense{font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .tag{display:inline-block;min-width:20px;margin-right:6px;padding:1px 4px;border-radius:4px;background:var(--sunk);color:var(--muted);font-size:10px;font-family:var(--mono);text-transform:uppercase;vertical-align:middle}
-  .gl{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
-  .add{opacity:0}
-  .row:hover .add,.row:focus-within .add{opacity:1}
-  .cut{font-size:12.5px}
-  .empty{padding:18px 0;color:var(--muted);font-size:14px}
+  .controls{display:grid;gap:var(--ui-space-md)}
+  .filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-sm)}
+  .filter-row > .ui-label{inline-size:92px}
+  .start{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
+  .meaning-row{grid-template-columns:38px minmax(0,1.2fr) minmax(0,1fr)}
+  .meaning-row :global(.ui-script){font-size:28px;text-align:center}
+  .sense{overflow:hidden;color:var(--ui-color-ink);font-size:var(--ui-text-md);text-overflow:ellipsis;white-space:nowrap}
+  .meaning-row .ui-row-gloss{text-align:end}
+  @media (max-width:900px){
+    .filter-row > .ui-label{inline-size:100%}
+    .meaning-row{grid-template-columns:34px minmax(0,1fr);gap:var(--ui-space-sm)}
+    .meaning-row :global(.ui-script){font-size:26px}
+    .meaning-row .ui-row-gloss{grid-column:2;text-align:start;font-size:var(--ui-text-xs)}
+  }
 </style>

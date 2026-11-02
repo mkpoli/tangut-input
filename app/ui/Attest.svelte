@@ -13,12 +13,12 @@
   const source = $derived(db.attestation?.sources[0])
 </script>
 
-<section>
-  <h3 class="label">{t('attest.title')}</h3>
+<section class="attest">
+  <h3 class="ui-label">{t('attest.title')}</h3>
   {#if !db.attestation}
-    <p class="empty">{t('attest.loading')}</p>
+    <p class="ui-hint">{t('attest.loading')}</p>
   {:else if !places.length}
-    <p class="absent">{@html t('attest.absent', { characters: corpus?.characters ?? 0, distinct: corpus?.distinct ?? 0 })}</p>
+    <p class="ui-notice">{@html t('attest.absent', { characters: corpus?.characters ?? 0, distinct: corpus?.distinct ?? 0 })}</p>
   {:else}
     <ol class="places">
       {#each places as place (place.line + place.position)}
@@ -26,13 +26,13 @@
         <li class="place">
           <img src={crop} alt={t('attest.crop', { char, line: place.line.split(':')[1] })} width="44" height="72" loading="lazy" />
           <div class="line">
-            <p class="text tg" lang="txg">
+            <p class="text ui-script" lang="txg">
               {#each [...place.text.text] as other, i (i)}
                 {#if i + 1 === place.position}<mark>{other}</mark>{:else}<button type="button" onclick={() => choose(other)}>{other}</button>{/if}
               {/each}
             </p>
             {#if place.text.english}<p class="en">{place.text.english}</p>{/if}
-            <p class="where muted">{t('attest.where', { line: place.line.split(':')[1], position: place.position, page: place.text.page })}
+            <p class="where ui-hint">{t('attest.where', { line: place.line.split(':')[1], position: place.position, page: place.text.page })}
               {#if place.text.url} · <a href={place.text.url} target="_blank" rel="noreferrer">{place.text.read ? t('attest.reading') : t('attest.unread')}</a>{/if}</p>
           </div>
         </li>
@@ -40,23 +40,22 @@
     </ol>
   {/if}
   {#if source}
-    <p class="src muted">{source.author} {source.year}, <a href={source.url} target="_blank" rel="noreferrer"><i>{source.title}</i></a>, {source.licence}; {source.manuscript}.
+    <p class="src ui-hint">{source.author} {source.year}, <a href={source.url} target="_blank" rel="noreferrer"><i>{source.title}</i></a>, {source.licence}; {source.manuscript}.
       {source.facsimileCredit} {t('attest.lineReadings')} <a href={source.readingUrl} target="_blank" rel="noreferrer">{source.reading}</a>. {t('attest.recordedBy')}</p>
   {/if}
 </section>
 
 <style>
-  section{display:grid;gap:8px}
-  .absent{padding:10px 12px;border-radius:9px;background:var(--raised);border:1px dashed var(--line-strong);font-size:13.5px;color:var(--ink-2)}
-  .places{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-  .place{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--raised)}
-  img{flex:none;width:44px;height:72px;object-fit:contain;background:#f2ede2;border-radius:5px;border:1px solid var(--line)}
-  .line{display:grid;gap:4px;min-width:0}
-  .text{font-size:24px;display:flex;flex-wrap:wrap;gap:1px}
-  .text button{padding:1px;border:0;border-radius:4px;background:none;font:inherit}
-  .text button:hover{background:var(--hover)}
-  mark{padding:1px 2px;border-radius:4px;background:var(--accent-soft);color:var(--accent-ink);box-shadow:inset 0 -2px 0 var(--accent)}
-  .en{font-family:var(--serif);font-size:14px;line-height:1.4}
-  .where{font-size:12px}
-  .src{font-size:11.5px;line-height:1.5}
+  .attest{display:grid;gap:var(--ui-space-sm);padding-block:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
+  .places{list-style:none;margin:0;padding:0;display:grid;gap:var(--ui-space-xs)}
+  .place{display:flex;gap:var(--ui-space-md);align-items:flex-start;padding:var(--ui-space-sm);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface-sunken)}
+  img{flex:none;inline-size:44px;block-size:72px;object-fit:contain;background:#e8e1d4;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-xs)}
+  .line{display:grid;gap:var(--ui-space-2xs);min-inline-size:0}
+  .text{display:flex;flex-wrap:wrap;gap:1px;font-size:23px;line-height:1.3}
+  .text button{padding:1px;border:0;border-radius:var(--ui-radius-xs);background:none;font:inherit;color:inherit}
+  .text button:hover{background:var(--ui-color-surface-hover)}
+  mark{padding:1px 2px;border-radius:var(--ui-radius-xs);background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink);box-shadow:inset 0 -2px 0 var(--ui-color-accent)}
+  .en{font-family:var(--ui-font-serif);font-size:var(--ui-text-sm);line-height:1.45}
+  .where{font-size:var(--ui-text-2xs)}
+  .src{font-size:var(--ui-text-2xs);line-height:1.55}
 </style>

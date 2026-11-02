@@ -1,5 +1,14 @@
 # Tangut Input: design
 
+## The design system
+
+The interface shares one design system, in [`design/`](../design/): tokens for colour, type, space,
+shape and motion; a base layer; controls; and the patterns the site repeats (a finder page, an
+index of ways in, character tiles, result rows, the candidate bar, the key chart). `app/app.css`
+imports it, sets the Tangut faces as the script tokens, and adds no paint of its own. The reference
+page at `/design.html` shows every token and state in both schemes; `bun run check:design` operates
+it and visits every page in Chromium. `design/README.md` documents the tokens, classes and rules.
+
 ## The model
 
 The site has three parts.
@@ -22,13 +31,17 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 
 ## The frame
 
-**Desktop (1440×900).** Top bar with the five finders and Sources; the text strip under it; the
-finder on the left and the card in a fixed 440 px column on the right, scrolling on its own. The
-card stays visible while candidates change, so meaning and reading are read alongside the list.
+**Desktop (1440×900).** One 54 px top bar: the mark, the nine finders, Sources, then the
+reconstruction, the interface language, the Tangut face and the theme. The text strip sits under
+it; the finder takes the left and the card a fixed 400 px column on the right, scrolling on its
+own. The card stays visible while candidates change, so meaning and reading are read alongside the
+list.
 
-**Phone (390 wide).** The finders move to a bottom tab bar. The card becomes a full-height sheet
-that a tap opens and Back or `Esc` closes; previews from the keyboard do not open it. The text strip
-stays at the top.
+**Phone (390 wide).** The top bar keeps the mark, the reconstruction, the face and the theme. The
+finders move to a bottom tab bar with the four a reader starts from and a More sheet for the rest,
+Sources and the interface language; the sheet is a native `<dialog>`, so Escape closes it and
+focus returns to More. The card becomes a full-height sheet that a tap opens and Back or `Esc`
+closes; previews from the keyboard do not open it. The text strip stays at the top.
 
 ## The finders, and why each sits where it does
 
@@ -110,12 +123,15 @@ for every path.
 
 ## Visual identity
 
-Warm paper and ink with one vermilion accent, used only for what acts (the primary button, focus,
-the highlighted candidate) and for the mark. Tangut is set in Noto Serif Tangut; Latin headings and
-readings in a book serif from the system; interface text in the system sans; codes in the system
-monospace. Light and dark are `light-dark()` pairs; the theme follows the system unless the switch
-in the top bar fixes it. The mark is 𘅤 (U+18164), glossed “to write” in Open Tangut, drawn from the
-font into the favicon.
+Warm paper and ink with one vermilion accent, used for what acts (the primary button, a selected
+row or candidate, the mark) and for the mark. The focus ring is ink, so a focused box does not read
+as an error. The page has three surfaces and no shadow; only menus, popovers and the toast float.
+Tangut is set in Noto Serif Tangut by default, with three further faces from the top bar; Latin
+headings and readings in a book serif from the system; interface text in the system sans; codes in
+the system monospace. Light and dark are `light-dark()` pairs; the theme follows the system unless
+the switch in the top bar fixes it. The card can show a character in every face the site serves,
+loading the seven extra outlines only when asked. The mark is 𘅤 (U+18164), glossed “to write” in
+Open Tangut, drawn from the font into the favicon.
 
 Google Fonts' Noto Serif Tangut lacks the newest components (U+18AF3–18AFF, U+18D00–18D08), so a
 4 KB subset of the bundled version 2.168 covers those code points. Characters no font draws yet
@@ -225,6 +241,10 @@ table marks as wrong, and an offline (service worker) mode.
   only line numbers and positions until it was rebuilt.
 - `package.json` still describes the package as “A Tangut-only IDS editor” and exports the old
   `src/` library, which the site does not use.
+- This document called the site's finders “the five finders” while the app has nine; the frame
+  section above now names the bar as it is.
+- The Sources page was written in English in the component while the message catalogues held the
+  same text; the paragraphs now live in the catalogues, as the interface's other strings do.
 
 ## Screenshots
 

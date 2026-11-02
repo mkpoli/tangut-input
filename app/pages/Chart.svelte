@@ -254,47 +254,49 @@
   }
 </script>
 
-<div class="chart">
-  <header class="intro">
-    <h1>{t('nav.chart')}</h1>
-    <p class="muted">{t('chart.intro')}</p>
-    <div class="modes" role="group" aria-label={t('chart.axis')}>
-      <button type="button" class="chip" aria-pressed={String(view.mode) === 'rhyme'} onclick={() => { view.mode = 'rhyme'; page = 0 }}>{t('chart.mode.rhyme')}</button>
-      <button type="button" class="chip" aria-pressed={String(view.mode) === 'tangut'} onclick={() => { view.mode = 'tangut'; page = 0 }}>{t('chart.mode.tangut')}</button>
-      <button type="button" class="chip" aria-pressed={String(view.mode) === 'han'} onclick={() => { view.mode = 'han'; page = 0 }}>{t('chart.mode.han')}</button>
-      <button type="button" class="chip" aria-pressed={String(view.mode) === 'sound'} onclick={() => { view.mode = 'sound'; page = 0 }}>{t('chart.mode.sound')}</button>
+<div class="ui-page chart" data-width="wide">
+  <header class="ui-page-head">
+    <h1 class="ui-page-title">{t('nav.chart')}</h1>
+    <p class="ui-page-intro">{t('chart.intro')}</p>
+    <div class="ui-toolbar modes" role="group" aria-label={t('chart.axis')}>
+      <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'rhyme'} onclick={() => { view.mode = 'rhyme'; page = 0 }}>{t('chart.mode.rhyme')}</button>
+      <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'tangut'} onclick={() => { view.mode = 'tangut'; page = 0 }}>{t('chart.mode.tangut')}</button>
+      <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'han'} onclick={() => { view.mode = 'han'; page = 0 }}>{t('chart.mode.han')}</button>
+      <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'sound'} onclick={() => { view.mode = 'sound'; page = 0 }}>{t('chart.mode.sound')}</button>
       {#if String(view.mode) === 'rhyme'}
-        <button type="button" class="chip" aria-pressed={view2.adjacent} onclick={() => { view2.adjacent = !view2.adjacent }}>{t('chart.order')}</button>
+        <button type="button" class="ui-chip" aria-pressed={view2.adjacent} onclick={() => { view2.adjacent = !view2.adjacent }}>{t('chart.order')}</button>
       {/if}
       <label class="choose">
-        <span class="label">{t('chart.system')}</span>
-        <select class="field" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('chart.system')}>
-          {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
-        </select>
+        <span class="ui-label">{t('chart.system')}</span>
+        <span class="ui-select-wrap">
+          <select class="ui-select" data-size="sm" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('chart.system')}>
+            {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+          </select>
+        </span>
       </label>
     </div>
   </header>
 
   {#if !ready}
-    <p class="empty">{t('common.loading')}</p>
+    <p class="ui-empty">{t('common.loading')}</p>
   {:else if String(view.mode) === 'sound'}
-    <p class="muted legend">{t('chart.soundIntro', { sounds: soundGroups.length })}</p>
+    <p class="ui-hint">{t('chart.soundIntro', { sounds: soundGroups.length })}</p>
     <div class="sounds">
       {#each soundGroups as group (group.sound)}
         <section class="sound">
           <h3 class="sound-head">
-            <span class="zh">{group.sound}</span>
-            <small class="muted">{t('common.characters', { count: group.characters.length })}</small>
+            <span class="sound-glyph">{group.sound}</span>
+            <span class="ui-count">{t('common.characters', { count: group.characters.length })}</span>
           </h3>
-          <div class="tiles small">
+          <div class="ui-tiles" style:--ui-tile-size="52px">
             {#each group.characters as char (char)}
               {#if ix.rhymes.get(char)}
-                <button class="tile" type="button" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>
-                  <span class="tg">{char}</span>
-                  <small class="muted">{(ix.rhymes.get(char)?.[3] ?? '') + (ix.rhymes.get(char)?.[4] ?? '')}</small>
+                <button class="ui-tile" type="button" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>
+                  <span class="ui-script ui-tile-glyph">{char}</span>
+                  <span class="ui-tile-note ui-script">{(ix.rhymes.get(char)?.[3] ?? '') + (ix.rhymes.get(char)?.[4] ?? '')}</span>
                 </button>
               {:else}
-                <button class="tile" type="button" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}><span class="tg">{char}</span></button>
+                <button class="ui-tile" type="button" data-note="none" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}><span class="ui-script ui-tile-glyph">{char}</span></button>
               {/if}
             {/each}
           </div>
@@ -302,10 +304,10 @@
       {/each}
     </div>
   {:else if String(view.mode) !== 'rhyme'}
-    <div class="pager">
-      <span class="muted">{t('chart.page', { page: page + 1, pages })}</span>
-      <button type="button" class="chip" disabled={page === 0} onclick={() => { page = Math.max(0, page - 1) }} aria-label={t('chart.prev')}>‹</button>
-      <button type="button" class="chip" disabled={page >= pages - 1} onclick={() => { page = Math.min(pages - 1, page + 1) }} aria-label={t('chart.next')}>›</button>
+    <div class="ui-toolbar">
+      <span class="ui-count">{t('chart.page', { page: page + 1, pages })}</span>
+      <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" disabled={page === 0} onclick={() => { page = Math.max(0, page - 1) }} aria-label={t('chart.prev')}>‹</button>
+      <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" disabled={page >= pages - 1} onclick={() => { page = Math.min(pages - 1, page + 1) }} aria-label={t('chart.next')}>›</button>
     </div>
     <div class="wrap">
       <table>
@@ -313,17 +315,17 @@
           <tr>
             <th class="corner" scope="col"><span>{t('chart.lower')}</span> / {t('chart.upper')}</th>
             {#each shownUppers as upper (upper)}
-              <th scope="col" class="group tg" title={upperClasses.get(upper)?.zh ?? ''}>{upper}{#if upperClasses.get(upper)}<small lang="zh-Hant">{upperClasses.get(upper)?.zh}</small>{/if}</th>
+              <th scope="col" class="group" title={upperClasses.get(upper)?.zh ?? ''}><span class="ui-script">{upper}</span>{#if upperClasses.get(upper)}<small lang="zh-Hant">{upperClasses.get(upper)?.zh}</small>{/if}</th>
             {/each}
           </tr>
         </thead>
         <tbody>
           {#each spellRows as row (row.lower)}
             <tr>
-              <th scope="row" class="rhyme tg">{row.lower}{#if lowerRhymes.get(row.lower)}<small>{t('card.rhyme')} {lowerRhymes.get(row.lower)}</small>{/if}</th>
+              <th scope="row" class="head-cell"><span class="ui-script">{row.lower}</span>{#if lowerRhymes.get(row.lower)}<small>{t('card.rhyme')} {lowerRhymes.get(row.lower)}</small>{/if}</th>
               {#each row.cells as cell, i (i)}
                 <td>
-                  {#each cell as item (item.char)}<button type="button" class="tg cell" title={detail(item.char)} onclick={() => choose(item.char)} ondblclick={() => put(item.char)}>{item.char}{#if item.zhiyin}<small>{item.zhiyin}</small>{/if}</button>{/each}
+                  {#each cell as item (item.char)}<button type="button" class="cell ui-script" title={detail(item.char)} onclick={() => choose(item.char)} ondblclick={() => put(item.char)}>{item.char}{#if item.zhiyin}<small>{item.zhiyin}</small>{/if}</button>{/each}
                 </td>
               {/each}
             </tr>
@@ -352,17 +354,17 @@
               <tr class="tone"><th colspan={GROUPS.length + 1}>{t(TONE_KEY[row.tone])}</th></tr>
             {/if}
             <tr>
-              <th scope="row" class="rhyme">
-                <span>{row.rhyme}</span>
+              <th scope="row" class="head-cell rhyme">
+                <span class="rhyme-number">{row.rhyme}</span>
                 {#if view2.adjacent}<span class="tone-label">{t(TONE_KEY[row.tone])}</span>{/if}
                 {#if finals.get(row.key)?.length}<span class="final">{finals.get(row.key)?.join(' ')}</span>{/if}
-                <small class="muted">{row.count}</small>
+                <small class="ui-count">{row.count}</small>
               </th>
               {#each GROUPS as group (group)}
                 <td>
                   {#if row.columns.get(group)?.length}
                     {#each row.columns.get(group) ?? [] as char (char)}
-                      <button type="button" class="tg cell" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}</button>
+                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}</button>
                     {/each}
                   {/if}
                 </td>
@@ -372,46 +374,42 @@
         </tbody>
       </table>
     </div>
-    <p class="legend muted">{t('chart.legend')}</p>
+    <p class="ui-hint">{t('chart.legend')}</p>
   {/if}
 </div>
 
 <style>
-  .chart{display:grid;gap:14px;max-width:1100px}
-  .intro{display:grid;gap:6px}
-  h1{font-family:var(--serif);font-size:26px;font-weight:600}
-  .intro p{font-size:13.5px;max-width:56em}
-  .wrap{overflow:auto;max-height:calc(100dvh - 260px);border:1px solid var(--line);border-radius:12px;background:var(--surface)}
-  table{border-collapse:separate;border-spacing:0;font-size:13px}
-  thead th{position:sticky;top:0;z-index:2;background:var(--raised);border-bottom:1px solid var(--line-strong);padding:7px 6px;font:600 12px var(--mono);color:var(--muted)}
-  thead th.corner{left:0;z-index:3;text-align:left;white-space:nowrap;font-family:var(--ui);font-weight:500}
-  thead th.group{text-align:center;width:84px}
-  thead th.group .roman{display:block;font-size:12px}
-  thead th.group .name{display:block;font-family:var(--ui);font-size:11.5px;color:var(--ink-2);letter-spacing:0;text-transform:none}
-  thead th.group small{display:block;font-size:10px;color:var(--muted);font-weight:400}
-  tbody th.rhyme{position:sticky;left:0;z-index:1;background:var(--raised);border-right:1px solid var(--line-strong);padding:4px 8px;text-align:right;font:600 13px var(--mono);white-space:nowrap;min-width:52px}
-  tbody th.rhyme small{display:block;font-weight:400;font-size:10px}
-  tbody th.rhyme .final{display:block;font-family:var(--serif);font-size:11.5px;font-weight:400;color:var(--ink-2);white-space:nowrap}
-  tbody th.rhyme .tone-label{display:block;font-family:var(--ui);font-size:10.5px;font-weight:400;color:var(--muted);white-space:nowrap}
-  tr.tone th{position:sticky;left:0;background:var(--sunk);color:var(--muted);text-align:left;padding:5px 10px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border-top:1px solid var(--line-strong)}
-  td{vertical-align:top;border-top:1px solid var(--line);border-left:1px solid var(--line);padding:3px;min-width:84px}
-  .cell{font-family:var(--tangut);font-size:19px;line-height:1.12;border:0;background:none;padding:1px 2px;border-radius:5px;color:var(--ink)}
-  .cell:hover{background:var(--accent-soft);color:var(--accent-ink)}
-  .cell small{display:block;font-family:var(--ui);font-size:9.5px;color:var(--muted);line-height:1.1}
-  .legend{font-size:12.5px;max-width:60em}
-  .pager{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .sounds{display:grid;gap:14px;max-height:calc(100dvh - 300px);overflow:auto}
-  .sound{display:grid;gap:6px;padding-bottom:10px;border-bottom:1px solid var(--line)}
-  .sound-head{display:flex;align-items:baseline;gap:8px;margin:0}
-  .sound-head .zh{font-size:20px;font-weight:600}
-  .sound .tile small{font-family:var(--tangut);font-size:12px}
-  .choose{display:flex;align-items:center;gap:6px;font-size:12.5px;margin-left:auto}
-  .choose .label{white-space:nowrap}
-  .choose select{padding:4px 8px;font-size:12.5px}
-  .pager .muted{font-size:12.5px;margin-left:auto}
-  .modes{display:flex;gap:5px}
-  .chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
-  th.group.tg{font-family:var(--tangut);font-size:20px;color:var(--ink)}
-  tbody th.rhyme.tg{font-family:var(--tangut);font-size:20px;color:var(--ink)}
-  .empty{padding:18px 0;color:var(--muted);font-size:14px}
+  .modes{gap:var(--ui-space-xs)}
+  .choose{display:flex;align-items:center;gap:var(--ui-space-xs);margin-inline-start:auto}
+  .choose .ui-label{white-space:nowrap}
+  .wrap{overflow:auto;max-block-size:calc(100dvh - 250px);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-lg);background:var(--ui-color-surface)}
+  table{border-collapse:separate;border-spacing:0;font-size:var(--ui-text-sm)}
+  thead th{position:sticky;top:0;z-index:2;padding:var(--ui-space-sm) var(--ui-space-xs);border-bottom:1px solid var(--ui-color-border-strong);background:var(--ui-color-surface);color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold)}
+  thead th.corner{left:0;z-index:3;text-align:start;white-space:nowrap;font-family:var(--ui-font-sans);font-weight:var(--ui-weight-medium)}
+  thead th.group{text-align:center;inline-size:84px}
+  thead th.group .ui-script{display:block;font-size:19px;color:var(--ui-color-ink)}
+  thead th.group .roman{display:block;font-size:var(--ui-text-xs)}
+  thead th.group .name{display:block;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft);font-weight:var(--ui-weight-normal);letter-spacing:0;text-transform:none}
+  thead th.group small{display:block;font-size:10px;color:var(--ui-color-ink-muted);font-weight:var(--ui-weight-normal)}
+  tbody th.head-cell{position:sticky;left:0;z-index:1;padding:var(--ui-space-2xs) var(--ui-space-sm);border-inline-end:1px solid var(--ui-color-border);background:var(--ui-color-surface);text-align:end;white-space:nowrap;min-inline-size:52px;font-family:var(--ui-font-mono);font-size:var(--ui-text-xs)}
+  tbody th.head-cell .ui-script{display:block;font-size:20px;color:var(--ui-color-ink)}
+  tbody th.head-cell small{display:block;font-weight:var(--ui-weight-normal);font-size:10px;color:var(--ui-color-ink-muted)}
+  tbody th.head-cell .rhyme-number{font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);color:var(--ui-color-ink)}
+  tbody th.head-cell .final{display:block;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
+  tbody th.head-cell .tone-label{display:block;font-family:var(--ui-font-sans);font-size:10px;color:var(--ui-color-ink-muted)}
+  tr.tone th{position:sticky;left:0;background:var(--ui-color-surface-sunken);color:var(--ui-color-ink-muted);text-align:start;padding:var(--ui-space-2xs) var(--ui-space-sm);font-size:var(--ui-text-2xs);letter-spacing:var(--ui-tracking-caps);text-transform:uppercase;border-top:1px solid var(--ui-color-border-strong)}
+  td{vertical-align:top;border-top:1px solid var(--ui-color-border);border-inline-start:1px solid var(--ui-color-border);padding:3px;min-inline-size:84px}
+  .cell{padding:1px 3px;border:1px solid transparent;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font-size:19px;line-height:1.12}
+  .cell:hover{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover)}
+  .cell small{display:block;font-family:var(--ui-font-sans);font-size:9.5px;color:var(--ui-color-ink-muted);line-height:1.1}
+  .sounds{display:grid;gap:var(--ui-space-xl);max-block-size:calc(100dvh - 290px);overflow:auto;padding-inline-end:var(--ui-space-2xs)}
+  .sound{display:grid;gap:var(--ui-space-sm);padding-bottom:var(--ui-space-md);border-bottom:1px solid var(--ui-color-border)}
+  .sound-head{display:flex;align-items:baseline;gap:var(--ui-space-sm);margin:0}
+  .sound-glyph{font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold)}
+  .sound .ui-tile-note{font-size:var(--ui-text-xs)}
+  @media (max-width:900px){
+    .choose{margin-inline-start:0}
+    .wrap{max-block-size:calc(100dvh - 300px)}
+    td{min-inline-size:70px}
+  }
 </style>

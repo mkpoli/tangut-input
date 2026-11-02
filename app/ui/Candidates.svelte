@@ -37,18 +37,19 @@
 </script>
 
 {#if shown.length}
-  <div class="tiles" style:--tile="{size}px" role="listbox" aria-label={label} bind:this={grid}>
+  <div class="ui-tiles" style:--ui-tile-size="{size}px" role="listbox" aria-label={label} bind:this={grid}>
     {#each shown as item, i (item.char)}
-      <button class="tile" type="button" role="option" aria-selected={i === active || (active < 0 && route.c === item.char)}
+      <button class="ui-tile" type="button" role="option" aria-selected={i === active || (active < 0 && route.c === item.char)}
+        data-note={item.sub ? undefined : 'none'}
         title={item.title ?? item.sub ?? ''}
         onclick={() => { active = i; choose(item.char) }} ondblclick={() => put(item.char, { place: i })}>
-        <G char={item.char} />{#if item.sub}<small>{item.sub}</small>{/if}
+        <span class="ui-tile-glyph"><G char={item.char} /></span>{#if item.sub}<span class="ui-tile-note">{item.sub}</span>{/if}
       </button>
     {/each}
   </div>
-  {#if items.length > limit}<p class="cut muted">The first {limit} of {items.length}. Narrow the search to see the rest.</p>{/if}
+  {#if items.length > limit}<p class="cut ui-hint">The first {limit} of {items.length}. Narrow the search to see the rest.</p>{/if}
 {/if}
 
 <style>
-  .cut{margin-top:10px;font-size:12.5px}
+  .cut{margin-top:var(--ui-space-md)}
 </style>

@@ -1,0 +1,384 @@
+// Checks the design system and the pages built on it in a real browser: accessible names, keyboard
+// operation, focus rings, measured contrast, target sizes, the theme switch, reduced motion,
+// forced colours, and a visit to every page at a desktop and a phone width.
+//
+//   DESIGN_URL=http://localhost:5180/design.html bun scripts/check_design.mjs
+//   DESIGN_SHOTS=docs/design/check bun scripts/check_design.mjs
+import { chromium } from 'playwright-core'
+import { strict as assert } from 'node:assert'
+import { existsSync, mkdirSync, readdirSync } from 'node:fs'
+import { homedir } from 'node:os'
+import { join } from 'node:path'
+
+const DESIGN = process.env.DESIGN_URL ?? 'http://localhost:5180/design.html'
+const APP = new URL('/', DESIGN).href.replace(/\/$/, '')
+const SHOTS = process.env.DESIGN_SHOTS
+if (SHOTS) mkdirSync(SHOTS, { recursive: true })
+
+function browserPath() {
+  if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH
+  const cache = join(homedir(), '.cache/ms-playwright')
+  for (const dir of readdirSync(cache).filter(name => name.startsWith('chromium-')).sort().reverse()) {
+    for (const tail of ['chrome-linux64/chrome', 'chrome-linux/chrome']) {
+      const path = join(cache, dir, tail)
+      if (existsSync(path)) return path
+    }
+  }
+  throw new Error('No Chromium under ~/.cache/ms-playwright; set CHROMIUM_PATH')
+}
+
+const browser = await chromium.launch({ executablePath: browserPath() })
+let passed = 0
+const failed = []
+
+/** @param {string} name @param {() => Promise<void>} check */
+async function step(name, check) {
+  try {
+    await check()
+    passed++
+    console.log('PASS', name)
+  } catch (error) {
+    failed.push({ name, error })
+    console.log('FAIL', name, `\n  ${error.message.split('\n').join('\n  ')}`)
+  }
+}
+
+/** Colour arithmetic as the screen resolves it, and the WCAG ratio between two colours. */
+function colourHelpers() {
+  /** @param {string} value @returns {[number, number, number, number] | null} */
+  const parse = value => {
+    const match = value.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?/)
+    if (!match) return null
+    const alpha = match[4] === undefined ? 1 : match[4].endsWith('%') ? parseFloat(match[4]) / 100 : Number(match[4])
+    return [Number(match[1]), Number(match[2]), Number(match[3]), alpha]
+  }
+  const over = (top, below) => top.slice(0, 3).map((c, i) => c * top[3] + below[i] * (1 - top[3]))
+  /** @param {Element} el */
+  const backdrop = el => {
+    const layers = []
+    for (let node = el; node; node = node.parentElement ?? node.getRootNode()?.host ?? null) {
+      const style = getComputedStyle(node)
+      if (style.backgroundImage !== 'none') return null
+      const fill = parse(style.backgroundColor)
+      if (fill && fill[3] > 0) layers.push(fill)
+      if (fill && fill[3] >= 1) break
+    }
+    let colour = [255, 255, 255]
+    for (const layer of layers.reverse()) colour = over(layer, colour)
+    return colour
+  }
+  const luminance = rgb => {
+    const [r, g, b] = rgb.map(value => {
+      const c = value / 255
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    })
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+  const ratio = (foreground, behind) => {
+    const fg = parse(foreground)
+    if (!fg || !behind) return 0
+    const [light, dark] = [luminance(over(fg, behind)), luminance(behind)].sort((a, b) => b - a)
+    return Math.round(((light + 0.05) / (dark + 0.05)) * 100) / 100
+  }
+  Object.assign(window, { __colour: { parse, backdrop, ratio } })
+}
+
+/**
+ * @param {{ scheme?: 'light' | 'dark', reducedMotion?: 'reduce' | 'no-preference', forcedColors?: 'active' | 'none' }} [options]
+ * @returns {Promise<{ context: import('playwright-core').BrowserContext, page: import('playwright-core').Page }>}
+ */
+async function openDesign(options = {}) {
+  const context = await browser.newContext({
+    viewport: { width: 1180, height: 900 },
+    deviceScaleFactor: 1,
+    colorScheme: options.scheme ?? 'light',
+    reducedMotion: options.reducedMotion ?? 'no-preference',
+    forcedColors: options.forcedColors ?? 'none',
+  })
+  await context.addInitScript(colourHelpers)
+  const page = await context.newPage()
+  page.errors = []
+  page.on('pageerror', error => page.errors.push(error.message))
+  await page.goto(DESIGN, { waitUntil: 'domcontentloaded' })
+  await page.locator('h1').waitFor({ timeout: 30000 })
+  await page.waitForFunction(() => document.querySelectorAll('.swatch-score[data-pass]').length > 0)
+  await page.waitForTimeout(150)
+  return { context, page }
+}
+
+/** Every visible control has a name a screen reader can announce. @param {import('playwright-core').Page} page */
+async function checkNames(page) {
+  const unnamed = await page.evaluate(() => {
+    const hasName = el => {
+      if (el.getAttribute('aria-label')?.trim()) return true
+      const refs = el.getAttribute('aria-labelledby')
+      if (refs?.split(/\s+/).some(id => document.getElementById(id)?.textContent?.trim())) return true
+      if (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`)?.textContent?.trim()) return true
+      if (el.closest('label')?.textContent?.trim()) return true
+      if (el.getAttribute('title')?.trim()) return true
+      if (el.matches('button, [role="button"]') && el.textContent?.trim()) return true
+      return false
+    }
+    return [...document.querySelectorAll('input, select, textarea, button')]
+      .filter(el => !(/** @type {HTMLInputElement} */ (el).disabled) && el.getClientRects().length > 0 && !hasName(el))
+      .map(el => el.outerHTML.slice(0, 160))
+  })
+  assert.deepEqual(unnamed, [], `controls without a name:\n${unnamed.join('\n')}`)
+}
+
+/** Keyboard: Space on a checkbox and a switch, arrows in a segmented control, one visible ring. @param {import('playwright-core').Page} page */
+async function checkKeyboard(page) {
+  const checkbox = page.getByLabel('Include empty slots', { exact: true })
+  await checkbox.focus()
+  const checked = await checkbox.isChecked()
+  await page.keyboard.press('Space')
+  assert.equal(await checkbox.isChecked(), !checked, 'Space toggles a checkbox')
+  await page.keyboard.press('Space')
+
+  const toggle = page.getByRole('switch', { name: 'Follow the system theme', exact: true })
+  await toggle.focus()
+  const on = await toggle.isChecked()
+  await page.keyboard.press('Space')
+  assert.equal(await toggle.isChecked(), !on, 'Space toggles a switch')
+  await page.keyboard.press('Space')
+
+  const first = page.getByRole('radio', { name: 'By rhyme', exact: true })
+  await first.focus()
+  await page.keyboard.press('ArrowRight')
+  const second = page.getByRole('radio', { name: 'By fanqie', exact: true })
+  assert.equal(await second.isChecked(), true, 'ArrowRight moves a segmented control')
+  assert.equal(await second.evaluate(el => el === document.activeElement), true, 'focus follows the segment')
+  const ring = await second.evaluate(el => {
+    const face = el.nextElementSibling
+    const style = getComputedStyle(face)
+    return { visible: el.matches(':focus-visible'), style: style.outlineStyle, width: parseFloat(style.outlineWidth) }
+  })
+  assert.equal(ring.visible, true, 'a focused segment matches :focus-visible')
+  assert.equal(ring.style, 'solid', 'the segment draws a ring on its face')
+  assert.ok(ring.width >= 2, `the segment ring is 2px or more (${ring.width})`)
+
+  await checkbox.focus()
+  const control = await checkbox.evaluate(el => {
+    const style = getComputedStyle(el)
+    return {
+      visible: el.matches(':focus-visible'),
+      style: style.outlineStyle,
+      width: parseFloat(style.outlineWidth),
+      offset: parseFloat(style.outlineOffset),
+    }
+  })
+  assert.equal(control.visible, true, 'a focused control matches :focus-visible')
+  assert.equal(control.style, 'solid', 'the focus ring is drawn')
+  assert.ok(control.width >= 2 && control.offset >= 1, `the ring is at least 2px with an offset (${control.width}, ${control.offset})`)
+}
+
+/** The palette in the page reports every token's measured ratio. @param {import('playwright-core').Page} page */
+async function checkPalette(page) {
+  const measured = await page.evaluate(() => [...document.querySelectorAll('.swatch')].map(figure => ({
+    ratio: Number(figure.dataset.ratio),
+    threshold: Number(figure.dataset.threshold),
+    name: figure.querySelector('.swatch-name')?.textContent ?? '',
+  })))
+  assert.ok(measured.length >= 20, `expected the palette, found ${measured.length} swatches`)
+  const below = measured.filter(item => item.threshold > 1 && item.ratio < item.threshold)
+  assert.deepEqual(below, [], `tokens below target:\n${below.map(item => `${item.name}: ${item.ratio}:1 < ${item.threshold}:1`).join('\n')}`)
+}
+
+/** Text and control boundaries in the page, as the browser paints them. @param {import('playwright-core').Page} page */
+async function checkContrast(page) {
+  const results = await page.evaluate(() => {
+    const { parse, backdrop, ratio } = window.__colour
+    const text = (selector, threshold, against) => {
+      const el = document.querySelector(selector)
+      if (!el) return { name: selector, ratio: 0, threshold, missing: true }
+      const fg = getComputedStyle(el).color
+      const bg = against ?? backdrop(el)
+      return { name: selector, ratio: ratio(fg, bg), threshold }
+    }
+    return [
+      text('body', 4.5),
+      text('.ui-label', 4.5),
+      text('.ui-hint', 4.5),
+      text('.ui-button', 4.5),
+      text('.ui-button[data-variant="primary"]', 4.5),
+      text('.ui-button[data-variant="toast"]', 4.5),
+      text('.ui-chip[aria-pressed="true"]', 4.5),
+      text('.ui-error', 4.5),
+      text('.ui-tag', 4.5),
+      text('.ui-formula', 4.5),
+      { name: 'input boundary', threshold: 3, ratio: (() => {
+        const el = document.querySelector('.ui-input')
+        return el ? ratio(getComputedStyle(el).borderTopColor, backdrop(el.parentElement)) : 0
+      })() },
+      { name: 'focus ring', threshold: 3, ratio: (() => {
+        const el = document.querySelector('.ui-checkbox')
+        if (!el) return 0
+        el.focus()
+        return ratio(getComputedStyle(el).outlineColor, backdrop(el.parentElement))
+      })() },
+      { name: 'checkbox mark', threshold: 4.5, ratio: (() => {
+        const el = document.querySelector('.ui-checkbox:checked')
+        if (!el) return 0
+        return ratio(getComputedStyle(el, '::before').borderRightColor, parse(getComputedStyle(el).backgroundColor)?.slice(0, 3) ?? [0, 0, 0])
+      })() },
+    ]
+  })
+  const below = results.filter(item => item.missing || item.ratio < item.threshold)
+  assert.deepEqual(below, [], `contrast below target:\n${below.map(item => `${item.name}: ${item.ratio}:1 < ${item.threshold}:1`).join('\n')}`)
+}
+
+/** Every control meets the 24px target. @param {import('playwright-core').Page} page */
+async function checkTargets(page) {
+  const small = await page.evaluate(() => [...document.querySelectorAll(
+    '.ui-button, .ui-chip, .ui-input, .ui-select, .ui-textarea, .ui-check-row, .ui-switch, .ui-segment',
+  )]
+    .filter(el => {
+      const rect = el.getBoundingClientRect()
+      return rect.width > 0 && rect.height > 0 && rect.height < 24
+    })
+    .map(el => `${el.className.split(' ')[0]}: ${Math.round(el.getBoundingClientRect().height)}px`))
+  assert.deepEqual(small, [], `targets under 24px:\n${small.join('\n')}`)
+}
+
+/**
+ * The theme control changes the palette and returns to the system scheme.
+ * @param {import('playwright-core').Page} page @param {'light' | 'dark'} scheme
+ */
+async function checkTheme(page, scheme) {
+  const other = scheme === 'light' ? 'Dark' : 'Light'
+  await page.getByRole('radio', { name: other, exact: true }).click()
+  await page.waitForTimeout(120)
+  const changed = await page.evaluate(() => ({
+    theme: document.documentElement.dataset.theme,
+    background: getComputedStyle(document.body).backgroundColor,
+  }))
+  assert.equal(changed.theme, scheme === 'light' ? 'dark' : 'light', 'the control sets data-theme')
+  assert.equal(changed.background, scheme === 'light' ? 'rgb(20, 18, 16)' : 'rgb(244, 239, 229)', 'the palette follows the chosen scheme')
+  await page.getByRole('radio', { name: 'System', exact: true }).click()
+  await page.waitForTimeout(120)
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme ?? ''), '', 'System removes data-theme')
+}
+
+/** A page never scrolls sideways: wide tables scroll inside their own frame. @param {import('playwright-core').Page} page */
+async function noSideScroll(page) {
+  const overflow = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, view: window.innerWidth }))
+  assert.ok(overflow.scroll <= overflow.view + 1, `the page scrolls sideways (${overflow.scroll} > ${overflow.view})`)
+}
+
+const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chart', '/draw', '/parts', '/about']
+
+/** Visits every page at one viewport and checks it renders without script errors or side scroll. */
+async function checkPages(viewport, scheme) {
+  const context = await browser.newContext({ viewport, deviceScaleFactor: 1, colorScheme: scheme })
+  const page = await context.newPage()
+  /** @type {string[]} */
+  const errors = []
+  page.on('pageerror', error => errors.push(error.message))
+  for (const path of PAGES) {
+    await page.goto(APP + path, { waitUntil: 'networkidle' })
+    await page.locator('main.finder').waitFor({ timeout: 30000 })
+    await page.waitForTimeout(150)
+    await noSideScroll(page)
+    const unnamed = await page.evaluate(() => {
+      const hasName = el => {
+        if (el.getAttribute('aria-label')?.trim()) return true
+        const refs = el.getAttribute('aria-labelledby')
+        if (refs?.split(/\s+/).some(id => document.getElementById(id)?.textContent?.trim())) return true
+        if (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`)?.textContent?.trim()) return true
+        if (el.closest('label')?.textContent?.trim()) return true
+        if (el.getAttribute('title')?.trim()) return true
+        if (el.matches('button, [role="button"]') && el.textContent?.trim()) return true
+        return false
+      }
+      return [...document.querySelectorAll('input, select, textarea, button')]
+        .filter(el => !(/** @type {HTMLInputElement} */ (el).disabled) && el.getClientRects().length > 0 && !hasName(el))
+        .map(el => el.outerHTML.slice(0, 140))
+    })
+    assert.deepEqual(unnamed, [], `${path}: controls without a name:\n${unnamed.join('\n')}`)
+  }
+  await context.close()
+  assert.deepEqual(errors, [], `script errors:\n${errors.join('\n')}`)
+}
+
+const LIGHT = await openDesign({ scheme: 'light' })
+await step('design page renders without script errors', async () => {
+  assert.deepEqual(LIGHT.page.errors, [])
+})
+await step('every control has an accessible name', () => checkNames(LIGHT.page))
+await step('the palette clears its contrast targets', () => checkPalette(LIGHT.page))
+await step('text and control boundaries clear their targets', () => checkContrast(LIGHT.page))
+await step('keyboard reaches and operates every control', () => checkKeyboard(LIGHT.page))
+await step('every control meets the 24px target', () => checkTargets(LIGHT.page))
+await step('the theme control changes the palette', () => checkTheme(LIGHT.page, 'light'))
+if (SHOTS) await LIGHT.page.screenshot({ path: join(SHOTS, 'design-light.png'), fullPage: true })
+await LIGHT.context.close()
+
+const DARK = await openDesign({ scheme: 'dark' })
+await step('the palette clears its targets in the dark scheme', () => checkPalette(DARK.page))
+await step('text and boundaries clear their targets in the dark scheme', () => checkContrast(DARK.page))
+if (SHOTS) await DARK.page.screenshot({ path: join(SHOTS, 'design-dark.png'), fullPage: true })
+await DARK.context.close()
+
+const PHONE = await openDesign({ scheme: 'light' })
+await PHONE.page.setViewportSize({ width: 390, height: 844 })
+await step('the design page does not scroll sideways on a phone', () => noSideScroll(PHONE.page))
+await PHONE.context.close()
+
+const REDUCED = await openDesign({ reducedMotion: 'reduce' })
+await step('reduced motion collapses transitions', async () => {
+  const duration = await REDUCED.page.locator('.ui-button').first().evaluate(el => getComputedStyle(el).transitionDuration)
+  const seconds = Math.max(...duration.split(',').map(value => parseFloat(value)))
+  assert.ok(seconds <= 0.02, `a button still transitions for ${duration}`)
+})
+await REDUCED.context.close()
+
+const FORCED = await openDesign({ forcedColors: 'active' })
+await step('forced colours keep the controls visible', async () => {
+  const state = await FORCED.page.evaluate(() => {
+    const box = document.querySelector('.ui-checkbox')
+    const button = document.querySelector('.ui-button[data-variant="primary"]')
+    if (!box || !button) return null
+    return {
+      border: getComputedStyle(box).borderTopStyle,
+      button: getComputedStyle(button).backgroundColor,
+    }
+  })
+  assert.ok(state, 'the controls exist')
+  assert.notEqual(state.border, 'none', 'a checkbox keeps a border')
+  assert.notEqual(state.button, 'rgba(0, 0, 0, 0)', 'a primary button keeps a fill')
+})
+await FORCED.context.close()
+
+await step('every page renders at 1440 in the light scheme', () => checkPages({ width: 1440, height: 1000 }, 'light'))
+await step('every page renders at 390 in the dark scheme', () => checkPages({ width: 390, height: 844 }, 'dark'))
+
+const PHONE_APP = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: 'light' })
+const phone = await PHONE_APP.newPage()
+await phone.goto(`${APP}/meaning?q=water`)
+await phone.locator('main.finder').waitFor()
+await step('the phone menu is a dialog that closes on Escape', async () => {
+  const more = phone.getByRole('button', { name: 'More', exact: true })
+  await more.focus()
+  await more.click()
+  const dialog = phone.getByRole('dialog', { name: 'Ways to find a character' })
+  await dialog.waitFor()
+  assert.equal(await dialog.evaluate(el => el.contains(document.activeElement)), true, 'focus moves into the sheet')
+  await phone.keyboard.press('Escape')
+  await dialog.waitFor({ state: 'hidden' })
+  assert.equal(await more.evaluate(el => el === document.activeElement), true, 'Escape returns focus to the button')
+})
+await step('the card opens as a sheet on a phone', async () => {
+  await phone.goto(`${APP}/?q=%F0%97%8B%95`)
+  await phone.locator('main.finder').waitFor()
+  await phone.locator('.ui-row-pick').first().click()
+  const card = phone.locator('aside.card')
+  await phone.waitForFunction(() => document.querySelector('aside.card')?.classList.contains('open'))
+  assert.equal(await card.isVisible(), true, 'the card sheet is visible')
+  await phone.getByRole('button', { name: 'Back', exact: true }).click()
+  await phone.waitForFunction(() => !document.querySelector('aside.card')?.classList.contains('open'))
+})
+await PHONE_APP.close()
+
+await browser.close()
+console.log(`\n${passed} passed, ${failed.length} failed`)
+if (failed.length) process.exit(1)

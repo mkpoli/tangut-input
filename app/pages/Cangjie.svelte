@@ -131,79 +131,82 @@
   const split = full => [full.slice(0, code.length), full.slice(code.length)]
 </script>
 
-<div class="cangjie">
+<div class="ui-page cangjie" data-width="wide">
   <section class="composer" aria-label="Cangjie code">
     <div class="box">
-      <input bind:this={input} data-primary class="code mono" value={code} spellcheck="false" autocomplete="off" autocapitalize="off"
+      <input bind:this={input} data-primary class="ui-input code-input ui-mono" value={code} spellcheck="false" autocomplete="off" autocapitalize="off"
         inputmode={touch ? 'none' : 'text'} aria-label={t('cangjie.label')} placeholder={t('cangjie.placeholder')}
         oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => setCode(event.currentTarget.value)} onkeydown={keys} use:autofocus />
-      <span class="count muted" role="status">{#if code}{hits.length ? t('common.characters', { count: hits.length }) : t('cangjie.none')}{/if}</span>
+      <span class="ui-count count" role="status">{#if code}{hits.length ? t('common.characters', { count: hits.length }) : t('cangjie.none')}{/if}</span>
     </div>
 
-    <div class="bar" role="listbox" aria-label={t('common.candidates')} class:idle={!code}>
+    <div class="ui-candidates" role="listbox" aria-label={t('common.candidates')} data-idle={!code ? '' : undefined}>
       {#if code && shown.length}
         {#each shown as hit, i (hit.char)}
           {@const [typed, rest] = split(hit.code)}
-          <button type="button" role="option" class="cand" aria-selected={i === active}
+          <button type="button" role="option" class="ui-candidate" aria-selected={i === active}
             onclick={() => commit(i)} onmouseenter={() => { active = i }} title={gloss(hit.char)}>
-            <span class="n mono">{i + 1}</span>
+            <span class="ui-candidate-number">{i + 1}</span>
             <G char={hit.char} />
-            <span class="rest mono"><span class="typed">{typed}</span>{rest}</span>
+            <span class="ui-candidate-code"><span class="typed">{typed}</span>{rest}</span>
           </button>
         {/each}
         {#if pages > 1}
-          <span class="pager">
-            <button type="button" class="btn ghost" aria-label={t('common.previous')} onclick={() => turn(-1)}>‹</button>
-            <span class="muted mono">{page + 1}/{pages}</span>
-            <button type="button" class="btn ghost" aria-label={t('common.more')} onclick={() => turn(1)}>›</button>
+          <span class="ui-pager">
+            <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" aria-label={t('common.previous')} onclick={() => turn(-1)}>‹</button>
+            <span>{page + 1}/{pages}</span>
+            <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" aria-label={t('common.more')} onclick={() => turn(1)}>›</button>
           </span>
         {/if}
       {:else if code}
-        <p class="muted">{t('cangjie.noCode', { code })}</p>
+        <p>{t('cangjie.noCode', { code })}</p>
       {:else}
-        <p class="muted keys">{@html t('cangjie.keys')}</p>
+        <p class="keys">{@html t('cangjie.keys')}</p>
       {/if}
     </div>
   </section>
 
   <div class="split">
     <section class="keyboard" aria-label={t('cangjie.keysLabel')}>
-      <div class="head"><h2 class="label">{t('cangjie.keysTitle')}</h2><p class="muted">{#if code}{t('cangjie.keysHint')}{:else}{t('cangjie.keysHintIdle')}{/if}</p></div>
-      {#each ROWS as row, r (row)}
-        <div class="row" style:padding-left="{r * 18}px">
-          {#each row as letter (letter)}
-            {@const n = next.get(letter) ?? 0}
-            <button type="button" class="key" class:dead={!n} onclick={() => press(letter)} title={n ? t('cangjie.keyContinues', { count: n, letter }) : t('cangjie.keyDead', { letter })}>
-              <span class="letter mono">{letter}</span>
-              <span class="roots tg">{(roots.get(letter) ?? []).slice(0, 3).join('')}</span>
-            </button>
-          {/each}
-          {#if r === 2}<button type="button" class="key wide" onclick={() => press('back')} aria-label={t('common.backspace')}>⌫</button>{/if}
-        </div>
-      {/each}
-      <div class="row"><button type="button" class="key space" onclick={() => press('space')} disabled={!code}>{#if shown[active]}{t('cangjie.spaceAdds')} <span class="tg">{shown[active].char}</span>{:else}{t('cangjie.space')}{/if}</button></div>
+      <header class="head"><h2 class="ui-label">{t('cangjie.keysTitle')}</h2><p class="ui-hint">{#if code}{t('cangjie.keysHint')}{:else}{t('cangjie.keysHintIdle')}{/if}</p></header>
+      <div class="ui-keys">
+        {#each ROWS as row, r (row)}
+          <div class="ui-key-row" style:padding-inline-start="{r * 18}px">
+            {#each row as letter (letter)}
+              {@const n = next.get(letter) ?? 0}
+              <button type="button" class="ui-key" data-dead={!n ? '' : undefined} onclick={() => press(letter)}
+                title={n ? t('cangjie.keyContinues', { count: n, letter }) : t('cangjie.keyDead', { letter })}>
+                <span class="ui-key-letter">{letter}</span>
+                <span class="ui-key-glyphs ui-script">{(roots.get(letter) ?? []).slice(0, 3).join('')}</span>
+              </button>
+            {/each}
+            {#if r === 2}<button type="button" class="ui-key" data-wide onclick={() => press('back')} aria-label={t('common.backspace')}>⌫</button>{/if}
+          </div>
+        {/each}
+        <div class="ui-key-row"><button type="button" class="ui-key" data-space onclick={() => press('space')} disabled={!code}>{#if shown[active]}{t('cangjie.spaceAdds')} <span class="ui-script">{shown[active].char}</span>{:else}{t('cangjie.space')}{/if}</button></div>
+      </div>
     </section>
 
     <section class="palette" aria-label={t('cangjie.componentsLabel')}>
-      <div class="head">
-        <h2 class="label">{t('cangjie.components')}</h2>
-        <p class="muted">{@html t('cangjie.componentsHint')}</p>
-      </div>
-      <div class="letters" role="group" aria-label={t('cangjie.groupBy')}>
-        <button type="button" class="chip" aria-pressed={palette === 'all'} onclick={() => { palette = 'all' }}>{t('common.all')}</button>
+      <header class="head">
+        <h2 class="ui-label">{t('cangjie.components')}</h2>
+        <p class="ui-hint">{@html t('cangjie.componentsHint')}</p>
+      </header>
+      <div class="ui-chip-row letters" role="group" aria-label={t('cangjie.groupBy')}>
+        <button type="button" class="ui-chip" aria-pressed={palette === 'all'} onclick={() => { palette = 'all' }}>{t('common.all')}</button>
         {#each [...groups.keys()] as letter (letter)}
-          <button type="button" class="chip mono" aria-pressed={palette === letter} onclick={() => { palette = letter }}>p{letter}</button>
+          <button type="button" class="ui-chip ui-mono" aria-pressed={palette === letter} onclick={() => { palette = letter }}>p{letter}</button>
         {/each}
       </div>
       <div class="groups">
         {#each paletteShown as [letter, items] (letter)}
           <div class="group">
-            <h3 class="mono">p{letter} <span class="tg">{(roots.get(letter) ?? []).join(' ')}</span></h3>
-            <div class="comps">
+            <h3 class="group-head"><span class="ui-mono">p{letter}</span> <span class="ui-script group-glyphs">{(roots.get(letter) ?? []).join(' ')}</span></h3>
+            <div class="ui-tiles comps" style:--ui-tile-size="54px">
               {#each items as item (item.char)}
-                <button type="button" class="comp" class:match={code.startsWith('p') && item.code.startsWith(code)} class:on={route.c === item.char}
+                <button type="button" class="ui-tile comp" data-open={route.c === item.char ? '' : undefined}
                   onclick={() => choose(item.char)} ondblclick={() => put(item.char)} title={t('cangjie.componentTitle', { code: item.code, count: ix.usedBy.get(item.char)?.size ?? 0 })}>
-                  <G char={item.char} /><small class="mono">{item.code}</small>
+                  <G char={item.char} /><span class="ui-tile-note ui-mono">{item.code}</span>
                 </button>
               {/each}
             </div>
@@ -215,67 +218,38 @@
 </div>
 
 <style>
-  .cangjie{display:grid;gap:22px}
-  .composer{display:grid;gap:10px}
-  .box{display:flex;align-items:center;gap:14px}
-  .code{flex:1;min-width:0;padding:12px 16px;border:1px solid var(--line-strong);border-radius:12px;background:var(--surface);font-size:30px;letter-spacing:.14em;text-transform:lowercase}
-  .code:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
-  .code::placeholder{font-size:17px;letter-spacing:.02em;color:var(--muted);font-family:var(--ui)}
-  .count{min-width:9em;text-align:right;font-size:13px}
-  .bar{display:flex;align-items:stretch;gap:6px;min-height:92px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow-x:auto}
-  .bar.idle{align-items:center;padding:8px 14px}
-  .bar p{font-size:13px}
-  .bar :global(kbd){margin:0 1px}
-  .cand{position:relative;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;min-width:76px;padding:4px 6px 6px;border:1px solid transparent;border-radius:9px;background:none}
-  .cand:hover{background:var(--hover)}
-  .cand[aria-selected="true"]{background:var(--accent-soft);border-color:var(--accent)}
-  .cand .n{align-self:start;justify-self:start;font-size:11px;color:var(--muted)}
-  .cand[aria-selected="true"] .n{color:var(--accent-ink);font-weight:700}
-  .cand :global(.tg){font-size:40px}
-  .rest{font-size:12px;color:var(--ink);letter-spacing:.04em}
-  .typed{color:var(--muted)}
-  .pager{display:flex;align-items:center;gap:2px;margin-left:auto;padding-left:8px;font-size:12px}
-
-  .split{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:24px;align-items:start}
-  .head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-  .head p{font-size:12.5px}
-  .row{display:flex;gap:5px;margin-bottom:5px}
-  .key{display:grid;grid-template-rows:auto 1fr;flex:1;max-width:52px;aspect-ratio:1/1.12;padding:4px 5px;border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:8px;background:var(--surface);text-align:left}
-  .key:hover{border-color:var(--accent)}
-  .key:active{transform:translateY(1px)}
-  .key.dead{opacity:.32}
-  .letter{font-size:12px;font-weight:700;color:var(--ink-2)}
-  .roots{align-self:end;justify-self:center;font-size:15px;letter-spacing:-.04em;color:var(--ink)}
-  .key.wide{max-width:72px;flex:1.4;place-items:center;font-size:18px;grid-template-rows:1fr}
-  .key.space{display:flex;align-items:center;justify-content:center;gap:4px;max-width:none;flex:1;aspect-ratio:auto;height:44px;white-space:nowrap;font-size:13px;color:var(--ink-2)}
-  .key.space :global(.tg){font-size:20px;margin-left:6px}
-  .key:disabled{opacity:.5;cursor:default}
-
-  .palette{min-width:0}
-  .letters{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}
-  .letters .chip{min-height:24px;padding:0 7px;font-size:11.5px}
-  .groups{display:grid;gap:14px;max-height:calc(100dvh - 380px);min-height:320px;overflow:auto;padding-right:4px}
-  .group h3{position:sticky;top:0;z-index:1;padding:3px 0;background:var(--bg);font-size:12px;font-weight:700;color:var(--ink-2)}
-  .group h3 :global(.tg){font-size:15px;margin-left:6px;color:var(--muted)}
-  .comps{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:4px}
-  .comp{display:grid;justify-items:center;gap:2px;padding:6px 2px 4px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
-  .comp:hover{border-color:var(--line-strong)}
-  .comp.match{border-color:var(--accent);background:var(--accent-soft)}
-  .comp.on{box-shadow:0 0 0 2px var(--accent)}
-  .comp :global(.tg){font-size:26px}
-  .comp small{font-size:10.5px;color:var(--muted)}
-
-  @media (max-width:1320px){.split{grid-template-columns:1fr}.groups{max-height:520px}}
+  .composer{display:grid;gap:var(--ui-space-md)}
+  .box{display:flex;align-items:center;gap:var(--ui-space-xl)}
+  .code-input{flex:1;min-inline-size:0;min-block-size:60px;padding:var(--ui-space-md) var(--ui-space-xl);border-radius:var(--ui-radius-lg);font-size:30px;letter-spacing:.14em;text-transform:lowercase}
+  .code-input::placeholder{font-family:var(--ui-font-sans);font-size:var(--ui-text-lg);letter-spacing:.02em}
+  .count{min-inline-size:9em;text-align:end}
+  .keys{color:var(--ui-color-ink-muted);font-size:var(--ui-text-sm)}
+  .cangjie .ui-candidate :global(.ui-script){font-size:34px}
+  .split{display:grid;grid-template-columns:minmax(0,540px) minmax(0,1fr);gap:var(--ui-space-3xl);align-items:start}
+  .head{display:flex;align-items:baseline;flex-wrap:wrap;gap:var(--ui-space-sm);margin-bottom:var(--ui-space-md)}
+  .head .ui-hint{font-size:var(--ui-text-xs)}
+  .keyboard{min-inline-size:0}
+  .palette{min-inline-size:0}
+  .letters{margin-bottom:var(--ui-space-md)}
+  .groups{display:grid;gap:var(--ui-space-xl);max-block-size:calc(100dvh - 390px);min-block-size:320px;overflow:auto;padding-inline-end:var(--ui-space-2xs)}
+  .group-head{position:sticky;top:0;z-index:1;display:flex;align-items:baseline;gap:var(--ui-space-sm);padding:var(--ui-space-2xs) 0;background:var(--ui-color-canvas);color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold)}
+  .group-glyphs{font-size:15px;color:var(--ui-color-ink-muted)}
+  .comp{aspect-ratio:1/1.08}
+  .comp :global(.ui-script){font-size:26px}
+  .comp :global(.ui-nog){font-size:9px}
+  .comp[data-open]{background:var(--ui-color-accent-soft)}
+  .comp .ui-tile-note{font-size:var(--ui-text-2xs)}
+  @media (max-width:1320px){
+    .split{grid-template-columns:1fr}
+    .groups{max-block-size:520px}
+  }
   @media (max-width:900px){
-    .code{font-size:24px;padding:10px 12px}
+    .code-input{min-block-size:50px;padding:var(--ui-space-sm) var(--ui-space-md);font-size:24px}
     .count{display:none}
-    .bar{min-height:80px}
-    .cand{min-width:62px}
-    .cand :global(.tg){font-size:32px}
-    .bar.idle .keys{display:none}
-    .row{gap:4px}
-    .row[style]{padding-left:0 !important}
-    .key{max-width:none;padding:3px}
-    .roots{font-size:12px}
+    .cangjie .ui-candidate :global(.ui-script){font-size:30px}
+    .keys{display:none}
+    .ui-key-row[style]{padding-inline-start:0 !important}
+    .ui-key{max-inline-size:none}
+    .ui-key-glyphs{font-size:12px}
   }
 </style>

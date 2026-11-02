@@ -100,7 +100,7 @@
     <button class="ui-button" data-size="sm" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}>{t('common.copy')}</button>
     <div class="more" bind:this={more} onfocusout={closeMenu}>
       <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" bind:this={trigger}
-        aria-haspopup="menu" aria-expanded={menu} aria-label={t('writing.more')}
+        aria-haspopup="menu" aria-expanded={menu} aria-label={t('writing.more')} disabled={!text.value}
         onclick={() => { menu ? close(false) : open() }}>
         <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><g fill="currentColor"><circle cx="4" cy="10" r="1.7"/><circle cx="10" cy="10" r="1.7"/><circle cx="16" cy="10" r="1.7"/></g></svg>
       </button>

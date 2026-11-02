@@ -36,37 +36,39 @@
   })
 </script>
 
-<div class="fanqie">
-  <header class="intro">
-    <h1>{t('nav.fanqie')}</h1>
-    <p class="muted">{t('fanqie.intro')}</p>
+<div class="ui-page fanqie">
+  <header class="ui-page-head">
+    <h1 class="ui-page-title">{t('nav.fanqie')}</h1>
+    <p class="ui-page-intro">{t('fanqie.intro')}</p>
   </header>
 
   <div class="search">
-    <input class="field big" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
+    <input class="ui-input fanqie-input ui-script" data-size="xl" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
       aria-label={t('fanqie.label')} placeholder={t('fanqie.placeholder')}
       oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { query = event.currentTarget.value; setQuery(query) }}
       use:autofocus />
     <label class="choose">
-      <span class="label">{t('fanqie.reading')}</span>
-      <select class="field" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('fanqie.reading')}>
-        {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
-      </select>
+      <span class="ui-label">{t('fanqie.reading')}</span>
+      <span class="ui-select-wrap">
+        <select class="ui-select" data-size="sm" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('fanqie.reading')}>
+          {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+        </select>
+      </span>
     </label>
   </div>
 
   {#if own}
-    <section class="record" aria-label={t('fanqie.ownLabel')}>
-      <span class="tg own">{text}</span>
+    <section class="own-card" aria-label={t('fanqie.ownLabel')}>
+      <span class="ui-script own">{text}</span>
       <span class="cuts">
         {#each [own[3] ?? own[5], own[4] ?? own[6]] as cut (cut)}
-          {#if cut}<span class="cut"><span class="tg">{cut}</span>{#if reading(cut)}<small>{reading(cut)}</small>{/if}</span>{/if}
+          {#if cut}<span class="cut"><span class="ui-script">{cut}</span>{#if reading(cut)}<small>{reading(cut)}</small>{/if}</span>{/if}
         {/each}
-        {#if !ownSpelling}<span class="muted">—</span>{/if}
+        {#if !ownSpelling}<span class="ui-hint">—</span>{/if}
       </span>
       <span class="own-meta">
-        {#if own[0]}<span class="muted">{t('card.rhyme')} {own[0]}</span>{/if}
-        {#if own[1]}<span class="muted"> · {t(`card.tone.${own[1] === 1 ? 'level' : own[1] === 2 ? 'rising' : 'entering'}`)}</span>{/if}
+        {#if own[0]}<span class="ui-hint">{t('card.rhyme')} {own[0]}</span>{/if}
+        {#if own[1]}<span class="ui-hint"> · {t(`card.tone.${own[1] === 1 ? 'level' : own[1] === 2 ? 'rising' : 'entering'}`)}</span>{/if}
         {#if reading(text)}<span class="own-reading">{reading(text)}</span>
         {:else if inferred.get(ownSpelling)}<span class="own-reading guess" title={t('fanqie.inferred', { char: inferred.get(ownSpelling)?.from ?? '' })}>{inferred.get(ownSpelling)?.value}</span>{/if}
       </span>
@@ -74,35 +76,37 @@
   {/if}
 
   {#if !text}
-    <p class="muted hint">{t('fanqie.hint')}</p>
+    <p class="ui-hint">{t('fanqie.hint')}</p>
   {:else if !ready}
-    <p class="empty">{t('common.loading')}</p>
+    <p class="ui-empty">{t('common.loading')}</p>
   {:else if !hits.length}
-    {#if !own}<p class="empty">{t('fanqie.none', { text })}</p>{/if}
+    {#if !own}<p class="ui-empty">{t('fanqie.none', { text })}</p>{/if}
   {:else}
-    <p class="summary muted" role="status">{t('common.characters', { count: hits.length })}</p>
-    <ol class="rows" role="listbox" aria-label={t('fanqie.label')}>
+    <p class="ui-count" role="status">{t('common.characters', { count: hits.length })}</p>
+    <ol class="ui-rows">
       {#each hits as hit, i (hit.char)}
-        <li role="option" aria-selected={route.c === hit.char} class="row">
-          <button type="button" class="pick" onclick={() => choose(hit.char)} ondblclick={() => put(hit.char, { place: i })}>
-            <span class="tg glyph">{hit.char}</span>
+        <li class="ui-row" data-selected={route.c === hit.char}>
+          <button type="button" class="ui-row-pick fanqie-row" aria-current={route.c === hit.char ? 'true' : undefined}
+            onclick={() => choose(hit.char)} ondblclick={() => put(hit.char, { place: i })}>
+            <span class="ui-script ui-row-glyph">{hit.char}</span>
             <span class="cuts">
-              {#if hit.upper}<span class="cut"><span class="tg">{hit.upper}</span>{#if reading(hit.upper)}<small>{reading(hit.upper)}</small>{/if}</span>{/if}
-              {#if hit.lower}<span class="cut"><span class="tg">{hit.lower}</span>{#if reading(hit.lower)}<small>{reading(hit.lower)}</small>{/if}</span>{/if}
+              {#if hit.upper}<span class="cut"><span class="ui-script">{hit.upper}</span>{#if reading(hit.upper)}<small>{reading(hit.upper)}</small>{/if}</span>{/if}
+              {#if hit.lower}<span class="cut"><span class="ui-script">{hit.lower}</span>{#if reading(hit.lower)}<small>{reading(hit.lower)}</small>{/if}</span>{/if}
             </span>
             <span class="text">
-            <span class="meta">
-              {#if reading(hit.char)}
-                <span class="say">{reading(hit.char)}</span>
-              {:else if inferred.get(hit.spelling)}
-                <span class="say guess" title={t('fanqie.inferred', { char: inferred.get(hit.spelling)?.from ?? '' })}>{inferred.get(hit.spelling)?.value}</span>
-              {/if}
-              {#if hit.rhyme}<span class="muted">{#if reading(hit.char) || inferred.get(hit.spelling)} · {/if}{t('card.rhyme')} {hit.rhyme}</span>{/if}
-            </span>
-            <span class="gl">{gloss(hit.char)}</span>
+              <span class="meta">
+                {#if reading(hit.char)}
+                  <span class="say">{reading(hit.char)}</span>
+                {:else if inferred.get(hit.spelling)}
+                  <span class="say guess" title={t('fanqie.inferred', { char: inferred.get(hit.spelling)?.from ?? '' })}>{inferred.get(hit.spelling)?.value}</span>
+                {/if}
+                {#if hit.rhyme}<span class="ui-hint">{#if reading(hit.char) || inferred.get(hit.spelling)} · {/if}{t('card.rhyme')} {hit.rhyme}</span>{/if}
+              </span>
+              <span class="ui-row-gloss">{gloss(hit.char)}</span>
             </span>
           </button>
-          <button type="button" class="add btn ghost" aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
+          <button type="button" class="ui-row-action ui-button" data-variant="quiet" data-size="icon-sm"
+            aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
             <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
         </li>
@@ -112,37 +116,31 @@
 </div>
 
 <style>
-  .fanqie{display:grid;gap:16px;max-width:900px}
-  .intro{display:grid;gap:6px}
-  h1{font-family:var(--serif);font-size:26px;font-weight:600}
-  .intro p{font-size:13.5px;max-width:52em}
-  .big{font-size:26px;padding:12px 16px;font-family:var(--tangut)}
-  .choose{display:flex;align-items:center;gap:8px;font-size:13px}
-  .choose .label{flex:0 0 auto;white-space:nowrap}
-  .choose select{width:auto;padding:6px 10px;font-size:13px}
-  .record{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
-  .own{font-size:34px;line-height:1}
-  .own-meta{display:flex;align-items:center;gap:6px;font-size:13px;margin-left:auto}
-  .own-reading{font-family:var(--serif);font-size:15px;padding-left:8px}
-  .say{font-family:var(--serif)}
-  .guess{color:var(--muted);font-style:italic;border-bottom:1px dotted var(--line-strong);cursor:help}
-  .hint{font-size:13.5px}
-  .summary{font-size:12.5px}
-  .rows{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-  .row{display:grid;grid-template-columns:1fr auto;align-items:center;border-radius:9px}
-  .row:hover,.row[aria-selected="true"]{background:var(--hover)}
-  .pick{display:grid;grid-template-columns:40px 120px minmax(0,1fr);align-items:center;gap:12px;padding:6px 8px;border:0;background:none;text-align:left;width:100%}
-  .text{display:grid;gap:2px;min-width:0}
-  .glyph{font-family:var(--tangut);font-size:30px;line-height:1}
-  .cuts{display:flex;gap:10px;color:var(--accent-ink)}
+  .search{display:flex;align-items:flex-end;gap:var(--ui-space-md);flex-wrap:wrap}
+  .search .ui-input{flex:1;min-inline-size:240px}
+  .fanqie-input{font-size:26px}
+  .choose{display:flex;align-items:center;gap:var(--ui-space-sm);padding-bottom:10px}
+  .choose .ui-label{white-space:nowrap}
+  .choose :global(.ui-select){inline-size:auto}
+  .own-card{display:flex;align-items:center;flex-wrap:wrap;gap:var(--ui-space-xl);padding:var(--ui-space-md) var(--ui-space-xl);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-lg);background:var(--ui-color-surface-sunken)}
+  .own{font-size:36px;line-height:1}
+  .cuts{display:flex;gap:var(--ui-space-md);color:var(--ui-color-accent-ink)}
   .cut{display:grid;justify-items:center;line-height:1}
-  .cut .tg{font-size:21px}
-  .cut small{font-size:10px;color:var(--muted);font-family:var(--serif);margin-top:2px}
-  .record .cuts .tg{font-size:24px}
-  .meta{font-size:12.5px}
-  .gl{font-size:13px;color:var(--muted);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  @media (max-width:700px){.gl{text-align:left}.cuts{gap:6px}}
-  .add{opacity:0}
-  .row:hover .add,.row:focus-within .add{opacity:1}
-  .empty{padding:18px 0;color:var(--muted);font-size:14px}
+  .cut .ui-script{font-size:21px}
+  .cut small{font-family:var(--ui-font-serif);font-size:10px;color:var(--ui-color-ink-muted);margin-top:3px}
+  .own-card .cuts :global(.ui-script){font-size:24px}
+  .own-meta{display:flex;align-items:center;gap:var(--ui-space-xs);margin-inline-start:auto}
+  .own-reading{font-family:var(--ui-font-serif);font-size:var(--ui-text-lg);padding-inline-start:var(--ui-space-sm)}
+  .say{font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
+  .guess{color:var(--ui-color-ink-muted);font-style:italic;border-bottom:1px dotted var(--ui-color-border-strong);cursor:help}
+  .fanqie-row{grid-template-columns:40px 124px minmax(0,1fr)}
+  .fanqie-row :global(.ui-row-glyph){font-size:30px}
+  .text{display:grid;gap:1px;min-inline-size:0}
+  .meta{font-size:var(--ui-text-xs)}
+  .meta .ui-hint{font-size:var(--ui-text-2xs)}
+  .fanqie-row .ui-row-gloss{text-align:start;font-size:var(--ui-text-xs)}
+  @media (max-width:700px){
+    .fanqie-row{grid-template-columns:34px 100px minmax(0,1fr);gap:var(--ui-space-sm)}
+    .own-meta{margin-inline-start:0}
+  }
 </style>

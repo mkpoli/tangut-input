@@ -61,14 +61,14 @@
   /** The faces a character can be compared in. All but the first are fetched when asked for, so a
    *  reader who never opens the row pays nothing for the 50 MB of outlines behind it. */
   const FACES = [
-    { key: 'noto', name: 'Noto Serif Tangut', family: '"Noto Serif Tangut"' },
-    { key: 'yinchuan', name: 'Tangut Yinchuan', family: '"Tangut Yinchuan"' },
-    { key: 'wenhai', name: 'BabelStone Wenhai', family: '"BabelStone Wenhai"' },
-    { key: 'kai', name: 'New Tangut Std', family: '"New Tangut Std"' },
-    { key: 'genzui', name: 'GenZui Sans', family: '"GenZui Sans"' },
-    { key: 'mojikyo', name: 'Mojikyo Tangut', family: '"Mojikyo Tangut"' },
-    { key: 'n4694', name: 'Tangut N4694', family: '"Tangut N4694"' },
-    { key: 'twu', name: 'Tangut TWU', family: '"Tangut TWU"' },
+    { key: 'noto', name: 'Noto Serif Tangut', short: 'Noto', family: '"Noto Serif Tangut"' },
+    { key: 'yinchuan', name: 'Tangut Yinchuan', short: 'Yinchuan', family: '"Tangut Yinchuan"' },
+    { key: 'wenhai', name: 'BabelStone Wenhai', short: 'Wenhai', family: '"BabelStone Wenhai"' },
+    { key: 'kai', name: 'New Tangut Std', short: 'New Std', family: '"New Tangut Std"' },
+    { key: 'genzui', name: 'GenZui Sans', short: 'GenZui', family: '"GenZui Sans"' },
+    { key: 'mojikyo', name: 'Mojikyo Tangut', short: 'Mojikyo', family: '"Mojikyo Tangut"' },
+    { key: 'n4694', name: 'Tangut N4694', short: 'N4694', family: '"Tangut N4694"' },
+    { key: 'twu', name: 'Tangut TWU', short: 'TWU', family: '"Tangut TWU"' },
   ]
   /** @type {string[]} */
   let facesShown = $state([])
@@ -134,6 +134,27 @@
       <button class="ui-button" data-size="sm" type="button" onclick={() => copy(char)}>{t('common.copy')} <span class="ui-script copy-glyph">{char}</span></button>
       <button class="ui-button" data-size="sm" type="button" onclick={() => copy(address, t('card.link'))}>{t('card.copyLink')}</button>
     </div>
+
+    <section class="faces-section">
+      <div class="faces-head">
+        <h3 class="ui-label">{t('card.renderings')}</h3>
+        {#if facesShown.length < FACES.length - 1}
+          <button class="ui-button" data-variant="quiet" data-size="sm" type="button" disabled={facesLoading} onclick={showFaces}>
+            {facesLoading ? t('card.loadingFaces') : t('card.showFaces')}
+          </button>
+        {/if}
+      </div>
+      <div class="faces">
+        {#each FACES as face, i (face.key)}
+          {#if i === 0 || facesShown.includes(face.key)}
+            <figure class="face">
+              <span class="ui-script face-glyph" style:font-family={face.family} lang="txg">{char}</span>
+              <figcaption title={face.name}>{face.short}</figcaption>
+            </figure>
+          {/if}
+        {/each}
+      </div>
+    </section>
 
     {#if codes.length}
       <section>
@@ -296,6 +317,11 @@
   .inline{padding:0 3px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font-size:17px;vertical-align:-2px}
   .inline:hover{background:var(--ui-color-surface-hover)}
   .use{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);padding-bottom:var(--ui-space-xl)}
+  .faces-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--ui-space-sm)}
+  .faces{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:var(--ui-space-2xs)}
+  .face{display:grid;place-items:center;gap:2px;margin:0;padding:var(--ui-space-xs) 2px var(--ui-space-2xs);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-sm);background:var(--ui-color-surface-sunken);min-inline-size:0}
+  .face-glyph{font-size:32px;line-height:1.15}
+  .face figcaption{max-inline-size:100%;overflow:hidden;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);line-height:1.2;text-align:center;text-overflow:ellipsis;white-space:nowrap}
   .copy-glyph{font-size:16px;line-height:1}
   section{display:grid;gap:var(--ui-space-sm);padding-block:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
   .codes{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
@@ -320,7 +346,7 @@
   .ids .ui-formula{font-size:20px}
   .ids-link{font-size:var(--ui-text-xs)}
   .rel{gap:3px}
-  .rel .ui-tile-note{font-size:10px}
+  .rel .ui-tile-note{font-size:var(--ui-text-2xs)}
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}
   .credit{border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg);font-size:var(--ui-text-2xs);line-height:1.6;margin-top:var(--ui-space-xl)}

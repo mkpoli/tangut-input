@@ -70,95 +70,86 @@
   }
 </script>
 
-<div class="sijiao">
+<div class="ui-page sijiao">
   <section class="composer" aria-label="Four-corner code">
     <div class="box">
-      <input bind:this={input} data-primary class="code mono" value={code} spellcheck="false" autocomplete="off"
+      <input bind:this={input} data-primary class="ui-input code-input ui-mono" value={code} spellcheck="false" autocomplete="off"
         inputmode={touch ? 'none' : 'numeric'} aria-label={t('sijiao.label')} placeholder={t('sijiao.placeholder')}
         oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => setCode(event.currentTarget.value)} onkeydown={keys} use:autofocus />
-      <span class="count muted" role="status">{#if code}{hits.length ? t('common.characters', { count: hits.length }) : t('sijiao.none')}{/if}</span>
+      <span class="ui-count count" role="status">{#if code}{hits.length ? t('common.characters', { count: hits.length }) : t('sijiao.none')}{/if}</span>
     </div>
 
-    <div class="bar" role="listbox" aria-label={t('common.candidates')} class:idle={!code}>
+    <div class="ui-candidates" role="listbox" aria-label={t('common.candidates')} data-idle={!code ? '' : undefined}>
       {#if code && shown.length}
         {#each shown as hit, i (hit.char)}
-          <button type="button" role="option" class="cand" aria-selected={i === active}
+          <button type="button" role="option" class="ui-candidate" aria-selected={i === active}
             onclick={() => commit(i)} onmouseenter={() => { active = i }} title={gloss(hit.char)}>
-            <span class="n mono">{i + 1}</span>
+            <span class="ui-candidate-number">{i + 1}</span>
             <G char={hit.char} />
-            <span class="rest mono"><span class="typed">{code}</span>{hit.code.slice(code.length)}</span>
+            <span class="ui-candidate-code"><span class="typed">{code}</span>{hit.code.slice(code.length)}</span>
           </button>
         {/each}
         {#if pages > 1}
-          <span class="pager">
-            <button type="button" class="btn ghost" aria-label={t('common.previous')} onclick={() => turn(-1)}>‹</button>
-            <span class="muted mono">{page + 1}/{pages}</span>
-            <button type="button" class="btn ghost" aria-label={t('common.more')} onclick={() => turn(1)}>›</button>
+          <span class="ui-pager">
+            <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" aria-label={t('common.previous')} onclick={() => turn(-1)}>‹</button>
+            <span>{page + 1}/{pages}</span>
+            <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" aria-label={t('common.more')} onclick={() => turn(1)}>›</button>
           </span>
         {/if}
       {:else if code}
-        <p class="muted">{t('sijiao.noCode', { code })}</p>
+        <p>{t('sijiao.noCode', { code })}</p>
       {:else}
-        <p class="muted keys">{@html t('sijiao.keys')}</p>
+        <p class="keys">{@html t('sijiao.keys')}</p>
       {/if}
     </div>
   </section>
 
   <section class="pad" aria-label={t('sijiao.padLabel')}>
-    <div class="head"><h2 class="label">{t('sijiao.digits')}</h2><p class="muted">{t('sijiao.digitsHint')}</p></div>
-    {#each ROWS as row (row)}
-      <div class="row">
-        {#each [...row] as letter (letter)}
-          <button type="button" class="key" class:dead={!KEYS[letter]} disabled={!KEYS[letter]} onclick={() => press(KEYS[letter])}
-            aria-label={KEYS[letter] ? t('sijiao.digitKey', { digit: KEYS[letter] }) : t('sijiao.unusedKey', { letter })}>
-            <span class="digit mono">{KEYS[letter] ?? ''}</span>
-            <span class="letter mono">{letter}</span>
-          </button>
-        {/each}
-        {#if row === 'zxcvbnm'}<button type="button" class="key wide" onclick={() => press('back')} aria-label={t('common.backspace')}>⌫</button>{/if}
-      </div>
-    {/each}
-    <div class="row"><button type="button" class="key space" onclick={() => press('space')} disabled={!code}>{#if shown[active]}{t('cangjie.spaceAdds')} <span class="tg">{shown[active].char}</span>{:else}{t('cangjie.space')}{/if}</button></div>
+    <header class="head"><h2 class="ui-label">{t('sijiao.digits')}</h2><p class="ui-hint">{t('sijiao.digitsHint')}</p></header>
+    <div class="ui-keys">
+      {#each ROWS as row (row)}
+        <div class="ui-key-row">
+          {#each [...row] as letter (letter)}
+            <button type="button" class="ui-key digit-key" data-dead={!KEYS[letter] ? '' : undefined} disabled={!KEYS[letter]} onclick={() => press(KEYS[letter])}
+              aria-label={KEYS[letter] ? t('sijiao.digitKey', { digit: KEYS[letter] }) : t('sijiao.unusedKey', { letter })}>
+              <span class="digit ui-mono">{KEYS[letter] ?? ''}</span>
+              <span class="letter ui-mono">{letter}</span>
+            </button>
+          {/each}
+          {#if row === 'zxcvbnm'}<button type="button" class="ui-key" data-wide onclick={() => press('back')} aria-label={t('common.backspace')}>⌫</button>{/if}
+        </div>
+      {/each}
+      <div class="ui-key-row"><button type="button" class="ui-key" data-space onclick={() => press('space')} disabled={!code}>{#if shown[active]}{t('cangjie.spaceAdds')} <span class="ui-script">{shown[active].char}</span>{:else}{t('cangjie.space')}{/if}</button></div>
+    </div>
   </section>
 
-  <div class="legend">
-    <h2 class="label">{t('sijiao.corners')}</h2>
-    <p class="muted">{@html t('sijiao.cornersHint', { count: ix.sijiao.size })}</p>
-  </div>
+  <section class="legend">
+    <h2 class="ui-label">{t('sijiao.corners')}</h2>
+    <p class="ui-notice">{@html t('sijiao.cornersHint', { count: ix.sijiao.size })}</p>
+  </section>
 </div>
 
 <style>
-  .sijiao{display:grid;gap:22px}
-  .composer{display:grid;gap:10px}
-  .box{display:flex;align-items:center;gap:14px}
-  .code{flex:1;min-width:0;padding:12px 16px;border:1px solid var(--line-strong);border-radius:12px;background:var(--surface);font-size:30px;letter-spacing:.24em}
-  .code:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
-  .code::placeholder{font-size:17px;letter-spacing:.02em;color:var(--muted);font-family:var(--ui)}
-  .count{min-width:9em;text-align:right;font-size:13px}
-  .bar{display:flex;align-items:stretch;gap:6px;min-height:92px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow-x:auto}
-  .bar.idle{align-items:center;padding:8px 14px}
-  .bar p{font-size:13px}
-  .bar :global(kbd){margin:0 1px}
-  .cand{position:relative;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;min-width:76px;padding:4px 6px 6px;border:1px solid transparent;border-radius:9px;background:none}
-  .cand:hover{background:var(--hover)}
-  .cand[aria-selected="true"]{background:var(--accent-soft);border-color:var(--accent)}
-  .cand .n{align-self:start;justify-self:start;font-size:11px;color:var(--muted)}
-  .cand[aria-selected="true"] .n{color:var(--accent-ink);font-weight:700}
-  .cand :global(.tg){font-size:40px}
-  .rest{font-size:12px;letter-spacing:.04em}
-  .typed{color:var(--muted)}
-  .pager{display:flex;align-items:center;gap:2px;margin-left:auto;padding-left:8px;font-size:12px}
-  .pad{max-width:560px}
-  .head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-  .head p{font-size:12.5px}
-  .row{display:flex;gap:6px;margin-bottom:6px}
-  .key{position:relative;display:grid;place-items:center;width:52px;height:52px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
-  .key .digit{font-size:17px;font-weight:600}
-  .key .letter{position:absolute;right:5px;bottom:3px;font-size:10px;color:var(--muted)}
-  .key.dead{opacity:.35}
-  .key.wide{width:auto;flex:1}
-  .key.space{width:100%;height:40px;margin-top:2px;font-size:13px}
-  .key.space .tg{font-size:20px;margin-left:6px}
-  .legend{max-width:60ch}
-  .legend p{font-size:12.5px;line-height:1.55}
+  .composer{display:grid;gap:var(--ui-space-md)}
+  .box{display:flex;align-items:center;gap:var(--ui-space-xl)}
+  .code-input{flex:1;min-inline-size:0;min-block-size:60px;padding:var(--ui-space-md) var(--ui-space-xl);border-radius:var(--ui-radius-lg);font-size:30px;letter-spacing:.24em}
+  .code-input::placeholder{font-family:var(--ui-font-sans);font-size:var(--ui-text-lg);letter-spacing:.02em}
+  .count{min-inline-size:9em;text-align:end}
+  .keys{color:var(--ui-color-ink-muted);font-size:var(--ui-text-sm)}
+  .sijiao .ui-candidate :global(.ui-script){font-size:34px}
+  .pad{max-inline-size:560px;display:grid;gap:var(--ui-space-md)}
+  .head{display:flex;align-items:baseline;flex-wrap:wrap;gap:var(--ui-space-sm)}
+  .head .ui-hint{font-size:var(--ui-text-xs)}
+  .digit-key{position:relative;place-items:center;max-inline-size:50px;aspect-ratio:1;grid-template-rows:1fr}
+  .digit-key .digit{font-size:17px;font-weight:var(--ui-weight-semibold)}
+  .digit-key .letter{position:absolute;right:5px;bottom:3px;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
+  .digit-key[data-dead]{opacity:.35}
+  .legend{display:grid;gap:var(--ui-space-sm);max-inline-size:60ch}
+  .legend .ui-notice{font-size:var(--ui-text-xs);line-height:1.55}
+  @media (max-width:900px){
+    .code-input{min-block-size:50px;padding:var(--ui-space-sm) var(--ui-space-md);font-size:24px}
+    .count{display:none}
+    .keys{display:none}
+    .sijiao .ui-candidate :global(.ui-script){font-size:30px}
+  }
 </style>

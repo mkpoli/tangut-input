@@ -172,11 +172,11 @@
 
 <svelte:window onresize={resize} onkeydown={keys} />
 
-<div class="draw">
+<div class="ui-page draw" data-width="wide">
   <section class="pad-column" aria-label={t('draw.padLabel')}>
-    <header class="intro">
-      <h1>{t('nav.draw')}</h1>
-      <p class="muted">{t('draw.intro')}</p>
+    <header class="ui-page-head">
+      <h1 class="ui-page-title">{t('nav.draw')}</h1>
+      <p class="ui-page-intro">{t('draw.intro')}</p>
     </header>
     <div class="pad">
       <canvas bind:this={canvas} aria-label={t('draw.canvas')}
@@ -184,58 +184,49 @@
       {#if !strokes.length}<p class="hint" aria-hidden="true">{t('draw.here')}</p>{/if}
     </div>
     <div class="tools">
-      <button type="button" class="btn" onclick={undo} disabled={!strokes.length}>{t('draw.undo')}</button>
-      <button type="button" class="btn" onclick={clear} disabled={!strokes.length}>{t('draw.clear')}</button>
-      <span class="muted strokes">{t('draw.strokes', { count: strokes.length })}</span>
+      <button type="button" class="ui-button" data-size="sm" onclick={undo} disabled={!strokes.length}>{t('draw.undo')}</button>
+      <button type="button" class="ui-button" data-size="sm" onclick={clear} disabled={!strokes.length}>{t('draw.clear')}</button>
+      <span class="ui-count strokes">{t('draw.strokes', { count: strokes.length })}</span>
     </div>
   </section>
 
   <section class="notes" aria-label={t('draw.optionsLabel')}>
     <div class="options">
-      <label><input type="checkbox" bind:checked={useCount} onchange={update} /> {t('draw.favourStrokes', { count: strokes.length || '—' })}</label>
-      <label><input type="checkbox" bind:checked={components} onchange={update} /> {t('draw.includeComponents')}</label>
+      <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" bind:checked={useCount} onchange={update} /> <span>{t('draw.favourStrokes', { count: strokes.length || '—' })}</span></label>
+      <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" bind:checked={components} onchange={update} /> <span>{t('draw.includeComponents')}</span></label>
     </div>
-    <p class="note honest">{@html t('draw.note')}</p>
+    <p class="ui-notice">{@html t('draw.note')}</p>
   </section>
 
   <section class="results" aria-label={t('draw.resultsLabel')}>
-    <div class="head">
-      <h2 class="label">{t('draw.results')}</h2>
-      {#if status === 'loading'}<span class="muted">{t('draw.loading')}</span>{:else if status === 'failed'}<span class="muted">{t('draw.failed')}</span>{/if}
+    <div class="ui-section-head">
+      <h2 class="ui-label">{t('draw.results')}</h2>
+      {#if status === 'loading'}<span class="ui-count">{t('draw.loading')}</span>{:else if status === 'failed'}<span class="ui-count">{t('draw.failed')}</span>{/if}
     </div>
     {#if items.length}
       <Candidates bind:this={grid} {items} bind:active size={70} label={t('draw.results')} />
-      <p class="muted keys">{@html t('draw.keys')}</p>
+      <p class="ui-hint keys">{@html t('draw.keys')}</p>
     {:else}
-      <p class="empty">{t('draw.empty')}</p>
+      <p class="ui-empty">{t('draw.empty')}</p>
     {/if}
   </section>
 </div>
 
 <style>
-  .draw{display:grid;grid-template-columns:minmax(280px,400px) minmax(0,1fr);grid-template-areas:"pad results" "notes results";grid-template-rows:auto 1fr;gap:16px 28px;align-items:start}
-  .pad-column{grid-area:pad}
-  .notes{grid-area:notes;display:grid;gap:12px}
-  .results{grid-area:results}
-  .pad-column{display:grid;gap:12px}
-  .intro{display:grid;gap:4px}
-  h1{font-family:var(--serif);font-size:26px;font-weight:600}
-  .intro p{font-size:13.5px}
-  .pad{position:relative;aspect-ratio:1;border:1px solid var(--line-strong);border-radius:14px;background:var(--surface);overflow:hidden;box-shadow:var(--shadow)}
-  .pad::before,.pad::after{content:"";position:absolute;background:var(--line);pointer-events:none}
+  .draw{display:grid;grid-template-columns:minmax(280px,400px) minmax(0,1fr);grid-template-areas:"pad results" "notes results";grid-template-rows:auto 1fr;gap:var(--ui-space-xl) var(--ui-space-3xl);align-items:start}
+  .pad-column{grid-area:pad;display:grid;gap:var(--ui-space-lg)}
+  .notes{grid-area:notes;display:grid;gap:var(--ui-space-md)}
+  .results{grid-area:results;min-inline-size:0}
+  .pad{position:relative;aspect-ratio:1;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-xl);background:var(--ui-color-surface-sunken);overflow:hidden}
+  .pad::before,.pad::after{content:"";position:absolute;background:var(--ui-color-border);pointer-events:none}
   .pad::before{left:50%;top:14px;bottom:14px;width:1px}
   .pad::after{top:50%;left:14px;right:14px;height:1px}
-  canvas{position:relative;z-index:1;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair;color:var(--ink)}
-  .hint{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
-  .tools{display:flex;align-items:center;gap:6px}
-  .strokes{margin-left:auto;font-size:12.5px;font-variant-numeric:tabular-nums}
-  .options{display:grid;gap:4px;font-size:13px;color:var(--ink-2)}
-  .options input{accent-color:var(--accent);margin-right:6px}
-  .honest{font-size:12.5px;line-height:1.55}
-  .results{min-width:0}
-  .head{display:flex;align-items:baseline;gap:12px;margin:6px 0 12px}
-  .head span{font-size:12.5px}
-  .keys{margin-top:12px;font-size:12px}
+  canvas{position:relative;z-index:1;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair;color:var(--ui-color-ink)}
+  .hint{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);letter-spacing:var(--ui-tracking-caps);text-transform:uppercase;pointer-events:none}
+  .tools{display:flex;align-items:center;gap:var(--ui-space-xs)}
+  .strokes{margin-inline-start:auto}
+  .options{display:grid;gap:2px}
+  .keys{margin-top:var(--ui-space-md)}
   @media (max-width:1100px){.draw{grid-template-columns:minmax(0,440px);grid-template-areas:"pad" "results" "notes"}}
-  @media (max-width:900px){.keys{display:none}.results :global(.tiles){--tile:54px !important}}
+  @media (max-width:900px){.keys{display:none}.results :global(.ui-tiles){--ui-tile-size:54px !important}}
 </style>

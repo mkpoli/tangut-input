@@ -5,4 +5,4 @@
   let { char } = $props()
 </script>
 
-{#if hasGlyph(char)}<span class="tg" lang="txg">{char}</span>{:else}<span class="nog" title="No font draws U+{hex(char)} yet">{hex(char)}</span>{/if}
+{#if hasGlyph(char)}<span class="ui-script" lang="txg">{char}</span>{:else}<span class="ui-nog" title="No font draws U+{hex(char)} yet">{hex(char)}</span>{/if}

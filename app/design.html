@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <title>Tangut Input — design system</title>
+  <meta name="description" content="The colours, type, states and patterns behind Tangut Input, measured in the browser.">
+  <script>
+    // The theme kept from the last visit, set before the page paints.
+    try {
+      const theme = localStorage.getItem('tangut-input:theme')
+      if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+    } catch {}
+  </script>
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-head">
+      <div>
+        <p class="ui-label">Design system</p>
+        <h1 class="doc-title">Paper, ink, and one vermilion</h1>
+        <p class="doc-intro">
+          The colours, type, states and patterns behind Tangut Input. Every sample below is the
+          shipped CSS, not a copy, so a regression here is a regression in the site.
+        </p>
+      </div>
+      <div class="ui-segmented theme-pick" role="group" aria-label="Theme">
+        <label class="ui-segment">
+          <input type="radio" name="theme" value="auto" />
+          <span class="ui-segment-face">System</span>
+        </label>
+        <label class="ui-segment">
+          <input type="radio" name="theme" value="light" />
+          <span class="ui-segment-face">Light</span>
+        </label>
+        <label class="ui-segment">
+          <input type="radio" name="theme" value="dark" />
+          <span class="ui-segment-face">Dark</span>
+        </label>
+      </div>
+    </header>
+
+    <nav class="doc-nav" aria-label="Sections">
+      <a href="#colour">Colour</a>
+      <a href="#type">Type</a>
+      <a href="#controls">Controls</a>
+      <a href="#patterns">Patterns</a>
+      <a href="#rules">Rules</a>
+    </nav>
+
+    <section id="colour" class="doc-section">
+      <header class="doc-section-head">
+        <h2>Colour</h2>
+        <p class="doc-note">Ratios are measured from the rendered page against the surface named beside each token. Text needs 4.5:1; a control boundary needs 3:1.</p>
+      </header>
+      <div id="palette" class="palette"></div>
+    </section>
+
+    <section id="type" class="doc-section">
+      <h2>Type</h2>
+      <div class="type-scale">
+        <div class="type-row"><span class="type-sample" style="font-size: 32px">𘅤 Tangut</span><code>--ui-text-3xl · 32px</code><span class="doc-note">The mark, a page's opening figure</span></div>
+        <div class="type-row"><span class="type-sample" style="font-size: 26px; font-family: var(--ui-font-serif)">Find a character</span><code>--ui-text-2xl · 26px</code><span class="doc-note">A page title</span></div>
+        <div class="type-row"><span class="type-sample" style="font-size: 20px; font-family: var(--ui-font-serif)">ndzi · to write</span><code>--ui-text-xl · 20px</code><span class="doc-note">A reading, a card's gloss</span></div>
+        <div class="type-row"><span class="type-sample" style="font-size: 16px">A result row's reading</span><code>--ui-text-lg · 16px</code><span class="doc-note">The strongest line in a row</span></div>
+        <div class="type-row"><span class="type-sample" style="font-size: 14px">Body text, a page's introduction</span><code>--ui-text-md · 14px</code><span class="doc-note">Body</span></div>
+        <div class="type-row"><span class="type-sample" style="font-size: 13px">A control's label, a dense row</span><code>--ui-text-sm · 13px</code><span class="doc-note">Controls</span></div>
+        <div class="type-row"><span class="type-sample" style="font-size: 12px">A hint, a count, a chip</span><code>--ui-text-xs · 12px</code><span class="doc-note">Hints</span></div>
+        <div class="type-row"><span class="type-sample ui-label">Cangjie codes</span><code>--ui-text-2xs · 11px</code><span class="doc-note">Overlines, tags, keycaps</span></div>
+      </div>
+    </section>
+
+    <section id="controls" class="doc-section">
+      <h2>Controls</h2>
+
+      <div class="doc-group">
+        <h3>Buttons</h3>
+        <div class="row">
+          <button class="ui-button" type="button">Copy</button>
+          <button class="ui-button" data-variant="primary" type="button">Add to text</button>
+          <button class="ui-button" data-variant="quiet" type="button">Reset</button>
+          <button class="ui-button" data-variant="danger" type="button">Delete</button>
+          <button class="ui-button" type="button" disabled>Disabled</button>
+          <button class="ui-button" type="button" aria-pressed="true">Pressed</button>
+        </div>
+        <div class="row">
+          <button class="ui-button" data-size="sm" type="button">Small</button>
+          <button class="ui-button" data-size="lg" type="button">Large</button>
+          <button class="ui-button" data-size="icon" type="button" aria-label="More actions">⋯</button>
+          <button class="ui-button" data-size="icon-sm" type="button" aria-label="Close">×</button>
+        </div>
+      </div>
+
+      <div class="doc-group">
+        <h3>Chips</h3>
+        <div class="ui-chip-row" role="group" aria-label="Example filters">
+          <button class="ui-chip" type="button" aria-pressed="true">All</button>
+          <button class="ui-chip" type="button">Level</button>
+          <button class="ui-chip" type="button">Rising</button>
+          <button class="ui-chip" type="button" disabled>Unavailable</button>
+        </div>
+      </div>
+
+      <div class="doc-group">
+        <h3>Fields</h3>
+        <div class="field-grid">
+          <div class="ui-field">
+            <label class="ui-label" for="sample-text">Cangjie code</label>
+            <input class="ui-input" id="sample-text" value="msb" aria-describedby="sample-hint" />
+            <p class="ui-hint" id="sample-hint">Letters only; the code completes as you type.</p>
+          </div>
+          <div class="ui-field">
+            <label class="ui-label" for="sample-select">Reconstruction</label>
+            <span class="ui-select-wrap">
+              <select class="ui-select" id="sample-select">
+                <option>Gong Xun 2024-11</option>
+                <option>Li Fanwen 2008</option>
+                <option>Gong Hwang-cherng 1997</option>
+              </select>
+            </span>
+          </div>
+          <div class="ui-field">
+            <label class="ui-label" for="sample-bad">A description</label>
+            <input class="ui-input" id="sample-bad" value="⿰木" aria-invalid="true" aria-describedby="sample-error" />
+            <p class="ui-error" id="sample-error">The description ends before its second part.</p>
+          </div>
+          <div class="ui-field">
+            <label class="ui-label" for="sample-off">Disabled</label>
+            <input class="ui-input" id="sample-off" value="Not editable" disabled />
+          </div>
+        </div>
+        <div class="ui-field">
+          <label class="ui-label" for="sample-notes">Notes</label>
+          <textarea class="ui-textarea" id="sample-notes" rows="2">The text being written stays in this browser.</textarea>
+        </div>
+      </div>
+
+      <div class="doc-group">
+        <h3>Choices</h3>
+        <div class="choice-grid">
+          <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" checked /> <span>Include empty slots</span></label>
+          <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" /> <span>Count strokes</span></label>
+          <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" indeterminate /> <span>Mixed</span></label>
+          <label class="ui-switch-row"><span>Follow the system theme</span><input class="ui-switch" type="checkbox" role="switch" checked aria-label="Follow the system theme" /></label>
+        </div>
+        <div class="ui-segmented" role="radiogroup" aria-label="View">
+          <label class="ui-segment"><input type="radio" name="view" checked /><span class="ui-segment-face">By rhyme</span></label>
+          <label class="ui-segment"><input type="radio" name="view" /><span class="ui-segment-face">By fanqie</span></label>
+          <label class="ui-segment"><input type="radio" name="view" /><span class="ui-segment-face">By sound</span></label>
+        </div>
+      </div>
+    </section>
+
+    <section id="patterns" class="doc-section">
+      <h2>Patterns</h2>
+
+      <div class="doc-group">
+        <h3>An index of ways in</h3>
+        <div class="ui-index">
+          <a class="ui-index-link" href="#patterns">
+            <span class="ui-index-glyph" aria-hidden="true">𗀀</span>
+            <span class="ui-index-text">
+              <span class="ui-index-title">Cangjie</span>
+              <span class="ui-index-body">Type the glyph code letter by letter; candidates are numbered for quick entry.</span>
+            </span>
+            <span class="ui-index-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="ui-index-link" href="#patterns">
+            <span class="ui-index-glyph" aria-hidden="true">𘅤</span>
+            <span class="ui-index-text">
+              <span class="ui-index-title">Draw</span>
+              <span class="ui-index-body">Sketch the character and scan the glyphs closest in shape.</span>
+            </span>
+            <span class="ui-index-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="doc-group">
+        <h3>Tiles</h3>
+        <div class="ui-tiles" style="--ui-tile-size: 72px">
+          <button class="ui-tile" type="button" aria-selected="true"><span class="ui-script ui-tile-glyph">𗀀</span><span class="ui-tile-note">pa</span></button>
+          <button class="ui-tile" type="button"><span class="ui-script ui-tile-glyph">𗁤</span><span class="ui-tile-note">pai</span></button>
+          <button class="ui-tile" type="button"><span class="ui-script ui-tile-glyph">𘅤</span><span class="ui-tile-note">water</span></button>
+          <button class="ui-tile" type="button" data-note="none"><span class="ui-script ui-tile-glyph">𘏨</span></button>
+        </div>
+      </div>
+
+      <div class="doc-group">
+        <h3>Result rows</h3>
+        <ol class="ui-rows">
+          <li class="ui-row" role="option" aria-selected="true">
+            <button class="ui-row-pick sample-row-pick" type="button">
+              <span class="ui-script ui-row-glyph">𘅤</span>
+              <span class="ui-row-body"><span class="ui-row-said">ndzi</span><span class="ui-row-title"><span class="ui-tag">en</span> to write</span></span>
+              <span class="ui-row-gloss">to write</span>
+            </button>
+            <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label="Add to text" style="margin-inline-end: 6px">+</button>
+          </li>
+          <li class="ui-row" role="option">
+            <button class="ui-row-pick sample-row-pick" type="button">
+              <span class="ui-script ui-row-glyph">𗁤</span>
+              <span class="ui-row-body"><span class="ui-row-said">ndzji</span><span class="ui-row-title">water</span></span>
+              <span class="ui-row-gloss">river</span>
+            </button>
+          </li>
+        </ol>
+      </div>
+
+      <div class="doc-group">
+        <h3>Candidate bar and keys</h3>
+        <div class="ui-candidates" role="listbox" aria-label="Candidates">
+          <button class="ui-candidate" type="button" role="option" aria-selected="true">
+            <span class="ui-candidate-number">1</span>
+            <span class="ui-candidate-glyph">𗀀</span>
+            <span class="ui-candidate-code"><span class="typed">p</span>a</span>
+          </button>
+          <button class="ui-candidate" type="button" role="option">
+            <span class="ui-candidate-number">2</span>
+            <span class="ui-candidate-glyph">𗁤</span>
+            <span class="ui-candidate-code"><span class="typed">p</span>ai</span>
+          </button>
+          <span class="ui-pager"><span>1 / 2</span></span>
+        </div>
+        <div class="ui-keys" style="max-inline-size: 360px">
+          <div class="ui-key-row">
+            <button class="ui-key" type="button"><span class="ui-key-letter">p</span><span class="ui-key-glyphs">𗀀𗁤</span></button>
+            <button class="ui-key" type="button"><span class="ui-key-letter">a</span><span class="ui-key-glyphs">𘅤</span></button>
+            <button class="ui-key" type="button" data-dead><span class="ui-key-letter">z</span><span class="ui-key-glyphs"></span></button>
+          </div>
+          <div class="ui-key-row"><button class="ui-key" type="button" data-space>Space adds 𗀀</button></div>
+        </div>
+      </div>
+
+      <div class="doc-group">
+        <h3>A description and a notice</h3>
+        <p><span class="ui-formula">⿰𗀀𗁤</span></p>
+        <p class="ui-notice">Not yet recorded. The corpus so far is one chapter of the Tangut <i>Bodhicaryāvatāra</i> (280 characters, 151 distinct), so most characters have no attestation here yet.</p>
+      </div>
+
+      <div class="doc-group">
+        <h3>Menu, popover and toast</h3>
+        <div class="row" style="align-items: flex-start">
+          <div class="ui-menu" role="menu" aria-label="Example menu">
+            <button class="ui-menu-item" role="menuitemcheckbox" aria-checked="true" type="button">Noto Serif</button>
+            <button class="ui-menu-item" role="menuitemcheckbox" aria-checked="false" type="button">Tangut Yinchuan</button>
+            <hr class="ui-menu-separator" />
+            <button class="ui-menu-item" role="menuitem" type="button">BabelStone Wenhai</button>
+          </div>
+          <div class="ui-popover" style="padding: 10px 12px; max-width: 280px">
+            <span class="ui-label">Reconstruction</span>
+            <p class="ui-row-said" style="margin-top: 4px">ndzi</p>
+            <p class="ui-hint">Gong Xun 2024-11 · Li Fanwen 2008</p>
+          </div>
+          <div class="ui-toast"><span>Copied 𘅤</span><button class="ui-button" data-size="sm" data-variant="toast" type="button">Undo</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="rules" class="doc-section">
+      <h2>Rules</h2>
+      <ul class="doc-rules">
+        <li>One ring: 2px of the accent, 2px outside the control. A component may inset it when an edge would clip it, never recolour it.</li>
+        <li>State is never colour alone: a check, a thumb, a rule, a word or an outline carries it too.</li>
+        <li>Three surfaces only: the page, a panel, an inset. Overlays are the one place that casts a shadow.</li>
+        <li>Text clears 4.5:1 on the surface it sits on; a boundary that identifies a control clears 3:1.</li>
+        <li>Native elements for controls. A custom widget has to bring its own keyboard, and the browser already has one.</li>
+        <li>Controls and their labels meet the 24px target; a chip is 26px and a row is at least 40px.</li>
+        <li>Reduced motion collapses transitions; forced colours keep every shape.</li>
+      </ul>
+    </section>
+  </main>
+  <script type="module" src="./design-preview.js"></script>
+</body>
+</html>

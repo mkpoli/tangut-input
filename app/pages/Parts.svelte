@@ -83,67 +83,71 @@
   const items = $derived(hits.map(char => ({ char, sub: gloss(char) })))
 </script>
 
-<div class="parts">
-  <header class="intro">
-    <h1>{t('nav.parts')}</h1>
-    <p class="muted">{t('parts.intro')}</p>
+<div class="ui-page parts">
+  <header class="ui-page-head">
+    <h1 class="ui-page-title">{t('nav.parts')}</h1>
+    <p class="ui-page-intro">{t('parts.intro')}</p>
   </header>
 
-  <section class="build" aria-label={t('parts.chosenLabel')}>
+  <section class="ui-card build" data-padding="sm" aria-label={t('parts.chosenLabel')}>
     <div class="chosen">
       {#each chosen as part, i (i)}
         <div class="partwrap">
-          <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')}><G char={part} /><span class="x" aria-hidden="true">×</span><span class="sr">{t('parts.remove')}</span></button>
+          <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')}><G char={part} /><span class="x" aria-hidden="true">×</span><span class="ui-visually-hidden">{t('parts.remove')}</span></button>
           {#if partsIn(part).length}
             <button type="button" class="split" onclick={() => split(i)} title={t('parts.splitTitle', { part })} aria-label={t('parts.splitTitle', { part })}>⿱</button>
           {/if}
         </div>
       {/each}
-      {#if !chosen.length}<span class="muted ph">{t('parts.noneChosen')}</span>{/if}
-      {#if chosen.length || layout}<button type="button" class="btn ghost reset" onclick={reset}>{t('parts.reset')}</button>{/if}
+      {#if !chosen.length}<span class="ui-hint ph">{t('parts.noneChosen')}</span>{/if}
+      {#if chosen.length || layout}<button type="button" class="ui-button" data-variant="quiet" data-size="sm" onclick={reset}>{t('parts.reset')}</button>{/if}
     </div>
-    <div class="layouts" role="group" aria-label={t('parts.layout')}>
-      <span class="label">{t('parts.layout')}</span>
-      <button type="button" class="chip" aria-pressed={!layout} onclick={() => { layout = '' }}>{t('parts.anyLayout')}</button>
+    <div class="ui-toolbar layouts" role="group" aria-label={t('parts.layout')}>
+      <span class="ui-label">{t('parts.layout')}</span>
+      <button type="button" class="ui-chip" aria-pressed={!layout} onclick={() => { layout = '' }}>{t('parts.anyLayout')}</button>
       {#each LAYOUT_KEYS as op (op)}
-        <button type="button" class="chip" aria-pressed={layout === op} title={t(`layout.${op}`)} onclick={() => { layout = layout === op ? '' : op }}>
-          <Layout {op} size={15} /><span>{t(`layout.${op}`)}</span>
+        <button type="button" class="ui-chip" aria-pressed={layout === op} title={t(`layout.${op}`)} onclick={() => { layout = layout === op ? '' : op }}>
+          <Layout {op} size={14} /><span>{t(`layout.${op}`)}</span>
         </button>
       {/each}
     </div>
   </section>
 
   <section class="matches" aria-label={t('parts.matchesLabel')}>
-    <div class="head">
-      <h2 class="label">{chosen.length || layout ? t('common.characters', { count: hits.length }) : t('common.charactersLabel')}</h2>
-      {#if chosen.length || layout}<span class="muted">{t('parts.fewestStrokes')}</span>{/if}
+    <div class="ui-section-head">
+      <h2 class="ui-label">{chosen.length || layout ? t('common.characters', { count: hits.length }) : t('common.charactersLabel')}</h2>
+      {#if chosen.length || layout}<span class="ui-count">{t('parts.fewestStrokes')}</span>{/if}
     </div>
     {#if chosen.length || layout}
       {#if hits.length}
         <div role="presentation" onkeydown={keys}><Candidates bind:this={grid} {items} bind:active size={64} label={t('parts.matchesLabel')} limit={240} /></div>
       {:else}
-        <p class="empty">{layout ? t('parts.noMatchLayout') : t('parts.noMatch')}</p>
+        <p class="ui-empty">{layout ? t('parts.noMatchLayout') : t('parts.noMatch')}</p>
       {/if}
     {:else}
-      <p class="empty">{t('parts.empty')}</p>
+      <p class="ui-empty">{t('parts.empty')}</p>
     {/if}
   </section>
 
   <section class="palette" aria-label={t('parts.paletteLabel')}>
-    <div class="head">
-      <h2 class="label">{among && !everything ? t('parts.stillOccur') : t('parts.allComponents')}</h2>
-      <input class="field filter mono" data-primary bind:value={filter} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} spellcheck="false" autocomplete="off" />
-      {#if among}<label class="all"><input type="checkbox" bind:checked={everything} /> {t('parts.showAll')}</label>{/if}
+    <div class="ui-section-head">
+      <h2 class="ui-label">{among && !everything ? t('parts.stillOccur') : t('parts.allComponents')}</h2>
+      {#if among}
+        <label class="ui-check-row all"><input class="ui-checkbox" type="checkbox" bind:checked={everything} /> <span>{t('parts.showAll')}</span></label>
+      {/if}
+      <span class="filter-wrap">
+        <input class="ui-input ui-mono" data-size="sm" data-primary bind:value={filter} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} spellcheck="false" autocomplete="off" />
+      </span>
     </div>
     <div class="strokes">
       {#each byStroke as [count, parts] (count)}
         <div class="stroke-group">
-          <h3 class="n" title={t('draw.strokes', { count })}>{count || '?'}</h3>
-          <div class="comps">
+          <h3 class="stroke-count" title={t('draw.strokes', { count })}>{count || '?'}</h3>
+          <div class="ui-tiles comps" style:--ui-tile-size="46px">
             {#each parts as p (p.part)}
-              <button type="button" class="comp" class:dim={p.live === 0} onclick={() => add(p.part)}
+              <button type="button" class="ui-tile comp" data-dim={p.live === 0 ? '' : undefined} onclick={() => add(p.part)}
                 title={t('parts.componentTitle', { code: ix.codes.get(p.part)?.[0] ?? '', count: p.live >= 0 ? p.live : p.uses })}>
-                <G char={p.part} />{#if p.live > 0}<small>{p.live}</small>{/if}
+                <G char={p.part} />{#if p.live > 0}<small class="use">{p.live}</small>{/if}
               </button>
             {/each}
           </div>
@@ -154,37 +158,33 @@
 </div>
 
 <style>
-  .parts{display:grid;gap:18px}
-  .intro{display:grid;gap:4px}
-  h1{font-family:var(--serif);font-size:26px;font-weight:600}
-  .intro p{font-size:13.5px;max-width:56em}
-  .build{display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
-  .chosen{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:58px}
+  .build{gap:var(--ui-space-md)}
+  .chosen{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs);min-block-size:56px}
   .partwrap{position:relative}
-  .part{display:grid;place-items:center;width:58px;height:58px;border:1px solid var(--accent);border-radius:10px;background:var(--accent-soft)}
-  .split{position:absolute;top:-7px;left:-7px;display:grid;place-items:center;width:20px;height:20px;padding:0;border:1px solid var(--accent);border-radius:50%;background:var(--surface);color:var(--accent-ink);font-size:11px;line-height:1}
-  .split:hover{background:var(--accent);color:var(--on-accent)}
-  .part :global(.tg){font-size:36px}
-  .part .x{position:absolute;top:1px;right:5px;font-size:13px;color:var(--accent-ink)}
-  .part:hover{filter:brightness(.96)}
-  .ph{font-size:13px}
-  .reset{margin-left:auto}
-  .layouts{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
-  .layouts .label{margin-right:4px}
-  .layouts .chip{gap:6px}
-  .head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
-  .head span{font-size:12.5px}
-  .filter{width:200px;padding:6px 10px;font-size:13px;margin-left:auto}
-  .all{font-size:12.5px;color:var(--ink-2)}
-  .all input{accent-color:var(--accent)}
-  .strokes{display:grid;gap:8px}
-  .stroke-group{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start}
-  .n{padding-top:10px;font:600 12px var(--mono);color:var(--muted);text-align:right}
-  .comps{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:4px}
-  .comp{position:relative;display:grid;place-items:center;aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
-  .comp:hover{border-color:var(--accent);background:var(--accent-soft)}
-  .comp :global(.tg){font-size:27px}
-  .comp small{position:absolute;right:3px;bottom:1px;font-size:9.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .comp.dim{opacity:.3}
-  @media (max-width:900px){.filter{width:100%;margin-left:0}.layouts .chip span{display:none}}
+  .part{display:grid;place-items:center;inline-size:56px;block-size:56px;border:1px solid var(--ui-color-accent);border-radius:var(--ui-radius-md);background:var(--ui-color-accent-soft)}
+  .part :global(.ui-script){font-size:34px}
+  .part .x{position:absolute;top:1px;right:5px;font-size:var(--ui-text-xs);color:var(--ui-color-accent-ink)}
+  .split{position:absolute;top:-7px;left:-7px;display:grid;place-items:center;inline-size:20px;block-size:20px;padding:0;border:1px solid var(--ui-color-accent);border-radius:var(--ui-radius-pill);background:var(--ui-color-surface);color:var(--ui-color-accent-ink);font-family:var(--ui-font-ids);font-size:11px;line-height:1}
+  .split:hover{background:var(--ui-color-accent);color:var(--ui-color-on-accent)}
+  .ph{font-size:var(--ui-text-sm)}
+  .build > .chosen + .ui-toolbar{margin-inline-start:0}
+  .layouts{gap:var(--ui-space-xs)}
+  .layouts .ui-label{margin-inline-end:var(--ui-space-2xs)}
+  .filter-wrap{margin-inline-start:auto}
+  .filter-wrap .ui-input{inline-size:200px}
+  .all{min-block-size:24px;font-size:var(--ui-text-xs);color:var(--ui-color-ink-soft)}
+  .strokes{display:grid;gap:var(--ui-space-sm)}
+  .stroke-group{display:grid;grid-template-columns:30px minmax(0,1fr);gap:var(--ui-space-sm);align-items:start}
+  .stroke-count{padding-top:var(--ui-space-xs);color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold);text-align:end}
+  .comps{gap:3px}
+  .comp{position:relative;aspect-ratio:1}
+  .comp :global(.ui-script){font-size:25px}
+  .comp :global(.ui-nog){font-size:9px}
+  .comp .use{position:absolute;right:3px;bottom:1px;color:var(--ui-color-ink-muted);font-size:9.5px;font-variant-numeric:tabular-nums}
+  .comp[data-dim]{opacity:.32}
+  @media (max-width:900px){
+    .filter-wrap{inline-size:100%;margin-inline-start:0}
+    .filter-wrap .ui-input{inline-size:100%}
+    .layouts .ui-chip span{display:none}
+  }
 </style>

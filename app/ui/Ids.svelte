@@ -56,16 +56,17 @@
 </div>
 
 <style>
-  .ids{display:flex;gap:8px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
-  .box{position:relative;display:flex;padding:18px 8px 8px;border:1px dashed var(--line-strong);border-radius:9px;flex:1}
-  .op{position:absolute;top:3px;left:5px;font-family:var(--ids);font-size:14px;line-height:1;color:var(--ink-2)}
-  .inner{display:flex;gap:6px;flex:1;align-items:stretch;justify-content:center}
+  .ids{display:flex;gap:var(--ui-space-xs);padding:var(--ui-space-md);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface-sunken)}
+  .box{position:relative;display:flex;padding:18px 6px 6px;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-sm);flex:1;background:var(--ui-color-surface)}
+  .op{position:absolute;top:2px;left:5px;font-family:var(--ui-font-ids);font-size:12px;line-height:1;color:var(--ui-color-ink-muted)}
+  .inner{display:flex;gap:var(--ui-space-xs);flex:1;align-items:stretch;justify-content:center}
   [data-op="⿱"]>.inner,[data-op="⿳"]>.inner{flex-direction:column}
   [data-op="⿵"]>.inner,[data-op="⿶"]>.inner,[data-op="⿴"]>.inner{flex-direction:column}
   [data-op="⿸"]>.inner,[data-op="⿹"]>.inner,[data-op="⿺"]>.inner,[data-op="⿷"]>.inner{flex-direction:row}
   [data-op="⿻"]>.inner{flex-direction:row}
-  .leaf{display:grid;place-items:center;flex:1;min-width:52px;min-height:52px;padding:4px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
-  .leaf:hover{border-color:var(--accent);background:var(--accent-soft)}
-  .leaf :global(.tg){font-size:34px}
-  .ids>.leaf{flex:0 0 auto;min-width:72px;min-height:72px}
+  .leaf{display:grid;place-items:center;flex:1;min-inline-size:48px;min-block-size:48px;padding:var(--ui-space-2xs);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-xs);background:var(--ui-color-surface)}
+  .leaf:hover{border-color:var(--ui-color-accent);background:var(--ui-color-accent-soft)}
+  .leaf :global(.ui-script){font-size:32px}
+  .ids>.leaf{flex:0 0 auto;min-inline-size:64px;min-block-size:64px}
+  .ids>.leaf :global(.ui-script){font-size:44px}
 </style>
