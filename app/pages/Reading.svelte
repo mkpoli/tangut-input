@@ -6,6 +6,7 @@
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { SYSTEMS, TIERS, searchReadings, fold } from '../lib/reading.js'
+  import { t } from '../lib/i18n.svelte.js'
 
   let query = $state(route.q)
   let tone = $state('')
@@ -50,26 +51,26 @@
 
 <div class="reading">
   <header class="intro">
-    <h1>Reading</h1>
-    <p class="muted">Type a reconstruction in any system: Li Fanwen, Gong, Gong Xun, Arakawa, Miyake, Nishida, Kychanov or Sofronov. Diacritics and IPA are optional; <span class="mono">ɨ</span> can be typed <span class="mono">i</span>, <span class="mono">ś</span> as <span class="mono">s</span>, <span class="mono">ŋ</span> as <span class="mono">ng</span>.</p>
+    <h1>{t('nav.reading')}</h1>
+    <p class="muted">{@html t('reading.intro')}</p>
   </header>
 
   <div class="controls">
     <input class="field big" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
-      aria-label="Reconstruction" placeholder="a reading, e.g. ndzi or dzjɨ1"
+      aria-label={t('reading.label')} placeholder={t('reading.placeholder')}
       oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { query = event.currentTarget.value; setQuery(query) }} onkeydown={keys} use:autofocus />
     <div class="filters">
-      <div class="group" role="group" aria-label="Tone">
-        <span class="label">Tone</span>
-        {#each [['', 'any'], ['1', '1 level'], ['2', '2 rising']] as [value, name] (value)}
+      <div class="group" role="group" aria-label={t('reading.tone')}>
+        <span class="label">{t('reading.tone')}</span>
+        {#each [['', 'reading.tone.any'], ['1', 'reading.tone.level'], ['2', 'reading.tone.rising']] as [value, name] (value)}
           <button type="button" class="chip" aria-pressed={(typedTone || tone) === value} disabled={!!typedTone}
-            onclick={() => { tone = value }}>{name}</button>
+            onclick={() => { tone = value }}>{t(name)}</button>
         {/each}
-        {#if typedTone}<span class="muted hint">tone {typedTone} from the typed digit</span>{/if}
+        {#if typedTone}<span class="muted hint">{t('reading.toneTyped', { tone: typedTone })}</span>{/if}
       </div>
-      <div class="group" role="group" aria-label="Systems">
-        <span class="label">Systems</span>
-        <button type="button" class="chip" aria-pressed={!systems.length} onclick={() => { systems = [] }}>all</button>
+      <div class="group" role="group" aria-label={t('reading.systems')}>
+        <span class="label">{t('reading.systems')}</span>
+        <button type="button" class="chip" aria-pressed={!systems.length} onclick={() => { systems = [] }}>{t('common.all')}</button>
         {#each SYSTEMS as system (system.key)}
           <button type="button" class="chip" aria-pressed={systems.includes(system.key)} title={system.name} onclick={() => toggle(system.key)}>{system.name.replace(/ \d.*$/, '')}</button>
         {/each}
@@ -79,23 +80,23 @@
 
   {#if !query.trim()}
     <div class="start">
-      <p class="muted">Try</p>
+      <p class="muted">{t('find.try')}</p>
       {#each EXAMPLES as example (example)}
         <button type="button" class="chip mono" onclick={() => { query = example; setQuery(example) }}>{example}</button>
       {/each}
     </div>
   {:else if !ready}
-    <p class="empty">Loading the records…</p>
+    <p class="empty">{t('common.loading')}</p>
   {:else if !hits.length}
-    <p class="empty">No reading in {systems.length ? 'the chosen systems' : 'any system'} comes close to <b>{query}</b>{tone || typedTone ? ` in tone ${typedTone || tone}` : ''}. Try fewer letters, or drop the tone.</p>
+    <p class="empty">{t('reading.none', { query, systems: systems.length ? t('reading.chosenSystems') : t('reading.anySystem'), tone: tone || typedTone })}</p>
   {:else}
     <p class="summary muted" role="status">
-      {hits.length} {hits.length === 1 ? 'character' : 'characters'} ·
-      {#each TIERS as tier, i (tier)}{#if counts[i]}<span class="tier">{tier.toLowerCase()} {counts[i]}</span>{/if}{/each}
+      {t('common.characters', { count: hits.length })} ·
+      {#each TIERS as tier, i (tier)}{#if counts[i]}<span class="tier">{t(`reading.tier.${i}`)} {counts[i]}</span>{/if}{/each}
     </p>
-    <ol class="rows" bind:this={list} role="listbox" aria-label="Characters">
+    <ol class="rows" bind:this={list} role="listbox" aria-label={t('common.charactersLabel')}>
       {#each shown as hit, i (hit.char)}
-        {#if i === 0 || shown[i - 1].tier !== hit.tier}<li class="divider label" role="presentation">{TIERS[hit.tier]}</li>{/if}
+        {#if i === 0 || shown[i - 1].tier !== hit.tier}<li class="divider label" role="presentation">{t(`reading.tier.${hit.tier}`)}</li>{/if}
         <li role="option" aria-selected={i === active || (active < 0 && route.c === hit.char)} class="row">
           <button type="button" class="pick" onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char)}>
             <span class="tg glyph">{hit.char}</span>
@@ -106,13 +107,13 @@
             </span>
             <span class="gl">{gloss(hit.char)}</span>
           </button>
-          <button type="button" class="add btn ghost" aria-label="Add {hit.char} to the text" title="Add to the text" onclick={() => put(hit.char)}>
+          <button type="button" class="add btn ghost" aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char)}>
             <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
         </li>
       {/each}
     </ol>
-    {#if hits.length > shown.length}<p class="muted cut">The first {shown.length} of {hits.length}. Add letters or a tone to narrow.</p>{/if}
+    {#if hits.length > shown.length}<p class="muted cut">{t('reading.cut', { shown: shown.length, total: hits.length })}</p>{/if}
   {/if}
 </div>
 

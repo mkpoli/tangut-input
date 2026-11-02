@@ -9,6 +9,7 @@
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { byCode, byMeaning, byCodePoint, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
+  import { t } from '../lib/i18n.svelte.js'
 
   let query = $state(route.q)
   let active = $state(-1)
@@ -21,23 +22,23 @@
     const out = []
     const chars = tangutIn(text)
     if (chars.length) {
-      out.push({ key: 'text', title: chars.length === 1 ? 'The character' : 'Each character in the text', total: chars.length,
+      out.push({ key: 'text', title: chars.length === 1 ? t('find.group.character') : t('find.group.text'), total: chars.length,
         items: chars.map(char => ({ char, sub: gloss(char), extra: firstReading(char) })) })
       return out
     }
     const points = byCodePoint(text)
-    if (points.length) out.push({ key: 'cp', title: 'By code point', total: points.length, items: points.slice(0, 48).map(char => ({ char, sub: codePoint(char) })) })
+    if (points.length) out.push({ key: 'cp', title: t('find.group.codepoint'), total: points.length, items: points.slice(0, 48).map(char => ({ char, sub: codePoint(char) })) })
     if (/^[a-z]+$/i.test(text)) {
       const codes = byCode(text)
-      if (codes.length) out.push({ key: 'code', title: 'As a Cangjie code', page: 'cangjie', total: codes.length, items: codes.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.code })) })
+      if (codes.length) out.push({ key: 'code', title: t('find.group.cangjie'), page: 'cangjie', total: codes.length, items: codes.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.code })) })
     }
     if (/^[\p{Script=Latin}\p{M}0-9ʔɦɨɪʉɯəɛɔɑŋɣʁɲʷⁿ'·.\- ]+$/u.test(text)) {
       const readings = searchReadings(ix.readings, text).filter(hit => hit.tier < 2)
-      if (readings.length) out.push({ key: 'reading', title: 'As a reading', page: 'reading', total: readings.length,
+      if (readings.length) out.push({ key: 'reading', title: t('find.group.reading'), page: 'reading', total: readings.length,
         items: readings.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.readings[0].raw, extra: SYSTEMS.find(s => s.key === hit.readings[0].system)?.short })) })
     }
     const meanings = byMeaning(text)
-    if (meanings.length) out.push({ key: 'meaning', title: 'By meaning', total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: gloss(hit.char) })) })
+    if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: gloss(hit.char) })) })
     return out
   })
   /** The Li Fanwen reading, or the first system that has one, marked with its system. @param {string} char */
@@ -67,49 +68,49 @@
   }
 
   const DOORS = /** @type {const} */ ([
-    { page: 'cangjie', title: 'Cangjie', body: 'Type the glyph code letter by letter; candidates are numbered for quick entry. The keyboard is also the key chart, and every component has its own code.', sample: 'msbu', glyph: '𗀀' },
-    { page: 'reading', title: 'Reading', body: 'Type a reconstruction in any of eight systems. Candidates show which system reads them so.', sample: 'ndzi', glyph: '𗁤' },
-    { page: 'draw', title: 'Draw', body: 'Sketch the character and scan the glyphs closest in shape. The match is rough; expect to look down the list.', sample: '', glyph: '𗣳' },
-    { page: 'parts', title: 'Parts', body: 'Pick the components you can see; each pick narrows the characters and the remaining parts.', sample: '', glyph: '𘢰' },
+    { page: 'cangjie', title: 'nav.cangjie', body: 'find.door.cangjie', glyph: '𗀀' },
+    { page: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '𗁤' },
+    { page: 'draw', title: 'nav.draw', body: 'find.door.draw', glyph: '𗣳' },
+    { page: 'parts', title: 'nav.parts', body: 'find.door.parts', glyph: '𘢰' },
   ])
 </script>
 
 <div class="find">
   <div class="search">
     <input class="field big" data-primary value={query} spellcheck="false" autocomplete="off" autocapitalize="off"
-      aria-label="Find a character" placeholder="A Tangut character or text, a code, a reading, a meaning, U+17000…"
+      aria-label={t('find.label')} placeholder={t('find.placeholder')}
       oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { query = event.currentTarget.value; setQuery(query) }} onkeydown={keys} use:autofocus />
   </div>
 
   {#if !text}
-    <section class="doors" aria-label="Ways to find a character">
+    <section class="doors" aria-label={t('nav.label')}>
       {#each DOORS as door (door.page)}
         <a class="door" href={link(door.page)} onclick={event => { if (event.button === 0 && !event.metaKey && !event.ctrlKey) { event.preventDefault(); go(door.page) } }}>
           <span class="tg big-glyph" aria-hidden="true">{door.glyph}</span>
-          <span class="title">{door.title}</span>
-          <span class="body">{door.body}</span>
+          <span class="title">{t(door.title)}</span>
+          <span class="body">{t(door.body)}</span>
         </a>
       {/each}
     </section>
     <section class="tips">
-      <p><b>Reading a text?</b> Paste a line of Tangut above: each character is listed with its meaning and reading.</p>
-      <p class="muted">Try <button type="button" class="chip" onclick={() => { query = '𗋕𘏨𘜶𗤶𗜈𗧯𘔼'; setQuery(query) }}><span class="tg">𗋕𘏨𘜶𗤶𗜈𗧯𘔼</span></button>
+      <p>{t('find.tip')}</p>
+      <p class="muted">{t('find.try')} <button type="button" class="chip" onclick={() => { query = '𗋕𘏨𘜶𗤶𗜈𗧯𘔼'; setQuery(query) }}><span class="tg">𗋕𘏨𘜶𗤶𗜈𗧯𘔼</span></button>
         <button type="button" class="chip" onclick={() => { query = 'tiger'; setQuery(query) }}>tiger</button>
         <button type="button" class="chip" onclick={() => { query = '水'; setQuery(query) }}>水</button>
         <button type="button" class="chip mono" onclick={() => { query = 'U+1736'; setQuery(query) }}>U+1736</button></p>
     </section>
   {:else if !ready}
-    <p class="empty">Loading the records…</p>
+    <p class="empty">{t('common.loading')}</p>
   {:else if !groups.length}
-    <p class="empty">Nothing in the records matches <b>{text}</b>. The meanings are in English, Japanese and Chinese; readings may be typed without diacritics.</p>
+    <p class="empty">{t('find.none', { text })}</p>
   {:else}
     {#each groups as group, g (group.key)}
       {@const offset = groups.slice(0, g).reduce((sum, other) => sum + other.items.length, 0)}
       <section class="group" aria-label={group.title}>
         <header>
           <h2 class="label">{group.title}</h2>
-          <span class="muted">{group.total > group.items.length ? `${group.items.length} of ${group.total}` : group.total}</span>
-          {#if group.page}<a class="more" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>Continue in {group.page === 'cangjie' ? 'Cangjie' : 'Reading'} →</a>{/if}
+          <span class="muted">{group.total > group.items.length ? t('common.of', { shown: group.items.length, total: group.total }) : group.total}</span>
+          {#if group.page}<a class="more" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}</a>{/if}
         </header>
         {#if group.key === 'text'}
           <ol class="gloss-list" role="listbox" aria-label={group.title}>

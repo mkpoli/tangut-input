@@ -8,6 +8,7 @@
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
   import { put } from '../lib/ui.svelte.js'
   import Candidates from '../ui/Candidates.svelte'
+  import { t } from '../lib/i18n.svelte.js'
 
   /** @type {HTMLCanvasElement | null} */
   let canvas = $state(null)
@@ -144,48 +145,41 @@
 <svelte:window onresize={resize} onkeydown={keys} />
 
 <div class="draw">
-  <section class="pad-column" aria-label="Drawing pad">
+  <section class="pad-column" aria-label={t('draw.padLabel')}>
     <header class="intro">
-      <h1>Draw</h1>
-      <p class="muted">Draw the whole character, upright and filling the square.</p>
+      <h1>{t('nav.draw')}</h1>
+      <p class="muted">{t('draw.intro')}</p>
     </header>
     <div class="pad">
-      <canvas bind:this={canvas} aria-label="Drawing pad: draw a character with the mouse, a pen or a finger"
+      <canvas bind:this={canvas} aria-label={t('draw.canvas')}
         onpointerdown={down} onpointermove={moveTo} onpointerup={up} onpointercancel={up}></canvas>
-      {#if !strokes.length}<p class="hint" aria-hidden="true">draw here</p>{/if}
+      {#if !strokes.length}<p class="hint" aria-hidden="true">{t('draw.here')}</p>{/if}
     </div>
     <div class="tools">
-      <button type="button" class="btn" onclick={undo} disabled={!strokes.length}>Undo stroke</button>
-      <button type="button" class="btn" onclick={clear} disabled={!strokes.length}>Clear</button>
-      <span class="muted strokes">{strokes.length} {strokes.length === 1 ? 'stroke' : 'strokes'}</span>
+      <button type="button" class="btn" onclick={undo} disabled={!strokes.length}>{t('draw.undo')}</button>
+      <button type="button" class="btn" onclick={clear} disabled={!strokes.length}>{t('draw.clear')}</button>
+      <span class="muted strokes">{t('draw.strokes', { count: strokes.length })}</span>
     </div>
   </section>
 
-  <section class="notes" aria-label="Options and limits">
+  <section class="notes" aria-label={t('draw.optionsLabel')}>
     <div class="options">
-      <label><input type="checkbox" bind:checked={useCount} onchange={update} /> Favour characters with {strokes.length || 'this many'} strokes</label>
-      <label><input type="checkbox" bind:checked={components} onchange={update} /> Include components</label>
+      <label><input type="checkbox" bind:checked={useCount} onchange={update} /> {t('draw.favourStrokes', { count: strokes.length || '—' })}</label>
+      <label><input type="checkbox" bind:checked={components} onchange={update} /> {t('draw.includeComponents')}</label>
     </div>
-    <p class="note honest">
-      <b>How rough this is.</b> No recognizer for the whole Tangut script is openly available. The pad compares where your ink lies
-      with the printed glyphs of five Tangut faces, taking each character's best place in any one of them, and ignores stroke order
-      and direction. Drawings made from a font, thinned and skewed, find the right character among the first five about nine times in
-      ten; once they are also warped as a hand would warp them, about one time in three. On forty characters drawn by one reader,
-      it was the first result for one in four and among the first five for six in ten. Expect to scan the list, and use Cangjie or a
-      reading when you have one.
-    </p>
+    <p class="note honest">{@html t('draw.note')}</p>
   </section>
 
-  <section class="results" aria-label="Closest glyphs">
+  <section class="results" aria-label={t('draw.resultsLabel')}>
     <div class="head">
-      <h2 class="label">Closest in shape</h2>
-      {#if status === 'loading'}<span class="muted">Loading glyph shapes…</span>{:else if status === 'failed'}<span class="muted">The glyph shapes could not be loaded.</span>{/if}
+      <h2 class="label">{t('draw.results')}</h2>
+      {#if status === 'loading'}<span class="muted">{t('draw.loading')}</span>{:else if status === 'failed'}<span class="muted">{t('draw.failed')}</span>{/if}
     </div>
     {#if items.length}
-      <Candidates bind:this={grid} {items} bind:active size={70} label="Closest glyphs" />
-      <p class="muted keys"><kbd>Enter</kbd> adds the first and clears the pad · <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes a stroke · <kbd>Esc</kbd> clears</p>
+      <Candidates bind:this={grid} {items} bind:active size={70} label={t('draw.results')} />
+      <p class="muted keys">{@html t('draw.keys')}</p>
     {:else}
-      <p class="empty">The closest glyphs appear here after the first stroke and change with every stroke after it.</p>
+      <p class="empty">{t('draw.empty')}</p>
     {/if}
   </section>
 </div>

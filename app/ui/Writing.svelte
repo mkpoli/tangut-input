@@ -5,6 +5,7 @@
   import { copy } from '../lib/clip.svelte.js'
   import { isTangut } from '../lib/db.svelte.js'
   import { preview } from '../lib/ui.svelte.js'
+  import { t } from '../lib/i18n.svelte.js'
 
   /** @type {HTMLTextAreaElement | null} */
   let field = $state(null)
@@ -42,25 +43,25 @@
   }
 </script>
 
-<section class="writing" aria-label="Your text">
-  <label class="label" for="writing">Text</label>
+<section class="writing" aria-label={t('writing.label')}>
+  <label class="label" for="writing">{t('writing.text')}</label>
   <textarea id="writing" bind:this={field} class="tg" rows="1" spellcheck="false" autocomplete="off"
-    value={text.value} placeholder="Characters you pick land here"
+    value={text.value} placeholder={t('writing.placeholder')}
     oninput={event => { setText(event.currentTarget.value); remember() }}
     onkeyup={remember} onclick={caret} onselect={remember} onblur={remember}></textarea>
   <div class="actions">
     {#if count}<span class="count muted">{count}</span>{/if}
-    <button class="btn" type="button" disabled={!text.value} onclick={() => copy(text.value, 'the text')}>Copy</button>
+    <button class="btn" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}>{t('common.copy')}</button>
     <div class="more" onfocusout={closeMenu}>
-      <button class="btn ghost" type="button" aria-haspopup="menu" aria-expanded={menu} aria-label="More ways to copy"
+      <button class="btn ghost" type="button" aria-haspopup="menu" aria-expanded={menu} aria-label={t('writing.more')}
         onclick={() => { menu = !menu }}>
         <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><g fill="currentColor"><circle cx="4" cy="10" r="1.7"/><circle cx="10" cy="10" r="1.7"/><circle cx="16" cy="10" r="1.7"/></g></svg>
       </button>
       {#if menu}
         <div class="menu" role="menu">
-          <button role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodePoints(text.value), 'the code points'); menu = false }}>Copy as code points</button>
-          <button role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodes(text.value), 'the Cangjie codes'); menu = false }}>Copy as Cangjie codes</button>
-          <button role="menuitem" type="button" disabled={!text.value} onclick={() => { setText(''); menu = false; field?.focus() }}>Clear the text</button>
+          <button role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodePoints(text.value), t('writing.codePoints')); menu = false }}>{t('writing.copyCodePoints')}</button>
+          <button role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodes(text.value), t('writing.cangjieCodes')); menu = false }}>{t('writing.copyCangjie')}</button>
+          <button role="menuitem" type="button" disabled={!text.value} onclick={() => { setText(''); menu = false; field?.focus() }}>{t('writing.clear')}</button>
         </div>
       {/if}
     </div>

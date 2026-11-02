@@ -5,6 +5,7 @@
   import { route, go, PAGES } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, cycleTheme, setTangut, TANGUT_FACES } from './lib/ui.svelte.js'
   import { toast } from './lib/clip.svelte.js'
+  import { i18n, LOCALES, setLocale, t } from './lib/i18n.svelte.js'
   import Writing from './ui/Writing.svelte'
   import Card from './ui/Card.svelte'
   import Find from './pages/Find.svelte'
@@ -20,6 +21,7 @@
   applyTangut()
 
   let fontMenu = $state(false)
+  let langMenu = $state(false)
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page */
   function nav(event, page) {
@@ -39,33 +41,45 @@
     if (event.key === 'Escape' && ui.sheet) ui.sheet = false
   }
 
-  const THEMES = { auto: 'Theme follows the system', light: 'Light theme', dark: 'Dark theme' }
+  const THEMES = $derived({ auto: t('theme.auto'), light: t('theme.light'), dark: t('theme.dark') })
 </script>
 
 <svelte:window onkeydown={keys} />
 
 <div class="shell">
   <header class="top">
-    <a class="mark" href="/" onclick={event => nav(event, '')} aria-label="Tangut Input, home">
+    <a class="mark" href="/" onclick={event => nav(event, '')} aria-label={t('app.home')}>
       <span class="badge tg" aria-hidden="true">𘅤</span>
-      <span class="name">Tangut Input</span>
+      <span class="name">{t('app.name')}</span>
     </a>
-    <nav class="finders" aria-label="Ways to find a character">
+    <nav class="finders" aria-label={t('nav.label')}>
       {#each PAGES as page (page.path)}
         <a href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
-          onclick={event => nav(event, page.path)}>{page.label}</a>
+          title={t(page.hint)} onclick={event => nav(event, page.path)}>{t(page.label)}</a>
       {/each}
     </nav>
     <div class="aside">
-      <a href="/about" class="about" class:on={route.page === 'about'} onclick={event => nav(event, 'about')}>Sources</a>
+      <a href="/about" class="about" class:on={route.page === 'about'} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
+      <div class="font-pick">
+        <button class="btn ghost face" type="button" aria-haspopup="listbox" aria-expanded={langMenu}
+          title={t('lang.label')} onclick={() => { langMenu = !langMenu }}><span class="face-name">{LOCALES.find(locale => locale.key === i18n.locale)?.name}</span></button>
+        {#if langMenu}
+          <ul class="font-menu" role="listbox" aria-label={t('lang.label')}>
+            {#each LOCALES as locale (locale.key)}
+              <li><button type="button" role="option" aria-selected={i18n.locale === locale.key} class:on={i18n.locale === locale.key}
+                lang={locale.key} onclick={() => { setLocale(locale.key); langMenu = false }}><span>{locale.name}</span></button></li>
+            {/each}
+          </ul>
+        {/if}
+      </div>
       <div class="font-pick">
         <button class="btn ghost face" type="button" aria-haspopup="listbox" aria-expanded={fontMenu}
-          title="The face Tangut is set in" onclick={() => { fontMenu = !fontMenu }}><span class="tg sample" aria-hidden="true">𘅤</span><span class="face-name">{TANGUT_FACES.find(face => face.key === ui.tangut)?.label}</span></button>
+          title={t('font.label')} onclick={() => { fontMenu = !fontMenu }}><span class="tg sample" aria-hidden="true">𘅤</span><span class="face-name">{t(TANGUT_FACES.find(face => face.key === ui.tangut)?.label ?? 'font.serif')}</span></button>
         {#if fontMenu}
-          <ul class="font-menu" role="listbox" aria-label="Tangut face">
+          <ul class="font-menu" role="listbox" aria-label={t('font.label')}>
             {#each TANGUT_FACES as face (face.key)}
               <li><button type="button" role="option" aria-selected={ui.tangut === face.key} class:on={ui.tangut === face.key}
-                onclick={() => { setTangut(face.key); fontMenu = false }}><span class="tg sample" style:font-family={face.family} aria-hidden="true">𗀀</span><span>{face.label}</span></button></li>
+                onclick={() => { setTangut(face.key); fontMenu = false }}><span class="tg sample" style:font-family={face.family} aria-hidden="true">𗀀</span><span>{t(face.label)}</span></button></li>
             {/each}
           </ul>
         {/if}
@@ -85,10 +99,10 @@
   <Writing />
 
   {#if db.status === 'failed'}
-    <p class="fault">The Tangut records could not be loaded. Reload the page to try again.</p>
+    <p class="fault">{t('app.failed')}</p>
   {:else}
     <div class="body" class:about={route.page === 'about'}>
-      <main class="finder" aria-label={PAGES.find(p => p.path === route.page)?.label ?? 'Sources'}>
+      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? 'nav.sources')}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'cangjie'}<Cangjie />
         {:else if route.page === 'sijiao'}<Sijiao />
@@ -98,17 +112,17 @@
         {:else}<About />{/if}
       </main>
       {#if route.page !== 'about'}
-        <aside class="card" class:open={ui.sheet} aria-label="Character">
+        <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
           <Card />
         </aside>
       {/if}
     </div>
   {/if}
 
-  <nav class="tabs" aria-label="Ways to find a character">
+  <nav class="tabs" aria-label={t('nav.label')}>
     {#each PAGES as page (page.path)}
       <a href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
-        onclick={event => nav(event, page.path)}>{page.label}</a>
+        onclick={event => nav(event, page.path)}>{t(page.label)}</a>
     {/each}
   </nav>
 

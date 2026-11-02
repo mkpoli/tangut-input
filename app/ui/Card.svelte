@@ -11,6 +11,7 @@
   import { partsIn } from '../lib/search.js'
   import Ids from './Ids.svelte'
   import Attest from './Attest.svelte'
+  import { t } from '../lib/i18n.svelte.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -44,7 +45,7 @@
   <div class="sheetbar">
     <button class="btn ghost" type="button" onclick={() => { ui.sheet = false }}>
       <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Back
+      {t('card.back')}
     </button>
   </div>
 {/if}
@@ -52,18 +53,18 @@
 {#if !char}
   <div class="blank">
     <p class="tg ghost" aria-hidden="true">𘅤</p>
-    <p>Pick a character to see its record here, with ways to copy it or add it to your text.</p>
-    <p class="muted">Arrow keys move through candidates; <kbd>Enter</kbd> adds the highlighted one.</p>
+    <p>{t('card.blank')}</p>
+    <p class="muted">{@html t('card.blankKeys')}</p>
   </div>
 {:else}
   <article class="record">
     <header class="head">
       <div class="glyph"><G {char} /></div>
       <div class="facts">
-        <button class="cp mono" type="button" title="Copy the code point" onclick={() => copy(codePoint(char))}>{codePoint(char)}</button>
-        {#if first}<p class="gloss">{first}</p>{:else if isComponent(char)}<p class="gloss">component</p>{/if}
+        <button class="cp mono" type="button" title={t('card.copyCodePoint')} onclick={() => copy(codePoint(char))}>{codePoint(char)}</button>
+        {#if first}<p class="gloss">{first}</p>{:else if isComponent(char)}<p class="gloss">{t('card.component')}</p>{/if}
         <p class="meta">
-          {#if strokes}{strokes} strokes{/if}{#if entry?.radical}&ensp;·&ensp;radical <button class="inline tg" type="button" onclick={() => choose(/** @type {string} */ (entry?.radical))}>{entry.radical}</button>{/if}
+          {#if strokes}{t('draw.strokes', { count: strokes })}{/if}{#if entry?.radical}&ensp;·&ensp;{t('card.radical')} <button class="inline tg" type="button" onclick={() => choose(/** @type {string} */ (entry?.radical))}>{entry.radical}</button>{/if}
         </p>
       </div>
     </header>
@@ -71,29 +72,29 @@
     <div class="use">
       <button class="btn primary" type="button" onclick={() => put(char)}>
         <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        Add to text
+        {t('card.add')}
       </button>
-      <button class="btn" type="button" onclick={() => copy(char)}>Copy <span class="tg sm">{char}</span></button>
-      <button class="btn" type="button" onclick={() => copy(address, 'the link')}>Copy link</button>
+      <button class="btn" type="button" onclick={() => copy(char)}>{t('common.copy')} <span class="tg sm">{char}</span></button>
+      <button class="btn" type="button" onclick={() => copy(address, t('card.link'))}>{t('card.copyLink')}</button>
     </div>
 
     {#if codes.length}
       <section>
-        <h3 class="label">Cangjie</h3>
+        <h3 class="label">{t('nav.cangjie')}</h3>
         <div class="codes">
           {#each codes as code, i (code)}
-            <button class="code" type="button" title="Copy this code" onclick={() => copy(code, `the code ${code}`)}>
-              <span class="mono">{code}</span><small>{codes.length > 1 ? (i === 0 ? 'short' : i === codes.length - 1 ? 'full' : '') : ''}</small>
+            <button class="code" type="button" title={t('card.copyCode')} onclick={() => copy(code, code)}>
+              <span class="mono">{code}</span><small>{codes.length > 1 ? (i === 0 ? t('card.short') : i === codes.length - 1 ? t('card.full') : '') : ''}</small>
             </button>
           {/each}
-          <a class="type" href={link('cangjie', char, codes[0])}>Type it</a>
+          <a class="type" href={link('cangjie', char, codes[0])}>{t('card.typeIt')}</a>
         </div>
       </section>
     {/if}
 
     {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length}
       <section>
-        <h3 class="label">Meaning</h3>
+        <h3 class="label">{t('card.meaning')}</h3>
         <dl class="means">
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
@@ -104,14 +105,14 @@
 
     {#if readings.length}
       <section>
-        <h3 class="label">Readings</h3>
+        <h3 class="label">{t('card.readings')}</h3>
         <table class="readings">
           <tbody>
             {#each readings as reading (reading.key)}
               <tr><th scope="row">{reading.name}</th><td>{reading.value}</td></tr>
             {/each}
             {#each fanqie as row (row.name)}
-              <tr><th scope="row">Sound gloss, {row.name}</th><td lang="zh-Hant" class="cjk">{row.value}</td></tr>
+              <tr><th scope="row">{t('card.soundGloss', { name: row.name })}</th><td lang="zh-Hant" class="cjk">{row.value}</td></tr>
             {/each}
           </tbody>
         </table>
@@ -120,22 +121,22 @@
 
     {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
       <section>
-        <h3 class="label">Wenhai 文海 gloss</h3>
+        <h3 class="label">{t('card.wenhai')}</h3>
         {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
         {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
       </section>
     {/if}
 
     <section>
-      <h3 class="label">Built from</h3>
+      <h3 class="label">{t('card.builtFrom')}</h3>
       {#if entry?.composition}
         <Ids composition={entry.composition} />
-        <p class="ids"><button class="inline" type="button" title="Copy the description" onclick={() => copy(/** @type {string} */ (entry?.composition), 'the description')}><span class="tg">{entry.composition}</span></button>
-          {#if parts.length}<a href={link('parts', char, parts.join(''))}>Characters with these parts</a>{/if}</p>
+        <p class="ids"><button class="inline" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}><span class="tg">{entry.composition}</span></button>
+          {#if parts.length}<a href={link('parts', char, parts.join(''))}>{t('card.withTheseParts')}</a>{/if}</p>
       {:else if isComponent(char)}
-        <p class="empty">A component: it is a part of other characters, not built from parts itself.</p>
+        <p class="empty">{t('card.isComponent')}</p>
       {:else}
-        <p class="empty">No description from parts is recorded for this character.</p>
+        <p class="empty">{t('card.noDescription')}</p>
       {/if}
     </section>
 
@@ -143,17 +144,17 @@
 
     {#if users.length}
       <section>
-        <h3 class="label">Used in {users.length} {users.length === 1 ? 'character' : 'characters'}</h3>
+        <h3 class="label">{t('card.usedIn', { count: users.length })}</h3>
         <div class="tiles small">
           {#each users.slice(0, 48) as other (other)}<button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} /></button>{/each}
         </div>
-        {#if users.length > 48}<p class="more"><a href={link('parts', char, char)}>All {users.length} in Parts</a></p>{/if}
+        {#if users.length > 48}<p class="more"><a href={link('parts', char, char)}>{t('card.allInParts', { count: users.length })}</a></p>{/if}
       </section>
     {/if}
 
     {#if same.length}
       <section>
-        <h3 class="label">Described the same way</h3>
+        <h3 class="label">{t('card.sameDescription')}</h3>
         <div class="tiles small">
           {#each same as other (other)}<button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} /></button>{/each}
         </div>
@@ -162,7 +163,7 @@
 
     {#if homophones.length}
       <section>
-        <h3 class="label">Same reading in Li Fanwen</h3>
+        <h3 class="label">{t('card.sameReading')}</h3>
         <div class="tiles small">
           {#each homophones.slice(0, 48) as other (other)}<button class="tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} /><small>{gloss(other)}</small></button>{/each}
         </div>
@@ -170,8 +171,8 @@
     {/if}
 
     <footer class="credit muted">
-      Meanings, readings and descriptions: Open Tangut (MIT), from CCAMC and Wiktionary. Codes: RIME Tangut Cangjie, whose table warns that some codes are wrong.
-      <a href="/about">Sources</a>
+      {t('card.credit')}
+      <a href="/about">{t('nav.sources')}</a>
     </footer>
   </article>
 {/if}

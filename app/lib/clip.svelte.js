@@ -1,4 +1,5 @@
 // Copying, with a short confirmation of what went to the clipboard.
+import { t } from './i18n.svelte.js'
 
 export const toast = $state({ message: '', id: 0 })
 
@@ -13,8 +14,8 @@ export function say(message) {
 export async function copy(value, label = value) {
   try {
     await navigator.clipboard.writeText(value)
-    say(`Copied ${label}`)
+    say(t('toast.copied', { what: label }))
   } catch {
-    say('The browser refused the clipboard')
+    say(t('toast.clipboard'))
   }
 }

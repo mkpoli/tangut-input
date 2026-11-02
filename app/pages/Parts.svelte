@@ -10,6 +10,7 @@
   import { LAYOUTS } from '../ui/Ids.svelte'
   import Layout from '../ui/Layout.svelte'
   import Candidates from '../ui/Candidates.svelte'
+  import { t } from '../lib/i18n.svelte.js'
 
   let chosen = $state(/** @type {string[]} */ ([...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : partsIn(char))))
   let layout = $state('')
@@ -74,59 +75,59 @@
 
 <div class="parts">
   <header class="intro">
-    <h1>Parts</h1>
-    <p class="muted">Choose the components you can see in the character. Each choice keeps only the characters built with it, and the palette keeps only the parts that still occur.</p>
+    <h1>{t('nav.parts')}</h1>
+    <p class="muted">{t('parts.intro')}</p>
   </header>
 
-  <section class="build" aria-label="Chosen parts">
+  <section class="build" aria-label={t('parts.chosenLabel')}>
     <div class="chosen">
       {#each chosen as part, i (i)}
-        <button type="button" class="part" onclick={() => remove(i)} title="Remove this part"><G char={part} /><span class="x" aria-hidden="true">×</span><span class="sr">Remove</span></button>
+        <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')}><G char={part} /><span class="x" aria-hidden="true">×</span><span class="sr">{t('parts.remove')}</span></button>
       {/each}
-      {#if !chosen.length}<span class="muted ph">No parts chosen yet: pick from the palette below.</span>{/if}
-      {#if chosen.length || layout}<button type="button" class="btn ghost reset" onclick={reset}>Start over</button>{/if}
+      {#if !chosen.length}<span class="muted ph">{t('parts.noneChosen')}</span>{/if}
+      {#if chosen.length || layout}<button type="button" class="btn ghost reset" onclick={reset}>{t('parts.reset')}</button>{/if}
     </div>
-    <div class="layouts" role="group" aria-label="Outer layout">
-      <span class="label">Layout</span>
-      <button type="button" class="chip" aria-pressed={!layout} onclick={() => { layout = '' }}>any</button>
+    <div class="layouts" role="group" aria-label={t('parts.layout')}>
+      <span class="label">{t('parts.layout')}</span>
+      <button type="button" class="chip" aria-pressed={!layout} onclick={() => { layout = '' }}>{t('parts.anyLayout')}</button>
       {#each LAYOUT_KEYS as op (op)}
-        <button type="button" class="chip" aria-pressed={layout === op} title={LAYOUTS[op]} onclick={() => { layout = layout === op ? '' : op }}>
-          <Layout {op} size={15} /><span>{LAYOUTS[op]}</span>
+        <button type="button" class="chip" aria-pressed={layout === op} title={t(`layout.${op}`)} onclick={() => { layout = layout === op ? '' : op }}>
+          <Layout {op} size={15} /><span>{t(`layout.${op}`)}</span>
         </button>
       {/each}
     </div>
   </section>
 
-  <section class="matches" aria-label="Matching characters">
+  <section class="matches" aria-label={t('parts.matchesLabel')}>
     <div class="head">
-      <h2 class="label">{chosen.length || layout ? `${hits.length} ${hits.length === 1 ? 'character' : 'characters'}` : 'Characters'}</h2>
-      {#if chosen.length || layout}<span class="muted">fewest strokes first</span>{/if}
+      <h2 class="label">{chosen.length || layout ? t('common.characters', { count: hits.length }) : t('common.charactersLabel')}</h2>
+      {#if chosen.length || layout}<span class="muted">{t('parts.fewestStrokes')}</span>{/if}
     </div>
     {#if chosen.length || layout}
       {#if hits.length}
-        <div role="presentation" onkeydown={keys}><Candidates bind:this={grid} {items} bind:active size={64} label="Matching characters" limit={240} /></div>
+        <div role="presentation" onkeydown={keys}><Candidates bind:this={grid} {items} bind:active size={64} label={t('parts.matchesLabel')} limit={240} /></div>
       {:else}
-        <p class="empty">No recorded description holds all of these parts{layout ? ` in that layout` : ''}. Remove one to widen the search.</p>
+        <p class="empty">{layout ? t('parts.noMatchLayout') : t('parts.noMatch')}</p>
       {/if}
     {:else}
-      <p class="empty">The characters built from the chosen parts appear here.</p>
+      <p class="empty">{t('parts.empty')}</p>
     {/if}
   </section>
 
-  <section class="palette" aria-label="Components">
+  <section class="palette" aria-label={t('parts.paletteLabel')}>
     <div class="head">
-      <h2 class="label">{among && !everything ? 'Parts that still occur' : 'All components'}</h2>
-      <input class="field filter mono" data-primary bind:value={filter} placeholder="filter by code, e.g. pm" aria-label="Filter components by Cangjie code" spellcheck="false" autocomplete="off" />
-      {#if among}<label class="all"><input type="checkbox" bind:checked={everything} /> show all</label>{/if}
+      <h2 class="label">{among && !everything ? t('parts.stillOccur') : t('parts.allComponents')}</h2>
+      <input class="field filter mono" data-primary bind:value={filter} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} spellcheck="false" autocomplete="off" />
+      {#if among}<label class="all"><input type="checkbox" bind:checked={everything} /> {t('parts.showAll')}</label>{/if}
     </div>
     <div class="strokes">
       {#each byStroke as [count, parts] (count)}
         <div class="stroke-group">
-          <h3 class="n" title="{count} strokes">{count || '?'}</h3>
+          <h3 class="n" title={t('draw.strokes', { count })}>{count || '?'}</h3>
           <div class="comps">
             {#each parts as p (p.part)}
               <button type="button" class="comp" class:dim={p.live === 0} onclick={() => add(p.part)}
-                title="{ix.codes.get(p.part)?.[0] ?? ''} · in {p.live >= 0 ? `${p.live} of these` : `${p.uses}`} characters">
+                title={t('parts.componentTitle', { code: ix.codes.get(p.part)?.[0] ?? '', count: p.live >= 0 ? p.live : p.uses })}>
                 <G char={p.part} />{#if p.live > 0}<small>{p.live}</small>{/if}
               </button>
             {/each}

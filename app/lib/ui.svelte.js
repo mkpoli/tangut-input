@@ -2,16 +2,17 @@
 import { open } from './route.svelte.js'
 import { insert } from './text.svelte.js'
 import { say } from './clip.svelte.js'
+import { t } from './i18n.svelte.js'
 
 const THEME = 'tangut-input:theme'
 const TANGUT = 'tangut-input:font'
 
 /** The Tangut faces the reader can set the script in. Each is a family the stylesheet defines. */
 export const TANGUT_FACES = /** @type {const} */ ([
-  { key: 'serif', label: 'Noto Serif', family: '"Noto Serif Tangut"' },
-  { key: 'yinchuan', label: 'Yinchuan', family: '"Tangut Yinchuan"' },
-  { key: 'wenhai', label: 'Wenhai', family: '"BabelStone Wenhai"' },
-  { key: 'kai', label: 'New Standard (kai)', family: '"New Tangut Std"' },
+  { key: 'serif', label: 'font.serif', family: '"Noto Serif Tangut"' },
+  { key: 'yinchuan', label: 'font.yinchuan', family: '"Tangut Yinchuan"' },
+  { key: 'wenhai', label: 'font.wenhai', family: '"BabelStone Wenhai"' },
+  { key: 'kai', label: 'font.kai', family: '"New Tangut Std"' },
 ])
 
 export const ui = $state({
@@ -35,7 +36,7 @@ export function choose(char) {
 /** Put a character into the text being written. @param {string} char */
 export function put(char) {
   insert(char)
-  say(`Added ${char} to the text`)
+  say(t('toast.added', { char }))
 }
 
 export function cycleTheme() {

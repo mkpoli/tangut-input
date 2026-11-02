@@ -7,6 +7,7 @@
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { bySijiao } from '../lib/search.js'
+  import { t } from '../lib/i18n.svelte.js'
 
   const PAGE = 9
   const ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']
@@ -73,12 +74,12 @@
   <section class="composer" aria-label="Four-corner code">
     <div class="box">
       <input bind:this={input} data-primary class="code mono" value={code} spellcheck="false" autocomplete="off"
-        inputmode={touch ? 'none' : 'numeric'} aria-label="Four-corner code" placeholder="type six digits, e.g. 214122"
+        inputmode={touch ? 'none' : 'numeric'} aria-label={t('sijiao.label')} placeholder={t('sijiao.placeholder')}
         oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => setCode(event.currentTarget.value)} onkeydown={keys} use:autofocus />
-      <span class="count muted" role="status">{#if code}{hits.length ? `${hits.length} ${hits.length === 1 ? 'character' : 'characters'}` : 'no code begins so'}{/if}</span>
+      <span class="count muted" role="status">{#if code}{hits.length ? t('common.characters', { count: hits.length }) : t('sijiao.none')}{/if}</span>
     </div>
 
-    <div class="bar" role="listbox" aria-label="Candidates" class:idle={!code}>
+    <div class="bar" role="listbox" aria-label={t('common.candidates')} class:idle={!code}>
       {#if code && shown.length}
         {#each shown as hit, i (hit.char)}
           <button type="button" role="option" class="cand" aria-selected={i === active}
@@ -90,39 +91,39 @@
         {/each}
         {#if pages > 1}
           <span class="pager">
-            <button type="button" class="btn ghost" aria-label="Previous candidates" onclick={() => turn(-1)}>‹</button>
+            <button type="button" class="btn ghost" aria-label={t('common.previous')} onclick={() => turn(-1)}>‹</button>
             <span class="muted mono">{page + 1}/{pages}</span>
-            <button type="button" class="btn ghost" aria-label="More candidates" onclick={() => turn(1)}>›</button>
+            <button type="button" class="btn ghost" aria-label={t('common.more')} onclick={() => turn(1)}>›</button>
           </span>
         {/if}
       {:else if code}
-        <p class="muted">No character begins with <b class="mono">{code}</b>.</p>
+        <p class="muted">{t('sijiao.noCode', { code })}</p>
       {:else}
-        <p class="muted keys">Six digits, read from the four corners: <kbd>Space</kbd> adds the highlighted candidate · <kbd>←</kbd><kbd>→</kbd> highlight · <kbd>↑</kbd><kbd>↓</kbd> page · <kbd>Esc</kbd> clears</p>
+        <p class="muted keys">{@html t('sijiao.keys')}</p>
       {/if}
     </div>
   </section>
 
-  <section class="pad" aria-label="Number pad">
-    <div class="head"><h2 class="label">Digits</h2><p class="muted">The letter each digit is typed on.</p></div>
+  <section class="pad" aria-label={t('sijiao.padLabel')}>
+    <div class="head"><h2 class="label">{t('sijiao.digits')}</h2><p class="muted">{t('sijiao.digitsHint')}</p></div>
     {#each ROWS as row (row)}
       <div class="row">
         {#each [...row] as letter (letter)}
           <button type="button" class="key" class:dead={!KEYS[letter]} disabled={!KEYS[letter]} onclick={() => press(KEYS[letter])}
-            aria-label={KEYS[letter] ? `Digit ${KEYS[letter]}` : `Unused key ${letter}`}>
+            aria-label={KEYS[letter] ? t('sijiao.digitKey', { digit: KEYS[letter] }) : t('sijiao.unusedKey', { letter })}>
             <span class="digit mono">{KEYS[letter] ?? ''}</span>
             <span class="letter mono">{letter}</span>
           </button>
         {/each}
-        {#if row === 'zxcvbnm'}<button type="button" class="key wide" onclick={() => press('back')} aria-label="Backspace">⌫</button>{/if}
+        {#if row === 'zxcvbnm'}<button type="button" class="key wide" onclick={() => press('back')} aria-label={t('common.backspace')}>⌫</button>{/if}
       </div>
     {/each}
-    <div class="row"><button type="button" class="key space" onclick={() => press('space')} disabled={!code}>{#if shown[active]}Space adds <span class="tg">{shown[active].char}</span>{:else}Space{/if}</button></div>
+    <div class="row"><button type="button" class="key space" onclick={() => press('space')} disabled={!code}>{#if shown[active]}{t('cangjie.spaceAdds')} <span class="tg">{shown[active].char}</span>{:else}{t('cangjie.space')}{/if}</button></div>
   </section>
 
   <div class="legend">
-    <h2 class="label">Corners</h2>
-    <p class="muted">The first four digits read the top left, top right, bottom left and bottom right corner; the fifth the shape above the bottom right; the sixth the rest. Codes are from 韓小忙 (2021), through <a href="https://github.com/nkay0/Tangut-rhyme-dictionaries-data">Tangut-rhyme-dictionaries-data</a>; {ix.sijiao.size} characters carry one.</p>
+    <h2 class="label">{t('sijiao.corners')}</h2>
+    <p class="muted">{@html t('sijiao.cornersHint', { count: ix.sijiao.size })}</p>
   </div>
 </div>
 
@@ -137,7 +138,7 @@
   .bar{display:flex;align-items:stretch;gap:6px;min-height:92px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow-x:auto}
   .bar.idle{align-items:center;padding:8px 14px}
   .bar p{font-size:13px}
-  .keys kbd{margin:0 1px}
+  .bar :global(kbd){margin:0 1px}
   .cand{position:relative;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;min-width:76px;padding:4px 6px 6px;border:1px solid transparent;border-radius:9px;background:none}
   .cand:hover{background:var(--hover)}
   .cand[aria-selected="true"]{background:var(--accent-soft);border-color:var(--accent)}

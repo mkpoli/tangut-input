@@ -10,6 +10,7 @@
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { backspace } from '../lib/text.svelte.js'
   import { byCode } from '../lib/search.js'
+  import { t } from '../lib/i18n.svelte.js'
 
   const PAGE = 9
   const ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']
@@ -134,12 +135,12 @@
   <section class="composer" aria-label="Cangjie code">
     <div class="box">
       <input bind:this={input} data-primary class="code mono" value={code} spellcheck="false" autocomplete="off" autocapitalize="off"
-        inputmode={touch ? 'none' : 'text'} aria-label="Cangjie code" placeholder="type a code, e.g. msbu"
+        inputmode={touch ? 'none' : 'text'} aria-label={t('cangjie.label')} placeholder={t('cangjie.placeholder')}
         oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => setCode(event.currentTarget.value)} onkeydown={keys} use:autofocus />
-      <span class="count muted" role="status">{#if code}{hits.length ? `${hits.length} ${hits.length === 1 ? 'character' : 'characters'}` : 'no code begins so'}{/if}</span>
+      <span class="count muted" role="status">{#if code}{hits.length ? t('common.characters', { count: hits.length }) : t('cangjie.none')}{/if}</span>
     </div>
 
-    <div class="bar" role="listbox" aria-label="Candidates" class:idle={!code}>
+    <div class="bar" role="listbox" aria-label={t('common.candidates')} class:idle={!code}>
       {#if code && shown.length}
         {#each shown as hit, i (hit.char)}
           {@const [typed, rest] = split(hit.code)}
@@ -152,44 +153,44 @@
         {/each}
         {#if pages > 1}
           <span class="pager">
-            <button type="button" class="btn ghost" aria-label="Previous candidates" onclick={() => turn(-1)}>‹</button>
+            <button type="button" class="btn ghost" aria-label={t('common.previous')} onclick={() => turn(-1)}>‹</button>
             <span class="muted mono">{page + 1}/{pages}</span>
-            <button type="button" class="btn ghost" aria-label="More candidates" onclick={() => turn(1)}>›</button>
+            <button type="button" class="btn ghost" aria-label={t('common.more')} onclick={() => turn(1)}>›</button>
           </span>
         {/if}
       {:else if code}
-        <p class="muted">No code begins with <b class="mono">{code}</b>. Backspace and try another letter; the keyboard dims the keys that lead nowhere.</p>
+        <p class="muted">{t('cangjie.noCode', { code })}</p>
       {:else}
-        <p class="muted keys"><kbd>Space</kbd> or <kbd>1</kbd>–<kbd>9</kbd> adds a candidate to the text · <kbd>←</kbd><kbd>→</kbd> highlight · <kbd>↑</kbd><kbd>↓</kbd> page · <kbd>Esc</kbd> clears · <kbd>⌫</kbd> on an empty box deletes from the text</p>
+        <p class="muted keys">{@html t('cangjie.keys')}</p>
       {/if}
     </div>
   </section>
 
   <div class="split">
-    <section class="keyboard" aria-label="Keyboard and key chart">
-      <div class="head"><h2 class="label">Keys</h2><p class="muted">Each key and the shapes it names. {#if code}Faint keys continue no code.{/if}</p></div>
+    <section class="keyboard" aria-label={t('cangjie.keysLabel')}>
+      <div class="head"><h2 class="label">{t('cangjie.keysTitle')}</h2><p class="muted">{#if code}{t('cangjie.keysHint')}{:else}{t('cangjie.keysHintIdle')}{/if}</p></div>
       {#each ROWS as row, r (row)}
         <div class="row" style:padding-left="{r * 18}px">
           {#each row as letter (letter)}
             {@const n = next.get(letter) ?? 0}
-            <button type="button" class="key" class:dead={!n} onclick={() => press(letter)} title={n ? `${n} codes continue with ${letter}` : `No code continues with ${letter}`}>
+            <button type="button" class="key" class:dead={!n} onclick={() => press(letter)} title={n ? t('cangjie.keyContinues', { count: n, letter }) : t('cangjie.keyDead', { letter })}>
               <span class="letter mono">{letter}</span>
               <span class="roots tg">{(roots.get(letter) ?? []).slice(0, 3).join('')}</span>
             </button>
           {/each}
-          {#if r === 2}<button type="button" class="key wide" onclick={() => press('back')} aria-label="Backspace">⌫</button>{/if}
+          {#if r === 2}<button type="button" class="key wide" onclick={() => press('back')} aria-label={t('common.backspace')}>⌫</button>{/if}
         </div>
       {/each}
-      <div class="row"><button type="button" class="key space" onclick={() => press('space')} disabled={!code}>{#if shown[active]}Space adds <span class="tg">{shown[active].char}</span>{:else}Space{/if}</button></div>
+      <div class="row"><button type="button" class="key space" onclick={() => press('space')} disabled={!code}>{#if shown[active]}{t('cangjie.spaceAdds')} <span class="tg">{shown[active].char}</span>{:else}{t('cangjie.space')}{/if}</button></div>
     </section>
 
-    <section class="palette" aria-label="Components by code">
+    <section class="palette" aria-label={t('cangjie.componentsLabel')}>
       <div class="head">
-        <h2 class="label">Components</h2>
-        <p class="muted">Each component is typed as <span class="mono">p</span> and its own code.</p>
+        <h2 class="label">{t('cangjie.components')}</h2>
+        <p class="muted">{@html t('cangjie.componentsHint')}</p>
       </div>
-      <div class="letters" role="group" aria-label="Group by second letter">
-        <button type="button" class="chip" aria-pressed={palette === 'all'} onclick={() => { palette = 'all' }}>all</button>
+      <div class="letters" role="group" aria-label={t('cangjie.groupBy')}>
+        <button type="button" class="chip" aria-pressed={palette === 'all'} onclick={() => { palette = 'all' }}>{t('common.all')}</button>
         {#each [...groups.keys()] as letter (letter)}
           <button type="button" class="chip mono" aria-pressed={palette === letter} onclick={() => { palette = letter }}>p{letter}</button>
         {/each}
@@ -201,7 +202,7 @@
             <div class="comps">
               {#each items as item (item.char)}
                 <button type="button" class="comp" class:match={code.startsWith('p') && item.code.startsWith(code)} class:on={route.c === item.char}
-                  onclick={() => choose(item.char)} ondblclick={() => put(item.char)} title="{item.code}, used in {ix.usedBy.get(item.char)?.size ?? 0} characters">
+                  onclick={() => choose(item.char)} ondblclick={() => put(item.char)} title={t('cangjie.componentTitle', { code: item.code, count: ix.usedBy.get(item.char)?.size ?? 0 })}>
                   <G char={item.char} /><small class="mono">{item.code}</small>
                 </button>
               {/each}
@@ -224,7 +225,7 @@
   .bar{display:flex;align-items:stretch;gap:6px;min-height:92px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow-x:auto}
   .bar.idle{align-items:center;padding:8px 14px}
   .bar p{font-size:13px}
-  .keys kbd{margin:0 1px}
+  .bar :global(kbd){margin:0 1px}
   .cand{position:relative;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;min-width:76px;padding:4px 6px 6px;border:1px solid transparent;border-radius:9px;background:none}
   .cand:hover{background:var(--hover)}
   .cand[aria-selected="true"]{background:var(--accent-soft);border-color:var(--accent)}

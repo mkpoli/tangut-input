@@ -1,13 +1,14 @@
 // Where the reader is: the page in the path, the open character in `?c=` (its code point in hex),
 // and the page's own query in `?q=`. Every state worth sharing is in the address.
 
+// Each page's name and one-line hint are message keys, so the bar reads in the reader's language.
 export const PAGES = /** @type {const} */ ([
-  { path: '', label: 'Find', hint: 'Any character, code, reading or meaning' },
-  { path: 'cangjie', label: 'Cangjie', hint: 'Type glyph codes' },
-  { path: 'sijiao', label: '四角號碼', hint: 'Type the four-corner code' },
-  { path: 'reading', label: 'Reading', hint: 'Type a reconstruction' },
-  { path: 'draw', label: 'Draw', hint: 'Sketch the shape' },
-  { path: 'parts', label: 'Parts', hint: 'Build from components' },
+  { path: '', label: 'nav.find', hint: 'nav.find.hint' },
+  { path: 'cangjie', label: 'nav.cangjie', hint: 'nav.cangjie.hint' },
+  { path: 'sijiao', label: 'nav.sijiao', hint: 'nav.sijiao.hint' },
+  { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },
+  { path: 'draw', label: 'nav.draw', hint: 'nav.draw.hint' },
+  { path: 'parts', label: 'nav.parts', hint: 'nav.parts.hint' },
 ])
 
 /** @typedef {typeof PAGES[number]['path'] | 'about'} Page */
