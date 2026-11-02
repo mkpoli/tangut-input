@@ -28,6 +28,9 @@
   let langMenu = $state(false)
   /** The phone's tab strip, scrolled to keep the current finder in view. @type {HTMLElement | null} */
   let tabs = $state(null)
+  /** On a phone the strip holds the four finders a reader starts from; the rest wait in a sheet. */
+  const EXTRAS = new Set(['sijiao', 'fanqie', 'chart', 'draw', 'parts'])
+  let menu = $state(false)
 
   $effect(() => {
     void route.page
@@ -136,10 +139,30 @@
 
   <nav class="tabs" aria-label={t('nav.label')} bind:this={tabs}>
     {#each PAGES as page (page.path)}
-      <a href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
+      <a href="/{page.path}" class:on={route.page === page.path} class:extra={EXTRAS.has(page.path)}
+        aria-current={route.page === page.path ? 'page' : undefined}
         onclick={event => nav(event, page.path)}>{t(page.label)}</a>
     {/each}
+    <button class="more" class:on={EXTRAS.has(route.page) || route.page === 'about'} type="button"
+      aria-expanded={menu} aria-controls="finder-menu" onclick={() => { menu = !menu }}>{t('nav.more')}</button>
   </nav>
+
+  {#if menu}
+    <div class="menuwrap">
+      <button class="scrim" type="button" aria-label={t('nav.menuClose')} onclick={() => { menu = false }}></button>
+      <div class="menu" id="finder-menu" role="menu" aria-label={t('nav.label')}>
+        {#each PAGES.filter(page => EXTRAS.has(page.path) || page.path === '') as page (page.path)}
+          <a role="menuitem" href="/{page.path}" class:on={route.page === page.path}
+            onclick={event => { menu = false; nav(event, page.path) }}>
+            <span class="name">{t(page.label)}</span><span class="hint">{t(page.hint)}</span>
+          </a>
+        {/each}
+        <a role="menuitem" href="/about" class:on={route.page === 'about'} onclick={event => { menu = false; nav(event, 'about') }}>
+          <span class="name">{t('nav.sources')}</span><span class="hint">{t('nav.sources.hint')}</span>
+        </a>
+      </div>
+    </div>
+  {/if}
 
   <div class="toast" role="status" aria-live="polite">{#if toast.message}<span>{toast.message}</span>{/if}</div>
 </div>
@@ -185,10 +208,17 @@
     .card{position:fixed;inset:0;top:0;height:100dvh;z-index:40;border:0;transform:translateY(100%);transition:transform .22s ease;visibility:hidden}
     .card.open{transform:none;visibility:visible}
     /* Seven finders do not fit a phone; the strip scrolls sideways and keeps the current one in view. */
-    .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:2px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth}
-    .tabs::-webkit-scrollbar{display:none}
-    .tabs a{flex:0 0 auto;padding:9px 11px;border-radius:8px;text-align:center;color:var(--ink-2);text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap}
-    .tabs a.on{background:var(--ink);color:var(--bg)}
+    .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:2px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+    .tabs a,.tabs .more{flex:1 1 0;padding:9px 4px;border:0;border-radius:8px;text-align:center;color:var(--ink-2);background:none;text-decoration:none;font-size:12.5px;font-weight:500;white-space:nowrap}
+    .tabs a.extra{display:none}
+    .tabs a.on,.tabs .more.on{background:var(--ink);color:var(--bg)}
+    .menuwrap{position:fixed;inset:0;z-index:40}
+    .scrim{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:color-mix(in srgb,var(--ink) 28%,transparent)}
+    .menu{position:absolute;left:8px;right:8px;bottom:calc(64px + env(safe-area-inset-bottom));display:grid;gap:2px;padding:8px;border:1px solid var(--line-strong);border-radius:14px;background:var(--surface);box-shadow:var(--lift)}
+    .menu a{display:flex;align-items:baseline;gap:10px;padding:10px 12px;border-radius:9px;text-decoration:none;color:var(--ink)}
+    .menu a:hover,.menu a.on{background:var(--hover)}
+    .menu .name{font-weight:600;font-size:14px}
+    .menu .hint{font-size:12.5px;color:var(--muted)}
     .toast{bottom:84px}
   }
   @media (prefers-reduced-motion:reduce){.card{transition:none}}
