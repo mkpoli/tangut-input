@@ -1,0 +1,111 @@
+{
+  "built": "2026-11-03",
+  "samples": [
+    {
+      "id": "diamond-opening",
+      "sourceId": "wikisource-diamond",
+      "sourceTitle": "Diamond Sutra",
+      "sourceUrl": "https://wikisource.org/wiki/%F0%97%B5%92%F0%98%97%81%F0%98%84%92%F0%98%8E%91%F0%98%8F%9E%F0%97%93%BD%F0%97%95%A5%F0%97%B8%B0%F0%97%96%B0%F0%97%9A%A9",
+      "licence": "CC BY-SA 4.0",
+      "label": "1.1",
+      "famous": true,
+      "lineIds": [
+        "wikisource-diamond:1.1"
+      ],
+      "text": "𘌽𗍊𗔘𗧓，𘃞𗿳𗢳𘛣𗍗𗂧𗶹𗸰𗛝𘊳𘈑𘞪𗼜𗝠𗜂𗅁𗫻，𗡞𗍫𘊝𗏁𗰗𘓐𘜶𘜉𗴼𗫔𗑠𗄭。𗉘𘝨𗯨𗖻𗠇𗿳，𗓈𗔛𘄒𗧯，𘛣𗍗𘜶𗍁𗅁𘃽𗠇𗴿，𗋕𗍁𗅁，𘐡𗖵𗠇𗴿𘃪，𗅉𗰜𘋩，𗋚𗆮𗠇𗠰𗞞𘃪，𘄒𗓈𗔠𗴾，𗺌𘚎𘃪，𗅉𘛃𗶤𗋚𘐒，𗳱𗀔𗋚𗶠。"
+    },
+    {
+      "id": "diamond-marks",
+      "sourceId": "wikisource-diamond",
+      "sourceTitle": "Diamond Sutra",
+      "sourceUrl": "https://wikisource.org/wiki/%F0%97%B5%92%F0%98%97%81%F0%98%84%92%F0%98%8E%91%F0%98%8F%9E%F0%97%93%BD%F0%97%95%A5%F0%97%B8%B0%F0%97%96%B0%F0%97%9A%A9",
+      "licence": "CC BY-SA 4.0",
+      "label": "5.3",
+      "famous": true,
+      "lineIds": [
+        "wikisource-diamond:5.3"
+      ],
+      "text": "𗢳𗍏𘏞𘛛𗗙𘘣：「𗱕𘍦𗄑𗄑𗄊𘉏𘗫𘟂，𗓱𗱕𘍦𘍦𗅔𘟀，𗌭𗌮𗆐𘟀𘟂。」"
+    },
+    {
+      "id": "diamond-closing",
+      "sourceId": "wikisource-diamond",
+      "sourceTitle": "Diamond Sutra",
+      "sourceUrl": "https://wikisource.org/wiki/%F0%97%B5%92%F0%98%97%81%F0%98%84%92%F0%98%8E%91%F0%98%8F%9E%F0%97%93%BD%F0%97%95%A5%F0%97%B8%B0%F0%97%96%B0%F0%97%9A%A9",
+      "licence": "CC BY-SA 4.0",
+      "label": "32.2–32.3",
+      "famous": true,
+      "lineIds": [
+        "wikisource-diamond:32.2",
+        "wikisource-diamond:32.3"
+      ],
+      "text": "𗎒𗥔𗹙𗄑𗄑，𘈞𘂫𗩾𗇮𗍊。\n𘉌𗍊𗬔𗋚𗍊，𘌽𗍊𘝯𗹢𗦇。"
+    },
+    {
+      "id": "dharani-opening",
+      "sourceId": "wikisource-dharani",
+      "sourceTitle": "Great Compassion Dharani",
+      "sourceUrl": "https://wikisource.org/wiki/%F0%97%BC%83%F0%98%9D%AF%F0%98%9D%B5%F0%97%A6%B3%F0%98%9C%B6%F0%97%88%81%F0%97%A4%B6%F0%97%84%8A%F0%97%A7%AF%F0%97%A3%A9%F0%98%89%90%F0%97%96%B0%F0%97%96%B5%F0%97%B0%96",
+      "licence": "CC BY-SA 4.0",
+      "label": "lines 1–2",
+      "famous": true,
+      "lineIds": [
+        "wikisource-dharani:line-1",
+        "wikisource-dharani:line-2"
+      ],
+      "text": "[𗙫　𘀍𘓩　𘃜𘎤𘀍　𘎤𘃜𘋮𗓌𗗔]　𘀍𘓩　𗠝𘙇𘋮　𗠝𗓌𘎧𗥹𘎫\n𘆨𗮞𘃜𗓌𘁂　𗿋𗤂𘅄𗸢𗓌𘁂　𗏵𗶴　𘅄𗸢𘁂　𗏵𗶴𗓌　𘊾𘏘𗐱𘊾𗓌𘁂"
+    },
+    {
+      "id": "high-king-sutra",
+      "sourceId": "wikisource-high-king",
+      "sourceTitle": "High King Avalokitesvara Sutra",
+      "sourceUrl": "https://wikisource.org/wiki/%F0%97%A3%9B%F0%98%9F%99%F0%97%AF%A8%F0%97%99%8F%F0%98%9D%AF%F0%97%96%B0%F0%97%9A%A9",
+      "licence": "CC BY-SA 4.0",
+      "label": "line 3",
+      "famous": true,
+      "lineIds": [
+        "wikisource-high-king:line-3"
+      ],
+      "text": "𗢰𘓩𗯨𗙏𘝯𘋢𗥤。𗢰𘓩𗢳。𗢰𘓩𗹙。𗢰𘓩𗗆。𗢳𗂧𘔼𘟣，𗢳𗹙𘍦𗦫，𗏹𗴴𗧓𗑗，𘔼𘟣𗢳𗹙。𗢰𘓩𗓚𘄽𘄒𘎑𘏞𗓽𗕥，𘜶𗾈𗥺𘟂。𗢰𘓩𗓚𘄽𘄒𘎑𘏞𗓽𗕥，𘜶𗭼𗥺𘟂。𗢰𘓩𗓚𘄽𘄒𘎑𘏞𗓽𗕥，𗩾𗨁𗥺𘟂。𗢰𘓩𗓚𘄽𘄒𘎑𘏞𗓽𗕥，𘜄𗤋𘜄𗥺𘟂。"
+    },
+    {
+      "id": "twenty-five-questions",
+      "sourceId": "wikisource-twenty-five-questions",
+      "sourceTitle": "Twenty-five Questions",
+      "sourceUrl": "https://wikisource.org/wiki/%F0%97%B9%8C%F0%98%90%98%F0%97%8D%AB%F0%97%B0%97%F0%97%8F%81%F0%97%A4%84%F0%97%8A%AC",
+      "licence": "CC BY-SA 4.0",
+      "label": "Question 1",
+      "famous": false,
+      "lineIds": [
+        "wikisource-twenty-five-questions:q1"
+      ],
+      "text": "𘈒𗤄：𗢳𘒣：「𗎫𘟀𗢳𗵆」𘘣𗫂𘌽𗧘𘝶𗦜？𘘚𘒣：𗰜𗎫𗮔𗩱𗫂，𘟀𘟂。𗰜𗎫𘟀𗩱，𘟀𘟣𗦇𗤋𗫂，𗮔𘟂。𗮔𗰜𗋕𗡶，𘉐𗭍𗅋𗋃𗫂，𗎫𘟂。𘌽𗍊𗎫𘟀𗗙𗢳𗵆𘘣𘃞。𗅉𗤄：𘎳𗫻𘁟𗈞𗥃𘍦𗧘𗫂，𘓂𘙌𘟂？𘘚𘒣：𗈪𗆫𘟀𗩱，𗌭𘎳𗧘𘟂；𘟀𘘂𘟀𘙇𗫡𗢳𗵆𗫂，𗫻𗧘𘟂。𘓷𘟀𗎫𘟂。𗎫𗫂𗵘𘟂；𗵘𗫂𘉐𘟂；𘉐𗫂𗢳𘟂。𘌽𗫂𘁟𗧘𘟂。𗎫𘟀𗰜𘖀𗲠𗘺，𘟀𗦇𗅋𘟣，𘟀𘝵𘟀𗤋，𘘦𗈞𗧘𘟂。𗤄𗇋𘌽𗓨𗪲𗒐𘒩𘕤。"
+    },
+    {
+      "id": "dragon-king",
+      "sourceId": "wikisource-dragon-king",
+      "sourceTitle": "Dragon King’s question",
+      "sourceUrl": "https://wikisource.org/wiki/%F0%97%A2%B3%F0%97%97%9A%F0%97%B5%83%F0%98%9F%99%F0%97%97%99%F0%97%B9%99%F0%98%9F%A9%F0%98%92%A3%F0%97%96%B0%F0%97%9A%A9",
+      "licence": "CC BY-SA 4.0",
+      "label": "line 1",
+      "famous": false,
+      "lineIds": [
+        "wikisource-dragon-king:line-1"
+      ],
+      "text": "𘌽𗍊𗔘𗧓：𘃞𗿳𗣧𘀺𗏆𘜶𗗚𗵃𘟙𗎭𗅁𗫻，𘜶𗁡𗳷𗫔𗡞𗍫𘊝𗏁𗰗𘓐，𗅉𗱕𘏞𗢈𗓚𘄽𗢈𗫔𗄭。𗉘𘝨𗦗𘀺𗓽𗵃𘟙𗶠𘏚𗈪𗢵，𗢳𗺌𗗙𗍺𘐔，𗢳𗗙𘒣𘘥：「𗯨𗖻！𘓊𗰣𗹙𗒐𗧯𘔼，𗮅𗧸𗼕𗱱𗈪𗉘𘜘？」𘘣𗢳𗗚𗵃𘟙𗗙𘘥：「𗥃𘋠𗠁𘍳𗹙𘟣，𘎤𗓱𗒐𗧯、𗗈𘆖、𗧘𗖵𗄻𗥤𗌭，𘟏𗪺𘙌𘜶□□𗢼，𗮅𗼕𗣼𘜘，𘉋𗕑𗥃𗡞𗹙𗔇𗗈𘆖𗣼𘉐𗑠𗈪𗅲𗅋𘁟。𗥃𗫂𘓇𘙌𘟂？𘌽𗫂：𗱕𘝦𗅋𗏹、𗄑𗄑𗄊𘍔、𗱕𗹙𗧓𗤋、𗘺𗈞𗴴𗨻。𗆫𘆖𗦇𗵃𘟙！𘌽𗫂𗥃𘋠𗠁𘍳𗹙𘟂，𘏞𗢈𗓚𘄽𗢈𘌽𘕾𗅋𗋃𗹙𘄡𘜘，𗉮𘃛𘎳𗤋𘕥，𘜤𘍞𗘺𘕿𗫡，𘌽𘔼𗍳𘆄𗏹𗆫𘆖𗦇。」𗉘𘝨𗯨𗖻□𗥃𗣃𗹙𘟩𗖰𗚩𘎪，□□□𗓁、𘜶𘋢𗥤𗫔，𗅉𘓱𗵃𘉋𗴮、𗠝𘏱𗓽、𘀺□□□，□□□□，□□□□，□□𗡶𗭍。"
+    },
+    {
+      "id": "bodhicaryavatara",
+      "sourceId": "solonin-2024",
+      "sourceTitle": "Bodhicaryāvatāra, chapter 2",
+      "sourceUrl": "https://hdl.handle.net/10108/0002000647",
+      "licence": "CC BY 4.0",
+      "label": "2.1.1",
+      "famous": false,
+      "lineIds": [
+        "solonin-2024:2.1.1"
+      ],
+      "text": "𗋕𘏨𘜶𗤶𗜈𗧯𘔼"
+    }
+  ]
+}

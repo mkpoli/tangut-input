@@ -1,6 +1,6 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao, loadRhymes, loadFanqieAliases } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadFanqieAliases } from './data.js'
 import { indexReadings } from './reading.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
@@ -24,6 +24,7 @@ export const codePoint = char => `U+${hex(char)}`
 export const db = $state({
   /** @type {'loading' | 'ready' | 'failed'} */ status: 'loading',
   /** @type {import('./data.js').Attestation | null} */ attestation: null,
+  /** @type {import('./data.js').Sample[]} */ samples: [],
 })
 
 /** The indexes, filled when the records arrive. */
@@ -99,6 +100,7 @@ export async function load() {
     db.status = 'failed'
   }
   loadAttestation().then(found => { db.attestation = found }, error => console.error(error))
+  loadSamples().then(found => { db.samples = found.samples }, error => console.error(error))
 }
 
 /** The first English sense, shortened for a tile or a list row. @param {string} char */
