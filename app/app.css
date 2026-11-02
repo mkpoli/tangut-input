@@ -1,7 +1,9 @@
 /* The script's main face is served from the site: a stylesheet fetched from another origin could
    hold the first paint for as long as that origin takes to answer. */
 @font-face{font-family:"Noto Serif Tangut";src:url("/fonts/NotoSerifTangut-Regular.woff2") format("woff2");font-display:swap;
-  unicode-range:U+17000-18AFF,U+18D00-18DFF}
+  /* The description operators (⿰ ⿱ …) are in this face too; without them in the range the browser
+     falls through to a face that has none. */
+  unicode-range:U+17000-18AFF,U+18D00-18DFF,U+2FF0-2FFF}
 /* The bundled 2.168 lacks the newest components; this subset draws them. */
 @font-face{font-family:"Tangut Supplement";src:url("/fonts/NotoSerifTangut-supplement.woff2") format("woff2");unicode-range:U+18AF3-18AFF,U+18D00-18D08;font-display:swap}
 /* Three faces a reader may set Tangut in: Yinchuan (景永時's design, completed by Andrew West),

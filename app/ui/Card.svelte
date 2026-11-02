@@ -7,12 +7,11 @@
   import { route, link } from '../lib/route.svelte.js'
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
-  import { SYSTEMS } from '../lib/reading.js'
+  import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { partsIn } from '../lib/search.js'
-  import Ids, { LAYOUTS } from './Ids.svelte'
-  import Layout from './Layout.svelte'
+  import Ids from './Ids.svelte'
   import Attest from './Attest.svelte'
-  import { t } from '../lib/i18n.svelte.js'
+  import { i18n, t } from '../lib/i18n.svelte.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -22,8 +21,8 @@
   const meanings = $derived(entry?.definitions ?? {})
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   const fanqie = $derived([
-    { name: 'Li Fanwen', value: entry?.pronunciations?.sound_li_fanwen?.trim() ?? '' },
-    { name: 'Nie Lishan', value: entry?.pronunciations?.sound_nie_lishan?.trim() ?? '' },
+    { name: 'Li Fanwen', zh: '李範文', value: entry?.pronunciations?.sound_li_fanwen?.trim() ?? '' },
+    { name: 'Nie Lishan', zh: '聶歷山', value: entry?.pronunciations?.sound_nie_lishan?.trim() ?? '' },
   ].filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
   // is read from. 文海 where it has one, 合編 where it does not.
@@ -127,10 +126,10 @@
         <table class="readings">
           <tbody>
             {#each readings as reading (reading.key)}
-              <tr><th scope="row">{reading.name}</th><td>{reading.value}</td></tr>
+              <tr><th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th><td>{reading.value}</td></tr>
             {/each}
             {#each fanqie as row (row.name)}
-              <tr><th scope="row">{t('card.soundGloss', { name: row.name })}</th><td lang="zh-Hant" class="cjk">{row.value}</td></tr>
+              <tr><th scope="row" title={systemTitle(row)}>{t('card.soundGloss', { name: systemName(row, i18n.locale) })}</th><td lang="zh-Hant" class="cjk">{row.value}</td></tr>
             {/each}
             {#if rhymeClass}
               <tr><th scope="row">{t('card.rhyme')}</th><td>{rhymeClass}{#if toneName}<span class="muted"> · {t(toneName)}</span>{/if}</td></tr>
@@ -156,11 +155,7 @@
       {#if entry?.composition}
         <Ids composition={entry.composition} />
         <p class="ids">
-          <span class="formula" title={entry.composition}>
-            {#each [...entry.composition] as piece, i (i)}
-              {#if LAYOUTS[piece]}<span class="op"><Layout op={piece} size={13} /></span>{:else}<span class="tg">{piece}</span>{/if}
-            {/each}
-          </span>
+          <span class="formula" title={entry.composition}>{entry.composition}</span>
           <button class="btn ghost small" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}>{t('common.copy')}</button>
           {#if parts.length}<a href={link('parts', char, parts.join(''))}>{t('card.withTheseParts')}</a>{/if}
         </p>
@@ -256,9 +251,7 @@
   .readings td.cjk{font-family:var(--ui);font-size:13.5px}
   .readings tr+tr{border-top:1px solid var(--line)}
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px}
-  .formula{display:inline-flex;align-items:center;gap:1px;padding:3px 7px;border:1px solid var(--line);border-radius:8px;background:var(--bg);user-select:text;cursor:text}
-  .formula .tg{font-size:20px;line-height:1}
-  .formula .op{display:inline-flex;color:var(--muted)}
+  .formula{font-family:var(--tangut);font-size:21px;line-height:1.2;padding:3px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);user-select:text;cursor:text}
   .ids .btn.small{min-height:26px;padding:0 8px;font-size:12px}
   .tiles.small{--tile:48px}
   .tiles.small .tile{background:var(--raised);box-shadow:none;border-color:var(--line)}
