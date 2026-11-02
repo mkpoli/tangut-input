@@ -4,14 +4,12 @@
   import { db, ix, gloss, isTangut } from '../lib/db.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { route, setQuery } from '../lib/route.svelte.js'
-  import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
+  import { preview, choose, put, autofocus, ui, setReading } from '../lib/ui.svelte.js'
   import { byFanqie } from '../lib/search.js'
   import { i18n, t } from '../lib/i18n.svelte.js'
 
   let query = $state(route.q)
-  // Which reconstruction the results are read in. Kept in the browser, like the script's face.
-  let system = $state(/** @type {string} */ ((typeof localStorage !== 'undefined' && localStorage.getItem('tangut-input:reading')) || 'li_fanwen'))
-  $effect(() => { try { localStorage.setItem('tangut-input:reading', system) } catch { /* a blocked store only loses the choice */ } })
+  // Which reconstruction the results are read in: the reader's choice, remembered across pages.
 
   const ready = $derived(db.status === 'ready')
   const text = $derived([...query].filter(isTangut).slice(0, 2).join(''))
@@ -21,7 +19,7 @@
   const own = $derived(ready && [...text].length === 1 ? ix.rhymes.get(text) ?? null : null)
   const ownSpelling = $derived(own ? (own[3] || own[4] ? `${own[3] ?? ''}${own[4] ?? ''}` : `${own[5] ?? ''}${own[6] ?? ''}`) : '')
   /** @param {string} char */
-  const reading = char => (ix.byChar.get(char)?.pronunciations ?? {})[system]?.trim() ?? ''
+  const reading = char => (ix.byChar.get(char)?.pronunciations ?? {})[ui.reading]?.trim() ?? ''
 
   // A fanqie is a spelling: two characters fix one reading. So where a character has no reading of
   // its own recorded, the spelling it shares with a character that has one still gives it — taken
@@ -51,7 +49,7 @@
       use:autofocus />
     <label class="choose">
       <span class="label">{t('fanqie.reading')}</span>
-      <select class="field" bind:value={system} aria-label={t('fanqie.reading')}>
+      <select class="field" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('fanqie.reading')}>
         {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
       </select>
     </label>

@@ -3,7 +3,7 @@
   // with their tone, across the top the initial groups, and each cell holds the characters that
   // stand at that crossing — the place a dictionary of the 文海 would put them.
   import { db, ix, gloss } from '../lib/db.svelte.js'
-  import { choose, put } from '../lib/ui.svelte.js'
+  import { choose, put, ui, setReading } from '../lib/ui.svelte.js'
   import { t, i18n } from '../lib/i18n.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
 
@@ -25,8 +25,7 @@
     { roman: 'Ⅶ', zh: '正齒音' }, { roman: 'Ⅷ', zh: '喉音' }, { roman: 'Ⅸ', zh: '來日音' },
   ]
   const GROUPS = CLASSES.map(entry => entry.roman)
-  // Which reconstruction the axes are read in: 龔勛 (GX202411) unless the reader picks another.
-  const view3 = $state({ system: 'gong_xun_202411' })
+  // The axes are read in the reader's reconstruction, 龔勛's unless they picked another.
   /** @param {string} reading */
   const toneOff = reading => reading.replace(/[¹²³⁴⁵⁰?\d]+$/g, '')
   /** The initial a reading begins with: everything before its first vowel. @param {string} reading */
@@ -40,7 +39,7 @@
     const counts = new Map()
     for (const entry of ix.entries) {
       const roman = ix.rhymes.get(entry.char)?.[2]
-      const reading = entry.pronunciations?.[view3.system]?.trim() ?? ''
+      const reading = entry.pronunciations?.[ui.reading]?.trim() ?? ''
       if (!roman || !reading) continue
       const head = initialOf(reading)
       if (!head) continue
@@ -178,7 +177,7 @@
     for (const [char, value] of ix.rhymes) {
       const [rhyme, tone] = value
       if (typeof rhyme !== 'number') continue
-      const reading = ix.byChar.get(char)?.pronunciations?.[view3.system]?.trim() ?? ''
+      const reading = ix.byChar.get(char)?.pronunciations?.[ui.reading]?.trim() ?? ''
       const initial = initialOf(reading)
       if (!reading || !initial) continue
       const final = toneOff(reading).slice(initial.length)
@@ -244,7 +243,7 @@
       {/if}
       <label class="choose">
         <span class="label">{t('chart.system')}</span>
-        <select class="field" bind:value={view3.system} aria-label={t('chart.system')}>
+        <select class="field" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('chart.system')}>
           {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
         </select>
       </label>

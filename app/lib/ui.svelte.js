@@ -7,6 +7,7 @@ import { record } from './record.js'
 
 const THEME = 'tangut-input:theme'
 const TANGUT = 'tangut-input:font'
+const READING = 'tangut-input:reading'
 
 /** The Tangut faces the reader can set the script in. Each is a family the stylesheet defines. */
 export const TANGUT_FACES = /** @type {const} */ ([
@@ -23,7 +24,15 @@ export const ui = $state({
   theme: /** @type {'auto' | 'light' | 'dark'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(THEME)) || 'auto'),
   /** The face Tangut is set in. @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */
   tangut: /** @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(TANGUT)) || 'serif'),
+  /** Which reconstruction readings are shown in, wherever a system can be chosen. 龔勛's by default. */
+  reading: (typeof localStorage !== 'undefined' && localStorage.getItem(READING)) || 'gong_xun_202411',
 })
+
+/** Remember the reconstruction a reader picked, for the pages that show readings. @param {string} key */
+export function setReading(key) {
+  ui.reading = key
+  try { localStorage.setItem(READING, key) } catch { /* a blocked store only loses the choice */ }
+}
 
 /** Show a character in the card without taking the reader anywhere (arrow keys, highlighting). @param {string} char */
 export const preview = char => open(char)
