@@ -221,5 +221,10 @@
   "meaning.zh": "中文",
   "meaning.try": "Try",
   "meaning.none": "No meaning in the records holds “{query}”.",
-  "meaning.cut": "The first {shown} of {total}; narrow the word to see the rest."
+  "meaning.cut": "The first {shown} of {total}; narrow the word to see the rest.",
+  "card.rhyme": "Rhyme",
+  "card.fanqie": "Fanqie",
+  "card.tone.level": "level tone",
+  "card.tone.rising": "rising tone",
+  "card.tone.entering": "entering tone"
 }

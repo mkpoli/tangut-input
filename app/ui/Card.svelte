@@ -24,6 +24,21 @@
     { name: 'Li Fanwen', value: entry?.pronunciations?.sound_li_fanwen?.trim() ?? '' },
     { name: 'Nie Lishan', value: entry?.pronunciations?.sound_nie_lishan?.trim() ?? '' },
   ].filter(r => r.value))
+  // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
+  // is read from. 文海 where it has one, 合編 where it does not.
+  const rhyme = $derived(ready && char ? ix.rhymes.get(char) : undefined)
+  const rhymeClass = $derived(rhyme?.[0] ? String(rhyme[0]) : '')
+  const toneName = $derived(
+    rhyme?.[1] === 1 ? 'card.tone.level'
+      : rhyme?.[1] === 2 ? 'card.tone.rising'
+        : rhyme?.[1] === 4 ? 'card.tone.entering'
+          : '',
+  )
+  const spelling = $derived(
+    rhyme?.[3] || rhyme?.[4] ? [rhyme[3], rhyme[4]].filter(Boolean).join('')
+      : rhyme?.[5] || rhyme?.[6] ? [rhyme[5], rhyme[6]].filter(Boolean).join('')
+        : '',
+  )
 
   const same = $derived.by(() => {
     if (!entry?.composition) return []
@@ -114,6 +129,12 @@
             {#each fanqie as row (row.name)}
               <tr><th scope="row">{t('card.soundGloss', { name: row.name })}</th><td lang="zh-Hant" class="cjk">{row.value}</td></tr>
             {/each}
+            {#if rhymeClass}
+              <tr><th scope="row">{t('card.rhyme')}</th><td>{rhymeClass}{#if toneName}<span class="muted"> · {t(toneName)}</span>{/if}</td></tr>
+            {/if}
+            {#if spelling}
+              <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="tg">{spelling}</span></td></tr>
+            {/if}
           </tbody>
         </table>
       </section>

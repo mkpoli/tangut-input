@@ -221,5 +221,10 @@
   "meaning.zh": "中文",
   "meaning.try": "例：",
   "meaning.none": "「{query}」を含む意味は記録にありません。",
-  "meaning.cut": "全{total}件のうち最初の{shown}件を表示しています。語を絞り込むと残りが表示されます。"
+  "meaning.cut": "全{total}件のうち最初の{shown}件を表示しています。語を絞り込むと残りが表示されます。",
+  "card.rhyme": "韻目",
+  "card.fanqie": "反切",
+  "card.tone.level": "平声",
+  "card.tone.rising": "上声",
+  "card.tone.entering": "入声"
 }

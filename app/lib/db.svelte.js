@@ -1,6 +1,6 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao, loadRhymes } from './data.js'
 import { indexReadings } from './reading.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
@@ -40,11 +40,15 @@ export const ix = {
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
+  /** The rhyme books' record by character. @type {Map<string, import('./data.js').RhymeChars[string]>} */ rhymes: new Map(),
+  /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
 }
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao] = await Promise.all([loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => [])])
+    const [entries, pairs, strokes, sijiao, rhymes] = await Promise.all([
+      loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
+    ])
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
     for (const [char, code] of pairs) {
@@ -68,6 +72,10 @@ export async function load() {
         users.add(entry.char)
       }
       ix.partsOf.set(entry.char, counts)
+    }
+    if (rhymes) {
+      ix.rhymes = new Map(Object.entries(rhymes.chars))
+      ix.rhymeSource = rhymes.source
     }
     for (const [char, code] of sijiao) ix.sijiao.set(char, code)
     ix.sijiaoList = [...ix.sijiao].map(([char, code]) => /** @type {[string, string]} */ ([code, char])).sort((a, b) => a[0].localeCompare(b[0]) || (a[1].codePointAt(0) ?? 0) - (b[1].codePointAt(0) ?? 0))

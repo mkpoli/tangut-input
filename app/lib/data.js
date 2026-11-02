@@ -2,6 +2,9 @@
 // bundled into the script.
 
 /** @typedef {{ en?: string[], ja?: string[], zh?: string[], synonym?: string[] }} Definitions */
+/** A character's place in the rhyme books: `[rhyme, tone, group, upper, lower, upperB, lowerB]`.
+ * @typedef {{ [char: string]: [number | null, number | null, string | null, string | null, string | null, string | null, string | null] }} RhymeChars */
+/** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
 /** @typedef {{ char: string, codepoint: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
  *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_en?: string, wenhai_text_zh?: string }} Entry */
 /** @typedef {{ id: string, title: string, author: string, year: number, publisher: string, url: string, licence: string, manuscript: string,
@@ -45,6 +48,9 @@ export const loadCodes = () => once('codes', () => readJson(new URL('../data/tan
 
 /** Four-corner codes as [character, six digits] pairs, from the rhyme-dictionary table. @returns {Promise<[string, string][]>} */
 export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/tangut-sijiao.json.gz', import.meta.url)))
+
+/** The rhyme books' class for each character, with its fanqie. @returns {Promise<Rhymes>} */
+export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/tangut-rhymes.json.gz', import.meta.url)))
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */
 export const loadStrokes = () => once('strokes', async () => (await readJson(new URL('../data/tangut-strokes.json.gz', import.meta.url))).values)

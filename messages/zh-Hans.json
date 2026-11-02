@@ -221,5 +221,10 @@
   "meaning.zh": "中文",
   "meaning.try": "试试",
   "meaning.none": "记录中没有包含“{query}”的释义。",
-  "meaning.cut": "显示{total}项中的前{shown}项；请收窄检索词以查看其余结果。"
+  "meaning.cut": "显示{total}项中的前{shown}项；请收窄检索词以查看其余结果。",
+  "card.rhyme": "韵部",
+  "card.fanqie": "反切",
+  "card.tone.level": "平声",
+  "card.tone.rising": "上声",
+  "card.tone.entering": "入声"
 }
