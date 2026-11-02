@@ -138,14 +138,19 @@ stroke width to match. A lone stroke keeps a sliver shape instead of being blown
 Ranking 6,913 glyphs takes a few tens of milliseconds; the five faces together about a tenth of a
 second.
 
-`bun run quiz:score <session>` ranks the drawings saved by `bun run quiz` against both matchers. On
-80 characters drawn by one writer, 38 of them lookalikes chosen to be confusable and 42 at random,
-each character keeping its best place in any of the five faces:
+The stroke count of the drawing, counted by default and switchable beside the pad, is weighed inside
+each face's ranking before the faces are merged: a glyph whose recorded count is further from the
+drawing's costs 0.35 per stroke. Weighing it after the merge instead reorders a list whose scores
+come from five different scales, and measured five points worse in the first five.
 
-| Matcher | Top 1 | Top 5 | Top 20 |
+`bun run quiz:score <session> --shapes <files> --strokes 1` ranks the drawings saved by `bun run
+quiz` the way the page now does. On 80 characters drawn by one writer, 38 of them lookalikes chosen
+to be confusable and 42 at random:
+
+| Ranking | Top 1 | Top 5 | Top 20 |
 | --- | ---: | ---: | ---: |
-| filled masks, ink only | 11% | 24% | 30% |
-| pen lines and direction | 22% | 40% | 50% |
+| filled masks, position only, count after the merge | 9% | 20% | 33% |
+| pen lines and direction, count inside each face | 29% | 50% | 62% |
 
 `scripts/eval_tangut_shapes.mjs` measures the same matcher on drawings made from the font itself: a
 glyph's line, stretched and sheared at random, and optionally warped along a slow wave. On 1,000

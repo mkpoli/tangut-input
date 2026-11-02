@@ -113,7 +113,7 @@
   "draw.optionsLabel": "Options and limits",
   "draw.favourStrokes": "Favour characters with {count} strokes",
   "draw.includeComponents": "Include components",
-  "draw.note": "<b>How rough this is.</b> No recognizer for the whole Tangut script is openly available. The pad compares the line you drew and the direction it runs with the printed glyphs of five Tangut faces, and keeps each character's best place in any of them. Stroke order plays no part. On eighty characters drawn by one reader, it placed the right character first about one time in four and within the first five about four times in ten. Expect to scan the list, and reach for Cangjie or a reading when you have one.",
+  "draw.note": "<b>How rough this is.</b> No recognizer for the whole Tangut script is openly available. The pad compares the line you drew and the direction it runs with the printed glyphs of five Tangut faces, and keeps each character's best place in any of them. Stroke order plays no part. On eighty characters drawn by one reader, with the stroke count weighed as it is by default, the right character came first about three times in ten and within the first five about one time in two. Expect to scan the list, and reach for Cangjie or a reading when you have one.",
   "draw.results": "Closest in shape",
   "draw.resultsLabel": "Closest glyphs",
   "draw.loading": "Loading glyph shapes…",
