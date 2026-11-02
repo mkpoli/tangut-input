@@ -15,7 +15,6 @@
   "nav.draw.hint": "描绘字形查找",
   "nav.parts": "部件",
   "nav.parts.hint": "由部件组合查找",
-  "nav.group.text": "从文本",
   "nav.group.shape": "从字形",
   "nav.group.sound": "从字音",
   "nav.group.sense": "从字义",

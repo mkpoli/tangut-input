@@ -3,7 +3,7 @@
   // card of the open character beside it (a sheet over it on a phone).
   import { tick } from 'svelte'
   import { db, load } from './lib/db.svelte.js'
-  import { route, go, PAGES, GROUPS } from './lib/route.svelte.js'
+  import { route, go, PAGES, GROUPS, PRIMARY } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, cycleTheme, setTangut, setReading, TANGUT_FACES } from './lib/ui.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
@@ -139,6 +139,8 @@
       <span class="name">{t('app.name')}</span>
     </a>
     <nav class="finders" aria-label={t('nav.label')}>
+      <a href="/" class="primary" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
+        title={t(PRIMARY.hint)} onclick={event => nav(event, '')}>{t(PRIMARY.label)}</a>
       {#each GROUPS as group (group.label)}
         <div class="group" role="group" aria-label={t(group.label)}>
           {#each group.pages as page (page.path)}
@@ -294,7 +296,8 @@
   .finders a.on{color:var(--ui-color-ink);font-weight:var(--ui-weight-semibold)}
   .finders a.on::after{content:'';position:absolute;inset-inline:var(--ui-space-sm);bottom:0;block-size:2px;background:var(--ui-color-accent)}
   .finders .group{display:flex;align-items:stretch;gap:2px}
-  .finders .group + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
+  .finders .primary{font-weight:var(--ui-weight-semibold)}
+  .finders .group + .group, .finders .primary + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
   .aside{margin-inline-start:auto;display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .reading :global(.ui-select){inline-size:154px}
   .lang :global(.ui-select){inline-size:104px}
