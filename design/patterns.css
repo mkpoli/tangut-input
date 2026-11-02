@@ -320,6 +320,73 @@
   text-transform: uppercase;
 }
 
+/* ---------- A data table ---------- */
+
+/* A table that belongs to the page rather than to a chart: rules between rows, a quiet header,
+   and no cell borders. Put it in `.ui-table-wrap` when it is wider than its column. */
+.ui-table-wrap {
+  overflow: auto;
+  border: 1px solid var(--ui-color-border);
+  border-radius: var(--ui-radius-md);
+  background: var(--ui-color-surface);
+}
+
+.ui-table {
+  inline-size: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--ui-color-ink);
+  font-size: var(--ui-text-sm);
+  text-align: start;
+}
+
+.ui-table :where(thead th) {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--ui-space-2xs) var(--ui-space-lg);
+  border-block-end: 1px solid var(--ui-color-border-strong);
+  background: var(--ui-color-surface);
+  color: var(--ui-color-ink-muted);
+  font-size: var(--ui-text-2xs);
+  font-weight: var(--ui-weight-semibold);
+  letter-spacing: var(--ui-tracking-caps);
+  text-align: start;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ui-table :where(tbody th, tbody td) {
+  padding: var(--ui-space-xs) var(--ui-space-lg);
+  border-block-end: 1px solid var(--ui-color-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.ui-table tbody tr:last-child :where(th, td) {
+  border-block-end: 0;
+}
+
+.ui-table tbody tr:hover {
+  background: var(--ui-color-surface-hover);
+}
+
+.ui-table tbody th {
+  color: var(--ui-color-ink-soft);
+  font-weight: var(--ui-weight-medium);
+}
+
+.ui-table :where(.ui-script, .ui-tile-glyph) {
+  font-size: 1.5em;
+}
+
+.ui-table caption {
+  padding: var(--ui-space-sm) var(--ui-space-lg);
+  color: var(--ui-color-ink-muted);
+  font-size: var(--ui-text-xs);
+  text-align: start;
+}
+
 /* ---------- Candidate bar: an input method ---------- */
 
 .ui-candidates {

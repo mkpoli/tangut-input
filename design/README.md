@@ -153,6 +153,7 @@ browser keeps form submission, autofill, keyboard, screen readers and forced-col
 | `.ui-rows`, `.ui-row`, `.ui-row-pick`, `.ui-row-glyph`, `.ui-row-body` | A list of results |
 | `.ui-candidates`, `.ui-candidate` | The numbered bar of an input method |
 | `.ui-keys`, `.ui-key` | A key chart |
+| `.ui-table`, `.ui-table-wrap` | A data table with row rules and a sticky header |
 | `.ui-formula` | An IDS description in the operator face |
 | `.ui-popover` | A panel over the page |
 | `.ui-tag`, `.ui-kbd` | A small code or key |

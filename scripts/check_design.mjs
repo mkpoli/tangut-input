@@ -206,6 +206,8 @@ async function checkContrast(page) {
       text('.ui-error', 4.5),
       text('.ui-tag', 4.5),
       text('.ui-formula', 4.5),
+      text('.ui-table td', 4.5),
+      text('.ui-table thead th', 4.5),
       { name: 'input boundary', threshold: 3, ratio: (() => {
         const el = document.querySelector('.ui-input')
         return el ? ratio(getComputedStyle(el).borderTopColor, backdrop(el.parentElement)) : 0
