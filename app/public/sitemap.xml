@@ -5,6 +5,8 @@
   <url><loc>https://tangut.mkpo.li/cangjie</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/sijiao</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/reading</loc><priority>0.8</priority></url>
+  <url><loc>https://tangut.mkpo.li/fanqie</loc><priority>0.8</priority></url>
+  <url><loc>https://tangut.mkpo.li/chart</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/draw</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/parts</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/about</loc><priority>0.5</priority></url>

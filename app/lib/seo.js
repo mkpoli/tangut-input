@@ -36,6 +36,10 @@ export const PAGE_SEO = {
     title: 'Fanqie — Tangut Input',
     description: 'Type the two characters a Tangut fanqie is spelt with, the upper and the lower, and find the character they spell.',
   },
+  chart: {
+    title: 'Rhyme chart — Tangut Input',
+    description: 'The rhyme books laid out as a chart: rhymes down the side, initial groups across the top, and the characters that stand at each crossing.',
+  },
   draw: {
     title: 'Draw — Tangut Input',
     description: 'Sketch a Tangut character on the pad and see the glyphs closest to it in shape, compared against five Tangut faces.',

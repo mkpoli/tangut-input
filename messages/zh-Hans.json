@@ -237,5 +237,12 @@
   "fanqie.one": "请先选反切上字，再选反切下字。",
   "card.fanqieFor": "反切中用到此字的字（{count}）",
   "fanqie.reading": "拟音",
-  "fanqie.ownLabel": "此字自身的反切"
+  "fanqie.ownLabel": "此字自身的反切",
+  "nav.chart": "韵图",
+  "nav.chart.hint": "按韵图纵览韵书",
+  "chart.intro": "将《文海》排作韵图：每行为一韵及其声调，每列为一音类（九音），各字列于声韵相交之格。悬停于字上可查看其反切、音注与释义。",
+  "chart.rhyme": "韵部",
+  "chart.group": "声类",
+  "chart.tone.unknown": "声调未详",
+  "chart.legend": "一百零五韵与九音皆依韵书原有之目；纵横相交据《同音》与《文海》诸表排出。本数据未收录藏文对音，故各格仅列字形、反切及汉字音注。"
 }

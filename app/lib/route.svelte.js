@@ -9,6 +9,7 @@ export const PAGES = /** @type {const} */ ([
   { path: 'sijiao', label: 'nav.sijiao', hint: 'nav.sijiao.hint' },
   { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },
   { path: 'fanqie', label: 'nav.fanqie', hint: 'nav.fanqie.hint' },
+  { path: 'chart', label: 'nav.chart', hint: 'nav.chart.hint' },
   { path: 'draw', label: 'nav.draw', hint: 'nav.draw.hint' },
   { path: 'parts', label: 'nav.parts', hint: 'nav.parts.hint' },
 ])

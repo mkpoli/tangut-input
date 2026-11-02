@@ -237,5 +237,12 @@
   "fanqie.one": "Choose the upper character first, then the lower.",
   "card.fanqieFor": "Spelt with it ({count})",
   "fanqie.reading": "Reconstruction",
-  "fanqie.ownLabel": "This character’s own fanqie"
+  "fanqie.ownLabel": "This character’s own fanqie",
+  "nav.chart": "Chart",
+  "nav.chart.hint": "Read the rhyme books as a chart",
+  "chart.intro": "The 文海 as a chart: each row is a rhyme with its tone, each column an initial group, and every character stands in the cell where the two meet. Hover a character for its fanqie, its sound gloss and its meaning.",
+  "chart.rhyme": "Rhyme",
+  "chart.group": "Initial",
+  "chart.tone.unknown": "Tone unrecorded",
+  "chart.legend": "The 105 rhymes and nine initial groups are the rhyme books’ own; the crossings are read from the 同音 and 文海 tables. Tibetan transcriptions are not recorded in this data, so the cells hold the characters, their fanqie and the Chinese sound gloss."
 }

@@ -12,7 +12,7 @@
 import { seoOf } from './lib/seo.js'
 
 // The paths that answer with a head of their own: `PAGES` in `app/lib/route.svelte.js` and About.
-const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'draw', 'parts', 'about'])
+const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'chart', 'draw', 'parts', 'about'])
 
 // A drawing of a few hundred points is a few kilobytes; anything past this is not a reader's pen.
 const LIMIT = 60_000
