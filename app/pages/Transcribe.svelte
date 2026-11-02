@@ -1,15 +1,44 @@
 <script>
   // Transcribe a line of Tangut: every character with the reading the reader's system gives it, the
-  // line copied as those readings, and a table of all eight systems for pasting elsewhere.
+  // line copied as those readings, and a table of all eight systems for pasting elsewhere. The box
+  // holds the same text as the writing strip, which flies into it on the way in.
+  import { onMount } from 'svelte'
   import { db, ix, isTangut, gloss } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
+  import { text, attach, detach, setText } from '../lib/text.svelte.js'
   import { ui, setReading, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { t, i18n } from '../lib/i18n.svelte.js'
   import G from '../ui/G.svelte'
 
-  const query = $derived(route.q)
+  /** @type {HTMLTextAreaElement | null} */
+  let box = $state(null)
+
+  // A shared link carries the line in `?q=`; otherwise the writing strip's text is the line.
+  if (route.q && route.q !== text.value) setText(route.q)
+  else if (text.value) setQuery(text.value)
+
+  // The strip is where the line was written, so it settles into the box rather than appearing.
+  onMount(() => {
+    const field = box
+    if (!field) return
+    attach(field)
+    const from = document.getElementById('writing')
+    if (from && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const a = from.getBoundingClientRect()
+      const b = field.getBoundingClientRect()
+      if (b.width && b.height) {
+        field.animate([
+          { transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`, transformOrigin: 'top left' },
+          { transform: 'none', transformOrigin: 'top left' },
+        ], { duration: 280, easing: 'cubic-bezier(0.2, 0, 0, 1)' })
+      }
+    }
+    return () => detach(field)
+  })
+
+  const query = $derived(text.value)
   // The records are a plain object filled after they load, so the reading has to hang off the
   // store's status to be recomputed once they arrive.
   const ready = $derived(db.status === 'ready')
@@ -33,6 +62,7 @@
 
   /** @param {Event & { currentTarget: HTMLTextAreaElement }} event */
   function type(event) {
+    setText(event.currentTarget.value)
     setQuery(event.currentTarget.value)
   }
 </script>
@@ -43,7 +73,7 @@
     <p class="ui-page-intro">{t('transcribe.intro')}</p>
   </header>
 
-  <textarea class="ui-textarea transcribe-input ui-script" rows="2" value={query} spellcheck="false" autocomplete="off"
+  <textarea bind:this={box} class="ui-textarea transcribe-input ui-script" rows="2" value={query} spellcheck="false" autocomplete="off"
     aria-label={t('transcribe.input')} placeholder={t('transcribe.placeholder')} oninput={type}></textarea>
 
   <div class="ui-toolbar">

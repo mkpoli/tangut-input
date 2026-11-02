@@ -11,12 +11,27 @@ export const text = $state({
   end: -1,
 })
 
-/** @type {HTMLTextAreaElement | null} */
-let field = null
+/** Every field that holds this text: the writing strip and the transcribe box. @type {Set<HTMLTextAreaElement>} */
+const fields = new Set()
+/** The field an insertion follows: the focused one, else the last one attached. @type {HTMLTextAreaElement | null} */
+let last = null
 
-/** The writing field registers itself so insertions follow its caret. @param {HTMLTextAreaElement | null} element */
+/** A field for this text registers itself so insertions follow its caret. @param {HTMLTextAreaElement} element */
 export function attach(element) {
-  field = element
+  fields.add(element)
+  last = element
+}
+
+/** @param {HTMLTextAreaElement} element */
+export function detach(element) {
+  fields.delete(element)
+  if (last === element) last = null
+}
+
+/** @returns {HTMLTextAreaElement | null} */
+function field() {
+  const focused = /** @type {HTMLElement | null} */ (document.activeElement)
+  return focused instanceof HTMLTextAreaElement && fields.has(focused) ? focused : last
 }
 
 function save() {
@@ -31,9 +46,10 @@ export function setText(value) {
 
 /** Remember the caret of the writing field. */
 export function remember() {
-  if (!field) return
-  text.start = field.selectionStart
-  text.end = field.selectionEnd
+  const element = field()
+  if (!element) return
+  text.start = element.selectionStart
+  text.end = element.selectionEnd
 }
 
 /** Insert at the caret (the end, when the caret was never placed). @param {string} chars */
@@ -44,9 +60,10 @@ export function insert(chars) {
   text.value = text.value.slice(0, start) + chars + text.value.slice(end)
   text.start = text.end = start + chars.length
   save()
-  if (field) {
+  const element = field()
+  if (element) {
     const at = text.start
-    queueMicrotask(() => field?.setSelectionRange(at, at))
+    queueMicrotask(() => element.setSelectionRange(at, at))
   }
 }
 

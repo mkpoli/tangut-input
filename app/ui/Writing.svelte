@@ -2,7 +2,7 @@
   // The text being written. Every finder inserts here at the caret; it can also be typed or pasted
   // into directly. Clicking beside a character opens that character in the card.
   import { tick } from 'svelte'
-  import { text, attach, setText, remember, asCodePoints, asCodes } from '../lib/text.svelte.js'
+  import { text, attach, detach, setText, remember, asCodePoints, asCodes } from '../lib/text.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { isTangut } from '../lib/db.svelte.js'
   import { preview } from '../lib/ui.svelte.js'
@@ -20,8 +20,8 @@
   const count = $derived([...text.value].filter(isTangut).length)
 
   $effect(() => {
-    attach(field)
-    return () => attach(null)
+    if (field) attach(field)
+    return () => { if (field) detach(field) }
   })
 
   // Grow with the text up to three lines.
