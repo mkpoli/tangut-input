@@ -116,13 +116,13 @@ export function partsIn(char) {
  * Characters whose fanqie is spelt with one or two characters: one matches either the upper or the
  * lower of a spelling, two match them in that order. 文海's spelling is read before 合編's.
  * @param {string} text
- * @returns {{ char: string, rhyme: number | null, tone: number | null, spelling: string }[]}
+ * @returns {{ char: string, rhyme: number | null, tone: number | null, spelling: string, upper: string, lower: string }[]}
  */
 export function byFanqie(text) {
   const typed = [...text].filter(isTangut)
   if (!typed.length) return []
   const [first, second] = typed
-  /** @type {{ char: string, rhyme: number | null, tone: number | null, spelling: string }[]} */
+  /** @type {{ char: string, rhyme: number | null, tone: number | null, spelling: string, upper: string, lower: string }[]} */
   const hits = []
   for (const [char, value] of ix.rhymes) {
     const [rhyme, tone, , upper, lower, upperB, lowerB] = value
@@ -130,8 +130,10 @@ export function byFanqie(text) {
       ? (upper === first && lower === second) || (upperB === first && lowerB === second)
       : upper === first || lower === first || upperB === first || lowerB === first
     if (!found) continue
-    const spelling = upper || lower ? `${upper ?? ''}${lower ?? ''}` : `${upperB ?? ''}${lowerB ?? ''}`
-    hits.push({ char, rhyme, tone, spelling })
+    // 文海's spelling is read before 合編's; the two characters are kept apart so each can be read.
+    const usedUpper = upper || upperB || ''
+    const usedLower = lower || lowerB || ''
+    hits.push({ char, rhyme, tone, spelling: `${usedUpper}${usedLower}`, upper: usedUpper, lower: usedLower })
   }
   return hits.sort((a, b) => (a.rhyme ?? 99) - (b.rhyme ?? 99) || (a.tone ?? 9) - (b.tone ?? 9)
     || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))

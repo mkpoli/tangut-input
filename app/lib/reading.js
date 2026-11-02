@@ -3,16 +3,30 @@
 // separators drop out, and a final digit is kept apart as the tone.
 
 /** The systems a reader can type in, in the order the card lists them. */
+// Each system is named after the scholar who proposes it: in Latin letters for a reader working in
+// English, in the characters their name is written with in Chinese, Japanese and Korean. The other
+// spelling is the name's own title, so both are a hover away.
 export const SYSTEMS = /** @type {const} */ ([
-  { key: 'li_fanwen', short: 'Li', name: 'Li Fanwen 2008', tones: true },
-  { key: 'gong_huangcheng', short: 'Gong', name: 'Gong Hwang-cherng', tones: false },
-  { key: 'gong_xun_202411', short: 'GX', name: 'Gong Xun 2024-11', tones: true },
-  { key: 'arakawa_shintaro', short: 'Ar', name: 'Arakawa Shintarō', tones: false },
-  { key: 'miyake', short: 'My', name: 'Miyake', tones: true },
-  { key: 'nishida', short: 'Ni', name: 'Nishida 1966', tones: true },
-  { key: 'kychanov', short: 'Ky', name: 'Kychanov 2006', tones: true },
-  { key: 'sofronov', short: 'So', name: 'Sofronov 1968', tones: true },
+  { key: 'li_fanwen', short: 'Li', name: 'Li Fanwen 2008', zh: '李範文', tones: true },
+  { key: 'gong_huangcheng', short: 'Gong', name: 'Gong Hwang-cherng', zh: '龔煌城', tones: false },
+  { key: 'gong_xun_202411', short: 'GX', name: 'Gong Xun 2024-11', zh: '龔勛', tones: true },
+  { key: 'arakawa_shintaro', short: 'Ar', name: 'Arakawa Shintarō', zh: '荒川慎太郎', tones: false },
+  { key: 'miyake', short: 'My', name: 'Marc Miyake', zh: '三宅', tones: true },
+  { key: 'nishida', short: 'Ni', name: 'Nishida 1966', zh: '西田龍雄', tones: true },
+  { key: 'kychanov', short: 'Ky', name: 'Kychanov 2006', zh: '克恰諾夫', tones: true },
+  { key: 'sofronov', short: 'So', name: 'Sofronov 1968', zh: '索弗羅諾夫', tones: true },
 ])
+
+/**
+ * A system's name for a reader of a language: the characters a Chinese, Japanese or Korean reader
+ * knows it by, the Latin spelling otherwise.
+ * @param {{ name: string, zh: string }} system
+ * @param {string} locale
+ */
+export const systemName = (system, locale) => (/^(ja|zh|ko)/.test(locale) ? system.zh : system.name)
+
+/** Both spellings of a system's name, for a title. @param {{ name: string, zh: string }} system */
+export const systemTitle = system => `${system.name} · ${system.zh}`
 
 /** @typedef {typeof SYSTEMS[number]['key']} SystemKey */
 /** @typedef {{ char: string, system: SystemKey, raw: string, folded: string, loose: string, tone: string }} Reading */

@@ -5,8 +5,8 @@
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
-  import { SYSTEMS, TIERS, searchReadings, fold } from '../lib/reading.js'
-  import { t } from '../lib/i18n.svelte.js'
+  import { SYSTEMS, TIERS, searchReadings, fold, systemTitle } from '../lib/reading.js'
+  import { i18n, t } from '../lib/i18n.svelte.js'
 
   let query = $state(route.q)
   let tone = $state('')
@@ -102,7 +102,7 @@
             <span class="tg glyph">{hit.char}</span>
             <span class="said">
               {#each hit.readings as reading (reading.system)}
-                <span class="r"><span class="sys" title={NAMES[reading.system].name}>{NAMES[reading.system].short}</span>{reading.raw}</span>
+                <span class="r"><span class="sys" title={systemTitle(NAMES[reading.system])}>{NAMES[reading.system].short}</span>{reading.raw}</span>
               {/each}
             </span>
             <span class="gl">{gloss(hit.char)}</span>
