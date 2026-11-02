@@ -1,0 +1,16 @@
+{
+  "name": "Tangut Input",
+  "short_name": "Tangut",
+  "description": "Look up a Tangut character by its Cangjie code, its four-corner code, its reconstruction, its meaning or the shape you draw.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4efe5",
+  "theme_color": "#f4efe5",
+  "lang": "en",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,11 +1,18 @@
-// The site's worker: it takes what a reader drew and what they picked, and leaves the pages to the
-// assets. Only `/api/*` reaches it (`run_worker_first`), so a page view costs the worker nothing.
+// The site's worker: it takes what a reader drew and what they picked, and it answers a finder's own
+// address with that finder's title and description, so a link pasted into a chat or a search engine
+// shows the page rather than the landing page. Only `/api/*` and the finders' paths reach it
+// (`run_worker_first`); every other asset is served without it.
 //
 //   POST /api/record   one event, or an array of them
+//   GET  /<finder>     the app's page, with its head written for that finder
 //
 // An event is either a pick, `{ type: 'pick', char, finder, query, place, locale, session }`, or a
 // drawing, `{ type: 'drawing', strokes, picked?, place?, origin?, answer?, kind?, times?, … }`. The
 // rows land in D1 (`migrations/0001_records.sql`); `bun run records` reads them back.
+import { seoOf } from './lib/seo.js'
+
+// The paths that answer with a head of their own: `PAGES` in `app/lib/route.svelte.js` and About.
+const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'draw', 'parts', 'about'])
 
 // A drawing of a few hundred points is a few kilobytes; anything past this is not a reader's pen.
 const LIMIT = 60_000
@@ -148,6 +155,33 @@ async function record(request, env) {
   return Response.json({ stored: statements.length })
 }
 
+/**
+ * The app's page, with the head of the finder its address names.
+ * @param {Request} request
+ * @param {{ ASSETS: Fetcher }} env
+ * @param {URL} url
+ */
+async function page(request, env, url) {
+  const finder = url.pathname.replace(/^\/+|\/+$/g, '')
+  if (!FINDERS.has(finder)) return env.ASSETS.fetch(request)
+  const asset = await env.ASSETS.fetch(new URL('/index.html', url).toString())
+  if (!asset.ok) return asset
+  const { title, description, url: canonical } = seoOf(finder)
+  const attribute = (/** @type {string} */ name, /** @type {string} */ value) => ({
+    element: (/** @type {Element} */ element) => { element.setAttribute(name, value) },
+  })
+  return new HTMLRewriter()
+    .on('title', { element: element => { element.setInnerContent(title) } })
+    .on('link[rel="canonical"]', attribute('href', canonical))
+    .on('meta[name="description"]', attribute('content', description))
+    .on('meta[property="og:title"]', attribute('content', title))
+    .on('meta[property="og:description"]', attribute('content', description))
+    .on('meta[property="og:url"]', attribute('content', canonical))
+    .on('meta[name="twitter:title"]', attribute('content', title))
+    .on('meta[name="twitter:description"]', attribute('content', description))
+    .transform(asset)
+}
+
 export default {
   /**
    * @param {Request} request
@@ -156,6 +190,6 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url)
     if (url.pathname === '/api/record') return record(request, env)
-    return env.ASSETS.fetch(request)
+    return page(request, env, url)
   },
 }

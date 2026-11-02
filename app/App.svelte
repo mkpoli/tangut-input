@@ -6,6 +6,7 @@
   import { ui, applyTangut, applyTheme, cycleTheme, setTangut, TANGUT_FACES } from './lib/ui.svelte.js'
   import { toast } from './lib/clip.svelte.js'
   import { i18n, LOCALES, setLocale, t } from './lib/i18n.svelte.js'
+  import { applySeo } from './lib/seo.js'
   import Writing from './ui/Writing.svelte'
   import Card from './ui/Card.svelte'
   import Find from './pages/Find.svelte'
@@ -28,6 +29,7 @@
 
   $effect(() => {
     void route.page
+    applySeo(route.page)
     tabs?.querySelector('a.on')?.scrollIntoView({ block: 'nearest', inline: 'center' })
   })
 
