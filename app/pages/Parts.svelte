@@ -25,6 +25,8 @@
   let info = $state(null)
   /** @type {Candidates | null} */
   let grid = $state(null)
+  /** @type {HTMLElement | null} */
+  let results = $state(null)
 
   const ready = $derived(db.status === 'ready')
   // A part from the address waits for the records before it can be checked.
@@ -34,6 +36,11 @@
 
   const hits = $derived(ready ? byParts(chosen, layout) : [])
   const among = $derived(chosen.length || layout ? partsAmong(hits) : null)
+  // New matches are read from their first row; the palette keeps its own place.
+  $effect(() => {
+    void hits
+    if (results) results.scrollTop = 0
+  })
   const LAYOUT_KEYS = ['⿰', '⿱', '⿲', '⿳', '⿺', '⿸', '⿵', '⿻']
 
   // Every part, by strokes then by how often descriptions use it; narrowed by the choice so far.
@@ -95,6 +102,15 @@
   function hideInfo() {
     info = null
   }
+  // Tab reaches a tile, then the palette scrolls it into view: move the record with the tile.
+  function scrolled() {
+    const active = document.activeElement
+    if (active instanceof HTMLElement && active.classList.contains('comp') && active.dataset.part && info?.part === active.dataset.part) {
+      info = { ...info, ...partInfoPlacement(active.getBoundingClientRect()) }
+      return
+    }
+    hideInfo()
+  }
   /** @param {string} part */
   function shapeName(part) {
     return ix.names.find(row => row.char === part)?.name ?? ''
@@ -144,21 +160,54 @@
     </div>
   </section>
 
-  <section class="matches" aria-label={t('parts.matchesLabel')}>
-    <div class="ui-section-head">
-      <h2 class="ui-label">{chosen.length || layout ? t('common.characters', { count: hits.length }) : t('common.charactersLabel')}</h2>
-      {#if chosen.length || layout}<span class="ui-count">{t('parts.fewestStrokes')}</span>{/if}
-    </div>
-    {#if chosen.length || layout}
-      {#if hits.length}
-        <div role="presentation" onkeydown={keys}><Candidates bind:this={grid} {items} bind:active size={64} label={t('parts.matchesLabel')} limit={240} /></div>
-      {:else}
-        <p class="ui-empty">{layout ? t('parts.noMatchLayout') : t('parts.noMatch')}</p>
-      {/if}
-    {:else}
-      <p class="ui-empty">{t('parts.empty')}</p>
-    {/if}
-  </section>
+  <div class="work">
+    <section class="palette pane ui-card" data-padding="sm" aria-label={t('parts.paletteLabel')}>
+      <div class="ui-section-head">
+        <h2 class="ui-label">{among && !everything ? t('parts.stillOccur') : t('parts.allComponents')}</h2>
+        {#if among}
+          <label class="ui-check-row all"><input class="ui-checkbox" type="checkbox" bind:checked={everything} /> <span>{t('parts.showAll')}</span></label>
+        {/if}
+        <span class="filter-wrap">
+          <input class="ui-input ui-mono" data-size="sm" data-primary bind:value={filter} oninput={() => { info = null }} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} spellcheck="false" autocomplete="off" />
+        </span>
+      </div>
+      <div class="strokes" onscroll={scrolled}>
+        {#each byStroke as [count, parts] (count)}
+          <div class="stroke-group">
+            <h3 class="stroke-count" title={t('draw.strokes', { count })}>{count || '?'}</h3>
+            <div class="ui-tiles comps" style:--ui-tile-size="46px">
+              {#each parts as p (p.part)}
+                <button type="button" class="ui-tile comp" data-dim={p.live === 0 ? '' : undefined} data-part={p.part} onclick={() => add(p.part)}
+                  aria-describedby={info?.part === p.part ? 'part-info' : undefined}
+                  aria-label={partLabel(p)}
+                  onmouseenter={event => showInfo(event, p)} onmouseleave={hideInfo} onfocus={event => showInfo(event, p)} onblur={hideInfo}>
+                  <G char={p.part} />{#if p.live > 0}<small class="use">{p.live}</small>{/if}
+                </button>
+              {/each}
+            </div>
+          </div>
+        {/each}
+      </div>
+    </section>
+
+    <section class="matches pane ui-card" data-padding="sm" aria-label={t('parts.matchesLabel')}>
+      <div class="ui-section-head">
+        <h2 class="ui-label">{chosen.length || layout ? t('common.characters', { count: hits.length }) : t('common.charactersLabel')}</h2>
+        {#if chosen.length || layout}<span class="ui-count">{t('parts.fewestStrokes')}</span>{/if}
+      </div>
+      <div class="results" bind:this={results}>
+        {#if chosen.length || layout}
+          {#if hits.length}
+            <div role="presentation" onkeydown={keys}><Candidates bind:this={grid} {items} bind:active size={64} label={t('parts.matchesLabel')} limit={240} /></div>
+          {:else}
+            <p class="ui-empty">{layout ? t('parts.noMatchLayout') : t('parts.noMatch')}</p>
+          {/if}
+        {:else}
+          <p class="ui-empty">{t('parts.empty')}</p>
+        {/if}
+      </div>
+    </section>
+  </div>
 
   {#if ready && ix.partNames?.rows.length}
     <details class="name-table">
@@ -188,34 +237,6 @@
       </div>
     </details>
   {/if}
-  <section class="palette" aria-label={t('parts.paletteLabel')}>
-    <div class="ui-section-head">
-      <h2 class="ui-label">{among && !everything ? t('parts.stillOccur') : t('parts.allComponents')}</h2>
-      {#if among}
-        <label class="ui-check-row all"><input class="ui-checkbox" type="checkbox" bind:checked={everything} /> <span>{t('parts.showAll')}</span></label>
-      {/if}
-      <span class="filter-wrap">
-        <input class="ui-input ui-mono" data-size="sm" data-primary bind:value={filter} oninput={() => { info = null }} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} spellcheck="false" autocomplete="off" />
-      </span>
-    </div>
-    <div class="strokes">
-      {#each byStroke as [count, parts] (count)}
-        <div class="stroke-group">
-          <h3 class="stroke-count" title={t('draw.strokes', { count })}>{count || '?'}</h3>
-          <div class="ui-tiles comps" style:--ui-tile-size="46px">
-            {#each parts as p (p.part)}
-              <button type="button" class="ui-tile comp" data-dim={p.live === 0 ? '' : undefined} onclick={() => add(p.part)}
-                aria-describedby={info?.part === p.part ? 'part-info' : undefined}
-                aria-label={partLabel(p)}
-                onmouseenter={event => showInfo(event, p)} onmouseleave={hideInfo} onfocus={event => showInfo(event, p)} onblur={hideInfo}>
-                <G char={p.part} />{#if p.live > 0}<small class="use">{p.live}</small>{/if}
-              </button>
-            {/each}
-          </div>
-        </div>
-      {/each}
-    </div>
-  </section>
 
   {#if info}<PartInfo part={info.part} x={info.x} y={info.y} live={info.live} />{/if}
 </div>
@@ -236,7 +257,10 @@
   .filter-wrap{margin-inline-start:auto}
   .filter-wrap .ui-input{inline-size:200px}
   .all{min-block-size:24px;font-size:var(--ui-text-xs);color:var(--ui-color-ink-soft)}
-  .strokes{display:grid;gap:var(--ui-space-sm)}
+  .work{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:var(--ui-space-xl);align-items:stretch}
+  .pane{display:grid;grid-template-rows:auto minmax(0,1fr);gap:var(--ui-space-md);block-size:clamp(280px,calc(100dvh - 500px),680px);min-inline-size:0}
+  .strokes,.results{min-block-size:0;overflow:auto;scrollbar-gutter:stable;padding-inline-end:var(--ui-space-2xs)}
+  .strokes{display:grid;align-content:start;gap:var(--ui-space-sm)}
   .stroke-group{display:grid;grid-template-columns:30px minmax(0,1fr);gap:var(--ui-space-sm);align-items:start}
   .stroke-count{padding-top:var(--ui-space-xs);color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold);text-align:end}
   .comps{gap:3px}
@@ -253,7 +277,12 @@
   .name-table th[scope='row'] :global(.ui-script){font-size:22px;margin-inline-end:4px}
   .name-table td{vertical-align:top}
   .name-table .source{white-space:nowrap;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
+  @media (max-width:1240px){
+    .work{grid-template-columns:minmax(0,1fr)}
+    .pane{block-size:clamp(260px,38dvh,460px)}
+  }
   @media (max-width:900px){
+    .pane{block-size:clamp(260px,33dvh,380px)}
     .filter-wrap{inline-size:100%;margin-inline-start:0}
     .filter-wrap .ui-input{inline-size:100%}
     .layouts .ui-chip span{display:none}

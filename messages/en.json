@@ -146,7 +146,7 @@
   "parts.intro": "Choose the components you can see in the character. Each choice keeps only the characters built with it, and the palette keeps only the parts that still occur.",
   "parts.chosenLabel": "Chosen parts",
   "parts.remove": "Remove this part",
-  "parts.noneChosen": "No parts chosen yet: pick from the palette below.",
+  "parts.noneChosen": "No parts chosen yet: pick from the palette.",
   "parts.reset": "Start over",
   "parts.layout": "Layout",
   "parts.anyLayout": "any",
