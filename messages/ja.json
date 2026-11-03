@@ -379,5 +379,7 @@
   "draw.siblings": "{char}と部品ひとつ違いの字",
   "settings.label": "設定",
   "settings.close": "閉じる",
+  "settings.appearance": "外観",
+  "settings.text": "文字",
   "font.face": "西夏文字の書体"
 }

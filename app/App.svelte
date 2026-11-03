@@ -214,7 +214,7 @@
         {#if settingsOpen}
           <div class="settings-pop ui-popover" role="dialog" aria-label={t('settings.label')} bind:this={settingsPop}>
             <div class="settings-head">
-              <span class="ui-label"><Icon name="settings" size={14}/>{t('settings.label')}</span>
+              <h2 class="ui-label"><Icon name="settings" size={14}/>{t('settings.label')}</h2>
               <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('settings.close')} onclick={() => closeSettings()}><Icon name="close" size={16}/></button>
             </div>
             <SettingsRows />
@@ -308,7 +308,7 @@
     onclose={() => { settingsSheetOpen = false; settingsTrigger?.focus() }}
     onclick={(/** @type {MouseEvent} */ event) => { if (event.target === settingsDialog) closeSettings() }}>
     <div class="sheet-head">
-      <p class="ui-label"><Icon name="settings" size={14}/>{t('settings.label')}</p>
+      <h2 class="ui-label"><Icon name="settings" size={14}/>{t('settings.label')}</h2>
       <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('settings.close')}
         onclick={() => closeSettings()}><Icon name="close" size={16}/></button>
     </div>
@@ -341,7 +341,8 @@
   .settings{position:relative}
   .settings-pop{position:absolute;inset-inline-end:0;inset-block-start:calc(100% + var(--ui-space-sm));z-index:var(--ui-z-menu);inline-size:360px;padding:var(--ui-space-2xs) var(--ui-space-lg) var(--ui-space-sm)}
   .settings-head{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm);padding-block:var(--ui-space-2xs) var(--ui-space-xs);border-bottom:1px solid var(--ui-color-border)}
-  .settings-head .ui-label{display:flex;align-items:center;gap:4px}
+  .settings-head .ui-label,.sheet-head .ui-label{display:flex;align-items:center;gap:4px}
+  .settings-head h2,.sheet-head h2{margin:0}
 
   .body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 400px;align-items:start}
   .body.full{grid-template-columns:minmax(0,1fr)}
