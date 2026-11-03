@@ -57,6 +57,11 @@ export const preview = char => open(char)
 export function choose(char) {
   open(char)
   if (matchMedia('(max-width: 900px)').matches) ui.sheet = true
+  // With ?pick the page is being used as a character picker for another tool: the pick is handed
+  // back rather than only shown.
+  if (new URLSearchParams(location.search).has('pick')) {
+    try { window.parent?.postMessage({ type: 'tangut-pick', char }, '*') } catch { /* a closed window */ }
+  }
 }
 
 /** The pad a page is drawing on, if any: a pick made while it has a drawing carries that drawing.

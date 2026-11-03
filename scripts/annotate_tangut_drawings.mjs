@@ -162,11 +162,10 @@ const html = `<!doctype html>
   .verdicts button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
   .verdicts kbd { font:11px ui-monospace, monospace; opacity:.6; }
   .finder { width:min(920px, calc(100vw - 44px)); margin:0 auto 14px; display:grid; gap:8px; }
-  .methods { display:flex; gap:6px; flex-wrap:wrap; }
-  .methods button { font:inherit; font-size:12.5px; padding:5px 10px; border:1px solid var(--line); border-radius:8px;
-                    background:transparent; color:var(--ink); cursor:pointer; }
-  .methods button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
-  #found { max-height:150px; overflow:auto; }
+  .frame { position:relative; height:min(70vh, 560px); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .frame iframe { width:100%; height:100%; border:0; background:var(--bg); }
+  #site { font:inherit; font-size:13px; padding:6px 11px; border:1px solid var(--line); border-radius:8px;
+          background:transparent; color:var(--ink); cursor:pointer; }
   details { margin:0 auto 16px; width:min(920px, calc(100vw - 44px)); border:1px solid var(--line); border-radius:12px; }
   summary { cursor:pointer; padding:10px 14px; color:var(--muted); font-size:13px; }
   .inside { display:grid; gap:14px; padding:0 14px 16px; }
@@ -194,16 +193,15 @@ const html = `<!doctype html>
   <span class="progress"><i id="bar"></i></span>
 </header>
 <main><div id="stage"></div><div id="picks" hidden></div></main>
-<div class="finder" id="finder">
-  <div class="methods" id="methods">
-    <button data-m="cangjie" aria-pressed="true">Cangjie</button>
-    <button data-m="sijiao">Four-corner</button>
-    <button data-m="reading">Reading</button>
-    <button data-m="meaning">Meaning</button>
-    <button data-m="parts">Components</button>
+<div class="finder" id="finder" hidden>
+  <div class="row" style="justify-content:space-between;align-items:center">
+    <span class="label" style="margin:0">Find the character it should be</span>
+    <button id="site" type="button">Open the site's input method</button>
   </div>
-  <input class="field" id="query" placeholder="Search the block the way the site does" spellcheck="false" autocomplete="off">
-  <div class="tiles" id="found"></div>
+  <div id="siteframe" class="frame" hidden>
+    <iframe id="embed" title="Tangut Input" src="about:blank" referrerpolicy="no-referrer"></iframe>
+  </div>
+</div>
 </div>
 <div class="verdicts" id="verdicts">
   <button data-v="good">Good <kbd>1</kbd></button>
@@ -329,7 +327,8 @@ const html = `<!doctype html>
     }
     paintPicks(drawing, note)
     // The finders are for a drawing whose character is in doubt; otherwise they only take room.
-    document.getElementById('finder').hidden = !(picking || note.verdict === 'wrong' || note.verdict === 'unattested')
+    document.getElementById('finder').hidden = !picking && note.verdict !== 'wrong' && note.verdict !== 'unattested'
+    if (document.getElementById('finder').hidden) document.getElementById('siteframe').hidden = true
     for (const button of document.querySelectorAll('#tags button')) {
       button.setAttribute('aria-pressed', String(note.tags.includes(button.dataset.t)))
     }
@@ -452,74 +451,26 @@ const html = `<!doctype html>
   }
   document.getElementById('clear').onclick = () => { notes = {}; history = []; save(); index = 0; paint() }
 
-  // The site's own finders, over the same files: a drawing whose character is not among the picks
-  // can be chased by its code, its corners, its reading, its meaning or its parts.
-  const state = { method: 'cangjie', entries: null, codes: null, sijiao: null, parts: null }
-  async function loadData() {
-    if (state.entries) return
-    const gz = async path => new Response(await (await fetch(path)).blob().then(blob => blob.stream().pipeThrough(new DecompressionStream('gzip')))).json()
-    const [entries, codes, sijiao] = await Promise.all([
-      gz('/app/data/tangut-entries.json.gz'), gz('/app/data/tangut-cangjie.json.gz'), gz('/app/data/tangut-sijiao.json.gz'),
-    ])
-    state.entries = new Map(entries.rows.map(row => [row[0], row]))
-    state.codes = codes
-    state.sijiao = sijiao
-    const parts = new Map()
-    const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
-    for (const row of entries.rows) {
-      const list = [...(row[1] ?? '')].filter(char => !OPERATORS.has(char) && char !== '(' && char !== ')')
-      for (const part of new Set(list)) parts.set(part, [...(parts.get(part) ?? []), row[0]])
-    }
-    state.parts = parts
+  // The site's own input method, embedded: whatever way the reviewer finds the character there —
+  // code, corners, reading, meaning, parts, the pad — it comes back here as the correction.
+  addEventListener('message', event => {
+    const data = event.data
+    if (!data || data.type !== 'tangut-pick' || typeof data.char !== 'string' || !data.char) return
+    const drawing = current()
+    if (!drawing) return
+    const note = noteOf(drawing.id)
+    note.correct = data.char
+    if (note.verdict === 'good' || note.verdict === 'bad' || !note.verdict) note.verdict = 'wrong'
+    save()
+    document.getElementById('siteframe').hidden = true
+    paint()
+  })
+  document.getElementById('site').onclick = () => {
+    const frame = document.getElementById('siteframe')
+    const embed = document.getElementById('embed')
+    embed.src = 'https://tangut.mkpo.li/?pick=1'
+    frame.hidden = false
   }
-  function fold(text) {
-    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[ɨɪ]/g, 'i').replace(/ə/g, 'e').replace(/ŋ/g, 'ng').toLowerCase().replace(/[^a-z]/g, '')
-  }
-  async function search() {
-    await loadData()
-    const query = document.getElementById('query').value.trim()
-    const box = document.getElementById('found')
-    box.innerHTML = ''
-    if (!query) return
-    /** @type {Set<string>} */
-    const found = new Set()
-    if (state.method === 'cangjie') {
-      const typed = query.toLowerCase().replace(/[^a-z]/g, '')
-      for (const [char, code] of state.codes) if (code.startsWith(typed)) { found.add(char); if (found.size > 120) break }
-    } else if (state.method === 'sijiao') {
-      const digits = query.replace(/[^0-9]/g, '')
-      for (const [char, code] of state.sijiao) if (code.startsWith(digits)) found.add(char)
-    } else if (state.method === 'reading') {
-      const typed = fold(query)
-      for (const [char, row] of state.entries) if ((row[7] ?? []).some(reading => fold(reading || '').startsWith(typed))) found.add(char)
-    } else if (state.method === 'meaning') {
-      const typed = query.toLowerCase()
-      for (const [char, row] of state.entries) {
-        const glosses = [...(row[4] ?? []), ...(row[5] ?? []), ...(row[6] ?? [])].join(' ').toLowerCase()
-        if (glosses.includes(typed)) found.add(char)
-      }
-    } else {
-      for (const char of state.parts.get(query) ?? []) found.add(char)
-    }
-    for (const char of [...found].slice(0, 120)) {
-      const button = document.createElement('button')
-      button.className = 'tile'
-      button.textContent = char
-      button.onclick = () => { noteOf(current().id).correct = char; save(); paint() }
-      box.append(button)
-    }
-  }
-  for (const button of document.querySelectorAll('#methods button')) {
-    button.onclick = async () => {
-      await loadData()
-      state.method = button.dataset.m
-      for (const other of document.querySelectorAll('#methods button')) other.setAttribute('aria-pressed', String(other === button))
-      await search()
-    }
-  }
-  let typing = null
-  document.getElementById('query').oninput = () => { clearTimeout(typing); typing = setTimeout(search, 180) }
 
   addEventListener('keydown', event => {
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return
