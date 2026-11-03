@@ -352,6 +352,7 @@
   .reading{display:flex;align-items:center;gap:var(--ui-space-xs)}
   .reading-label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
   .reading-icon{display:grid;place-items:center;color:var(--ui-color-ink-muted)}
+  @media (max-width:1600px){.reading-label{display:none}}
   .reading :global(.ui-select){inline-size:154px}
   .settings{position:relative}
   .settings-pop{position:absolute;inset-inline-end:0;inset-block-start:calc(100% + var(--ui-space-sm));z-index:var(--ui-z-menu);inline-size:360px;padding:var(--ui-space-2xs) var(--ui-space-lg) var(--ui-space-sm)}
