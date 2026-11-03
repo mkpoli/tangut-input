@@ -6,7 +6,8 @@
    The colours are design readings, sampled from photographs of Tangut-period works, not pigment
    measurements. The light scheme of `indigo` is an analogue: the manuscript itself is dark.
 
-   Set a palette on the root:
+   Set a palette on the root; a nested element may carry one too, which lets a
+   swatch preview another scheme without leaving the current one:
      <html data-palette="mineral">                                     */
 
 /* ---------- Yulin: the mineral wall ---------- */
@@ -15,7 +16,7 @@
    halos and the lion, malachite green in the drapery, cinnabar and ink in the outlines.
    Reference: the west-wall Mañjuśrī photograph on Wikimedia Commons, "Yulin Cave 3 w wall
    Manjusri (Western Xia)". */
-:root[data-palette='mineral'] {
+[data-palette='mineral'] {
   --p-canvas: light-dark(#ece4d3, #151814);
   --p-surface: light-dark(#faf5e9, #1d211c);
   --p-sunken: light-dark(#e3d9c6, #10130f);
@@ -53,7 +54,7 @@
    of the ink.
    Reference: Alexander Zorin, "On a 'Golden' Khara-Khoto Manuscript", Revue d'Etudes Tibétaines
    56 (2020), 161–169. */
-:root[data-palette='indigo'] {
+[data-palette='indigo'] {
   --p-canvas: light-dark(#e8eae4, #0c1513);
   --p-surface: light-dark(#f6f7f1, #121d18);
   --p-sunken: light-dark(#dfe3da, #08100d);
@@ -89,7 +90,7 @@
    and the buff silk of the Moon-Water Bodhisattva painting in the Hermitage, with its earth
    and brick reds. Reference: the Khara-khoto photographs on Wikimedia Commons and the
    "Moon-Water Bodhisattva Kuanyin, detail of entertainers" (State Hermitage Museum). */
-:root[data-palette='sand'] {
+[data-palette='sand'] {
   --p-canvas: light-dark(#efe3cc, #101820);
   --p-surface: light-dark(#fbf3e3, #18222c);
   --p-sunken: light-dark(#e5d6bd, #0c1218);
