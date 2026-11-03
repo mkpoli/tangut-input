@@ -34,7 +34,10 @@ export const GROUPS = /** @type {const} */ ([
     label: 'nav.group.sense',
     tab: 'nav.group.sense.tab',
     icon: 'sense',
-    pages: [{ path: 'meaning', label: 'nav.meaning', icon: 'meaning', hint: 'nav.meaning.hint' }],
+    pages: [
+      { path: 'meaning', label: 'nav.meaning', icon: 'meaning', hint: 'nav.meaning.hint' },
+      { path: 'eras', label: 'nav.eras', icon: 'eras', hint: 'nav.eras.hint' },
+    ],
   },
 ])
 
