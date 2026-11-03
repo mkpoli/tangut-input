@@ -270,12 +270,19 @@ const html = `<!doctype html>
   let history = []
   let picking = false
 
-  /** The drawings still to review; once all are done, the whole set cycles again. */
-  function queue() {
-    const pending = drawings.filter(drawing => !notes[drawing.id]?.verdict)
-    return pending.length ? pending : drawings
+  /**
+   * The drawings still worth a look. One called good is settled and one called bad has left the
+   * dataset; what remains is unjudged, or judged as another character and still without the
+   * correction the reviewer wanted to give it.
+   */
+  function needsWork(drawing) {
+    const note = notes[drawing.id]
+    if (!note?.verdict) return true
+    if (note.verdict === 'good' || note.verdict === 'bad') return false
+    return !note.correct
   }
-  function current() { return queue()[Math.min(index, queue().length - 1)] }
+  function queue() { return drawings.filter(needsWork) }
+  function current() { return queue()[Math.min(index, Math.max(0, queue().length - 1))] }
   function noteOf(id) { return notes[id] ??= { tags: [], note: '', correct: '' } }
   let saving = null
   let saved = 'saved'
@@ -301,14 +308,14 @@ const html = `<!doctype html>
   }
 
   function paint() {
-    const pending = drawings.filter(drawing => !notes[drawing.id]?.verdict).length
+    const pending = queue().length
     const done = drawings.length - pending
     count.textContent = done + ' / ' + drawings.length
     bar.style.width = (done / drawings.length * 100).toFixed(1) + '%'
 
     const drawing = current()
     if (!drawing) {
-      stage.innerHTML = '<div class="done"><h2>All reviewed</h2><p class="count">Export the notes below.</p></div>'
+      stage.innerHTML = '<div class="done"><h2>Nothing left to review</h2><p class="count">Every drawing is either good, out of the dataset, or corrected.</p></div>'
       return
     }
     const note = noteOf(drawing.id)
@@ -316,11 +323,13 @@ const html = `<!doctype html>
       '<div class="target' + (note.correct ? ' corrected' : '') + '" lang="txg">' + (note.correct || drawing.char) + '</div></div>' +
       '<p class="meta">' + drawing.at.replace('T', ' ').slice(0, 16) + ' · ' + drawing.strokes.length + ' strokes · ' +
       drawing.name + '</p></div>'
-    where.textContent = pending + ' left' + (note.verdict ? ' · this one: ' + note.verdict : '')
+    where.textContent = pending + ' to look at' + (note.verdict ? ' · this one: ' + note.verdict : '')
     for (const button of document.querySelectorAll('#verdicts button')) {
       button.setAttribute('aria-pressed', String(note.verdict === button.dataset.v))
     }
     paintPicks(drawing, note)
+    // The finders are for a drawing whose character is in doubt; otherwise they only take room.
+    document.getElementById('finder').hidden = !(picking || note.verdict === 'wrong' || note.verdict === 'unattested')
     for (const button of document.querySelectorAll('#tags button')) {
       button.setAttribute('aria-pressed', String(note.tags.includes(button.dataset.t)))
     }
