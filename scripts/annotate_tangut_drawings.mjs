@@ -1,10 +1,12 @@
-// An annotation board for the drawings made by hand: pick a drawing, say whether it is a fair
-// example, what went wrong when it is not, and the character it should have been. Everything stays
-// in the page until "Export" writes it out, because the drawings never leave this machine.
+// A review board for the drawings made by hand, one at a time: the drawing large beside the
+// character it was made for, a verdict on the number keys, and the next one up as soon as it is
+// given. Everything stays in the page until "Export" writes it out; the drawings never leave the
+// machine.
 //   bun scripts/annotate_tangut_drawings.mjs [out.html]
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { join } from 'node:path'
+import { parseShapes, indexShapes, rasterize, rankShapes } from '../app/lib/shape.js'
 
 const out = process.argv[2] ?? 'docs/handwriting-annotate.html'
 const DATA = new URL('../data/handwriting/', import.meta.url)
@@ -25,8 +27,7 @@ for (const session of readdirSync(DATA).sort()) {
   }
 }
 
-// Characters near the drawn one, by the codes they share: a misdrawn character is usually one a
-// neighbouring code names, and the board offers those to correct a wrong target with.
+// Characters near the drawn one in the Cangjie table, to correct a wrong target with.
 const pairs = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-cangjie.json.gz', import.meta.url))).toString())
 /** @type {Map<string, string[]>} */
 const codesOf = new Map()
@@ -40,213 +41,399 @@ for (const char of new Set(drawings.map(drawing => drawing.char))) {
   for (const [other, codes] of codesOf) {
     if (other === char) continue
     if (codes.some(code => own.some(mine => code.slice(0, 2) === mine.slice(0, 2)))) near.add(other)
-    if (near.size >= 16) break
+    if (near.size >= 12) break
   }
-  suggestions.set(char, [...near].slice(0, 16))
+  suggestions.set(char, [...near].slice(0, 12))
 }
-const payload = JSON.stringify({ drawings, suggestions: Object.fromEntries(suggestions) })
+
+// What the drawing search itself makes of each drawing: the characters it ranked first. Marking one
+// wrong then opens these, so the correction is a pick from the recogniser's own list.
+const faces = ['tangut-shapes.bin.gz', 'tangut-shapes-yinchuan.bin.gz', 'tangut-shapes-genzui.bin.gz', 'tangut-shapes-mojikyo.bin.gz', 'tangut-shapes-std.bin.gz']
+const indexes = faces.map(file => indexShapes(parseShapes(gunzipSync(readFileSync(new URL(`../app/data/${file}`, import.meta.url))))))
+const strokesFile = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-strokes.json.gz', import.meta.url))).toString())
+const strokeCounts = new Map(Object.entries(strokesFile.values))
+/** @type {Map<string, string[]>} */
+const candidates = new Map()
+for (const drawing of drawings) {
+  const strokes = drawing.strokes.map(stroke => stroke.map(([x, y]) => [x * 340, y * 340]))
+  const mask = rasterize(strokes)
+  /** @type {Map<string, number>} */
+  const ranked = new Map()
+  for (const index of indexes) {
+    rankShapes(index, mask, { limit: index.chars.length, strokes: strokes.length, strokeCounts })
+      .forEach((hit, at) => { const known = ranked.get(hit.char); if (known === undefined || at < known) ranked.set(hit.char, at) })
+  }
+  const list = [...ranked.entries()]
+    .filter(([char]) => /[\u{17000}-\u{187FF}]/u.test(char))
+    .sort((a, b) => a[1] - b[1])
+    .map(([char]) => char)
+    .slice(0, 30)
+  candidates.set(drawing.id, list)
+}
+
+// Characters one component away: same parts but one replaced, added or dropped. A reader who means
+// a character but writes a shape with a neighbouring component needs to see that neighbour, and the
+// recogniser is right to rank what was actually drawn.
+const entries = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-entries.json.gz', import.meta.url))).toString())
+const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
+/** @param {string} composition */
+function partsOf(composition) {
+  return [...(composition ?? '')].filter(char => !OPERATORS.has(char) && char !== '(' && char !== ')')
+}
+/** @type {Map<string, Set<string>>} */
+const byDropped = new Map()
+/** @type {Map<string, string[]>} */
+const partsByChar = new Map()
+for (const row of entries.rows) {
+  const parts = partsOf(row[1])
+  if (parts.length < 2) continue
+  partsByChar.set(row[0], parts)
+  for (const part of new Set(parts)) {
+    const key = [...parts]
+    key.splice(key.indexOf(part), 1)
+    const bucket = byDropped.get(key.sort().join('')) ?? new Set()
+    byDropped.set(key.sort().join(''), bucket)
+    bucket.add(row[0])
+  }
+}
+/** @param {string} char */
+function siblingsOf(char) {
+  const parts = partsByChar.get(char)
+  if (!parts) return []
+  /** @type {Set<string>} */
+  const found = new Set()
+  for (const part of new Set(parts)) {
+    const key = [...parts]
+    key.splice(key.indexOf(part), 1)
+    for (const other of byDropped.get(key.sort().join('')) ?? []) if (other !== char) found.add(other)
+  }
+  return [...found].slice(0, 24)
+}
+/** @type {Record<string, string[]>} */
+const siblings = {}
+for (const drawing of drawings) {
+  siblings[drawing.char] ??= siblingsOf(drawing.char)
+  for (const pick of (candidates.get(drawing.id) ?? []).slice(0, 6)) siblings[pick] ??= siblingsOf(pick)
+}
+
+const payload = JSON.stringify({
+  drawings,
+  suggestions: Object.fromEntries(suggestions),
+  candidates: Object.fromEntries(candidates),
+  siblings,
+})
 
 const html = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Annotate the hand drawings — ${drawings.length}</title>
+<title>Review the hand drawings — ${drawings.length}</title>
 <style>
-  :root { color-scheme: light dark; --ink:#2b241d; --bg:#faf6ef; --line:#e4dccd; --muted:#8a7f6d; --accent:#a5382c; --ok:#2f6b46; --warn:#8a6a1f; }
-  @media (prefers-color-scheme: dark) { :root { --ink:#eae3d6; --bg:#1b1815; --line:#3a342c; --muted:#9c907c; --accent:#e07060; --ok:#7fc79b; --warn:#d9b45a; } }
+  @font-face { font-family: "Noto Serif Tangut"; src: url("/app/public/fonts/NotoSerifTangut-Regular.woff2") format("woff2");
+               unicode-range: U+17000-18AFF, U+18D00-18DFF; font-display: swap; }
+  :root { color-scheme: light dark; --ink:#2b241d; --bg:#faf6ef; --line:#e4dccd; --muted:#8a7f6d;
+          --accent:#a5382c; --ok:#2f6b46; --warn:#8a6a1f; }
+  @media (prefers-color-scheme: dark) { :root { --ink:#eae3d6; --bg:#1b1815; --line:#3a342c; --muted:#9c907c;
+          --accent:#e07060; --ok:#7fc79b; --warn:#d9b45a; } }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.5 ui-serif, Georgia, serif; }
-  header { position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:16px; padding:14px 20px;
-           background:color-mix(in srgb, var(--bg) 92%, var(--ink)); border-bottom:1px solid var(--line); }
-  h1 { font-size:18px; margin:0; font-weight:600; }
-  .count { color:var(--muted); font-size:13px; }
-  header .spacer { flex:1; }
-  button { font:inherit; padding:6px 11px; border:1px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); cursor:pointer; }
-  button:hover { border-color:var(--ink); }
-  button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
-  main { display:grid; grid-template-columns: minmax(0,1fr) 340px; gap:20px; padding:20px; align-items:start; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(132px,1fr)); gap:10px; }
-  figure { margin:0; padding:8px; border:2px solid var(--line); border-radius:10px; cursor:pointer; background:color-mix(in srgb,var(--bg) 94%, var(--ink)); }
-  figure[data-verdict="good"] { border-color:var(--ok); }
-  figure[data-verdict="wrong"] { border-color:var(--accent); }
-  figure[data-verdict="bad"] { border-color:var(--warn); }
-  figure[aria-current="true"] { outline:2px solid var(--ink); outline-offset:1px; }
-  figure .pair { display:flex; align-items:center; justify-content:space-between; gap:4px; }
-  figure svg { color:var(--accent); }
-  figure .target { font-family:"Noto Serif Tangut", serif; font-size:32px; line-height:1; }
-  figcaption { margin-top:6px; display:flex; justify-content:space-between; gap:6px; font:11px/1.4 ui-monospace, monospace; color:var(--muted); }
-  aside { position:sticky; top:78px; display:grid; gap:16px; padding:16px; border:1px solid var(--line); border-radius:12px; }
-  aside h2 { font-size:13px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:0; font-weight:600; }
+  body { margin:0; min-height:100dvh; display:flex; flex-direction:column; background:var(--bg); color:var(--ink);
+         font:15px/1.5 ui-serif, Georgia, serif; }
+  header { display:flex; align-items:center; gap:18px; padding:14px 22px; border-bottom:1px solid var(--line); }
+  h1 { font-size:15px; margin:0; font-weight:600; letter-spacing:.01em; }
+  .progress { flex:1; height:4px; background:var(--line); border-radius:2px; overflow:hidden; }
+  .progress i { display:block; height:100%; background:var(--accent); width:0; transition:width .2s ease; }
+  .count { color:var(--muted); font-size:13px; font-variant-numeric:tabular-nums; }
+  main { flex:1; display:grid; place-items:center; padding:24px 22px 6px; }
+  .card { display:flex; align-items:center; gap:44px; }
+  .drawn { color:var(--accent); }
+  .target { font-family:"Noto Serif Tangut", serif; font-size:104px; line-height:1; }
+  .target.corrected { color:var(--ok); }
+  .picks { display:grid; gap:10px; justify-items:center; margin-top:14px; }
+  .picks p { margin:0; color:var(--muted); font-size:13px; }
+  .picks .tiles { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; max-width:900px; }
+  .picks .tile { width:52px; height:52px; font-size:28px; position:relative; }
+  .picks .tile span { position:absolute; top:1px; left:3px; font:9px ui-monospace, monospace; color:var(--muted); }
+  .meta { margin:18px 0 0; text-align:center; color:var(--muted); font:12px ui-monospace, monospace; }
+  .verdicts { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; padding:6px 22px 16px; }
+  .verdicts button { font:inherit; font-size:16px; padding:11px 20px; border:1px solid var(--line); border-radius:10px;
+                     background:transparent; color:var(--ink); cursor:pointer; display:flex; align-items:center; gap:8px; }
+  .verdicts button:hover { border-color:var(--ink); }
+  .verdicts button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  .verdicts kbd { font:11px ui-monospace, monospace; opacity:.6; }
+  .finder { width:min(920px, calc(100vw - 44px)); margin:0 auto 14px; display:grid; gap:8px; }
+  .methods { display:flex; gap:6px; flex-wrap:wrap; }
+  .methods button { font:inherit; font-size:12.5px; padding:5px 10px; border:1px solid var(--line); border-radius:8px;
+                    background:transparent; color:var(--ink); cursor:pointer; }
+  .methods button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  #found { max-height:150px; overflow:auto; }
+  details { margin:0 auto 16px; width:min(920px, calc(100vw - 44px)); border:1px solid var(--line); border-radius:12px; }
+  summary { cursor:pointer; padding:10px 14px; color:var(--muted); font-size:13px; }
+  .inside { display:grid; gap:14px; padding:0 14px 16px; }
   .row { display:flex; flex-wrap:wrap; gap:6px; }
-  .field { width:100%; padding:7px 9px; border:1px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); font:inherit; }
-  textarea.field { min-height:70px; resize:vertical; }
-  .tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(36px,1fr)); gap:6px; }
-  .tile { aspect-ratio:1; display:grid; place-items:center; border:1px solid var(--line); border-radius:8px; font-family:"Noto Serif Tangut", serif; font-size:22px; cursor:pointer; background:transparent; color:var(--ink); }
-  .tile[aria-pressed="true"] { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
-  .empty { color:var(--muted); }
-  kbd { font:11px ui-monospace, monospace; border:1px solid var(--line); border-radius:4px; padding:1px 4px; }
+  .row button { font:inherit; font-size:13px; padding:6px 11px; border:1px solid var(--line); border-radius:8px;
+                background:transparent; color:var(--ink); cursor:pointer; }
+  .row button[aria-pressed="true"] { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+  .field { width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:transparent;
+           color:var(--ink); font:inherit; }
+  textarea.field { min-height:64px; resize:vertical; }
+  .tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(38px,1fr)); gap:6px; }
+  .tile { aspect-ratio:1; display:grid; place-items:center; border:1px solid var(--line); border-radius:8px;
+          font-family:"Noto Serif Tangut", serif; font-size:22px; cursor:pointer; background:transparent; color:var(--ink); }
+  .label { font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); font-weight:600; margin:0 0 6px; }
+  footer { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 22px 16px; color:var(--muted); font-size:12.5px; }
+  .done { text-align:center; display:grid; gap:10px; }
+  .done h2 { font-size:22px; margin:0; font-weight:600; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Annotate the hand drawings</h1>
+  <h1>Review the hand drawings</h1>
   <span class="count" id="count"></span>
-  <span class="spacer"></span>
-  <button id="export">Export JSONL</button>
-  <button id="copy">Copy JSON</button>
-  <button id="clear">Clear all</button>
+  <span class="count" id="status">saved</span>
+  <span class="progress"><i id="bar"></i></span>
 </header>
-<main>
-  <div>
-    <div class="row" id="filter" style="margin-bottom:12px">
-      <button data-f="all" aria-pressed="true">All</button>
-      <button data-f="todo">Unannotated</button>
-      <button data-f="good">Good</button>
-      <button data-f="wrong">Wrong character</button>
-      <button data-f="bad">Bad strokes</button>
-      <button data-f="unclear">Unclear</button>
-    </div>
-    <div class="grid" id="grid"></div>
+<main><div id="stage"></div><div id="picks" hidden></div></main>
+<div class="finder" id="finder">
+  <div class="methods" id="methods">
+    <button data-m="cangjie" aria-pressed="true">Cangjie</button>
+    <button data-m="sijiao">Four-corner</button>
+    <button data-m="reading">Reading</button>
+    <button data-m="meaning">Meaning</button>
+    <button data-m="parts">Components</button>
   </div>
-  <aside>
-    <h2>The drawing</h2>
-    <div id="detail" class="empty">Pick a drawing on the left.</div>
-    <h2>Is it a fair example?</h2>
-    <div class="row" id="verdict">
-      <button data-v="good">Good</button>
-      <button data-v="wrong">Wrong character</button>
-      <button data-v="bad">Bad strokes</button>
-      <button data-v="unclear">Unclear</button>
+  <input class="field" id="query" placeholder="Search the block the way the site does" spellcheck="false" autocomplete="off">
+  <div class="tiles" id="found"></div>
+</div>
+<div class="verdicts" id="verdicts">
+  <button data-v="good">Good <kbd>1</kbd></button>
+  <button data-v="wrong">Wrong character <kbd>2</kbd></button>
+  <button data-v="bad">Bad strokes <kbd>3</kbd></button>
+  <button data-v="unclear">Unclear <kbd>4</kbd></button>
+  <button data-v="unattested">Not a character <kbd>5</kbd></button>
+  <button data-v="skip">Skip <kbd>space</kbd></button>
+</div>
+<details id="more">
+  <summary>Tags, correction and note</summary>
+  <div class="inside">
+    <div>
+      <p class="label">What went wrong</p>
+      <div class="row" id="tags">
+        <button data-t="missing-stroke">Missing stroke</button>
+        <button data-t="extra-stroke">Extra stroke</button>
+        <button data-t="misplaced-part">Part misplaced</button>
+        <button data-t="proportions">Proportions</button>
+        <button data-t="scribble">Scribble</button>
+        <button data-t="one-stroke">One stroke only</button>
+      </div>
     </div>
-    <h2>What went wrong</h2>
-    <div class="row" id="tags">
-      <button data-t="missing-stroke">Missing stroke</button>
-      <button data-t="extra-stroke">Extra stroke</button>
-      <button data-t="misplaced-part">Part misplaced</button>
-      <button data-t="proportions">Proportions</button>
-      <button data-t="scribble">Scribble</button>
-      <button data-t="one-stroke">One stroke only</button>
+    <div>
+      <p class="label">The character it should be</p>
+      <input class="field" id="correct" placeholder="Type or paste a character" spellcheck="false">
+      <div class="tiles" id="suggest" style="margin-top:8px"></div>
     </div>
-    <h2>The character it should be</h2>
-    <input class="field" id="correct" placeholder="Type or paste a character" spellcheck="false">
-    <div class="tiles" id="suggest"></div>
-    <h2>Note</h2>
-    <textarea class="field" id="note" placeholder="What is worth remembering about this one"></textarea>
-    <p class="count">Keys: <kbd>←</kbd> <kbd>→</kbd> move, <kbd>1</kbd>–<kbd>4</kbd> verdict, <kbd>Esc</kbd> clear the selection.</p>
-  </aside>
-</main>
+    <div>
+      <p class="label">Note</p>
+      <textarea class="field" id="note" placeholder="What is worth remembering about this one"></textarea>
+    </div>
+  </div>
+</details>
+<footer>
+  <span id="where"></span>
+  <div class="row">
+    <button id="back">Back ←</button>
+    <button id="export">Export JSONL</button>
+    <button id="clear">Start over</button>
+  </div>
+</footer>
 <script type="application/json" id="data">${payload}</script>
 <script>
   const data = JSON.parse(document.getElementById('data').textContent)
   const drawings = data.drawings
   const suggestions = data.suggestions
   const KEY = 'tangut-input:annotations'
-  /** @type {Record<string, {verdict?: string, tags: string[], note: string, correct: string}>} */
   let notes = {}
   try { notes = JSON.parse(localStorage.getItem(KEY) ?? '{}') } catch { notes = {} }
+  fetch('/api/annotations').then(response => response.ok ? response.json() : null).then(data => {
+    if (!data?.notes) return
+    const stored = Object.keys(notes).length
+    const fromServer = Object.keys(data.notes).length
+    if (fromServer > stored) { notes = data.notes; save(); paint() }
+  }).catch(() => {})
 
-  const grid = document.getElementById('grid')
-  const detail = document.getElementById('detail')
+  const stage = document.getElementById('stage')
   const count = document.getElementById('count')
-  let current = -1
-  let filter = 'all'
+  const bar = document.getElementById('bar')
+  const where = document.getElementById('where')
+  const more = document.getElementById('more')
+  let index = 0
+  let history = []
+  let picking = false
 
-  /** @param {{id: string}} drawing */
-  function kept(drawing) {
-    const note = notes[drawing.id]
-    if (filter === 'all') return true
-    if (filter === 'todo') return !note?.verdict
-    return note?.verdict === filter
+  /** The drawings still to review; once all are done, the whole set cycles again. */
+  function queue() {
+    const pending = drawings.filter(drawing => !notes[drawing.id]?.verdict)
+    return pending.length ? pending : drawings
+  }
+  function current() { return queue()[Math.min(index, queue().length - 1)] }
+  function noteOf(id) { return notes[id] ??= { tags: [], note: '', correct: '' } }
+  let saving = null
+  let saved = 'saved'
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(notes)) } catch {}
+    saved = 'saving'
+    document.getElementById('status').textContent = saved
+    clearTimeout(saving)
+    saving = setTimeout(async () => {
+      try {
+        const response = await fetch('/api/annotations', { method: 'POST', body: JSON.stringify(notes) })
+        saved = response.ok ? 'saved' : 'not saved'
+      } catch { saved = 'not saved' }
+      document.getElementById('status').textContent = saved
+    }, 250)
   }
 
   /** @param {number[][]} strokes */
-  function svgOf(strokes, size = 76) {
-    return '<svg viewBox="0 0 ' + size + ' ' + size + '" width="' + size + '" height="' + size + '">' +
+  function svgOf(strokes, size = 250) {
+    return '<svg viewBox="0 0 ' + size + ' ' + size + '" width="' + size + '" height="' + size + '" class="drawn">' +
       strokes.map(stroke => '<polyline points="' + stroke.map(([x, y]) => (x * size).toFixed(1) + ',' + (y * size).toFixed(1)).join(' ') +
-        '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>').join('') + '</svg>'
+        '" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>').join('') + '</svg>'
   }
-
-  function noteOf(id) { return notes[id] ??= { tags: [], note: '', correct: '' } }
 
   function paint() {
-    grid.innerHTML = ''
-    drawings.forEach((drawing, i) => {
-      if (!kept(drawing)) return
-      const note = notes[drawing.id]
-      const figure = document.createElement('figure')
-      if (note?.verdict) figure.dataset.verdict = note.verdict
-      if (i === current) figure.setAttribute('aria-current', 'true')
-      figure.innerHTML = '<div class="pair">' + svgOf(drawing.strokes) + '<span class="target" lang="txg">' +
-        (note?.correct || drawing.char) + '</span></div><figcaption><span>' + drawing.session.slice(-8) + ' · ' +
-        drawing.strokes.length + ' strokes</span><span>' + drawing.at.slice(11, 16) + '</span></figcaption>'
-      figure.onclick = () => { current = i; paint(); show() }
-      grid.append(figure)
-    })
-    const done = Object.values(notes).filter(note => note.verdict).length
-    const shown = drawings.filter(kept).length
-    count.textContent = shown + ' of ' + drawings.length + ' drawings · ' + done + ' annotated'
-    for (const button of document.querySelectorAll('#filter button')) button.setAttribute('aria-pressed', String(button.dataset.f === filter))
-  }
+    const pending = drawings.filter(drawing => !notes[drawing.id]?.verdict).length
+    const done = drawings.length - pending
+    count.textContent = done + ' / ' + drawings.length
+    bar.style.width = (done / drawings.length * 100).toFixed(1) + '%'
 
-  function show() {
-    const drawing = drawings[current]
-    if (!drawing) { detail.textContent = 'Pick a drawing on the left.'; detail.className = 'empty'; return }
+    const drawing = current()
+    if (!drawing) {
+      stage.innerHTML = '<div class="done"><h2>All reviewed</h2><p class="count">Export the notes below.</p></div>'
+      return
+    }
     const note = noteOf(drawing.id)
-    detail.className = ''
-    detail.innerHTML = '<div class="pair" style="display:flex;align-items:center;gap:12px">' + svgOf(drawing.strokes, 96) +
-      '<span style="font-family:\\'Noto Serif Tangut\\',serif;font-size:46px">' + (note.correct || drawing.char) + '</span></div>' +
-      '<p class="count">' + drawing.id + '<br>' + drawing.at.replace('T', ' ').slice(0, 16) + ' · ' + drawing.strokes.length + ' strokes</p>'
-    for (const button of document.querySelectorAll('#verdict button')) button.setAttribute('aria-pressed', String(note.verdict === button.dataset.v))
-    for (const button of document.querySelectorAll('#tags button')) button.setAttribute('aria-pressed', String(note.tags.includes(button.dataset.t)))
+    stage.innerHTML = '<div><div class="card">' + svgOf(drawing.strokes) +
+      '<div class="target' + (note.correct ? ' corrected' : '') + '" lang="txg">' + (note.correct || drawing.char) + '</div></div>' +
+      '<p class="meta">' + drawing.at.replace('T', ' ').slice(0, 16) + ' · ' + drawing.strokes.length + ' strokes · ' +
+      drawing.name + '</p></div>'
+    where.textContent = pending + ' left' + (note.verdict ? ' · this one: ' + note.verdict : '')
+    for (const button of document.querySelectorAll('#verdicts button')) {
+      button.setAttribute('aria-pressed', String(note.verdict === button.dataset.v))
+    }
+    paintPicks(drawing, note)
+    for (const button of document.querySelectorAll('#tags button')) {
+      button.setAttribute('aria-pressed', String(note.tags.includes(button.dataset.t)))
+    }
     document.getElementById('correct').value = note.correct
     document.getElementById('note').value = note.note
-    suggest(drawing)
-  }
-
-  /** Characters near the drawn one in the Cangjie table, for correcting a wrong target. */
-  function suggest(drawing) {
     const box = document.getElementById('suggest')
     box.innerHTML = ''
-    const note = notes[drawing.id]
-    for (const char of suggestions[note?.correct || drawing.char] ?? []) {
+    for (const char of suggestions[note.correct || drawing.char] ?? []) {
       const button = document.createElement('button')
       button.className = 'tile'
       button.textContent = char
-      button.setAttribute('aria-pressed', String(document.getElementById('correct').value === char))
-      button.onclick = () => { setCorrect(char); show() }
+      button.onclick = () => { note.correct = char; save(); paint() }
       box.append(button)
     }
   }
 
-  function setCorrect(char) { noteOf(drawings[current].id).correct = char; save() }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(notes)) } catch {} }
-
-  for (const button of document.querySelectorAll('#verdict button')) {
-    button.onclick = () => {
-      if (current < 0) return
-      const note = noteOf(drawings[current].id)
-      note.verdict = note.verdict === button.dataset.v ? undefined : button.dataset.v
-      save(); paint(); show()
+  /**
+   * Marking the character wrong asks which one it was, from the recogniser's own ranking: the pick
+   * records both, so a review leaves a corrected target behind.
+   */
+  function paintPicks(drawing, note) {
+    const box = document.getElementById('picks')
+    box.innerHTML = ''
+    box.hidden = !picking
+    if (!picking) return
+    const picks = data.candidates[drawing.id] ?? []
+    const hint = document.createElement('p')
+    hint.textContent = 'What the drawing search ranked for this drawing — pick the character it should be.'
+    const tiles = document.createElement('div')
+    tiles.className = 'tiles'
+    picks.forEach((char, i) => {
+      const button = document.createElement('button')
+      button.className = 'tile'
+      button.title = 'Rank ' + (i + 1)
+      button.innerHTML = '<span>' + (i + 1) + '</span>' + char
+      button.onclick = () => { note.correct = char; choose() }
+      tiles.append(button)
+    })
+    // Beside the ranking, the characters one component away from the first pick: what a reader who
+    // wrote a neighbouring component most likely meant.
+    const first = picks[0]
+    const kin = (data.siblings[first] ?? []).filter(char => !picks.includes(char)).slice(0, 16)
+    if (kin.length) {
+      const kinHint = document.createElement('p')
+      kinHint.textContent = 'One component away from ' + first + ' — often what was meant'
+      const kinTiles = document.createElement('div')
+      kinTiles.className = 'tiles'
+      for (const char of kin) {
+        const button = document.createElement('button')
+        button.className = 'tile'
+        button.textContent = char
+        button.onclick = () => { note.correct = char; choose() }
+        kinTiles.append(button)
+      }
+      box.append(kinHint, kinTiles)
     }
+    const none = document.createElement('button')
+    none.className = 'verdicts'
+    none.style.cssText = 'font:inherit;font-size:13px;padding:6px 11px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer'
+    none.textContent = 'None of these'
+    none.onclick = () => choose()
+    box.append(hint, tiles, none)
   }
+
+  /** Records the wrong character, with whatever correction was picked, and moves on. */
+  function choose() {
+    const drawing = current()
+    noteOf(drawing.id).verdict = 'wrong'
+    save()
+    picking = false
+    index = 0
+    paint()
+  }
+
+  /** @param {string} verdict */
+  function decide(verdict) {
+    const drawing = current()
+    if (!drawing) return
+    if (verdict === 'wrong') { picking = true; paint(); return }
+    history.push(drawing.id)
+    if (verdict !== 'skip') noteOf(drawing.id).verdict = verdict
+    save()
+    picking = false
+    index = 0
+    paint()
+  }
+
+  for (const button of document.querySelectorAll('#verdicts button')) button.onclick = () => decide(button.dataset.v)
   for (const button of document.querySelectorAll('#tags button')) {
     button.onclick = () => {
-      if (current < 0) return
-      const note = noteOf(drawings[current].id)
+      const note = noteOf(current().id)
       const tag = button.dataset.t
       note.tags = note.tags.includes(tag) ? note.tags.filter(other => other !== tag) : [...note.tags, tag]
-      save(); show()
+      save(); paint()
     }
   }
-  document.getElementById('note').oninput = event => { if (current >= 0) { noteOf(drawings[current].id).note = event.target.value; save() } }
-  document.getElementById('correct').oninput = event => { if (current >= 0) { noteOf(drawings[current].id).correct = event.target.value.trim(); save(); paint() } }
-
+  document.getElementById('note').oninput = event => { const note = noteOf(current().id); note.note = event.target.value; save() }
+  document.getElementById('correct').oninput = event => { const note = noteOf(current().id); note.correct = event.target.value.trim(); save(); paint() }
+  document.getElementById('back').onclick = () => {
+    const id = history.pop()
+    if (!id) return
+    if (notes[id]) notes[id].verdict = undefined
+    save()
+    index = Math.max(0, queue().findIndex(drawing => drawing.id === id))
+    paint()
+  }
   document.getElementById('export').onclick = () => {
     const lines = drawings.map(drawing => {
       const note = notes[drawing.id]
       if (!note?.verdict && !note?.correct && !note?.note) return null
-      return JSON.stringify({ id: drawing.id, char: drawing.char, corrected: note.correct || undefined, verdict: note.verdict ?? null, tags: note.tags ?? [], note: note.note || undefined })
+      return JSON.stringify({ id: drawing.id, char: drawing.char, corrected: note.correct || undefined,
+        verdict: note.verdict ?? null, excluded: note.verdict === 'bad' || undefined,
+        tags: note.tags ?? [], note: note.note || undefined })
     }).filter(Boolean)
     const blob = new Blob([lines.join('\\n') + '\\n'], { type: 'application/jsonl' })
     const link = document.createElement('a')
@@ -254,25 +441,83 @@ const html = `<!doctype html>
     link.download = 'tangut-drawings-annotations.jsonl'
     link.click()
   }
-  document.getElementById('copy').onclick = async () => {
-    await navigator.clipboard.writeText(JSON.stringify(notes, null, 2))
+  document.getElementById('clear').onclick = () => { notes = {}; history = []; save(); index = 0; paint() }
+
+  // The site's own finders, over the same files: a drawing whose character is not among the picks
+  // can be chased by its code, its corners, its reading, its meaning or its parts.
+  const state = { method: 'cangjie', entries: null, codes: null, sijiao: null, parts: null }
+  async function loadData() {
+    if (state.entries) return
+    const gz = async path => new Response(await (await fetch(path)).blob().then(blob => blob.stream().pipeThrough(new DecompressionStream('gzip')))).json()
+    const [entries, codes, sijiao] = await Promise.all([
+      gz('/app/data/tangut-entries.json.gz'), gz('/app/data/tangut-cangjie.json.gz'), gz('/app/data/tangut-sijiao.json.gz'),
+    ])
+    state.entries = new Map(entries.rows.map(row => [row[0], row]))
+    state.codes = codes
+    state.sijiao = sijiao
+    const parts = new Map()
+    const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
+    for (const row of entries.rows) {
+      const list = [...(row[1] ?? '')].filter(char => !OPERATORS.has(char) && char !== '(' && char !== ')')
+      for (const part of new Set(list)) parts.set(part, [...(parts.get(part) ?? []), row[0]])
+    }
+    state.parts = parts
   }
-  document.getElementById('clear').onclick = () => { notes = {}; save(); paint(); show() }
-  for (const button of document.querySelectorAll('#filter button')) {
-    button.onclick = () => { filter = button.dataset.f; paint() }
+  function fold(text) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[ɨɪ]/g, 'i').replace(/ə/g, 'e').replace(/ŋ/g, 'ng').toLowerCase().replace(/[^a-z]/g, '')
   }
+  async function search() {
+    await loadData()
+    const query = document.getElementById('query').value.trim()
+    const box = document.getElementById('found')
+    box.innerHTML = ''
+    if (!query) return
+    /** @type {Set<string>} */
+    const found = new Set()
+    if (state.method === 'cangjie') {
+      const typed = query.toLowerCase().replace(/[^a-z]/g, '')
+      for (const [char, code] of state.codes) if (code.startsWith(typed)) { found.add(char); if (found.size > 120) break }
+    } else if (state.method === 'sijiao') {
+      const digits = query.replace(/[^0-9]/g, '')
+      for (const [char, code] of state.sijiao) if (code.startsWith(digits)) found.add(char)
+    } else if (state.method === 'reading') {
+      const typed = fold(query)
+      for (const [char, row] of state.entries) if ((row[7] ?? []).some(reading => fold(reading || '').startsWith(typed))) found.add(char)
+    } else if (state.method === 'meaning') {
+      const typed = query.toLowerCase()
+      for (const [char, row] of state.entries) {
+        const glosses = [...(row[4] ?? []), ...(row[5] ?? []), ...(row[6] ?? [])].join(' ').toLowerCase()
+        if (glosses.includes(typed)) found.add(char)
+      }
+    } else {
+      for (const char of state.parts.get(query) ?? []) found.add(char)
+    }
+    for (const char of [...found].slice(0, 120)) {
+      const button = document.createElement('button')
+      button.className = 'tile'
+      button.textContent = char
+      button.onclick = () => { noteOf(current().id).correct = char; save(); paint() }
+      box.append(button)
+    }
+  }
+  for (const button of document.querySelectorAll('#methods button')) {
+    button.onclick = async () => {
+      await loadData()
+      state.method = button.dataset.m
+      for (const other of document.querySelectorAll('#methods button')) other.setAttribute('aria-pressed', String(other === button))
+      await search()
+    }
+  }
+  let typing = null
+  document.getElementById('query').oninput = () => { clearTimeout(typing); typing = setTimeout(search, 180) }
 
   addEventListener('keydown', event => {
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return
-    if (event.key === 'ArrowRight') { current = Math.min(drawings.length - 1, current + 1); paint(); show() }
-    if (event.key === 'ArrowLeft') { current = Math.max(0, current - 1); paint(); show() }
-    const verdicts = ['good', 'wrong', 'bad', 'unclear']
-    if (['1', '2', '3', '4'].includes(event.key) && current >= 0) {
-      const note = noteOf(drawings[current].id)
-      note.verdict = verdicts[Number(event.key) - 1]
-      save(); paint(); show()
-    }
-    if (event.key === 'Escape') { current = -1; paint(); show() }
+    const verdicts = { '1': 'good', '2': 'wrong', '3': 'bad', '4': 'unclear', '5': 'unattested', ' ': 'skip' }
+    if (verdicts[event.key]) { event.preventDefault(); decide(verdicts[event.key]) }
+    if (event.key === 'ArrowLeft') document.getElementById('back').click()
+    if (event.key === 'Escape') more.open = false
   })
 
   paint()

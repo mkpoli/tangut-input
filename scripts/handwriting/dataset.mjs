@@ -13,6 +13,25 @@ import { gzipSync } from 'node:zlib'
 const ROOT = new URL('../../data/handwriting/', import.meta.url)
 const OUT = new URL('dataset.jsonl.gz', ROOT)
 const MANIFEST = new URL('dataset.json', ROOT)
+const ANNOTATIONS = new URL('annotations.json', ROOT)
+
+/**
+ * The drawings the review threw out: a scribble or a one-stroke mark is no example of a character,
+ * and keeping it in the dataset would teach a model the wrong thing. The verdict is the tag, so a
+ * drawing removed once stays out however often the dataset is rebuilt.
+ * @returns {Set<string>}
+ */
+function excluded() {
+  if (!existsSync(ANNOTATIONS)) return new Set()
+  try {
+    const saved = JSON.parse(readFileSync(ANNOTATIONS, 'utf8'))
+    return new Set(Object.entries(saved.notes ?? {})
+      .filter(([, note]) => note.verdict === 'bad')
+      .map(([id]) => id))
+  } catch {
+    return new Set()
+  }
+}
 
 /** A session folder, oldest first. @returns {string[]} */
 function sessions() {
@@ -45,7 +64,8 @@ function drawings(dir) {
  * @param {{ write?: boolean }} [options]
  */
 export function build({ write = true } = {}) {
-  const counts = { sessions: 0, empty: 0, drawings: 0, withoutTiming: 0 }
+  const counts = { sessions: 0, empty: 0, drawings: 0, excluded: 0, withoutTiming: 0 }
+  const skip = excluded()
   /** @type {Record<string, number>} */
   const kinds = {}
   /** @type {Record<string, number>} */
@@ -62,6 +82,10 @@ export function build({ write = true } = {}) {
     for (const { name, record } of list) {
       if (typeof record.char !== 'string' || !record.char || !Array.isArray(record.strokes) || !record.strokes.length) {
         console.warn(`skipped ${dir}/${name}: no character or no strokes`)
+        continue
+      }
+      if (skip.has(`${dir}/${name}`)) {
+        counts.excluded++
         continue
       }
       const entry = {
@@ -95,6 +119,7 @@ export function build({ write = true } = {}) {
     schema: 1,
     built: new Date().toISOString(),
     drawings: counts.drawings,
+    excluded: counts.excluded,
     sessions: counts.sessions,
     kinds,
     writers,

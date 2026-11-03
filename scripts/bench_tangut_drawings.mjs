@@ -39,6 +39,21 @@ const strokesFile = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tang
 const strokeCounts = new Map(Object.entries(strokesFile.values))
 const indexes = FACES.map(face => ({ face: face.key, index: indexShapes(parseShapes(gunzipSync(readFileSync(new URL(`../app/data/${face.file}`, import.meta.url))))) }))
 
+/**
+ * The drawings the review threw out. A scribble is no example of a character, and leaving one in
+ * the measuring set makes every model look worse than it is.
+ * @returns {Set<string>}
+ */
+function excluded() {
+  const file = new URL('../data/handwriting/annotations.json', import.meta.url)
+  if (!existsSync(file)) return new Set()
+  try {
+    const saved = JSON.parse(readFileSync(file).toString())
+    return new Set(Object.entries(saved.notes ?? {}).filter(([, note]) => note.verdict === 'bad').map(([id]) => id))
+  } catch { return new Set() }
+}
+const skip = excluded()
+
 /** Every drawing on disk, with the character it was made for. */
 const drawings = []
 for (const session of readdirSync(DATA).sort()) {
@@ -48,6 +63,7 @@ for (const session of readdirSync(DATA).sort()) {
   for (const name of readdirSync(dir).filter(name => /^\d{3}-.*\.json$/.test(name)).sort()) {
     const record = JSON.parse(readFileSync(new URL(name, dir)).toString())
     if (!record.char || !record.strokes?.length) continue
+    if (skip.has(`${session}/${name}`)) continue
     drawings.push({ session, name, char: record.char, strokes: record.strokes })
   }
 }
