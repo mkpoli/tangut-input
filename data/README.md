@@ -57,6 +57,14 @@ title and has no `place`. Eras without a row rest on the calendar alone.
 `scripts/build_tangut_eras.py` joins it to the calendar and stops unless a form with a `place`
 is followed there by a year.
 
+## `tangut-titles.tsv`
+
+Imperial titles as the Tangut texts in this repository write them, one row per title and text: the
+holder; `identified`, `stated` by an edition or `dated`, inferred from the date of the passage; the
+Tangut; the Chinese exactly as `chinese_source` prints it, if any; the source's key in
+`app/lib/era-sources.js`; and the `place`. Compiled by hand. `scripts/build_tangut_titles.py` stops
+if a title does not occur in its place.
+
 ## `tangut-frequency.json.gz`
 
 One count per Tangut character: the number of places it occupies in
