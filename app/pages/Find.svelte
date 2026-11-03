@@ -8,7 +8,7 @@
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
-  import { byCode, byName, byMeaning, byCodePoint, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byMeaning, byCodePoint, byDescription, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
 
@@ -21,6 +21,13 @@
     if (!ready || !text) return []
     /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string }[] }[]} */
     const out = []
+    // A description, whole or cut after its opening part, is read against the records' own.
+    const described = byDescription(text)
+    if (described.length) {
+      out.push({ key: 'ids', title: t('find.group.description'), total: described.length,
+        items: described.slice(0, 48).map(char => ({ char, sub: gloss(char) })) })
+      return out
+    }
     const chars = tangutIn(text)
     if (chars.length) {
       out.push({ key: 'text', title: chars.length === 1 ? t('find.group.character') : t('find.group.text'), total: chars.length,

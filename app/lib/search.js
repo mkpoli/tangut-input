@@ -2,6 +2,7 @@
 // Readings live in reading.js and drawings in shape.js.
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { searchShapeNames } from './names.js'
+import { describedBy } from './description.js'
 
 /** @typedef {{ char: string, code: string, near?: boolean }} CodeHit */
 
@@ -212,6 +213,14 @@ export function bySijiao(digits) {
   }
   return hits
 }
+
+/**
+ * Characters whose recorded description begins with the typed or pasted text: the whole description
+ * names its character, a description cut after its opening part names the family that opens so.
+ * @param {string} text
+ * @returns {string[]}
+ */
+export const byDescription = text => describedBy(ix.entries, text)
 
 /** The Tangut characters in a piece of text, each once, in order. @param {string} text */
 export function tangutIn(text) {

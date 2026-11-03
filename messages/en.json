@@ -66,6 +66,7 @@
   "find.group.cangjie": "As a Cangjie code",
   "find.group.reading": "As a reading",
   "find.group.meaning": "By meaning",
+  "find.group.description": "By description",
   "find.door.cangjie": "Type the glyph code letter by letter; candidates are numbered for quick entry. The keyboard is also the key chart, and every component has its own code.",
   "find.door.reading": "Type a reconstruction in any of eight systems. Candidates show which system reads them so.",
   "find.door.draw": "Sketch the character and scan the glyphs closest in shape. The match is rough; expect to look down the list.",

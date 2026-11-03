@@ -62,6 +62,8 @@ stacks it above the name.
   interpretation is a separate group with a link to continue in its own finder, so the ambiguity of
   `do` (code or reading?) is shown instead of guessed.
 - `U+17…` or bare hex lists code points; Chinese and Japanese are read as meanings.
+- A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its opening part it
+  lists the family that opens that way.
 
 With an empty box, the page shows the nine finders as doors with one line each, and examples.
 
