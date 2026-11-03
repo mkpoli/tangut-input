@@ -321,7 +321,7 @@
       <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" disabled={page === 0} onclick={() => { page = Math.max(0, page - 1) }} aria-label={t('chart.prev')}><Icon name="prev" size={16}/></button>
       <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" disabled={page >= pages - 1} onclick={() => { page = Math.min(pages - 1, page + 1) }} aria-label={t('chart.next')}><Icon name="next" size={16}/></button>
     </div>
-    <div class="wrap">
+    <div class="wrap fit">
       <table>
         <thead>
           <tr>
@@ -347,7 +347,7 @@
     </div>
   {:else}
     <div class="wrap">
-      <table>
+      <table class="rhyme">
         <thead>
           <tr>
             <th class="corner" scope="col"><span>{t('chart.rhyme')}</span> / {t('chart.group')}</th>
@@ -396,10 +396,14 @@
   .choose{display:flex;align-items:center;gap:var(--ui-space-xs);margin-inline-start:auto}
   .choose .ui-label{white-space:nowrap}
   .wrap{overflow:auto;max-block-size:calc(100dvh - 250px);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-lg);background:var(--ui-color-surface)}
-  table{inline-size:100%;border-collapse:separate;border-spacing:0;font-size:var(--ui-text-sm)}
+  .wrap.fit{inline-size:fit-content;max-inline-size:100%}
+  table{border-collapse:separate;border-spacing:0;font-size:var(--ui-text-sm)}
+  table.rhyme{inline-size:100%}
   thead th{position:sticky;top:0;z-index:2;padding:var(--ui-space-sm) var(--ui-space-xs);border-bottom:1px solid var(--ui-color-border-strong);background:var(--ui-color-surface);color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold)}
-  /* The rhyme-number rail takes only its text's width, and the nine classes share the rest. */
-  thead th.corner{left:0;z-index:3;inline-size:1%;text-align:start;white-space:nowrap;font-family:var(--ui-font-sans);font-weight:var(--ui-weight-medium)}
+  thead th.corner{left:0;z-index:3;text-align:start;white-space:nowrap;font-family:var(--ui-font-sans);font-weight:var(--ui-weight-medium)}
+  /* In the rhyme chart the first column keeps its text width — a percentage column takes no share of the
+     surplus — and the nine classes divide the rest of the card. */
+  table.rhyme thead th.corner{inline-size:1%}
   thead th.group{text-align:center;inline-size:84px}
   thead th.group .ui-script{display:block;font-size:19px;color:var(--ui-color-ink)}
   thead th.group .tangut{display:block;font-size:13px;white-space:nowrap;color:var(--ui-color-ink)}
