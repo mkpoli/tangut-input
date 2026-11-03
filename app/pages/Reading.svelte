@@ -7,6 +7,7 @@
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { SYSTEMS, TIERS, searchReadings, fold, systemTitle } from '../lib/reading.js'
   import { i18n, t } from '../lib/i18n.svelte.js'
+  import Icon from '../ui/Icon.svelte'
 
   let query = $state(route.q)
   let tone = $state('')
@@ -51,7 +52,7 @@
 
 <div class="ui-page reading">
   <header class="ui-page-head">
-    <h1 class="ui-page-title">{t('nav.reading')}</h1>
+    <h1 class="ui-page-title"><Icon name="reading" size={22}/><span>{t('nav.reading')}</span></h1>
     <p class="ui-page-intro">{@html t('reading.intro')}</p>
   </header>
 
@@ -114,7 +115,7 @@
           </button>
           <button type="button" class="ui-row-action ui-button" data-variant="quiet" data-size="icon-sm"
             aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
-            <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <Icon name="add" size={15}/>
           </button>
         </li>
       {/each}

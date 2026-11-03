@@ -5,6 +5,7 @@
   // code point opens its range; Chinese or Japanese is read as a meaning.
   import { db, ix, gloss, codePoint } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
+  import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { byCode, byName, byMeaning, byCodePoint, tangutIn } from '../lib/search.js'
@@ -70,15 +71,15 @@
   }
 
   const DOORS = /** @type {const} */ ([
-    { page: 'cangjie', title: 'nav.cangjie', body: 'find.door.cangjie', glyph: '𗀀' },
-    { page: 'sijiao', title: 'nav.sijiao', body: 'find.door.sijiao', glyph: '𗩤' },
-    { page: 'draw', title: 'nav.draw', body: 'find.door.draw', glyph: '𗣳' },
-    { page: 'parts', title: 'nav.parts', body: 'find.door.parts', glyph: '𘢰' },
-    { page: 'fanqie', title: 'nav.fanqie', body: 'find.door.fanqie', glyph: '𘓐' },
-    { page: 'chart', title: 'nav.chart', body: 'find.door.chart', glyph: '𘛽' },
-    { page: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '𗁤' },
-    { page: 'transcribe', title: 'nav.transcribe', body: 'find.door.transcribe', glyph: '𗹱' },
-    { page: 'meaning', title: 'nav.meaning', body: 'find.door.meaning', glyph: '𗼇' },
+    { page: 'cangjie', icon: 'cangjie', title: 'nav.cangjie', body: 'find.door.cangjie', glyph: '𗀀' },
+    { page: 'sijiao', icon: 'sijiao', title: 'nav.sijiao', body: 'find.door.sijiao', glyph: '𗩤' },
+    { page: 'draw', icon: 'draw', title: 'nav.draw', body: 'find.door.draw', glyph: '𗣳' },
+    { page: 'parts', icon: 'parts', title: 'nav.parts', body: 'find.door.parts', glyph: '𘢰' },
+    { page: 'fanqie', icon: 'fanqie', title: 'nav.fanqie', body: 'find.door.fanqie', glyph: '𘓐' },
+    { page: 'chart', icon: 'chart', title: 'nav.chart', body: 'find.door.chart', glyph: '𘛽' },
+    { page: 'reading', icon: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '𗁤' },
+    { page: 'transcribe', icon: 'transcribe', title: 'nav.transcribe', body: 'find.door.transcribe', glyph: '𗹱' },
+    { page: 'meaning', icon: 'meaning', title: 'nav.meaning', body: 'find.door.meaning', glyph: '𗼇' },
   ])
 
   /** @type {{ value: string, script?: boolean, lang?: string, mono?: boolean }[]} */
@@ -116,7 +117,7 @@
           <a class="ui-index-link" href={link(door.page)} onclick={event => { if (event.button === 0 && !event.metaKey && !event.ctrlKey) { event.preventDefault(); go(door.page) } }}>
             <span class="ui-index-glyph" aria-hidden="true">{door.glyph}</span>
             <span class="ui-index-text">
-              <span class="ui-index-title">{t(door.title)}</span>
+              <span class="ui-index-title"><Icon name={door.icon} size={16}/>{t(door.title)}</span>
               <span class="ui-index-body">{t(door.body)}</span>
             </span>
             <span class="ui-index-arrow" aria-hidden="true">→</span>
@@ -136,7 +137,7 @@
         <header class="ui-section-head">
           <h2 class="ui-label">{group.title}</h2>
           <span class="ui-count">{group.total > group.items.length ? t('common.of', { shown: group.items.length, total: group.total }) : group.total}</span>
-          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}</a>{/if}
+          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}<Icon name="arrow" size={13}/></a>{/if}
         </header>
         {#if group.key === 'text'}
           <ol class="ui-rows">

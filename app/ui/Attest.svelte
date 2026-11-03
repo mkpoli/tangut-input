@@ -5,6 +5,7 @@
   import { db } from '../lib/db.svelte.js'
   import { choose } from '../lib/ui.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
+  import Icon from './Icon.svelte'
 
   /** @type {{ char: string }} */
   let { char } = $props()
@@ -38,7 +39,7 @@
 </script>
 
 <section class="attest">
-  <h3 class="ui-label">{t('attest.title')}</h3>
+  <h3 class="ui-label"><Icon name="archive" size={15}/>{t('attest.title')}</h3>
   {#if !db.attestation}
     <p class="ui-hint">{t('attest.loading')}</p>
   {:else if !total}
@@ -100,6 +101,7 @@
 
 <style>
   .attest{display:grid;gap:var(--ui-space-md);padding-block:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
+  .attest > .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .group{display:grid;gap:var(--ui-space-xs)}
   .group + .group{padding-top:var(--ui-space-md);border-top:1px solid var(--ui-color-border)}
   .group-head{display:grid;grid-template-columns:minmax(0, 1fr) auto;align-items:baseline;gap:var(--ui-space-sm)}

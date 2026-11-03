@@ -10,6 +10,7 @@
   import { t } from '../lib/i18n.svelte.js'
   import MiniIme from './MiniIme.svelte'
   import SamplePicker from './SamplePicker.svelte'
+  import Icon from './Icon.svelte'
 
   /** @type {HTMLTextAreaElement | null} */
   let field = $state(null)
@@ -102,19 +103,19 @@
     <MiniIme />
     {#if count}<span class="count ui-count">{count}</span>{/if}
     <SamplePicker syncQuery={route.page === 'transcribe'} onpick={() => field?.focus()} />
-    <button class="ui-button" data-size="sm" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}>{t('common.copy')}</button>
+    <button class="ui-button" data-size="sm" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}><Icon name="copy" size={14}/>{t('common.copy')}</button>
     <div class="more" bind:this={more} onfocusout={closeMenu}>
       <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" bind:this={trigger}
         aria-haspopup="menu" aria-expanded={menu} aria-label={t('writing.more')} disabled={!text.value}
         onclick={() => { menu ? close(false) : open() }}>
-        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><g fill="currentColor"><circle cx="4" cy="10" r="1.7"/><circle cx="10" cy="10" r="1.7"/><circle cx="16" cy="10" r="1.7"/></g></svg>
+        <Icon name="more" size={16}/>
       </button>
       {#if menu}
         <div class="ui-menu writing-menu" role="menu" tabindex="-1" bind:this={list} onkeydown={keys}>
-          <button class="ui-menu-item" role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodePoints(text.value), t('writing.codePoints')); close() }}>{t('writing.copyCodePoints')}</button>
-          <button class="ui-menu-item" role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodes(text.value), t('writing.cangjieCodes')); close() }}>{t('writing.copyCangjie')}</button>
+          <button class="ui-menu-item" role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodePoints(text.value), t('writing.codePoints')); close() }}><Icon name="code" size={15}/>{t('writing.copyCodePoints')}</button>
+          <button class="ui-menu-item" role="menuitem" type="button" disabled={!count} onclick={() => { copy(asCodes(text.value), t('writing.cangjieCodes')); close() }}><Icon name="cangjie" size={15}/>{t('writing.copyCangjie')}</button>
           <hr class="ui-menu-separator" />
-          <button class="ui-menu-item" role="menuitem" type="button" disabled={!text.value} onclick={() => { setText(''); close(false); field?.focus() }}>{t('writing.clear')}</button>
+          <button class="ui-menu-item" role="menuitem" type="button" disabled={!text.value} onclick={() => { setText(''); close(false); field?.focus() }}><Icon name="clear" size={15}/>{t('writing.clear')}</button>
         </div>
       {/if}
     </div>
@@ -131,6 +132,7 @@
   .count{margin-inline-end:var(--ui-space-xs)}
   .more{position:relative}
   .writing-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);min-inline-size:220px}
+  .writing-menu .ui-menu-item{align-items:center}
   @media (max-width:900px){
     .writing{gap:var(--ui-space-sm);padding:var(--ui-space-xs) var(--ui-space-lg)}
     .writing-label{display:none}

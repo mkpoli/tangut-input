@@ -12,6 +12,7 @@
   import Writing from './ui/Writing.svelte'
   import SettingsRows from './ui/SettingsRows.svelte'
   import Card from './ui/Card.svelte'
+  import Icon from './ui/Icon.svelte'
   import Find from './pages/Find.svelte'
   import Cangjie from './pages/Cangjie.svelte'
   import Sijiao from './pages/Sijiao.svelte'
@@ -181,12 +182,12 @@
     </a>
     <nav class="finders" aria-label={t('nav.label')}>
       <a href="/" class="primary" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
-        title={t(PRIMARY.hint)} onclick={event => nav(event, '')}>{t(PRIMARY.label)}</a>
+        title={t(PRIMARY.hint)} onclick={event => nav(event, '')}><Icon name={PRIMARY.icon} size={14} stroke={1.6}/><span>{t(PRIMARY.label)}</span></a>
       {#each GROUPS as group (group.label)}
         <div class="group" role="group" aria-label={t(group.label)}>
           {#each group.pages as page (page.path)}
             <a href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
-              title={t(page.hint)} onclick={event => nav(event, page.path)}>{t(page.label)}</a>
+              title={t(page.hint)} onclick={event => nav(event, page.path)}><Icon name={page.icon} size={14} stroke={1.6}/><span>{t(page.label)}</span></a>
           {/each}
         </div>
       {/each}
@@ -194,9 +195,7 @@
     <div class="aside">
       <label class="reading" title={`${t('reading.system')}: ${systemTitle(readingSystem)}`}>
         <span class="reading-label" aria-hidden="true">{t('reading.system')}</span>
-        <span class="reading-icon" aria-hidden="true">
-          <svg viewBox="0 0 20 20" width="16" height="16"><path d="M3 8h3l4-3v10l-4-3H3z" fill="currentColor"/><path d="M13 7a4 4 0 0 1 0 6M15.4 4.6a7 7 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </span>
+        <span class="reading-icon" aria-hidden="true"><Icon name="sound" size={16}/></span>
         <span class="ui-visually-hidden">{t('reading.system')}</span>
         <span class="ui-select-wrap">
           <select class="ui-select" data-size="sm" value={ui.reading}
@@ -210,13 +209,13 @@
           aria-label={t('settings.label')} title={t('settings.label')} aria-haspopup="dialog"
           aria-expanded={settingsOpen || settingsSheetOpen}
           onclick={() => { settingsOpen || settingsSheetOpen ? closeSettings() : openSettings() }}>
-          <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <Icon name="settings" size={17}/>
         </button>
         {#if settingsOpen}
           <div class="settings-pop ui-popover" role="dialog" aria-label={t('settings.label')} bind:this={settingsPop}>
             <div class="settings-head">
-              <span class="ui-label">{t('settings.label')}</span>
-              <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('settings.close')} onclick={() => closeSettings()}>×</button>
+              <span class="ui-label"><Icon name="settings" size={14}/>{t('settings.label')}</span>
+              <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('settings.close')} onclick={() => closeSettings()}><Icon name="close" size={16}/></button>
             </div>
             <SettingsRows />
           </div>
@@ -260,20 +259,20 @@
 
   <nav class="tabs" aria-label={t('nav.label')}>
     <a class="tab" href="/" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
-      onclick={event => nav(event, '')}>{t(PRIMARY.tab)}</a>
+      onclick={event => nav(event, '')}><Icon name={PRIMARY.icon} size={18}/><span>{t(PRIMARY.tab)}</span></a>
     {#each GROUPS as group (group.label)}
       <button class="tab" type="button" class:on={group.pages.some(page => page.path === route.page)}
         aria-current={group.pages.some(page => page.path === route.page) ? 'true' : undefined}
         aria-haspopup="dialog" aria-expanded={groupOpen(group.label)}
         onclick={event => openMenu(event, { kind: 'group', label: group.label })}>
-        {t(group.tab)}
-        <svg class="caret" viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <Icon name={group.icon} size={18}/>
+        <span>{t(group.tab)}<svg class="caret" viewBox="0 0 10 10" width="8" height="8" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </button>
     {/each}
     <button class="tab" type="button" class:on={route.page === 'about'}
       aria-current={route.page === 'about' ? 'true' : undefined}
       aria-haspopup="dialog" aria-expanded={menu?.kind === 'more'}
-      onclick={event => openMenu(event, { kind: 'more' })}>{t('nav.more')}</button>
+      onclick={event => openMenu(event, { kind: 'more' })}><Icon name="more" size={18}/><span>{t('nav.more')}</span></button>
   </nav>
 
   <dialog class="sheet" bind:this={sheet} aria-label={menuTitle}
@@ -282,13 +281,14 @@
     <div class="sheet-head">
       <p class="ui-label">{menuTitle}</p>
       <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('nav.menuClose')}
-        onclick={() => closeMenu()}>×</button>
+        onclick={() => closeMenu()}><Icon name="close" size={16}/></button>
     </div>
     {#if menuGroup}
       <div class="sheet-links">
         {#each menuGroup.pages as page (page.path)}
           <a class="sheet-link" href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
             onclick={event => closeMenu(!nav(event, page.path))}>
+            <Icon name={page.icon} size={18}/>
             <span class="sheet-name">{t(page.label)}</span><span class="ui-hint">{t(page.hint)}</span>
           </a>
         {/each}
@@ -297,6 +297,7 @@
       <div class="sheet-links">
         <a class="sheet-link" href="/about" class:on={route.page === 'about'} aria-current={route.page === 'about' ? 'page' : undefined}
           onclick={event => closeMenu(!nav(event, 'about'))}>
+          <Icon name="sources" size={18}/>
           <span class="sheet-name">{t('nav.sources')}</span><span class="ui-hint">{t('nav.sources.hint')}</span>
         </a>
       </div>
@@ -307,9 +308,9 @@
     onclose={() => { settingsSheetOpen = false; settingsTrigger?.focus() }}
     onclick={(/** @type {MouseEvent} */ event) => { if (event.target === settingsDialog) closeSettings() }}>
     <div class="sheet-head">
-      <p class="ui-label">{t('settings.label')}</p>
+      <p class="ui-label"><Icon name="settings" size={14}/>{t('settings.label')}</p>
       <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('settings.close')}
-        onclick={() => closeSettings()}>×</button>
+        onclick={() => closeSettings()}><Icon name="close" size={16}/></button>
     </div>
     <SettingsRows />
   </dialog>
@@ -325,7 +326,7 @@
   .name{font-family:var(--ui-font-serif);font-size:17px;font-weight:var(--ui-weight-semibold);letter-spacing:.005em;white-space:nowrap}
   .finders{align-self:stretch;display:flex;align-items:stretch;gap:2px;min-inline-size:0;overflow-x:auto;scrollbar-width:none}
   .finders::-webkit-scrollbar{display:none}
-  .finders a{position:relative;display:flex;align-items:center;padding:0 var(--ui-space-sm);color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
+  .finders a{position:relative;display:flex;align-items:center;gap:4px;padding:0 7px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
   .finders a:hover{color:var(--ui-color-ink);background:var(--ui-color-surface-hover)}
   .finders a.on{color:var(--ui-color-ink);font-weight:var(--ui-weight-semibold)}
   .finders a.on::after{content:'';position:absolute;inset-inline:var(--ui-space-sm);bottom:0;block-size:2px;background:var(--ui-color-accent)}
@@ -340,6 +341,7 @@
   .settings{position:relative}
   .settings-pop{position:absolute;inset-inline-end:0;inset-block-start:calc(100% + var(--ui-space-sm));z-index:var(--ui-z-menu);inline-size:360px;padding:var(--ui-space-2xs) var(--ui-space-lg) var(--ui-space-sm)}
   .settings-head{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm);padding-block:var(--ui-space-2xs) var(--ui-space-xs);border-bottom:1px solid var(--ui-color-border)}
+  .settings-head .ui-label{display:flex;align-items:center;gap:4px}
 
   .body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 400px;align-items:start}
   .body.full{grid-template-columns:minmax(0,1fr)}
@@ -356,7 +358,7 @@
   .sheet::backdrop{background:var(--ui-color-overlay)}
   .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--ui-space-sm);padding-inline:var(--ui-space-sm)}
   .sheet-links{display:grid;gap:1px}
-  .sheet-link{display:flex;align-items:baseline;gap:var(--ui-space-md);padding:var(--ui-space-md) var(--ui-space-sm);border-radius:var(--ui-radius-sm);color:var(--ui-color-ink);text-decoration:none}
+  .sheet-link{display:flex;align-items:center;gap:var(--ui-space-md);padding:var(--ui-space-md) var(--ui-space-sm);border-radius:var(--ui-radius-sm);color:var(--ui-color-ink);text-decoration:none}
   .sheet-link:hover,.sheet-link.on{background:var(--ui-color-surface-hover)}
   .sheet-link.on .sheet-name{color:var(--ui-color-accent-ink)}
   .sheet-name{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold);white-space:nowrap}
@@ -370,7 +372,7 @@
   }
   /* A tablet keeps every finder: the bar takes a second row, and its rule runs the width of the
      page like the row above. The sticky chrome below it follows the new height. */
-  @media (min-width:901px) and (max-width:1180px){
+  @media (min-width:901px) and (max-width:1439px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
     .mark,.aside{block-size:55px}
@@ -391,7 +393,8 @@
     .card.open{transform:none;visibility:visible}
     .name{display:none}
     .tabs{position:fixed;inset-inline:0;bottom:0;z-index:var(--ui-z-chrome);display:flex;gap:2px;padding:var(--ui-space-xs) var(--ui-space-sm) calc(var(--ui-space-xs) + env(safe-area-inset-bottom));background:var(--ui-color-surface);border-top:1px solid var(--ui-color-border)}
-    .tabs .tab{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:2px;padding:9px 3px;border:0;border-radius:var(--ui-radius-sm);color:var(--ui-color-ink-soft);background:none;text-decoration:none;font-family:inherit;font-size:var(--ui-text-xs);font-weight:var(--ui-weight-medium);white-space:nowrap;cursor:pointer}
+    .tabs .tab{flex:1 1 0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:7px 3px;border:0;border-radius:var(--ui-radius-sm);color:var(--ui-color-ink-soft);background:none;text-decoration:none;font-family:inherit;font-size:var(--ui-text-xs);font-weight:var(--ui-weight-medium);white-space:nowrap;cursor:pointer}
+    .tabs .tab span{display:inline-flex;align-items:center;gap:1px;line-height:1.15}
     .tabs .tab.on{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
     .caret{flex:none;opacity:.55}
     .toast{bottom:calc(76px + env(safe-area-inset-bottom))}

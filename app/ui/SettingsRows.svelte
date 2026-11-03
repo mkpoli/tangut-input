@@ -4,13 +4,14 @@
   // phone's settings sheet.
   import { i18n, LOCALES, setLocale, t } from '../lib/i18n.svelte.js'
   import { PALETTES, TANGUT_FACES, setPalette, setTangut, setTheme, ui } from '../lib/ui.svelte.js'
+  import Icon from './Icon.svelte'
 
   const face = $derived(TANGUT_FACES.find(entry => entry.key === ui.tangut) ?? TANGUT_FACES[0])
 </script>
 
 <div class="settings-rows">
   <label class="settings-row">
-    <span class="ui-label">{t('theme.label')}</span>
+    <span class="ui-label"><Icon name="sun" size={14}/>{t('theme.label')}</span>
     <span class="ui-select-wrap">
       <select class="ui-select" value={ui.theme}
         onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setTheme(/** @type {'auto' | 'light' | 'dark'} */ (event.currentTarget.value))}>
@@ -22,7 +23,7 @@
   </label>
 
   <label class="settings-row">
-    <span class="ui-label">{t('palette.label')}</span>
+    <span class="ui-label"><Icon name="palette" size={14}/>{t('palette.label')}</span>
     <span class="ui-select-wrap">
       <select class="ui-select" value={ui.palette}
         onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setPalette(/** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (event.currentTarget.value))}>
@@ -32,7 +33,7 @@
   </label>
 
   <label class="settings-row">
-    <span class="ui-label">{t('lang.label')}</span>
+    <span class="ui-label"><Icon name="globe" size={14}/>{t('lang.label')}</span>
     <span class="ui-select-wrap">
       <select class="ui-select" value={i18n.locale}
         onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setLocale(/** @type {any} */ (event.currentTarget.value))}>
@@ -59,6 +60,7 @@
   .settings-rows{display:grid}
   .settings-row{display:grid;grid-template-columns:92px minmax(0,1fr);align-items:center;gap:var(--ui-space-md);padding-block:var(--ui-space-md);border-bottom:1px solid var(--ui-color-border)}
   .settings-row:last-child{border-bottom:0}
+  .settings-row > .ui-label{display:flex;align-items:center;gap:4px}
   .settings-row > :global(.ui-select-wrap){inline-size:100%}
   .face-control{display:flex;align-items:center;gap:var(--ui-space-xs);min-inline-size:0}
   .face-control :global(.ui-select-wrap){flex:1;inline-size:auto}

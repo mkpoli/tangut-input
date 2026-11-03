@@ -7,6 +7,7 @@
   import { t, i18n } from '../lib/i18n.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { hanFanqie, sounds } from '../lib/fanqie.js'
+  import Icon from '../ui/Icon.svelte'
 
   // The chart can be read two ways: by the rhyme books' own classes, or by the characters the
   // spellings are read from — the upper down one axis, the lower down the other — and each of those
@@ -267,7 +268,7 @@
 
 <div class="ui-page chart" data-width="wide">
   <header class="ui-page-head">
-    <h1 class="ui-page-title">{t('nav.chart')}</h1>
+    <h1 class="ui-page-title"><Icon name="chart" size={22}/><span>{t('nav.chart')}</span></h1>
     <p class="ui-page-intro">{t('chart.intro')}</p>
     <div class="ui-toolbar modes" role="group" aria-label={t('chart.axis')}>
       <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'rhyme'} onclick={() => { view.mode = 'rhyme'; page = 0 }}>{t('chart.mode.rhyme')}</button>
@@ -317,8 +318,8 @@
   {:else if String(view.mode) !== 'rhyme'}
     <div class="ui-toolbar">
       <span class="ui-count">{t('chart.page', { page: page + 1, pages })}</span>
-      <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" disabled={page === 0} onclick={() => { page = Math.max(0, page - 1) }} aria-label={t('chart.prev')}>‹</button>
-      <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" disabled={page >= pages - 1} onclick={() => { page = Math.min(pages - 1, page + 1) }} aria-label={t('chart.next')}>›</button>
+      <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" disabled={page === 0} onclick={() => { page = Math.max(0, page - 1) }} aria-label={t('chart.prev')}><Icon name="prev" size={16}/></button>
+      <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" disabled={page >= pages - 1} onclick={() => { page = Math.min(pages - 1, page + 1) }} aria-label={t('chart.next')}><Icon name="next" size={16}/></button>
     </div>
     <div class="wrap">
       <table>

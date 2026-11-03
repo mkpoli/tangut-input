@@ -5,33 +5,36 @@
 // One box takes anything and stands before the bar; the finders behind it are grouped by what the
 // reader already has: a shape, a sound, a meaning. A group's `tab` is its short name in the phone's
 // bottom bar, where the long label would not fit.
-export const PRIMARY = { path: '', label: 'nav.find', tab: 'nav.find.tab', hint: 'nav.find.hint' }
+export const PRIMARY = /** @type {const} */ ({ path: '', label: 'nav.find', tab: 'nav.find.tab', icon: 'find', hint: 'nav.find.hint' })
 
 export const GROUPS = /** @type {const} */ ([
   {
     label: 'nav.group.shape',
     tab: 'nav.group.shape.tab',
+    icon: 'shape',
     pages: [
-      { path: 'cangjie', label: 'nav.cangjie', hint: 'nav.cangjie.hint' },
-      { path: 'sijiao', label: 'nav.sijiao', hint: 'nav.sijiao.hint' },
-      { path: 'draw', label: 'nav.draw', hint: 'nav.draw.hint' },
-      { path: 'parts', label: 'nav.parts', hint: 'nav.parts.hint' },
+      { path: 'cangjie', label: 'nav.cangjie', icon: 'cangjie', hint: 'nav.cangjie.hint' },
+      { path: 'sijiao', label: 'nav.sijiao', icon: 'sijiao', hint: 'nav.sijiao.hint' },
+      { path: 'draw', label: 'nav.draw', icon: 'draw', hint: 'nav.draw.hint' },
+      { path: 'parts', label: 'nav.parts', icon: 'parts', hint: 'nav.parts.hint' },
     ],
   },
   {
     label: 'nav.group.sound',
     tab: 'nav.group.sound.tab',
+    icon: 'sound',
     pages: [
-      { path: 'fanqie', label: 'nav.fanqie', hint: 'nav.fanqie.hint' },
-      { path: 'chart', label: 'nav.chart', hint: 'nav.chart.hint' },
-      { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },
-      { path: 'transcribe', label: 'nav.transcribe', hint: 'nav.transcribe.hint' },
+      { path: 'fanqie', label: 'nav.fanqie', icon: 'fanqie', hint: 'nav.fanqie.hint' },
+      { path: 'chart', label: 'nav.chart', icon: 'chart', hint: 'nav.chart.hint' },
+      { path: 'reading', label: 'nav.reading', icon: 'reading', hint: 'nav.reading.hint' },
+      { path: 'transcribe', label: 'nav.transcribe', icon: 'transcribe', hint: 'nav.transcribe.hint' },
     ],
   },
   {
     label: 'nav.group.sense',
     tab: 'nav.group.sense.tab',
-    pages: [{ path: 'meaning', label: 'nav.meaning', hint: 'nav.meaning.hint' }],
+    icon: 'sense',
+    pages: [{ path: 'meaning', label: 'nav.meaning', icon: 'meaning', hint: 'nav.meaning.hint' }],
   },
 ])
 

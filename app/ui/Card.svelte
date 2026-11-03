@@ -4,6 +4,7 @@
   // where it stands in a text), then the characters near it.
   import { db, ix, codePoint, gloss, isComponent } from '../lib/db.svelte.js'
   import G from './G.svelte'
+  import Icon from './Icon.svelte'
   import { route, link } from '../lib/route.svelte.js'
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
@@ -101,7 +102,7 @@
 {#if ui.sheet}
   <div class="sheetbar">
     <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => { ui.sheet = false }}>
-      <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <Icon name="back" size={15}/>
       {t('card.back')}
     </button>
   </div>
@@ -128,19 +129,19 @@
 
     <div class="use">
       <button class="ui-button" data-variant="primary" data-size="sm" type="button" onclick={() => put(char)}>
-        <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <Icon name="add" size={14}/>
         {t('card.add')}
       </button>
-      <button class="ui-button" data-size="sm" type="button" onclick={() => copy(char)}>{t('common.copy')} <span class="ui-script copy-glyph">{char}</span></button>
-      <button class="ui-button" data-size="sm" type="button" onclick={() => copy(address, t('card.link'))}>{t('card.copyLink')}</button>
+      <button class="ui-button" data-size="sm" type="button" onclick={() => copy(char)}><Icon name="copy" size={14}/>{t('common.copy')} <span class="ui-script copy-glyph">{char}</span></button>
+      <button class="ui-button" data-size="sm" type="button" onclick={() => copy(address, t('card.link'))}><Icon name="link" size={14}/>{t('card.copyLink')}</button>
     </div>
 
     <section class="faces-section">
       <div class="faces-head">
-        <h3 class="ui-label">{t('card.renderings')}</h3>
+        <h3 class="ui-label"><Icon name="layers" size={15}/>{t('card.renderings')}</h3>
         {#if facesShown.length < FACES.length - 1}
           <button class="ui-button" data-variant="quiet" data-size="sm" type="button" disabled={facesLoading} onclick={showFaces}>
-            {facesLoading ? t('card.loadingFaces') : t('card.showFaces')}
+            {#if !facesLoading}<Icon name="layers" size={13}/>{/if}{facesLoading ? t('card.loadingFaces') : t('card.showFaces')}
           </button>
         {/if}
       </div>
@@ -158,21 +159,21 @@
 
     {#if codes.length}
       <section>
-        <h3 class="ui-label">{t('nav.cangjie')}</h3>
+        <h3 class="ui-label"><Icon name="cangjie" size={15}/>{t('nav.cangjie')}</h3>
         <div class="codes">
           {#each codes as code, i (code)}
             <button class="code" type="button" title={t('card.copyCode')} onclick={() => copy(code, code)}>
               <span class="ui-mono">{code}</span><small>{codes.length > 1 ? (i === 0 ? t('card.short') : i === codes.length - 1 ? t('card.full') : '') : ''}</small>
             </button>
           {/each}
-          <a class="type" href={link('cangjie', char, codes[0])}>{t('card.typeIt')}</a>
+          <a class="type" href={link('cangjie', char, codes[0])}><Icon name="keyboard" size={13}/>{t('card.typeIt')}</a>
         </div>
       </section>
     {/if}
 
     {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length}
       <section>
-        <h3 class="ui-label">{t('card.meaning')}</h3>
+        <h3 class="ui-label"><Icon name="meaning" size={15}/>{t('card.meaning')}</h3>
         {#if wordClass.length}
           <p class="pos" title={t('card.posSource')}>
             {#each wordClass as key (key)}<span class="ui-tag pos-tag">{t(`pos.${key}`)}</span>{/each}
@@ -188,7 +189,7 @@
 
     {#if readings.length}
       <section>
-        <h3 class="ui-label">{t('card.readings')}</h3>
+        <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
           <tbody>
             {#each readings as reading (reading.key)}
@@ -210,20 +211,20 @@
 
     {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
       <section>
-        <h3 class="ui-label">{t('card.wenhai')}</h3>
+        <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
         {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
         {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
       </section>
     {/if}
 
     <section>
-      <h3 class="ui-label">{t('card.builtFrom')}</h3>
+      <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.builtFrom')}</h3>
       {#if entry?.composition}
         <Ids composition={entry.composition} />
         <p class="ids">
           <span class="ui-formula" title={entry.composition}>{entry.composition}</span>
-          <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}>{t('common.copy')}</button>
-          {#if parts.length}<a class="ids-link" href={link('parts', char, parts.join(''))}>{t('card.withTheseParts')}</a>{/if}
+          <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
+          {#if parts.length}<a class="ids-link" href={link('parts', char, parts.join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
         </p>
       {:else if isComponent(char)}
         <p class="ui-hint">{t('card.isComponent')}</p>
@@ -236,17 +237,17 @@
 
     {#if users.length}
       <section>
-        <h3 class="ui-label">{t('card.usedIn', { count: users.length })}</h3>
+        <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.usedIn', { count: users.length })}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each users.slice(0, 48) as other (other)}<button class="ui-tile" type="button" data-note="none" title={gloss(other)} onclick={() => choose(other)}><G char={other} /></button>{/each}
         </div>
-        {#if users.length > 48}<p class="more"><a href={link('parts', char, char)}>{t('card.allInParts', { count: users.length })}</a></p>{/if}
+        {#if users.length > 48}<p class="more"><a href={link('parts', char, char)}><Icon name="arrow" size={13}/>{t('card.allInParts', { count: users.length })}</a></p>{/if}
       </section>
     {/if}
 
     {#if same.length}
       <section>
-        <h3 class="ui-label">{t('card.sameDescription')}</h3>
+        <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.sameDescription')}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each same as other (other)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
@@ -260,7 +261,7 @@
 
     {#if spells.length}
       <section>
-        <h3 class="ui-label">{t('card.fanqieFor', { count: spells.length })}</h3>
+        <h3 class="ui-label"><Icon name="fanqie" size={15}/>{t('card.fanqieFor', { count: spells.length })}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each spells.slice(0, 48) as other (other)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
@@ -274,7 +275,7 @@
 
     {#if homophones.length}
       <section>
-        <h3 class="ui-label">{t('card.sameReading')}</h3>
+        <h3 class="ui-label"><Icon name="sound" size={15}/>{t('card.sameReading')}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each homophones.slice(0, 48) as other (other)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
@@ -318,6 +319,8 @@
   .inline:hover{background:var(--ui-color-surface-hover)}
   .use{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);padding-bottom:var(--ui-space-xl)}
   .faces-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--ui-space-sm)}
+  .record section > .ui-label,.faces-head .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
+  .more a{display:inline-flex;align-items:center;gap:3px}
   .faces{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:var(--ui-space-2xs)}
   .face{display:grid;place-items:center;gap:2px;margin:0;padding:var(--ui-space-xs) 2px var(--ui-space-2xs);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-sm);background:var(--ui-color-surface-sunken);min-inline-size:0}
   .face-glyph{font-size:32px;line-height:1.15}
@@ -329,7 +332,7 @@
   .code:hover{border-color:var(--ui-color-ink-muted)}
   .code small{font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   .code small:empty{display:none}
-  .type{display:inline-flex;align-items:center;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
+  .type{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
   .means{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-sm);margin:0}
   .means dt{color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);font-weight:var(--ui-weight-semibold);line-height:1.9;text-transform:uppercase}
   .means dd{margin:0;font-size:var(--ui-text-md);line-height:var(--ui-leading-normal)}
@@ -344,7 +347,7 @@
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm)}
   .ids .ui-formula{font-size:20px}
-  .ids-link{display:inline-flex;align-items:center;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}
+  .ids-link{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}
   .rel{gap:3px}
   .rel .ui-tile-note{font-size:var(--ui-text-2xs)}
   .rel :global(.ui-script){font-size:26px}
