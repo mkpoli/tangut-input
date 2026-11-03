@@ -99,3 +99,16 @@ test('every place points at the character it attests', () => {
     }
   }
 })
+
+const samples = JSON.parse(readFileSync(new URL('../app/data/tangut-samples.json', import.meta.url)).toString())
+
+test('the sample passages are exact lines from the attestation', () => {
+  expect(samples.samples.length).toBe(8)
+  expect(samples.samples.filter(sample => sample.famous).length).toBe(5)
+  const sourceIds = new Set(attestation.sources.map(source => source.id))
+  for (const sample of samples.samples) {
+    expect(sourceIds.has(sample.sourceId)).toBe(true)
+    expect(sample.licence).toBe(attestation.sources.find(source => source.id === sample.sourceId)?.licence)
+    expect(sample.text).toBe(sample.lineIds.map(line => attestation.lines[line].text).join('\n'))
+  }
+})

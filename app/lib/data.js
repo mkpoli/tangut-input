@@ -16,6 +16,9 @@
 /** @typedef {[line: string, position: number]} Place */
 /** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sources: number, sha256: string },
  *   sources: AttestationSource[], lines: Record<string, AttestedLine>, rows: Record<string, Record<string, Place[]>> }} Attestation */
+/** @typedef {{ id: string, sourceId: string, sourceTitle: string, sourceUrl: string, licence: string, label: string,
+ *   famous: boolean, lineIds: string[], text: string }} Sample */
+/** @typedef {{ built: string, samples: Sample[] }} Samples */
 
 /**
  * Fetch a gzipped file. The dev server may hand it over already decoded, so the magic bytes decide
@@ -97,6 +100,9 @@ export const loadStrokes = () => once('strokes', async () => (await readJson(new
 
 /** The lines of the recorded corpus and where each character stands in them. @returns {Promise<Attestation>} */
 export const loadAttestation = () => once('attestation', () => readJson(new URL('../data/tangut-attestation.json.gz', import.meta.url)))
+
+/** Sample passages copied from the corpus. @returns {Promise<Samples>} */
+export const loadSamples = () => once('samples', () => readJson(new URL('../data/tangut-samples.json', import.meta.url)))
 
 /** The faces a drawing is compared with, best first: the shapes tabulated for each face. */
 export const SHAPE_FACES = /** @type {const} */ ([

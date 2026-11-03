@@ -211,6 +211,9 @@ the Tangut block, and anything that is not a pick or a drawing.
   revision in `data/wikisource/pages.json`. There is no facsimile or translation for those pages, so
   a place shows the passage around the character and links to the page. The edition is CC BY 4.0
   and the Wikisource text CC BY-SA 4.0; each source prints its own credit.
+- **Sample passages in the text strip and Transcribe.** Eight passages copied from the attestation,
+  five marked famous, sit in `app/data/tangut-samples.json`. Picking one replaces the text; on
+  Transcribe it also becomes the address's line. The list is a reading aid, not a frequency sample.
 - **Unused or unattributed data left out.** `app/data/tangut-parts.json.gz` (a list of characters
   with use counts) is deleted: the counts are recomputed from the descriptions at load.
   `data2/tangut-corpus.json.gz` (21 Tangut texts) would give frequencies for ranking, but nothing in
@@ -227,8 +230,9 @@ the Tangut block, and anything that is not a pick or a drawing.
 **Real, against the data:** all five finders; Cangjie prefix search over 11,805 codes with
 next-letter counts; reading search over 29,525 readings in eight systems; drawing search over
 6,913 glyphs; part search over 6,136 descriptions; the card with every field the records carry;
-attestation of 967 characters in 321 passages from six texts, with 280 facsimile crops; the text buffer with three
-copy formats; shareable URLs; light and dark; phone layout.
+attestation of 967 characters in 321 passages from six texts, with 280 facsimile crops; a picker
+of eight corpus passages, five marked famous, in the text strip and on Transcribe; the text buffer
+with three copy formats; shareable URLs; light and dark; phone layout.
 
 **Rough by nature:** drawing search (figures above); the reading folds are a convenience mapping,
 and the *near* tier is a heuristic.

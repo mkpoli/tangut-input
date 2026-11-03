@@ -5,9 +5,11 @@
   import { text, attach, detach, setText, remember, asCodePoints, asCodes } from '../lib/text.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { isTangut } from '../lib/db.svelte.js'
+  import { route } from '../lib/route.svelte.js'
   import { preview } from '../lib/ui.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import MiniIme from './MiniIme.svelte'
+  import SamplePicker from './SamplePicker.svelte'
 
   /** @type {HTMLTextAreaElement | null} */
   let field = $state(null)
@@ -99,6 +101,7 @@
   <div class="actions">
     <MiniIme />
     {#if count}<span class="count ui-count">{count}</span>{/if}
+    <SamplePicker syncQuery={route.page === 'transcribe'} onpick={() => field?.focus()} />
     <button class="ui-button" data-size="sm" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}>{t('common.copy')}</button>
     <div class="more" bind:this={more} onfocusout={closeMenu}>
       <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" bind:this={trigger}

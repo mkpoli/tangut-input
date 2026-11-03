@@ -12,6 +12,7 @@
   import { t, i18n } from '../lib/i18n.svelte.js'
   import G from '../ui/G.svelte'
   import MiniIme from '../ui/MiniIme.svelte'
+  import SamplePicker from '../ui/SamplePicker.svelte'
 
   /** @type {HTMLTextAreaElement | null} */
   let box = $state(null)
@@ -79,6 +80,7 @@
 
   <div class="ui-toolbar">
     <MiniIme align="start" />
+    <SamplePicker align="start" syncQuery onpick={() => box?.focus()} />
     <label class="choose">
       <span class="ui-label">{t('reading.system')}</span>
       <span class="ui-select-wrap">
