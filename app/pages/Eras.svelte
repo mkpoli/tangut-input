@@ -17,19 +17,22 @@
   const number = key => ERA_SOURCE_ORDER.indexOf(/** @type {keyof typeof ERA_SOURCES} */ (key)) + 1
 
   /**
-   * What an era's form rests on and the forms to show. A disputed reading outweighs a clear one, so
-   * an era is never tagged more surely than its weakest backed form; the build keeps every backed
-   * form among the calendar's.
+   * What an era's form rests on: one tag for each kind of evidence, with its sources, or the
+   * calendar alone. The build keeps every backed form among the calendar's, so those are the forms.
    * @param {Era} era
    */
   function basis(era) {
-    const attested = era.evidence.filter(e => e.tangut)
-    const kind = ['disputed', 'coin', 'text'].find(k => attested.some(e => e.kind === k))
-      ?? (era.calendar.length ? 'calendar' : 'none')
-    const forms = era.calendar
-    const sources = [...new Set(kind === 'calendar' ? ['calendar'] : attested.map(e => e.source))]
-    const doubt = era.evidence.find(e => e.kind === 'unknown')
-    return { kind, forms, sources, doubt }
+    const tags = ['coin', 'text', 'disputed'].flatMap(kind => {
+      const rows = era.evidence.filter(e => e.kind === kind)
+      return rows.length ? [{ kind, sources: [...new Set(rows.map(e => e.source))] }] : []
+    })
+    if (!tags.length) tags.push(era.calendar.length ? { kind: 'calendar', sources: ['calendar'] } : { kind: 'none', sources: [] })
+    return {
+      tags,
+      forms: era.calendar,
+      doubt: era.evidence.find(e => e.kind === 'unknown'),
+      gloss: era.evidence.find(e => e.kind === 'gloss'),
+    }
   }
 
   /** @param {Era} era */
@@ -39,10 +42,14 @@
   const counts = {
     total: rows.length,
     forms: rows.filter(row => row.forms.length).length,
-    clear: rows.filter(row => row.kind === 'coin' || row.kind === 'text').length,
-    disputed: rows.filter(row => row.kind === 'disputed').length,
+    clear: rows.filter(row => row.tags.some(tag => tag.kind === 'coin' || tag.kind === 'text')).length,
+    disputed: rows.filter(row => row.tags.some(tag => tag.kind === 'disputed')).length,
   }
 </script>
+
+{#snippet cites(/** @type {string[]} */ sources)}
+  {#if sources.length}<sup class="cite">{#each sources as key, i (key)}{#if i},{/if}<a href={`#era-source-${number(key)}`} aria-label={t('eras.cite', { n: number(key) })}>{number(key)}</a>{/each}</sup>{/if}
+{/snippet}
 
 <article class="ui-page eras">
   <header class="ui-page-head">
@@ -61,7 +68,7 @@
       <thead><tr><th scope="col">{t('eras.era')}</th><th scope="col">{t('eras.years')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
       <tbody>
         {#each rows as row (row.era.from)}
-          <tr data-kind={row.kind}>
+          <tr data-kind={row.tags[0].kind}>
             <th scope="row" lang="zh-Hant">{row.era.era}</th>
             <td class="years">{years(row.era)}</td>
             <td class="forms" data-empty={!row.forms.length || undefined}>
@@ -72,8 +79,11 @@
               {:else}<span class="ui-hint">—</span>{/each}
             </td>
             <td class="basis">
-              <span class="tag" data-kind={row.kind}>{t(`eras.kind.${row.kind}`)}</span>{#if row.sources.length}<sup class="cite">{#each row.sources as key, i (key)}{#if i},{/if}<a href={`#era-source-${number(key)}`} aria-label={t('eras.cite', { n: number(key) })}>{number(key)}</a>{/each}</sup>{/if}
-              {#if row.doubt}<p class="doubt">{t('eras.doubt')}<sup class="cite"><a href={`#era-source-${number(row.doubt.source)}`} aria-label={t('eras.cite', { n: number(row.doubt.source) })}>{number(row.doubt.source)}</a></sup></p>{/if}
+              {#each row.tags as tag (tag.kind)}
+                <span class="tagged"><span class="tag" data-kind={tag.kind}>{t(`eras.kind.${tag.kind}`)}</span>{@render cites(tag.sources)}</span>
+              {/each}
+              {#if row.gloss}<p class="doubt">{t('eras.gloss')}{@render cites([row.gloss.source])}</p>{/if}
+              {#if row.doubt}<p class="doubt">{t('eras.doubt')}{@render cites([row.doubt.source])}</p>{/if}
             </td>
           </tr>
         {/each}
@@ -86,7 +96,7 @@
     <ol class="source-list">
       {#each ERA_SOURCE_ORDER as key, i (key)}
         {@const source = ERA_SOURCES[key]}
-        <li id={`era-source-${i + 1}`}>{source.author}. {#if source.url}<a href={source.url}><i>{source.title}</i></a>{:else}<i>{source.title}</i>{/if}. {source.where}.{#if source.note}{' '}{source.note}{/if}</li>
+        <li id={`era-source-${i + 1}`}>{source.author}. {#if source.url}<a href={source.url}>{source.title}</a>{:else}{source.title}{/if}. {source.where}.{#if source.note}{' '}{source.note}{/if}</li>
       {/each}
     </ol>
   </section>
@@ -105,6 +115,7 @@
   .char{padding:0 1px;border:0;border-radius:var(--ui-radius-sm);background:none;color:inherit;font:inherit;cursor:pointer}
   .char :global(.ui-script){font-size:26px;line-height:1.2}
   .char:hover,.char[aria-current='true']{background:var(--ui-color-accent-soft)}
+  .tagged{display:inline-block;margin-inline-end:var(--ui-space-xs)}
   .tag{display:inline-block;padding:1px 7px;border:1px solid var(--ui-color-border);border-radius:999px;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs);white-space:nowrap}
   .tag[data-kind='coin'],.tag[data-kind='text']{border-color:var(--ui-color-accent);color:var(--ui-color-accent)}
   .tag[data-kind='none']{border-style:dashed;color:var(--ui-color-ink-muted)}

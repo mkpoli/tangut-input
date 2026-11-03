@@ -446,5 +446,6 @@
   "eras.kind.none": "記録なし",
   "eras.kind.none.hint": "ここで用いた資料には西夏文の表記がないもの。",
   "eras.form": "{era}の西夏文表記{n}",
-  "eras.cite": "出典{n}"
+  "eras.cite": "出典{n}",
+  "eras.gloss": "西夏文『貞観政要』は唐の元号「貞観」をこの二字で書いています。"
 }

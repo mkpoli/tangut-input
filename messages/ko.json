@@ -446,5 +446,6 @@
   "eras.kind.none": "기록 없음",
   "eras.kind.none.hint": "여기서 쓴 자료에는 서하 문자 표기가 없습니다.",
   "eras.form": "{era}의 서하 문자 표기 {n}",
-  "eras.cite": "출처 {n}"
+  "eras.cite": "출처 {n}",
+  "eras.gloss": "서하어 《정관정요》는 당나라 연호 ‘정관’을 이 두 글자로 적습니다."
 }
