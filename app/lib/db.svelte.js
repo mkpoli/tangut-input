@@ -2,10 +2,11 @@
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadFanqieAliases, loadTibetan, loadTangutNames, loadPartNames } from './data.js'
 import { indexReadings } from './reading.js'
+import { OPERATORS } from './composition.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
 
-export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
+export { OPERATORS }
 
 /** @param {string} char */
 export const isTangut = char => /^[\u{17000}-\u{18AFF}\u{18D00}-\u{18D7F}\u{18D80}-\u{18DFF}]$/u.test(char)
