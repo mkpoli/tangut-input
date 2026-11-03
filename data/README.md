@@ -1089,3 +1089,16 @@ missing records can fall through to other sources.
 ## `seal-extra-parts.json`
 
 Keys from the bundled Small Seal outlines absent from its curated palette. Regenerate with `node scripts/build_seal_extra_parts.mjs` when the source data changes.
+
+## `zhangzhongzhu/`
+
+The transcription of 《番漢合時掌中珠》 keyed from the scan of a 民國 貽安堂 printing held by
+清光山西巖寺 and photographed by 国文学研究資料館 ([DOI
+10.20730/100354804](https://kokusho.nijl.ac.jp/biblio/100354804)). `source.yaml` has the record,
+`witnesses.tsv` the copy, `leaves.tsv` the canvases, `entries.tsv` and `cells.tsv` the keyed text;
+[the README](zhangzhongzhu/README.md) has the column meanings. `scripts/check_zhangzhongzhu.py`
+validates the tables; `scripts/fetch_zhangzhongzhu.py` pulls a canvas or a crop into `cache/`.
+
+Licence: the images are **CC BY-NC 4.0**, 清光山西巖寺 / 国文学研究資料館, and are not
+redistributed here or on the site. The keyed text is this workshop's own work over a public-domain
+text; its licence is not settled, and until it is the rows may be cited but not reused at scale.
