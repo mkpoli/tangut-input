@@ -378,6 +378,27 @@ vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-nam
 comparison on Parts: Japanese shape names, the English abstract's wording for くノ and ノメ, and
 empty cells where the sources read record no name.
 
+## tangut-component-shape-hints.json.gz
+
+An editorial ranking, not a name table. Each of the 768 Tangut components U+18800–18AFF is compared
+with the eighteen components that have an attested Japanese shape name, and the three nearest names
+are kept with a cosine score and whether the stroke count agrees. 16 KB gzipped, built by
+`uv run scripts/rank_component_shapes.py` from `app/public/fonts/TangutYinchuan.ttf`.
+
+The score says the ink resembles an attested component's ink; it does not say the two are the same
+component or that the name applies. The method cannot separate くノ from ノメ, which score about
+0.98 against each other. Use the file to find candidates for review, never to fill
+`data/tangut-component-names.tsv`.
+
+Format: `format`, `version`, `editorial`, `note`, `method` (font, size, metric, limitation), `counts`,
+`exemplars` and `components`, one row per component with `char`, `codepoint`, `strokes`, `named` and
+`candidates` (name, char, score, strokes, sameStrokes).
+
+- Font: Tangut Yinchuan, Jing Yongshi and Andrew West, served unmodified; its terms are in
+  `app/public/fonts/FONT-LICENCES.md`, including the acknowledgement when it appears in a
+  publication.
+- The file is **editorial** and carries no claim of attestation.
+
 ## component-name-wikidata.json
 
 The labels and aliases of the 214 radicals' Wikidata items, in English, Japanese, Chinese (all three
