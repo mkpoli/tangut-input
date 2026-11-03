@@ -18,7 +18,7 @@
 
   const ready = $derived(db.status === 'ready')
   const typedTone = $derived(fold(query).tone)
-  const hits = $derived(ready && query.trim() ? searchReadings(ix.readings, query, { systems: new Set(systems), tone }) : [])
+  const hits = $derived(ready && query.trim() ? searchReadings(ix.readings, query, { systems: new Set(systems), tone, frequency: ix.frequency }) : [])
   const shown = $derived(hits.slice(0, 200))
   const counts = $derived(TIERS.map((_, tier) => hits.filter(hit => hit.tier === tier).length))
   const NAMES = Object.fromEntries(SYSTEMS.map(system => [system.key, system]))

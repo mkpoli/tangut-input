@@ -6,6 +6,9 @@ import { describedBy } from './description.js'
 
 /** @typedef {{ char: string, code: string, near?: boolean }} CodeHit */
 
+/** How often the character occurs in the corpus. @param {string} char */
+const frequency = char => ix.frequency.get(char) ?? 0
+
 /**
  * Characters whose Cangjie code begins with the typed letters: an exact code first, then shorter
  * codes, then by code. Each character appears once, under its best code.
@@ -32,7 +35,8 @@ export function byCode(letters, options = {}) {
   }
   if (best.size) {
     return [...best].map(([char, code]) => ({ char, code, near: false }))
-      .sort((a, b) => rank(a.code, typed) - rank(b.code, typed) || a.code.localeCompare(b.code)
+      .sort((a, b) => rank(a.code, typed) - rank(b.code, typed)
+        || frequency(b.char) - frequency(a.char) || a.code.localeCompare(b.code)
         || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
   }
   // Nothing begins with the typed code. A code one key away is what a reader most often typed:
@@ -46,7 +50,8 @@ export function byCode(letters, options = {}) {
     if (known === undefined || code.length < known.length) near.set(char, code)
   }
   return [...near].map(([char, code]) => ({ char, code, near: true }))
-    .sort((a, b) => a.code.length - b.code.length || a.code.localeCompare(b.code))
+    .sort((a, b) => a.code.length - b.code.length || frequency(b.char) - frequency(a.char)
+      || a.code.localeCompare(b.code) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
 
 /**
@@ -117,7 +122,8 @@ export function byMeaning(query, options = {}) {
     }
     if (tier < 9) hits.push({ char: entry.char, tier, sense, lang })
   }
-  return hits.sort((a, b) => a.tier - b.tier || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+  return hits.sort((a, b) => a.tier - b.tier || frequency(b.char) - frequency(a.char)
+    || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
 
 
@@ -148,7 +154,8 @@ export function byParts(parts, layout = '') {
     const have = ix.partsOf.get(char)
     if ([...need].every(([part, count]) => (have?.get(part) ?? 0) >= count)) hits.push(char)
   }
-  return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
+  return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99)
+    || frequency(b) - frequency(a) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
 
 /** The parts other than the chosen ones that occur in the given characters, with how many use each. @param {string[]} chars */
@@ -188,7 +195,7 @@ export function byFanqie(text) {
     hits.push({ char, rhyme, tone, spelling: `${usedUpper}${usedLower}`, upper: usedUpper, lower: usedLower })
   }
   return hits.sort((a, b) => (a.rhyme ?? 99) - (b.rhyme ?? 99) || (a.tone ?? 9) - (b.tone ?? 9)
-    || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+    || frequency(b.char) - frequency(a.char) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
 
 /**
@@ -211,7 +218,8 @@ export function bySijiao(digits) {
   for (const [code, char] of ix.sijiaoList) {
     if (code.startsWith(typed)) hits.push({ char, code })
   }
-  return hits
+  return hits.sort((a, b) => a.code.localeCompare(b.code) || frequency(b.char) - frequency(a.char)
+    || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
 
 /**

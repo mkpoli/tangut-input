@@ -85,10 +85,10 @@ export const TIERS = ['Exact', 'Begins with', 'Near', 'Near, begins with']
 
 /**
  * The characters with a reading like the query, best first: by tier, then by how many systems
- * agree, then by code point.
+ * agree, then by corpus frequency, then by code point.
  * @param {Reading[]} readings
  * @param {string} query
- * @param {{ systems?: Set<string>, tone?: string }} [options]
+ * @param {{ systems?: Set<string>, tone?: string, frequency?: Map<string, number> }} [options]
  * @returns {ReadingHit[]}
  */
 export function searchReadings(readings, query, options = {}) {
@@ -111,6 +111,9 @@ export function searchReadings(readings, query, options = {}) {
     if (!hit || tier < hit.tier) hits.set(reading.char, { char: reading.char, tier, readings: [reading] })
     else if (tier === hit.tier) hit.readings.push(reading)
   }
+  const frequency = options.frequency
+  /** @param {string} char */
+  const count = char => frequency?.get(char) ?? 0
   return [...hits.values()].sort((a, b) => a.tier - b.tier || b.readings.length - a.readings.length
-    || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+    || count(b.char) - count(a.char) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }

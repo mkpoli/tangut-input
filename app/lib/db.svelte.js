@@ -1,6 +1,6 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadFanqieAliases, loadTibetan, loadTangutNames, loadPartNames } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadFanqieAliases, loadTibetan, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
 import { indexReadings } from './reading.js'
 import { OPERATORS } from './composition.js'
 
@@ -47,6 +47,7 @@ export const ix = {
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
   /** Tibetan phonetic glosses by character: [Wylie, Tibetan script, [[shelfmark, count]…]]. @type {Map<string, [string, string, [string, number][]][]>} */ tibetan: new Map(),
   /** The several characters that stand for one Chinese fanqie initial: each maps to its group. @type {Map<string, string[]>} */ fanqieAliases: new Map(),
+  /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
   /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
   /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
   /** Characters one component away, built on the first ask: a reader who means one shape and draws
@@ -56,10 +57,10 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, aliases, tibetan, names, partNames] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, aliases, tibetan, names, partNames, frequency] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
       loadFanqieAliases().catch(() => null), loadTibetan().catch(() => null), loadTangutNames().catch(() => []),
-      loadPartNames().catch(() => null),
+      loadPartNames().catch(() => null), loadFrequency().catch(() => null),
     ])
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
     ix.entries = entries
@@ -88,6 +89,7 @@ export async function load() {
       }
       ix.partsOf.set(entry.char, counts)
     }
+    if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
     if (aliases) for (const group of aliases.groups) for (const char of group) ix.fanqieAliases.set(char, group)
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))

@@ -19,6 +19,8 @@
 /** @typedef {{ id: string, sourceId: string, sourceTitle: string, sourceUrl: string, licence: string, label: string,
  *   famous: boolean, lineIds: string[], text: string }} Sample */
 /** @typedef {{ built: string, samples: Sample[] }} Samples */
+/** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sha256: string },
+ *   counts: Record<string, number> }} Frequency */
 /** @typedef {{ source: string, entries: Record<string, { position: string, parts: [string, string | null][] }> }} WenhaiComposition */
 
 /**
@@ -115,6 +117,9 @@ export const loadAttestation = () => once('attestation', () => readJson(new URL(
 
 /** Sample passages copied from the corpus. @returns {Promise<Samples>} */
 export const loadSamples = () => once('samples', () => readJson(new URL('../data/tangut-samples.json', import.meta.url)))
+
+/** How often each character occurs in the corpus. @returns {Promise<Frequency>} */
+export const loadFrequency = () => once('frequency', () => readJson(new URL('../data/tangut-frequency.json.gz', import.meta.url)))
 
 /** The 60 文海 constructions: each head character's page and its source/part pairs. @returns {Promise<WenhaiComposition>} */
 export const loadWenhaiComposition = () => once('wenhai-composition', () => readJson(new URL('../data/wenhai-composition.json', import.meta.url)))

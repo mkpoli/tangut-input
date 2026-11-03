@@ -168,3 +168,17 @@ test('the gloss readings cover the one-character words', () => {
   // A character KANJIDIC2 does not carry keeps empty columns.
   expect(readingOf('𗐭')).toEqual(['𗐭', '說', '', '', ''])
 })
+
+const frequency = json('tangut-frequency.json.gz')
+
+test('the frequency table counts every place in the corpus', () => {
+  expect(frequency.corpus).toEqual({
+    lines: 5273,
+    characters: 92509,
+    distinct: 3350,
+    sha256: '5312f92bf9751cf88e4ef8c4306a5f4a7be4c94690f58da4eba1d88323623017',
+  })
+  expect(Object.keys(frequency.counts).length).toBe(3350)
+  expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(92509)
+  expect(frequency.counts['𗋕']).toBe(711)
+})
