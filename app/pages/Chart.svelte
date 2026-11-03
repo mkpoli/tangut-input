@@ -398,7 +398,8 @@
   .wrap{overflow:auto;max-block-size:calc(100dvh - 250px);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-lg);background:var(--ui-color-surface)}
   table{inline-size:100%;border-collapse:separate;border-spacing:0;font-size:var(--ui-text-sm)}
   thead th{position:sticky;top:0;z-index:2;padding:var(--ui-space-sm) var(--ui-space-xs);border-bottom:1px solid var(--ui-color-border-strong);background:var(--ui-color-surface);color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold)}
-  /* The rhyme-number rail takes only its text's width, and the nine classes share the rest. */
+  /* The first column keeps its text width — a percentage column sits out the surplus — so the columns
+     to its right take the rest of the card, or overflow it when the grid is wider. */
   thead th.corner{left:0;z-index:3;inline-size:1%;text-align:start;white-space:nowrap;font-family:var(--ui-font-sans);font-weight:var(--ui-weight-medium)}
   thead th.group{text-align:center;inline-size:84px}
   thead th.group .ui-script{display:block;font-size:19px;color:var(--ui-color-ink)}
