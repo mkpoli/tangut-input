@@ -114,6 +114,14 @@ The design system is in [`design/`](design/); its reference page is served at `/
 development and built beside the site. `bun run check:design` expects the dev server on
 `http://localhost:5180`; set `DESIGN_URL` for another address.
 
+## Deployment
+
+A push to `main` builds the app and deploys it to Cloudflare through
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). The workflow runs
+`bun run verify`, builds `dist/`, and deploys that artifact with Wrangler. It needs
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets. A pull request runs the
+same verification and build without deploying.
+
 The glyphs are set in Noto Serif Tangut from Google Fonts, with a small subset of the bundled
 version for the components Google's build lacks (`app/public/fonts/`, SIL OFL 1.1).
 
