@@ -9,6 +9,13 @@
       "credit": "Arakawa 2023"
     },
     {
+      "name": "一匕﹅",
+      "char": "𘡴",
+      "source": "arakawa-2023",
+      "detail": "B3 in table 5: the 一匕 form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
       "name": "ノノメ",
       "char": "𘢌",
       "source": "arakawa-2023",
@@ -23,10 +30,38 @@
       "credit": "Arakawa 2023"
     },
     {
+      "name": "ノ匕﹅",
+      "char": "𘢕",
+      "source": "arakawa-2023",
+      "detail": "B1 in table 5: the ノ匕 form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "二匕﹅",
+      "char": "𘣒",
+      "source": "arakawa-2023",
+      "detail": "B4 in table 5: the 二匕 form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "ラ匕﹅",
+      "char": "𘣭",
+      "source": "arakawa-2023",
+      "detail": "B8 in table 5: the ラ匕 form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
       "name": "ノくノ﹅",
       "char": "𘤆",
       "source": "arakawa-2023",
       "detail": "A2 in table 4: the ノくノ form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "ノノ匕﹅",
+      "char": "𘤈",
+      "source": "arakawa-2023",
+      "detail": "B2 in table 5: the ノノ匕 form with the emphatic dot",
       "credit": "Arakawa 2023"
     },
     {
@@ -37,10 +72,31 @@
       "credit": "Arakawa 2020 · Japanese Wikipedia"
     },
     {
+      "name": "コ匕﹅",
+      "char": "𘤾",
+      "source": "arakawa-2023",
+      "detail": "B9 in table 5: the コ匕 form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
       "name": "くくノ﹅",
       "char": "𘦄",
       "source": "arakawa-2023",
       "detail": "A4 in table 4: the くくノ form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "ソ一匕﹅",
+      "char": "𘦜",
+      "source": "arakawa-2023",
+      "detail": "B6 in table 5: the ソ一匕 form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "コ一匕﹅",
+      "char": "𘦺",
+      "source": "arakawa-2023",
+      "detail": "B11 in table 5: the コ一匕 form with the emphatic dot",
       "credit": "Arakawa 2023"
     },
     {

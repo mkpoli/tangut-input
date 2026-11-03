@@ -16,6 +16,14 @@ shorthand for a shape: 𘡃 is ノメ and 𘫺 is くノ, and the two are told a
 | くくノ﹅ | 𘦄 U+18984 | Arakawa 2023, table 4 A4 |
 | コくノ﹅ | 𘧆 U+189C6 | Arakawa 2023, table 4 A3 |
 | くノ﹅ノメ | 𘧶 U+189F6 | Arakawa 2023, table 4 A5 |
+| ノ匕﹅ | 𘢕 U+18895 | Arakawa 2023, table 5 B1 |
+| ノノ匕﹅ | 𘤈 U+18908 | Arakawa 2023, table 5 B2 |
+| 一匕﹅ | 𘡴 U+18874 | Arakawa 2023, table 5 B3 |
+| 二匕﹅ | 𘣒 U+188D2 | Arakawa 2023, table 5 B4 |
+| ソ一匕﹅ | 𘦜 U+1899C | Arakawa 2023, table 5 B6 |
+| ラ匕﹅ | 𘣭 U+188ED | Arakawa 2023, table 5 B8 |
+| コ匕﹅ | 𘤾 U+1893E | Arakawa 2023, table 5 B9 |
+| コ一匕﹅ | 𘦺 U+189BA | Arakawa 2023, table 5 B11 |
 
 The hover card takes a component's stroke count from the site's Unicode-derived data, which can
 differ from a count in the source.
@@ -26,13 +34,13 @@ Lotus Sutra; Arakawa 2023 adds ノくノ, コくノ, くノメ, くノノメ, �
 ソ一匕, フサ二匕 and ラ匕. These describe one element's strokes, often across more than one encoded
 component, and they are not a list of names for the 768 Tangut components.
 
-The ten rows above are the five base names and the five variants that the cited sources tie to a
-code point. They are kept in `data/tangut-component-names.tsv` and merged into
+The eighteen rows above are the five base names and the thirteen variants that the cited sources
+tie to a code point. They are kept in `data/tangut-component-names.tsv` and merged into
 `data/component-names.tsv` by `scripts/build_component_names.py`, so a search for くノ or ノメ
-reaches 𘫺 or 𘡃. The site's Find page reads the same ten rows from
+reaches 𘫺 or 𘡃. The site's Find page reads the same eighteen rows from
 `app/data/tangut-component-names.json` and shows them in a shape-name group; the Parts filter accepts the names too, and the part card on Parts and the Cangjie
 palette shows its name with its code point, component number, strokes, uses and Cangjie codes. Parts
-adds a ten-row table comparing the names across Japanese, English, Chinese, Russian and Korean. The rest of the vocabulary
+adds an eighteen-row table comparing the names across Japanese, English, Chinese, Russian and Korean. The rest of the vocabulary
 is recorded here because the sources read for this note do not assign it to individual code points.
 
 ## Sources

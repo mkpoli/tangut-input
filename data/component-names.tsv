@@ -1,6 +1,6 @@
 # The names, words and readings people use for components, for the component search (src/core/names.js).
 # columns: name, char, source, detail
-# rows: 6652
+# rows: 6660
 # Built by scripts/build_component_names.py.
 # source kanji-tools: anzumura/kanji-tools data/radicals.txt at c3e52cbca38a1fdbf9a96abb1dd015450cc1411c; MIT; Copyright (c) 2022 Dan H
 #   https://github.com/anzumura/kanji-tools
@@ -6665,11 +6665,19 @@ juanzitou	龹	pypinyin	pinyin of 卷字头
 卷字头	龹	rime-wanxiang	zh nickname
 卷字頭	龹	rime-wanxiang	zh nickname; traditional via OpenCC
 ノメ	𘡃	arakawa-2023	Arakawa calls this the ノメ型 lower-left element (n. 21)
+一匕﹅	𘡴	arakawa-2023	B3 in table 5: the 一匕 form with the emphatic dot
 ノノメ	𘢌	arakawa-2023	Arakawa gives this element as ノノメ (§1.4)
 くノ﹅	𘢒	arakawa-2023	A1 in table 4: the くノ form with the emphatic dot
+ノ匕﹅	𘢕	arakawa-2023	B1 in table 5: the ノ匕 form with the emphatic dot
+二匕﹅	𘣒	arakawa-2023	B4 in table 5: the 二匕 form with the emphatic dot
+ラ匕﹅	𘣭	arakawa-2023	B8 in table 5: the ラ匕 form with the emphatic dot
 ノくノ﹅	𘤆	arakawa-2023	A2 in table 4: the ノくノ form with the emphatic dot
+ノノ匕﹅	𘤈	arakawa-2023	B2 in table 5: the ノノ匕 form with the emphatic dot
 ノメメ	𘤊	ja-wikipedia-tangut	Arakawa 2020 distinguishes this 5-stroke form from くくノ; Wikipedia gives the code point
+コ匕﹅	𘤾	arakawa-2023	B9 in table 5: the コ匕 form with the emphatic dot
 くくノ﹅	𘦄	arakawa-2023	A4 in table 4: the くくノ form with the emphatic dot
+ソ一匕﹅	𘦜	arakawa-2023	B6 in table 5: the ソ一匕 form with the emphatic dot
+コ一匕﹅	𘦺	arakawa-2023	B11 in table 5: the コ一匕 form with the emphatic dot
 コくノ﹅	𘧆	arakawa-2023	A3 in table 4: the コくノ form with the emphatic dot
 くノ﹅ノメ	𘧶	arakawa-2023	A5 in table 4: a くノ with the emphatic dot above a ノメ
 くノ	𘫺	arakawa-2023	Arakawa calls this the くノ型 lower-left element (n. 21)
