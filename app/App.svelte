@@ -106,7 +106,7 @@
     }
     settingsOpen = true
     await tick()
-    settingsPop?.querySelector('select')?.focus()
+    ;/** @type {HTMLElement | null} */ (settingsPop?.querySelector('input, select, .palette-trigger'))?.focus()
   }
 
   /** @param {boolean} [restore] */
@@ -127,7 +127,10 @@
 
   $effect(() => {
     if (!settingsDialog) return
-    if (settingsSheetOpen && !settingsDialog.open) settingsDialog.showModal()
+    if (settingsSheetOpen && !settingsDialog.open) {
+      settingsDialog.showModal()
+      ;/** @type {HTMLElement | null} */ (settingsDialog.querySelector('input, select, .palette-trigger'))?.focus()
+    }
     if (!settingsSheetOpen && settingsDialog.open) settingsDialog.close()
   })
 
