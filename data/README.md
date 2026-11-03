@@ -452,7 +452,7 @@ source has them.
 Open Tangut publishes its compilation under MIT (`COPYING-open-tangut.txt`). Its records
 merge English, Japanese and Chinese [Wiktionary](https://en.wiktionary.org/) entries (CC
 BY-SA 4.0) and [CCAMC](http://ccamc.org/) data (no licence stated), so the combined Tangut
-data is not MIT alone; the source line and this note carry that attribution. The Unihan
+data is not MIT alone; the record and this note carry that attribution. The Unihan
 records keep Unicode License v3.
 
 The search reads these meanings and readings. A Tangut reconstruction finds the
