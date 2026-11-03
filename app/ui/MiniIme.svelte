@@ -10,10 +10,11 @@
   import { t } from '../lib/i18n.svelte.js'
   import G from './G.svelte'
 
-  /** Which edge of the button the panel hangs from, so it stays on-screen. */
-  let { align = 'end' } = $props()
+  /** Which edge of the button the panel hangs from, so it stays on-screen.
+   *  `always` is the standalone picker: no button, no closing, the panel in the flow. */
+  let { align = 'end', always = false } = $props()
 
-  let open = $state(false)
+  let open = $state(always)
   let query = $state('')
   let active = $state(-1)
   /** @type {HTMLButtonElement | null} */
@@ -71,8 +72,8 @@
   function put(char) {
     remember()
     insert(char)
-    // Opened as another tool's picker, the pick is handed back as well as typed in.
-    if (new URLSearchParams(location.search).has('pick')) {
+    // A picker hands its pick back to the window that embedded it.
+    if (always || new URLSearchParams(location.search).has('pick')) {
       try { window.parent?.postMessage({ type: 'tangut-pick', char }, '*') } catch { /* a closed window */ }
     }
     recent = [char, ...recent.filter(other => other !== char)].slice(0, 32)
@@ -139,12 +140,14 @@
   })
 </script>
 
-<div class="ime">
+<div class="ime" class:always>
+  {#if !always}
   <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" bind:this={trigger}
     aria-haspopup="dialog" aria-expanded={open} aria-label={t('ime.label')} title={t('ime.label')}
     onclick={() => { open ? close() : show() }}>
     <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="16" height="10" rx="2"/><path d="M5 9h1M8 9h1M11 9h1M14 9h1M5 12h10" stroke-linecap="round"/></g></svg>
   </button>
+  {/if}
   {#if open}
     <div class="panel ui-menu" class:start={align === 'start'} role="dialog" aria-label={t('ime.label')}>
       <input class="ui-input" data-size="sm" bind:this={box} bind:value={query} onkeydown={keys}
@@ -171,6 +174,9 @@
 
 <style>
   .ime{position:relative}
+  .ime.always{display:grid;gap:8px}
+  .ime.always .panel{position:static;inline-size:auto;box-shadow:none;border:1px solid var(--ui-color-border);padding:10px}
+  .ime.always .hits{grid-template-columns:repeat(8, 1fr);max-block-size:none}
   .panel{position:absolute;right:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);display:grid;gap:var(--ui-space-sm);inline-size:300px;padding:var(--ui-space-md)}
   .panel.start{right:auto;left:0}
   .hits{display:grid;grid-template-columns:repeat(8, 1fr);gap:2px;max-block-size:220px;overflow:auto}

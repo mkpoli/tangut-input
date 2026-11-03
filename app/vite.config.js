@@ -16,6 +16,7 @@ export default defineConfig({
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
         design: resolve(import.meta.dirname, 'design.html'),
+        pick: resolve(import.meta.dirname, 'pick.html'),
       },
     },
   },

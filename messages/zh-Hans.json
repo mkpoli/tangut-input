@@ -402,5 +402,6 @@
   "ime.kind.sound": "读音",
   "ime.kind.sense": "释义",
   "ime.kind.parts": "部件",
-  "ime.kind.codepoint": "码位"
+  "ime.kind.codepoint": "码位",
+  "pick.hint": "请选字：编码、数字、读音、释义、码位或部件都可以查。"
 }

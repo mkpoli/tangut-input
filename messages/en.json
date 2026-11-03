@@ -402,5 +402,6 @@
   "ime.kind.sound": "Reading",
   "ime.kind.sense": "Meaning",
   "ime.kind.parts": "Components",
-  "ime.kind.codepoint": "Code point"
+  "ime.kind.codepoint": "Code point",
+  "pick.hint": "Pick the character: a code, digits, a reading, a meaning, a code point or the parts of a shape."
 }

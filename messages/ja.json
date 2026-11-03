@@ -402,5 +402,6 @@
   "ime.kind.sound": "読み",
   "ime.kind.sense": "意味",
   "ime.kind.parts": "部品",
-  "ime.kind.codepoint": "符号位置"
+  "ime.kind.codepoint": "符号位置",
+  "pick.hint": "字を選んでください。コード・数字・音・意味・符号位置・部品のいずれでも引けます。"
 }
