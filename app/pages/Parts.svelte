@@ -33,15 +33,14 @@
   $effect(() => {
     if (ready && !chosen.length && route.q) chosen = [...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : partsIn(char))
   })
-  // New matches are read from their first row; the palette keeps its own place.
-  $effect(() => {
-    void chosen
-    void layout
-    if (results) results.scrollTop = 0
-  })
 
   const hits = $derived(ready ? byParts(chosen, layout) : [])
   const among = $derived(chosen.length || layout ? partsAmong(hits) : null)
+  // New matches are read from their first row; the palette keeps its own place.
+  $effect(() => {
+    void hits
+    if (results) results.scrollTop = 0
+  })
   const LAYOUT_KEYS = ['⿰', '⿱', '⿲', '⿳', '⿺', '⿸', '⿵', '⿻']
 
   // Every part, by strokes then by how often descriptions use it; narrowed by the choice so far.
@@ -103,6 +102,15 @@
   function hideInfo() {
     info = null
   }
+  // Tab reaches a tile, then the palette scrolls it into view: move the record with the tile.
+  function scrolled() {
+    const active = document.activeElement
+    if (active instanceof HTMLElement && active.classList.contains('comp') && active.dataset.part && info?.part === active.dataset.part) {
+      info = { ...info, ...partInfoPlacement(active.getBoundingClientRect()) }
+      return
+    }
+    hideInfo()
+  }
   /** @param {string} part */
   function shapeName(part) {
     return ix.names.find(row => row.char === part)?.name ?? ''
@@ -163,13 +171,13 @@
           <input class="ui-input ui-mono" data-size="sm" data-primary bind:value={filter} oninput={() => { info = null }} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} spellcheck="false" autocomplete="off" />
         </span>
       </div>
-      <div class="strokes" onscroll={hideInfo}>
+      <div class="strokes" onscroll={scrolled}>
         {#each byStroke as [count, parts] (count)}
           <div class="stroke-group">
             <h3 class="stroke-count" title={t('draw.strokes', { count })}>{count || '?'}</h3>
             <div class="ui-tiles comps" style:--ui-tile-size="46px">
               {#each parts as p (p.part)}
-                <button type="button" class="ui-tile comp" data-dim={p.live === 0 ? '' : undefined} onclick={() => add(p.part)}
+                <button type="button" class="ui-tile comp" data-dim={p.live === 0 ? '' : undefined} data-part={p.part} onclick={() => add(p.part)}
                   aria-describedby={info?.part === p.part ? 'part-info' : undefined}
                   aria-label={partLabel(p)}
                   onmouseenter={event => showInfo(event, p)} onmouseleave={hideInfo} onfocus={event => showInfo(event, p)} onblur={hideInfo}>
@@ -250,8 +258,8 @@
   .filter-wrap .ui-input{inline-size:200px}
   .all{min-block-size:24px;font-size:var(--ui-text-xs);color:var(--ui-color-ink-soft)}
   .work{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:var(--ui-space-xl);align-items:stretch}
-  .pane{display:grid;grid-template-rows:auto minmax(0,1fr);gap:var(--ui-space-md);block-size:clamp(340px,calc(100dvh - 500px),680px);min-inline-size:0}
-  .strokes,.results{min-block-size:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-inline-end:var(--ui-space-2xs)}
+  .pane{display:grid;grid-template-rows:auto minmax(0,1fr);gap:var(--ui-space-md);block-size:clamp(280px,calc(100dvh - 500px),680px);min-inline-size:0}
+  .strokes,.results{min-block-size:0;overflow:auto;scrollbar-gutter:stable;padding-inline-end:var(--ui-space-2xs)}
   .strokes{display:grid;align-content:start;gap:var(--ui-space-sm)}
   .stroke-group{display:grid;grid-template-columns:30px minmax(0,1fr);gap:var(--ui-space-sm);align-items:start}
   .stroke-count{padding-top:var(--ui-space-xs);color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold);text-align:end}
@@ -271,10 +279,10 @@
   .name-table .source{white-space:nowrap;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
   @media (max-width:1240px){
     .work{grid-template-columns:minmax(0,1fr)}
-    .pane{block-size:clamp(300px,38dvh,460px)}
+    .pane{block-size:clamp(260px,38dvh,460px)}
   }
   @media (max-width:900px){
-    .pane{block-size:clamp(260px,33dvh,380px);padding:var(--ui-space-md)}
+    .pane{block-size:clamp(260px,33dvh,380px)}
     .filter-wrap{inline-size:100%;margin-inline-start:0}
     .filter-wrap .ui-input{inline-size:100%}
     .layouts .ui-chip span{display:none}
