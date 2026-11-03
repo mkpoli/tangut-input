@@ -16,6 +16,8 @@
   const inner = $derived(partsIn(part))
   const code = $derived(part.codePointAt(0) ?? 0)
   const number = $derived(code >= 0x18800 && code <= 0x18AFF ? code - 0x18800 + 1 : 0)
+  /** @param {number} count */
+  const countText = count => count === 1 ? t('parts.info.oneCharacter') : t('common.characters', { count })
   const left = $derived(Math.max(8, Math.min(x, (globalThis.innerWidth ?? 1280) - 316)))
   const top = $derived(Math.max(8, Math.min(y, (globalThis.innerHeight ?? 800) - 300)))
 </script>
@@ -37,10 +39,10 @@
     <dt>{t('parts.info.strokes')}</dt>
     <dd>{strokes || '—'}</dd>
     <dt>{t('parts.info.uses')}</dt>
-    <dd>{t('common.characters', { count: uses })}</dd>
+    <dd>{countText(uses)}</dd>
     {#if live >= 0}
       <dt>{t('parts.info.matches')}</dt>
-      <dd>{t('common.characters', { count: live })}</dd>
+      <dd>{countText(live)}</dd>
     {/if}
     {#if codes.length}
       <dt>{t('parts.info.codes')}</dt>
