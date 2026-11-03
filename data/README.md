@@ -467,6 +467,32 @@ constants in `src/composer/constants.json` come from han-compose at bd0829b (MIT
 previously used by the composer's test fixture. Tangut Components Supplement glyphs
 are absent from this font version and report a missing glyph.
 
+## `tangut-gloss-words.tsv.gz`
+
+One Chinese word for each Tangut character, for a table that reads a character by its meaning: 毒,
+佛, 日 and 世界 can be read as they stand, 【宿】 writes a sound and has no meaning to read. 6,144
+rows, 57 KB gzipped. Format: `char`, `gloss`, `tier`, `reading`; comments start with `#`.
+
+`gloss` is the first sense of the entry's first Chinese gloss in `app/data/tangut-entries.json.gz`.
+Senses are separated by 、；， or a space outside brackets; numbering, part-of-speech tags and
+placeholder senses (暫無解釋, 不識) are dropped, and a short bracket before a word joins it, so
+（滴）答 gives 滴答. `tier` counts the characters of the gloss: `word`, one (3,115); `phrase`, two
+to four (2,057); `long`, five or more or a note in brackets (163); `transliteration`, a foreign
+sound (728); `empty`, nothing to read (58); `redirect`, the entry points at another character, which
+this file does not gloss (23). `reading` is Gong Xun's 202411 reconstruction, which 5,829 characters
+have.
+
+The gloss is the dictionary's first sense, not a chosen reading: a character glossed 世界、京城 keeps
+世界, and its senses differ in how well they read. Weighted by the six attested texts, 8,121 of their
+11,168 characters (72.7%) are `word`, 1,510 `phrase`, 838 `transliteration`, 598 `long`, 100
+`empty` and 1 `redirect`.
+
+Rebuild with `uv run scripts/build_tangut_gloss_words.py`, which also prints that coverage and would
+leave the file unchanged. The source is Open Tangut, whose export is MIT licensed and merges CCAMC
+and Wiktionary; `app/data/tangut-entries.json.gz` is its re-pack.
+
+Licence: **MIT**, following the entries file.
+
 ## Bopomofo outlines
 
 `bopomofo-outlines.json.gz` holds U+3105–U+312F and U+31A0–U+31BF (75 letters).
