@@ -4,9 +4,11 @@
   // narrows with them to the parts that still occur, so the next choice always leads somewhere.
   import { db, ix, gloss, isTangut } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
+  import PartInfo from '../ui/PartInfo.svelte'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview } from '../lib/ui.svelte.js'
   import { byParts, partsAmong, partsIn } from '../lib/search.js'
+  import { foldShapeName } from '../lib/names.js'
   import { LAYOUTS } from '../ui/Ids.svelte'
   import Layout from '../ui/Layout.svelte'
   import Candidates from '../ui/Candidates.svelte'
@@ -17,6 +19,8 @@
   let filter = $state('')
   let everything = $state(false)
   let active = $state(-1)
+  /** @type {{ part: string, x: number, y: number, live: number } | null} */
+  let info = $state(null)
   /** @type {Candidates | null} */
   let grid = $state(null)
 
@@ -33,9 +37,13 @@
   // Every part, by strokes then by how often descriptions use it; narrowed by the choice so far.
   const palette = $derived.by(() => {
     if (!ready) return []
-    const codes = filter.trim().toLowerCase()
+    const query = filter.trim()
+    const codes = query.toLowerCase()
+    const shape = foldShapeName(query)
+    /** @type {Set<string>} */
+    const named = shape ? new Set(ix.names.filter(row => foldShapeName(row.name).includes(shape)).map(row => row.char)) : new Set()
     let parts = [...ix.usedBy.keys()].map(part => ({ part, uses: ix.usedBy.get(part)?.size ?? 0, strokes: ix.strokes.get(part) ?? 0, live: among ? among.get(part) ?? 0 : -1 }))
-    if (codes) parts = parts.filter(p => (ix.codes.get(p.part) ?? []).some(code => code.startsWith(codes) || code.startsWith(`p${codes}`)))
+    if (query) parts = parts.filter(p => named.has(p.part) || (ix.codes.get(p.part) ?? []).some(code => code.startsWith(codes) || code.startsWith(`p${codes}`)))
     if (among && !everything) parts = parts.filter(p => p.live > 0)
     return parts.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses)
   })
@@ -52,6 +60,7 @@
     preview(part)
     setQuery(chosen.join(''))
     active = -1
+    info = null
   }
   /** Replace a part that is itself a character by the parts its own description is made of, so a
    *  reader who picks a large component can search its inside instead. @param {number} index */
@@ -73,6 +82,27 @@
     chosen = []
     layout = ''
     setQuery('')
+    info = null
+  }
+
+  /** @param {Event} event @param {{ part: string, live: number }} p */
+  function showInfo(event, p) {
+    const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
+    const below = box.bottom + 6
+    info = { part: p.part, live: p.live, x: box.left, y: below + 360 > innerHeight ? Math.max(8, box.top - 366) : below }
+  }
+  function hideInfo() {
+    info = null
+  }
+  /** @param {string} part */
+  function shapeName(part) {
+    return ix.names.find(row => row.char === part)?.name ?? ''
+  }
+  /** @param {{ part: string, uses: number, live: number }} p */
+  function partLabel(p) {
+    const code = ix.codes.get(p.part)?.[0] ?? ''
+    const count = p.live >= 0 ? p.live : p.uses
+    return [shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : t('common.characters', { count })].filter(Boolean).join(' · ')
   }
 
   /** @param {KeyboardEvent} event */
@@ -136,7 +166,7 @@
         <label class="ui-check-row all"><input class="ui-checkbox" type="checkbox" bind:checked={everything} /> <span>{t('parts.showAll')}</span></label>
       {/if}
       <span class="filter-wrap">
-        <input class="ui-input ui-mono" data-size="sm" data-primary bind:value={filter} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} spellcheck="false" autocomplete="off" />
+        <input class="ui-input ui-mono" data-size="sm" data-primary bind:value={filter} oninput={() => { info = null }} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} spellcheck="false" autocomplete="off" />
       </span>
     </div>
     <div class="strokes">
@@ -146,7 +176,9 @@
           <div class="ui-tiles comps" style:--ui-tile-size="46px">
             {#each parts as p (p.part)}
               <button type="button" class="ui-tile comp" data-dim={p.live === 0 ? '' : undefined} onclick={() => add(p.part)}
-                title={t('parts.componentTitle', { code: ix.codes.get(p.part)?.[0] ?? '', count: p.live >= 0 ? p.live : p.uses })}>
+                aria-describedby={info?.part === p.part ? 'part-info' : undefined}
+                aria-label={partLabel(p)}
+                onmouseenter={event => showInfo(event, p)} onmouseleave={hideInfo} onfocus={event => showInfo(event, p)} onblur={hideInfo}>
                 <G char={p.part} />{#if p.live > 0}<small class="use">{p.live}</small>{/if}
               </button>
             {/each}
@@ -155,6 +187,7 @@
       {/each}
     </div>
   </section>
+  {#if info}<PartInfo part={info.part} x={info.x} y={info.y} live={info.live} />{/if}
 </div>
 
 <style>

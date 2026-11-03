@@ -1,6 +1,7 @@
 // The finders that read the records directly: Cangjie codes, meanings, parts and code points.
 // Readings live in reading.js and drawings in shape.js.
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
+import { searchShapeNames } from './names.js'
 
 /** @typedef {{ char: string, code: string, near?: boolean }} CodeHit */
 
@@ -66,6 +67,14 @@ function within(a, b) {
 
 /** @param {string} code @param {string} typed */
 const rank = (code, typed) => (code === typed ? 0 : 1000) + code.length
+
+/**
+ * Tangut components whose Japanese shape name is the query, or starts it, or holds it. A whole name
+ * comes before a longer one, and a component with several names keeps its closest.
+ * @param {string} query
+ * @returns {{ char: string, name: string, tier: number }[]}
+ */
+export const byName = query => searchShapeNames(ix.names, query)
 
 /** The languages the meanings are recorded in. */
 export const MEANING_LANGUAGES = /** @type {const} */ (['en', 'ja', 'zh'])

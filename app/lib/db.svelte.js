@@ -1,6 +1,6 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadFanqieAliases, loadTibetan } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadFanqieAliases, loadTibetan, loadTangutNames } from './data.js'
 import { indexReadings } from './reading.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
@@ -46,6 +46,7 @@ export const ix = {
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
   /** Tibetan phonetic glosses by character: [Wylie, Tibetan script, [[shelfmark, count]…]]. @type {Map<string, [string, string, [string, number][]][]>} */ tibetan: new Map(),
   /** The several characters that stand for one Chinese fanqie initial: each maps to its group. @type {Map<string, string[]>} */ fanqieAliases: new Map(),
+  /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, strokes: number, credit: string }[]} */ names: [],
   /** Characters one component away, built on the first ask: a reader who means one shape and draws
    *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
   /** Whether the sibling index has been built. */ siblingsReady: false,
@@ -53,13 +54,14 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, aliases, tibetan] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, aliases, tibetan, names] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
-      loadFanqieAliases().catch(() => null), loadTibetan().catch(() => null),
+      loadFanqieAliases().catch(() => null), loadTibetan().catch(() => null), loadTangutNames().catch(() => []),
     ])
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
+    ix.names = names
     for (const [char, code] of pairs) {
       const list = ix.codes.get(char)
       if (list) list.push(code)
