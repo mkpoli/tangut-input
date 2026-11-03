@@ -10,6 +10,12 @@
   let { part, x, y, live = -1 } = $props()
   const names = $derived(ix.names.filter(row => row.char === part))
   const credits = $derived([...new Set(names.map(row => row.credit))])
+  const compared = $derived(ix.partNames?.rows.find(row => row.char === part) ?? null)
+  const comparedLanguages = $derived.by(() => {
+    const table = ix.partNames
+    if (!table || !compared) return []
+    return table.languages.filter(language => language !== 'ja' && compared.names[language]?.length)
+  })
   const codes = $derived(ix.codes.get(part) ?? [])
   const strokes = $derived(ix.strokes.get(part) ?? 0)
   const uses = $derived(ix.usedBy.get(part)?.size ?? 0)
@@ -36,6 +42,10 @@
       {#if names.length}{names.map(row => row.name).join(' · ')}{:else}<span class="ui-hint">{t('parts.info.noName')}</span>{/if}
       {#if credits.length}<span class="credit">{credits.join(' · ')}</span>{/if}
     </dd>
+    {#each comparedLanguages as language (language)}
+      <dt>{t(`parts.names.${language}`)}</dt>
+      <dd>{compared?.names[language]?.join(' · ')}</dd>
+    {/each}
     <dt>{t('parts.info.strokes')}</dt>
     <dd>{strokes || '—'}</dd>
     <dt>{t('parts.info.uses')}</dt>
