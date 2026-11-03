@@ -460,6 +460,13 @@ const html = `<!doctype html>
     if (!drawing) return
     const note = noteOf(drawing.id)
     note.correct = data.char
+    // The reviewer's own drawing of the character is kept too, marked as theirs.
+    if (Array.isArray(data.strokes) && data.strokes.length) {
+      fetch('/api/reviewer', { method: 'POST', body: JSON.stringify({ char: data.char, strokes: data.strokes, for: drawing.id }) })
+        .then(response => response.ok ? response.json() : null)
+        .then(saved => { if (saved?.file) { note.reviewer = saved.file; save() } })
+        .catch(() => {})
+    }
     if (note.verdict === 'good' || note.verdict === 'bad' || !note.verdict) note.verdict = 'wrong'
     save()
     document.getElementById('siteframe').hidden = true

@@ -115,11 +115,37 @@ export function build({ write = true } = {}) {
       lines.push(JSON.stringify(entry))
     }
   }
+  // Drawings the reviewer made while searching for the character: their hand, not the writer's, and
+  // linked to the drawing that prompted them.
+  const reviewer = new URL('reviewer/', ROOT)
+  if (existsSync(reviewer)) {
+    for (const name of readdirSync(reviewer).filter(name => name.endsWith('.json')).sort()) {
+      const record = JSON.parse(readFileSync(new URL(name, reviewer), 'utf8'))
+      if (!record.char || !record.strokes?.length) continue
+      counts.drawings++
+      counts.reviewer = (counts.reviewer ?? 0) + 1
+      lines.push(JSON.stringify({
+        id: `reviewer/${name.replace('.json', '')}`,
+        char: record.char,
+        code: `U+${record.char.codePointAt(0).toString(16).toUpperCase()}`,
+        kind: 'reviewer',
+        author: 'reviewer',
+        for: record.for ?? null,
+        strokes: record.strokes,
+        strokeCount: record.strokes.length,
+        times: null, pressure: null, pointer: null, writer: 'reviewer', device: null,
+        width: record.width, height: record.height, at: record.at,
+        session: { dir: 'reviewer', seed: null, started: null },
+      }))
+    }
+  }
+
   const manifest = {
     schema: 1,
     built: new Date().toISOString(),
     drawings: counts.drawings,
     excluded: counts.excluded,
+    reviewer: counts.reviewer ?? 0,
     sessions: counts.sessions,
     kinds,
     writers,

@@ -12,7 +12,7 @@
 
   /** Which edge of the button the panel hangs from, so it stays on-screen.
    *  `always` is the standalone picker: no button, no closing, the panel in the flow. */
-  let { align = 'end', always = false } = $props()
+  let { align = 'end', always = false, strokes = /** @type {[number, number][][] | null} */ (null) } = $props()
 
   let open = $state(always)
   let query = $state('')
@@ -77,7 +77,9 @@
     insert(char)
     // A picker hands its pick back to the window that embedded it.
     if (always || new URLSearchParams(location.search).has('pick')) {
-      try { window.parent?.postMessage({ type: 'tangut-pick', char }, '*') } catch { /* a closed window */ }
+      // The strokes arrive as reactive state, which cannot be posted as it stands; a plain copy can.
+      const plain = strokes ? JSON.parse(JSON.stringify(strokes)) : null
+      try { window.parent?.postMessage({ type: 'tangut-pick', char, strokes: plain }, '*') } catch { /* a closed window */ }
     }
     recent = [char, ...recent.filter(other => other !== char)].slice(0, 32)
     try { localStorage.setItem('tangut-input:recent', JSON.stringify(recent)) } catch { /* the list lives this visit */ }
@@ -132,6 +134,8 @@
 
   /** @param {PointerEvent} event */
   function outside(event) {
+    // A picker stays: it is the page, not a menu over one, and the reviewer draws beside it.
+    if (always) return
     const target = /** @type {HTMLElement} */ (event.target)
     if (open && !target.closest('.ime')) close(false)
   }

@@ -421,5 +421,7 @@
   "intro.s5.body": "The script outlived the state. The last known text is on a pair of dharani pillars at Baoding, Hebei, erected in 1502; a dharani is a Buddhist incantation. [3][9]\n\nUnicode, the standard for text on computers, encoded 6,881 Tangut characters in version 9.0 (June 2016): 6,125 ideographs, 755 components and an iteration mark, a sign that repeats the preceding character. Later versions added further ideographs and components. [3][5] Unicode gave the script code points, the numbers that identify each character, and fonts such as Noto Serif Tangut set it today. [5][11]",
   "intro.close": "The finders on this site look up a Tangut character by its shape, its sound or its meaning.",
   "intro.sources": "Sources",
-  "intro.start": "Look a character up"
+  "intro.start": "Look a character up",
+  "pick.drawHint": "Draw the character here and the strokes are kept with the pick, as a reviewer’s sample.",
+  "pick.clear": "Clear the pad"
 }
