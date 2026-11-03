@@ -9,7 +9,12 @@ the Western Xia (XixiaCalendar.txt, 2023-07-10), which names no source for its T
 the forms rest on is in `data/tangut-era-evidence.tsv`, one row per form and source:
 
 - `coin`: read on a coin; `disputed`: read on a coin, but the reading or the era it names is
-  disputed; `text`: written in a Tangut text; `unknown`: a source says no Tangut form is known.
+  disputed; `text`: dated with this era in a Tangut text; `gloss`: the same characters render the
+  era name's Chinese in a Tangut text, of another era bearing the name; `unknown`: a source says no
+  Tangut form is known.
+
+A row with a `place` names the text in this repository, `wikisource:<page>` or `lcdtt:<file>`, and
+the build stops unless the form occurs there.
 
 An era's dates are its first and last day in the calendar (Julian), and its years are the lunar
 years those days fall in, counted by the Julian year in which each lunar year begins, so an era
@@ -32,11 +37,22 @@ URL = 'https://www.babelstone.co.uk/Calendar/XixiaCalendar_txt.zip'
 SHA256 = 'bd3f44d3bbb1a285ed6a085a8434770e7a97c537e8f4cdd8a4864c0e6cc66c14'
 EVIDENCE = ROOT / 'data/tangut-era-evidence.tsv'
 OUT = ROOT / 'app/data/tangut-eras.json'
-KINDS = {'coin', 'disputed', 'text', 'unknown'}
+KINDS = {'coin', 'disputed', 'text', 'gloss', 'unknown'}
 
 
 def tangut(text: str) -> bool:
     return bool(text) and all(0x17000 <= ord(c) <= 0x18AFF or 0x18D00 <= ord(c) <= 0x18D7F for c in text)
+
+
+def corpus_text(place: str) -> str:
+    """The running text of a work in the repository's own corpus."""
+    corpus, name = place.split(':', 1)
+    if corpus == 'lcdtt':
+        return (ROOT / f'data/lcdtt/{name}.txt').read_text(encoding='utf-8')
+    if corpus == 'wikisource':
+        pages = json.loads((ROOT / 'data/wikisource/pages.json').read_text(encoding='utf-8'))['pages']
+        return pages[name]['content']
+    raise SystemExit(f'unknown corpus: {place}')
 
 
 def main() -> None:
@@ -75,6 +91,8 @@ def main() -> None:
                 raise SystemExit(f'no such era in the calendar: {row}')
             if row['tangut'] and row['tangut'] not in era['calendar']:
                 raise SystemExit(f'the form differs from the calendar\'s, which the page would hide: {row}')
+            if row['place'] and row['tangut'] not in corpus_text(row['place']):
+                raise SystemExit(f'the form does not occur in the text named: {row}')
             era['evidence'].append({'tangut': row['tangut'], 'kind': row['kind'], 'source': row['source']})
 
     OUT.write_text(json.dumps(eras, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
