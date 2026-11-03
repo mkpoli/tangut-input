@@ -314,7 +314,7 @@
   "about.rhymeBooksTitle": "韵书",
   "about.rhymeBooks": "nkay0所编<a href=\"https://github.com/nkay0/Tangut-rhyme-dictionaries-data\">Tangut-rhyme-dictionaries-data</a>（西夏語韻書データ）：收录各字在《文海》中的韵部、声调、声类（九音）及反切上下字，据韩小忙（2021）及《文海》《文海宝韵》《同音》《合编》诸本整理。原表所载页码与检字编号未予转载。代码库未声明许可协议。",
   "about.classNamesTitle": "九音品名",
-  "about.classNames": "《同音》为九类声母各立西夏文品名，如重唇音一品，西夏语序作“唇音重一品”。图表标题据孙伯君（2017）<a href=\"https://www.ngiam.cn/tangut/papers/%E5%AD%AB%E4%BC%AF%E5%90%9B_2017_%E8%AB%96%E8%A5%BF%E5%A4%8F%E5%B0%8D%E6%BC%A2%E8%AA%9E%E9%9F%B3%E9%9F%BB%E5%AD%B8%E7%9A%84%E7%B9%BC%E6%89%BF%E8%88%87%E5%89%B5%E6%96%B0.pdf\">《论西夏对汉语音韵学的继承与创新》</a>表二。第九类《五音切韵》称舌齿音，《同音》称来日音九品。",
+  "about.classNames": "《同音》以西夏文为九类声母命名，如重唇音一品，西夏语序作“唇音重一品”。图表标题据孙伯君（2017）<a href=\"https://www.ngiam.cn/tangut/papers/%E5%AD%AB%E4%BC%AF%E5%90%9B_2017_%E8%AB%96%E8%A5%BF%E5%A4%8F%E5%B0%8D%E6%BC%A2%E8%AA%9E%E9%9F%B3%E9%9F%BB%E5%AD%B8%E7%9A%84%E7%B9%BC%E6%89%BF%E8%88%87%E5%89%B5%E6%96%B0.pdf\">《论西夏对汉语音韵学的继承与创新》</a>表二。第九类，《五音切韵》称舌齿音，《同音》称来日音九品。",
   "about.pronunciationTitle": "读音校核",
   "about.pronunciationCheck": "读音取自Open Tangut。将其GX202411栏与<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">龚勋西夏文读音数据库（Xun Gong’s Tangut Pronunciation Database）</a>（2025）比对：将上标声调折算为数字后，6,031条读音中有5,743条一致，88条不同，另有58字彼处未收。",
   "about.strokes": "整字笔画数取自Unicode的<a href=\"https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt\">TangutSources.txt</a>（Unicode 18.0）；部件笔画数由本项目据字形审定计出。",

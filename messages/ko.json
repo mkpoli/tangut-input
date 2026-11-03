@@ -314,7 +314,7 @@
   "about.rhymeBooksTitle": "운서",
   "about.rhymeBooks": "nkay0의 <a href=\"https://github.com/nkay0/Tangut-rhyme-dictionaries-data\">Tangut-rhyme-dictionaries-data</a> (西夏語韻書データ): 한샤오망(Han Xiaomang, 2021) 및 《문해(文海)》, 《문해보운(文海寶韻)》, 《동음(同音)》, 《합편(合編)》 판본에서 가져온 각 글자의 《문해》 운목, 성조, 성류(구음), 반절상하자를 담고 있습니다. 원래 표의 쪽수와 색인 번호는 옮기지 않았습니다. 저장소에는 라이선스가 명시되어 있지 않습니다.",
   "about.classNamesTitle": "구음의 품명",
-  "about.classNames": "《동음(同音)》은 아홉 성류마다 서하어 품명을 세웁니다. 중순음일품(重唇音一品)은 서하어 어순으로 「순음중일품」입니다. 표의 머리는 쑨보쥔(孫伯君, 2017) <a href=\"https://www.ngiam.cn/tangut/papers/%E5%AD%AB%E4%BC%AF%E5%90%9B_2017_%E8%AB%96%E8%A5%BF%E5%A4%8F%E5%B0%8D%E6%BC%A2%E8%AA%9E%E9%9F%B3%E9%9F%BB%E5%AD%B8%E7%9A%84%E7%B9%BC%E6%89%BF%E8%88%87%E5%89%B5%E6%96%B0.pdf\">〈論西夏對漢語音韻學的繼承與創新〉</a>의 표 2를 따릅니다. 아홉째 갈래를 《오음절운(五音切韻)》은 설치음(舌齒音)이라 하고 《동음》은 내일음구품(來日音九品)이라 합니다.",
+  "about.classNames": "《동음(同音)》은 아홉 성류에 각각 서하어 품명을 붙입니다. 중순음일품(重唇音一品)은 서하어 어순으로 ‘순음중일품’입니다. 표의 머리는 쑨보쥔(孫伯君, 2017) <a href=\"https://www.ngiam.cn/tangut/papers/%E5%AD%AB%E4%BC%AF%E5%90%9B_2017_%E8%AB%96%E8%A5%BF%E5%A4%8F%E5%B0%8D%E6%BC%A2%E8%AA%9E%E9%9F%B3%E9%9F%BB%E5%AD%B8%E7%9A%84%E7%B9%BC%E6%89%BF%E8%88%87%E5%89%B5%E6%96%B0.pdf\">〈論西夏對漢語音韻學的繼承與創新〉</a>의 표 2를 따릅니다. 아홉째 갈래를 《오음절운(五音切韻)》은 설치음(舌齒音)이라 하고 《동음》은 來日音九品(내일음구품)이라 합니다.",
   "about.pronunciationTitle": "독음 대조",
   "about.pronunciationCheck": "독음은 Open Tangut의 것을 따릅니다. 그중 GX202411 열을 <a href=\"https://github.com/semakosa/tangut-pronunciation-db\">궁쉰의 서하어 독음 데이터베이스(Xun Gong’s Tangut Pronunciation Database)</a>(2025)와 대조한 결과, 위첨자 성조를 숫자로 바꾸었을 때 6,031개 독음 중 5,743개가 일치하고 88개가 다르며 58자는 해당 데이터베이스에 없습니다.",
   "about.strokes": "글자 획수는 유니코드의 <a href=\"https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt\">TangutSources.txt</a> (Unicode 18.0)에서 가져왔으며, 부품 획수는 이 프로젝트에서 자형을 검토하여 세었습니다.",

@@ -18,8 +18,8 @@
   const PER_PAGE = 20
 
   // The nine initial classes of the 同音: the Roman numeral is the class, `zh` its name in the rhyme
-  // books' Chinese, `tangut` the 同音's own chapter title (脣音重一品 and so on: the place, 音, the
-  // order, 品), as tabulated in 孫伯君 2017.
+  // books' Chinese, `tangut` the 同音's own chapter title (唇音重一品 and so on: the class's place and
+  // 音, then its number and 品), as tabulated in 孫伯君 2017.
   const CLASSES = [
     { roman: 'Ⅰ', zh: '重唇音', tangut: '𗠉𗙏𗊢𘈩𘄿' }, { roman: 'Ⅱ', zh: '輕唇音', tangut: '𗠉𗙏𗥫𗍫𘄿' },
     { roman: 'Ⅲ', zh: '舌頭音', tangut: '𗢯𘁙𗙏𘕕𘄿' }, { roman: 'Ⅳ', zh: '舌上音', tangut: '𗢯𗀔𗙏𗥃𘄿' },
