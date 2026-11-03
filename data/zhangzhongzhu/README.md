@@ -46,7 +46,14 @@ provisional and must be re-checked before the page order is quoted anywhere.
 
 `entry_id` is `zzz:<witness>:<seq>`, the running number once keyed, so a second witness or a
 re-photograph does not renumber the text. `canvas`, `side`, `band` and `seq` say where the entry sits,
-not what it is. `gloss_status` is `ok`, `uncertain` or `illegible`.
+not what it is: `seq` counts columns from the right edge of the band, because the bands read right to
+left. `gloss_status` is `ok`, `uncertain` or `illegible`.
+
+`column_role` says what the keyed column is: `gloss`, `transcription`, `tangut` or `unknown`. A row
+may hold a single column while the entry it belongs to is still unestablished — the first rows do,
+and their `notes` say so. That is deliberate: a column can be read from the image, a grouping cannot
+without knowing which columns are Tangut, and writing the grouping first would put a claim into the
+data that the evidence does not carry.
 
 ### cells.tsv
 
