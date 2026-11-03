@@ -119,3 +119,23 @@ test('the sample passages are exact lines from the attestation', () => {
     expect(sample.text).toBe(sample.lineIds.map(line => attestation.lines[line].text).join('\n'))
   }
 })
+
+const glossWords = gunzipSync(readFileSync(new URL('../data/tangut-gloss-words.tsv.gz', import.meta.url)))
+  .toString().split('\n').filter(line => line && !line.startsWith('#')).map(line => line.split('\t'))
+
+test('the gloss word table names every character once', () => {
+  expect(glossWords.length).toBe(6144)
+  expect(new Set(glossWords.map(row => row[0]))).toEqual(new Set(entries.rows.map(row => row[0])))
+  const tiers = {}
+  for (const [, , tier] of glossWords) tiers[tier] = (tiers[tier] ?? 0) + 1
+  expect(tiers).toEqual({ word: 3115, phrase: 2057, transliteration: 728, long: 163, empty: 58, redirect: 23 })
+  const glossOf = char => glossWords.find(row => row[0] === char)
+  expect(glossOf('𗢳')).toEqual(['𗢳', '佛', 'word', 'tha̱1'])
+  expect(glossOf('𘋢').slice(0, 3)).toEqual(['𘋢', '菩薩', 'phrase'])
+  expect(glossOf('𗍏')[2]).toBe('transliteration')
+  // A short bracket before a word belongs to it, and a bracket later in the entry does not make
+  // the first sense a transliteration.
+  expect(glossOf('𗁋').slice(0, 3)).toEqual(['𗁋', '滴答', 'phrase'])
+  expect(glossOf('𗓭').slice(0, 3)).toEqual(['𗓭', '富', 'word'])
+  expect(glossOf('𗘓')[2]).toBe('long')
+})
