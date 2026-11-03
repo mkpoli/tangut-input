@@ -35,8 +35,9 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 
 **Desktop (1440×900).** One top bar: the mark, the grouped finders, each with its icon before the
 name, the reconstruction with its label and sound icon, and a settings button. The settings popover
-carries the colour scheme, the light or dark side, the interface language and the Tangut face. The
-text strip sits under the bar; the finder takes the left and the card a fixed 400 px column on the
+is two groups: Appearance, with the three-way theme (system, light or dark) and the colour scheme;
+and Text, with the interface language and the Tangut face. Each row carries its own icon. The text
+strip sits under the bar; the finder takes the left and the card a fixed 400 px column on the
 right, scrolling on its own. Sources sits at the foot of the finder. The card stays visible while
 candidates change, so meaning and reading are read alongside the list.
 

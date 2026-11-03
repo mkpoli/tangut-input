@@ -380,5 +380,7 @@
   "draw.siblings": "Often meant: characters one component away from {char}",
   "settings.label": "Settings",
   "settings.close": "Close",
+  "settings.appearance": "Appearance",
+  "settings.text": "Text",
   "font.face": "Tangut face"
 }

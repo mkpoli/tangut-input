@@ -380,5 +380,7 @@
   "draw.siblings": "{char}와 부품 하나만 다른 글자",
   "settings.label": "설정",
   "settings.close": "닫기",
+  "settings.appearance": "모양",
+  "settings.text": "문자",
   "font.face": "서하 문자 글꼴"
 }

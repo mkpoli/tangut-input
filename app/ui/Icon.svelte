@@ -40,6 +40,7 @@
     scroll: '<path d="M6 4h7a2 2 0 0 1 2 2v11H7a1.5 1.5 0 0 1 0-3h8"/><path d="M7 4a1.5 1.5 0 0 0 0 3"/>',
     archive: '<rect x="3" y="4.5" width="14" height="4" rx="1"/><path d="M4.5 8.5v7h11v-7M8 11.5h4"/>',
     settings: '<path d="M3 6h8M15 6h2M3 14h2M9 14h8"/><circle cx="13" cy="6" r="2"/><circle cx="7" cy="14" r="2"/>',
+    type: '<path d="M4 16.5 10 3.5l6 13"/><path d="M6.5 11.5h7"/>',
   }
 
   /** @type {{ name: keyof typeof ICONS, size?: number, stroke?: number }} */

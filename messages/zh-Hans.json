@@ -380,5 +380,7 @@
   "draw.siblings": "与「{char}」只差一个部件的字",
   "settings.label": "设置",
   "settings.close": "关闭",
+  "settings.appearance": "外观",
+  "settings.text": "文字",
   "font.face": "西夏字体"
 }
