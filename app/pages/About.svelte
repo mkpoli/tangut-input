@@ -22,6 +22,8 @@
       <dd>{@html t('about.rhymeBooks')}</dd>
       <dt>{t('about.classNamesTitle')}</dt>
       <dd>{@html t('about.classNames')}</dd>
+      <dt>{t('about.tibetanTitle')}</dt>
+      <dd>{@html t('about.tibetan')}</dd>
       <dt>{t('about.pronunciationTitle')}</dt>
       <dd>{@html t('about.pronunciationCheck')}</dd>
       <dt>{t('about.strokesTitle')}</dt>

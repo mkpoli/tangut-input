@@ -253,7 +253,8 @@
     const value = ix.rhymes.get(char)
     const spelling = value ? [value[3] ?? value[5], value[4] ?? value[6]].filter(Boolean).join('') : ''
     const sound = ix.byChar.get(char)?.pronunciations?.sound_li_fanwen?.trim() ?? ''
-    return [char, spelling ? `反切 ${spelling}` : '', sound, gloss(char)].filter(Boolean).join(' · ')
+    const tibetan = (ix.tibetan.get(char) ?? []).map(([wylie, script, where]) => `${script} ${wylie} (${where.map(([shelf]) => shelf).join(', ')})`).join('; ')
+    return [char, spelling ? `反切 ${spelling}` : '', sound, tibetan ? `藏 ${tibetan}` : '', gloss(char)].filter(Boolean).join(' · ')
   }
 </script>
 
@@ -368,7 +369,7 @@
                 <td>
                   {#if row.columns.get(group)?.length}
                     {#each row.columns.get(group) ?? [] as char (char)}
-                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}</button>
+                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan" lang="bo">{ix.tibetan.get(char)?.map(([wylie, script]) => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}${wylie.includes('[?]') ? '?' : ''}`).join(' ')}</small>{/if}</button>
                     {/each}
                   {/if}
                 </td>
@@ -404,8 +405,9 @@
   tbody th.head-cell .tone-label{display:block;font-family:var(--ui-font-sans);font-size:10px;color:var(--ui-color-ink-muted)}
   tr.tone th{position:sticky;left:0;background:var(--ui-color-surface-sunken);color:var(--ui-color-ink-muted);text-align:start;padding:var(--ui-space-2xs) var(--ui-space-sm);font-size:var(--ui-text-2xs);letter-spacing:var(--ui-tracking-caps);text-transform:uppercase;border-top:1px solid var(--ui-color-border-strong)}
   td{vertical-align:top;border-top:1px solid var(--ui-color-border);border-inline-start:1px solid var(--ui-color-border);padding:3px;min-inline-size:84px}
-  .cell{padding:1px 3px;border:1px solid transparent;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font-size:19px;line-height:1.12}
+  .cell{vertical-align:top;padding:1px 3px;border:1px solid transparent;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font-size:19px;line-height:1.12}
   .cell:hover{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover)}
+  .cell small.tibetan{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.3;color:var(--ui-color-ink-soft)}
   .cell small{display:block;font-family:var(--ui-font-sans);font-size:9.5px;color:var(--ui-color-ink-muted);line-height:1.1}
   .sounds{display:grid;gap:var(--ui-space-xl);max-block-size:calc(100dvh - 290px);overflow:auto;padding-inline-end:var(--ui-space-2xs)}
   .sound{display:grid;gap:var(--ui-space-sm);padding-bottom:var(--ui-space-md);border-bottom:1px solid var(--ui-color-border)}
