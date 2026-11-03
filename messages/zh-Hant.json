@@ -392,5 +392,12 @@
   "settings.close": "關閉",
   "settings.appearance": "外觀",
   "settings.text": "文字",
-  "font.face": "西夏字體"
+  "font.face": "西夏字體",
+  "ime.placeholder": "編碼、數字、讀音、釋義或部件",
+  "ime.recent": "最近選用",
+  "ime.kind.code": "倉頡碼",
+  "ime.kind.sijiao": "四角號碼",
+  "ime.kind.sound": "讀音",
+  "ime.kind.sense": "釋義",
+  "ime.kind.parts": "部件"
 }

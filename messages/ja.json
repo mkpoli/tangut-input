@@ -392,5 +392,12 @@
   "settings.close": "閉じる",
   "settings.appearance": "外観",
   "settings.text": "文字",
-  "font.face": "西夏文字の書体"
+  "font.face": "西夏文字の書体",
+  "ime.placeholder": "コード・数字・音・意味・部品",
+  "ime.recent": "最近選んだ字",
+  "ime.kind.code": "倉頡コード",
+  "ime.kind.sijiao": "四角号碼",
+  "ime.kind.sound": "読み",
+  "ime.kind.sense": "意味",
+  "ime.kind.parts": "部品"
 }

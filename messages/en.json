@@ -392,5 +392,12 @@
   "settings.close": "Close",
   "settings.appearance": "Appearance",
   "settings.text": "Text",
-  "font.face": "Tangut face"
+  "font.face": "Tangut face",
+  "ime.placeholder": "Code, digits, reading, meaning or components",
+  "ime.recent": "Recently picked",
+  "ime.kind.code": "Cangjie code",
+  "ime.kind.sijiao": "Four-corner code",
+  "ime.kind.sound": "Reading",
+  "ime.kind.sense": "Meaning",
+  "ime.kind.parts": "Components"
 }
