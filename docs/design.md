@@ -98,12 +98,15 @@ when the user has one. A checkbox favours characters whose recorded stroke count
 number of strokes drawn; another adds components to the search. On a phone, results come straight
 after the pad and the note follows them.
 
-**Parts** (`/parts`) builds a character from components, as the script is built. The palette and
-the matching characters sit in two panes side by side, stacked on a narrow screen, each scrolling
-on its own, so a new match never pushes the palette out of reach. Each chosen part keeps only the
-characters whose description holds it (twice if chosen twice), and the palette keeps only the parts
-that still occur, with a count on each, so the next choice always leads somewhere. An outer layout
-(side by side, above and below, three across …) narrows further. The palette is ordered by stroke
+**Parts** (`/parts`) builds a character from parts, as the script is built. A part can be a
+component or a character that the description spells whole, at any layer of the description: a
+subtree that spells a character stands for it, and its own parts are followed in turn. The palette
+and the matching characters sit in two panes side by side, stacked on a narrow screen, each
+scrolling on its own, so a new match never pushes the palette out of reach. Each chosen part keeps
+only the characters that hold it anywhere in their description (twice if chosen twice), and the
+palette keeps only the parts that still occur, with a count on each, so the next choice always
+leads somewhere. An outer layout (side by side, above and below, three across …) narrows
+further. The palette is ordered by stroke
 count, then by use, and can be filtered by Cangjie code or Japanese shape name. Choosing a part
 also opens it in the card. A card's “Characters with these parts” link opens Parts with that
 character's parts chosen.
@@ -134,8 +137,8 @@ recorded with the fanqie it was made for.
   label and a link to its Wikisource page. Each source prints its own citation and rights. Outside
   the corpus it reads “Not yet recorded”, with the corpus size, so absence never reads as “not a
   character”.
-- Characters that use this one (for components), characters described the same way, characters
-  with the same Li Fanwen reading.
+- Characters that hold this one at any layer (for parts), characters described the same way,
+  characters with the same Li Fanwen reading.
 - Source line for the records.
 
 ## Addresses

@@ -1,6 +1,7 @@
 // The finders that read the records directly: Cangjie codes, meanings, parts and code points.
 // Readings live in reading.js and drawings in shape.js.
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
+import { matchByParts } from './composition.js'
 import { searchShapeNames } from './names.js'
 import { describedBy } from './description.js'
 
@@ -128,37 +129,22 @@ export function byMeaning(query, options = {}) {
 
 
 /**
- * Characters whose description holds every chosen part (a part chosen twice must appear twice),
- * optionally with a given outermost layout.
+ * Characters whose description holds every chosen part at any layer (a part chosen twice must
+ * appear twice), optionally with a given outermost layout. A part can be a component or a
+ * character the description spells whole.
  * @param {string[]} parts
  * @param {string} [layout] an IDS operator the description must begin with
  * @returns {string[]}
  */
 export function byParts(parts, layout = '') {
   if (!parts.length && !layout) return []
-  /** @type {Map<string, number>} */
-  const need = new Map()
-  for (const part of parts) need.set(part, (need.get(part) ?? 0) + 1)
-  /** @type {Iterable<string>} */
-  let pool = ix.byChar.keys()
-  let smallest = Infinity
-  for (const part of need.keys()) {
-    const users = ix.usedBy.get(part)
-    if (!users) return []
-    if (users.size < smallest) { pool = users; smallest = users.size }
-  }
-  /** @type {string[]} */
-  const hits = []
-  for (const char of pool) {
-    if (layout && !ix.byChar.get(char)?.composition?.startsWith(layout)) continue
-    const have = ix.partsOf.get(char)
-    if ([...need].every(([part, count]) => (have?.get(part) ?? 0) >= count)) hits.push(char)
-  }
+  let hits = parts.length ? matchByParts(ix, parts) : [...ix.byChar.keys()]
+  if (layout) hits = hits.filter(char => ix.byChar.get(char)?.composition?.startsWith(layout))
   return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99)
     || frequency(b) - frequency(a) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
 
-/** The parts other than the chosen ones that occur in the given characters, with how many use each. @param {string[]} chars */
+/** The parts the given characters hold at any layer, with how many use each. @param {string[]} chars */
 export function partsAmong(chars) {
   /** @type {Map<string, number>} */
   const counts = new Map()
@@ -166,9 +152,18 @@ export function partsAmong(chars) {
   return counts
 }
 
-/** The parts of a description, in order, without the layout operators. @param {string} char */
+/** The components of a description, in order, without the layout operators. @param {string} char */
 export function partsIn(char) {
   return [...(ix.byChar.get(char)?.composition ?? '')].filter(part => !OPERATORS.has(part) && isTangut(part))
+}
+
+/**
+ * The parts a character is described with directly, character-sized parts kept whole. Splitting
+ * one of these opens the character it stands for in turn.
+ * @param {string} char
+ */
+export function directPartsIn(char) {
+  return ix.directPartsOf.get(char) ?? []
 }
 
 /**
