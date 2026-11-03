@@ -10,10 +10,16 @@ a concordance layer: Tangut character ⇄ the Chinese character that transcribes
 canvases, 5766 × 4978 px, held by 清光山西巖寺 (shelfmark 156/西巖297), photographed 令和元年度,
 CC BY-NC 4.0. `source.yaml` and `witnesses.tsv` carry the record.
 
-It is a printed reproduction, not the Khara-Khoto manuscript. Any reading of a damaged glyph needs a
-second witness (羅福成's edition, or the facsimile in 俄藏黑水城文獻) before it is called certain.
-The images stay in `cache/` and are not redistributed. The non-commercial term governs the images,
-not the keyed rows; the rows' own licence is not settled.
+It is a printed reproduction, not the Khara-Khoto manuscript: 貽安堂 經籍鋪 printed it in the 民國
+as the first item of 絕域方言集. It carries the Tangut as well as the Chinese — canvas 4 is the title
+page, canvas 5 the series title facing a Tangut preface — so the columns on a body page are all
+there; what has to be settled is their order within an entry.
+
+A reading of a damaged glyph needs a second witness before it is called certain. `source.yaml` lists
+the 甲乙本 facsimile on Commons under `comparisons`: leaves of both manuscript copies, at about
+1237 × 1752 px per page, enough to compare a character and not enough to key from. The images stay
+in `cache/` and are not redistributed. The non-commercial term governs the images, not the keyed
+rows; the rows' own licence is not settled.
 
 ## What the page gives
 

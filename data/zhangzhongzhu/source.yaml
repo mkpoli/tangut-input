@@ -15,6 +15,9 @@ title_latin: Fan-Han heshi zhangzhongzhu
 author: 骨勒茂才
 date: 1190
 date_note: 西夏乾祐二十一年
+series: 絕域方言集 第一種
+publisher: 貽安堂經籍鋪
+published: 民國
 kind: bilingual-glossary
 languages: [txg, lzh]
 url: https://kokusho.nijl.ac.jp/biblio/100354804
@@ -39,4 +42,14 @@ notes:
   - The 掌中珠 is a classified glossary of about a thousand entries, in nine sections (天, 地, 人 …).
   - The images are CC BY-NC 4.0, 清光山西巖寺 / 国文学研究資料館. They are fetched to cache/ and not redistributed with the site.
   - The keyed text is our own work over a public-domain work; the non-commercial term governs the images, not the rows. Its licence is not settled, so cite the canvas and this repository.
-  - The text is also printed in 羅福成's edition and in the 俄藏黑水城文獻 facsimiles; a second witness is needed before any reading of a damaged glyph is called certain.
+  - The copy prints the Tangut as well as the Chinese: canvas 4 is the title page, canvas 5 the series title facing a Tangut preface.
+  - A reading of a damaged glyph needs a second witness before it is called certain; see comparisons.
+
+comparisons:
+  - id: jia-yi-ben-facsimile
+    title: 番漢合時掌中珠 甲乙本
+    url: https://commons.wikimedia.org/wiki/File:%E7%95%AA%E6%BC%A2%E5%90%88%E6%99%82%E6%8E%8C%E4%B8%AD%E7%8F%A0_%E7%94%B2%E4%B9%99%E6%9C%AC.pdf
+    content: 38 pages reproducing leaves of the 甲本 and 乙本, with some transcription pages; the Tangut is set in a denser, more angular hand than the 貽安堂 print
+    resolution: about 1237 × 1752 px per page, the leaf occupying part of it
+    licence: tagged public domain on Commons, but the scanned book looks like a modern edition, so the tag is the uploader's claim and was not checked
+    use: comparison only — not keyed from, not used as the site's image source
