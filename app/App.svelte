@@ -106,7 +106,12 @@
     }
     settingsOpen = true
     await tick()
-    settingsPop?.querySelector('select')?.focus()
+    // The theme is the first control; its checked radio is the group's one tab stop.
+    const panel = settingsPop
+    const first = /** @type {HTMLElement | null} */ (
+      panel?.querySelector('input[type="radio"]:checked') ?? panel?.querySelector('input, select')
+    )
+    first?.focus()
   }
 
   /** @param {boolean} [restore] */
