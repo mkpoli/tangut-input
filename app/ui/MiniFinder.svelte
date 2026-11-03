@@ -11,6 +11,7 @@
   import { preview, ui } from '../lib/ui.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from './G.svelte'
+  import Icon from './Icon.svelte'
 
   /** @typedef {{ char: string, note: string, title?: string }} MiniHit */
 
@@ -18,13 +19,13 @@
   let { selected = '', onpick } = $props()
 
   const MODES = /** @type {const} */ ([
-    { key: 'find', label: 'nav.find' },
-    { key: 'meaning', label: 'nav.meaning' },
-    { key: 'cangjie', label: 'nav.cangjie' },
-    { key: 'sijiao', label: 'nav.sijiao' },
-    { key: 'reading', label: 'nav.reading' },
-    { key: 'draw', label: 'nav.draw' },
-    { key: 'parts', label: 'nav.parts' },
+    { key: 'find', label: 'nav.find', icon: 'find' },
+    { key: 'meaning', label: 'nav.meaning', icon: 'meaning' },
+    { key: 'cangjie', label: 'nav.cangjie', icon: 'cangjie' },
+    { key: 'sijiao', label: 'nav.sijiao', icon: 'sijiao' },
+    { key: 'reading', label: 'nav.reading', icon: 'reading' },
+    { key: 'draw', label: 'nav.draw', icon: 'draw' },
+    { key: 'parts', label: 'nav.parts', icon: 'parts' },
   ])
   const LIMIT = 48
   const CANVAS = 320
@@ -403,14 +404,14 @@
         </div>
         <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm"
           aria-label={t('fanqie.picker.close')} title={t('fanqie.picker.close')} onclick={() => close()}>
-          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+          <Icon name="close" size={16}/>
         </button>
       </header>
 
       <div class="picker-modes ui-chip-row" role="group" aria-label={t('nav.label')}>
         {#each MODES as item (item.key)}
           <button type="button" class="ui-chip" aria-pressed={mode === item.key} onclick={() => setMode(item.key)}>
-            {t(item.label)}
+            <Icon name={item.icon} size={13}/>{t(item.label)}
           </button>
         {/each}
       </div>
@@ -457,8 +458,8 @@
               {#if !strokes.length}<span class="draw-hint" aria-hidden="true">{t('draw.here')}</span>{/if}
             </div>
             <div class="draw-tools">
-              <button type="button" class="ui-button" data-size="sm" onclick={undoDraw} disabled={!strokes.length}>{t('draw.undo')}</button>
-              <button type="button" class="ui-button" data-size="sm" onclick={clearDraw} disabled={!strokes.length}>{t('draw.clear')}</button>
+              <button type="button" class="ui-button" data-size="sm" onclick={undoDraw} disabled={!strokes.length}><Icon name="undo" size={14}/>{t('draw.undo')}</button>
+              <button type="button" class="ui-button" data-size="sm" onclick={clearDraw} disabled={!strokes.length}><Icon name="clear" size={14}/>{t('draw.clear')}</button>
               <span class="ui-count">{t('draw.strokes', { count: strokes.length })}</span>
               {#if shapeStatus === 'loading'}<span class="ui-hint">{t('draw.loading')}</span>{:else}<span class="ui-hint">{t('fanqie.picker.drawNote')}</span>{/if}
             </div>
@@ -471,7 +472,7 @@
                   <G char={part} /><span class="part-x" aria-hidden="true">×</span><span class="ui-visually-hidden">{t('parts.remove')}</span>
                 </button>
               {/each}
-              <button type="button" class="ui-button" data-variant="quiet" data-size="sm" onclick={resetParts}>{t('parts.reset')}</button>
+              <button type="button" class="ui-button" data-variant="quiet" data-size="sm" onclick={resetParts}><Icon name="clear" size={13}/>{t('parts.reset')}</button>
             {:else}
               <span class="ui-hint">{t('parts.noneChosen')}</span>
             {/if}

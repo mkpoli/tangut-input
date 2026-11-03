@@ -4,6 +4,7 @@
   // dictionary can find a character by its code without knowing a reading or a decomposition.
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
+  import Icon from '../ui/Icon.svelte'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { bySijiao } from '../lib/search.js'
@@ -91,9 +92,9 @@
         {/each}
         {#if pages > 1}
           <span class="ui-pager">
-            <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" aria-label={t('common.previous')} onclick={() => turn(-1)}>‹</button>
+            <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" aria-label={t('common.previous')} onclick={() => turn(-1)}><Icon name="prev" size={16}/></button>
             <span>{page + 1}/{pages}</span>
-            <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" aria-label={t('common.more')} onclick={() => turn(1)}>›</button>
+            <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm" aria-label={t('common.more')} onclick={() => turn(1)}><Icon name="next" size={16}/></button>
           </span>
         {/if}
       {:else if code}

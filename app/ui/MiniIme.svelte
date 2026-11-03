@@ -9,6 +9,7 @@
   import { insert, remember } from '../lib/text.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from './G.svelte'
+  import Icon from './Icon.svelte'
 
   /** Which edge of the button the panel hangs from, so it stays on-screen. */
   let { align = 'end' } = $props()
@@ -98,13 +99,13 @@
   <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" bind:this={trigger}
     aria-haspopup="dialog" aria-expanded={open} aria-label={t('ime.label')} title={t('ime.label')}
     onclick={() => { open ? close() : show() }}>
-    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="16" height="10" rx="2"/><path d="M5 9h1M8 9h1M11 9h1M14 9h1M5 12h10" stroke-linecap="round"/></g></svg>
+    <Icon name="keyboard" size={16}/>
   </button>
   {#if open}
     <div class="panel ui-menu" class:start={align === 'start'} role="dialog" aria-label={t('ime.label')}>
       <div class="modes" role="group" aria-label={t('ime.label')}>
         {#each MODES as name (name)}
-          <button type="button" class="ui-chip" aria-pressed={mode === name} onclick={() => { mode = name; query = ''; box?.focus() }}>{t(`ime.${name}`)}</button>
+          <button type="button" class="ui-chip" aria-pressed={mode === name} onclick={() => { mode = name; query = ''; box?.focus() }}><Icon name={name} size={13}/>{t(`ime.${name}`)}</button>
         {/each}
       </div>
       <input class="ui-input" data-size="sm" bind:this={box} bind:value={query} onkeydown={keys}

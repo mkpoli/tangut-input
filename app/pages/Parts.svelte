@@ -12,6 +12,7 @@
   import { LAYOUTS } from '../ui/Ids.svelte'
   import Layout from '../ui/Layout.svelte'
   import Candidates from '../ui/Candidates.svelte'
+  import Icon from '../ui/Icon.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
   let chosen = $state(/** @type {string[]} */ ([...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : partsIn(char))))
@@ -117,7 +118,7 @@
 
 <div class="ui-page parts">
   <header class="ui-page-head">
-    <h1 class="ui-page-title">{t('nav.parts')}</h1>
+    <h1 class="ui-page-title"><Icon name="parts" size={22}/><span>{t('nav.parts')}</span></h1>
     <p class="ui-page-intro">{t('parts.intro')}</p>
   </header>
 
@@ -132,7 +133,7 @@
         </div>
       {/each}
       {#if !chosen.length}<span class="ui-hint ph">{t('parts.noneChosen')}</span>{/if}
-      {#if chosen.length || layout}<button type="button" class="ui-button" data-variant="quiet" data-size="sm" onclick={reset}>{t('parts.reset')}</button>{/if}
+      {#if chosen.length || layout}<button type="button" class="ui-button" data-variant="quiet" data-size="sm" onclick={reset}><Icon name="clear" size={13}/>{t('parts.reset')}</button>{/if}
     </div>
     <div class="ui-toolbar layouts" role="group" aria-label={t('parts.layout')}>
       <span class="ui-label">{t('parts.layout')}</span>

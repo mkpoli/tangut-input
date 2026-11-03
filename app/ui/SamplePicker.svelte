@@ -6,6 +6,7 @@
   import { setText, text, loadSample, restoreSample, sampleHistory } from '../lib/text.svelte.js'
   import { setQuery } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
+  import Icon from './Icon.svelte'
 
   /** @type {{ align?: 'start' | 'end', syncQuery?: boolean, onpick?: () => void }} */
   let { align = 'end', syncQuery = false, onpick } = $props()
@@ -100,7 +101,7 @@
   <button class="ui-button trigger" data-variant="quiet" data-size="sm" type="button" bind:this={trigger}
     aria-haspopup="dialog" aria-expanded={open} aria-label={t('samples.button')} title={t('samples.button')}
     onclick={show}>
-    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M3 4.5h5.5c1 0 1.5.6 1.5 1.5v10c0-.9-.5-1.5-1.5-1.5H3zM17 4.5h-5.5c-1 0-1.5.6-1.5 1.5v10c0-.9.5-1.5 1.5-1.5H17z"/></g></svg>
+    <Icon name="book" size={16}/>
     <span class="label">{t('samples.button')}</span>
   </button>
   {#if open}
