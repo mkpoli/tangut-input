@@ -28,12 +28,22 @@ test('the packed records keep every character and its languages', () => {
 
 test('the Chinese fanqie parse is the one the chart draws', () => {
   const records = hanFanqie(expanded)
-  expect(records.length).toBe(3697)
+  expect(records.length).toBe(3816)
   const bySound = sounds(records)
-  expect(bySound.size).toBe(1425)
+  expect(bySound.size).toBe(1433)
   const several = [...bySound.values()].filter(group => group.spellings.size > 1).length
-  expect(several).toBe(492)
+  expect(several).toBe(504)
   expect(bySound.get('勒').spellings.size).toBe(20)
+})
+
+test('a rounding marker is not one of the two characters', () => {
+  const records = hanFanqie(expanded)
+  const rounded = records.find(record => record.char === '𗅶')
+  // 「底合卒切」: 底 with 合 marking the rounding, spelt with 卒.
+  expect(rounded.upper).toBe('底')
+  expect(rounded.lower).toBe('卒')
+  expect(rounded.round).toBe(true)
+  expect(records.filter(record => record.round).length).toBe(21)
 })
 
 test('every character with a rhyme is a character the site knows', () => {
