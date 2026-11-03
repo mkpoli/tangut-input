@@ -1,4 +1,4 @@
-// The works the era list cites, by the key `data/tangut-era-evidence.tsv` uses. `calendar` is the
+// The works the era and title lists cite, by the key `data/tangut-era-evidence.tsv` uses. `calendar` is the
 // source of every era's dates and of the forms no other source backs. A work read only through
 // another's quotation has no link of its own; its note names the work that quotes it.
 export const ERA_SOURCES = {
@@ -48,7 +48,7 @@ export const ERA_SOURCES = {
     author: '聶鴻音',
     title: '乾祐二十年《彌勒上生經御製發願文》的夏漢對勘研究',
     where: '西夏學 4 (2009), pp. 42–45; Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
-    note: 'The prayer is dated 乾祐 20 (1189).',
+    note: 'The prayer is dated 乾祐 20 (1189); the Chinese of its title is on p. 43.',
     url: 'https://www.sinoss.net/uploadfile/2010/1130/10732.pdf',
   },
   leilin: {
@@ -64,6 +64,34 @@ export const ERA_SOURCES = {
     where: '西夏學 6 (2010), pp. 14–18; Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
     note: 'Its Chinese rendering has 貞觀十四年 and 貞觀十七年 at the lines the Tangut opens with 𗣼𘝯, both of the Tang era. The comparison with the coin is made on this page.',
     url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606102539528.pdf',
+  },
+  diamond: {
+    author: 'Diamond Sutra, transcribed on Wikisource',
+    title: '𗵒𘗁𘄒𘎑𘏞𗓽𗕥𗸰𗖰𗚩',
+    where: 'Wikisource, revision 1030376',
+    note: 'The credit line gives the title as the corrector of the text.',
+    url: 'https://wikisource.org/w/index.php?oldid=1030376',
+  },
+  yang2010: {
+    author: '楊志高',
+    title: '國圖藏西夏文《慈悲道場懺法》卷八譯釋（一）',
+    where: '西夏學 5 (2010); Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
+    note: 'The translators\' line, and 惠宗 and his mother as the translators.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0528/20120528021944100.pdf',
+  },
+  yang2011: {
+    author: '楊志高',
+    title: '圖書館藏西夏文《慈悲道場懺法序》譯考',
+    where: '西夏學 8 (2011), p. 100',
+    note: 'The Chinese of the translators\' line, attributing 惠宗 to 史金波 1988.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0620/20120620033537836.pdf',
+  },
+  cui2007: {
+    author: 'Wikipedia contributors, citing 崔紅芬 and 文志勇',
+    title: 'Emperor Chongzong of Western Xia',
+    where: 'English Wikipedia, accessed 4 November 2026',
+    note: 'Its citation is 西夏皇帝尊號考略, 寧夏大學學報 2007(1), whose link is dead; that article was not seen.',
+    url: 'https://en.wikipedia.org/wiki/Emperor_Chongzong_of_Western_Xia',
   },
   nie2004: {
     author: '聶鴻音',
@@ -83,5 +111,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'cui2007',
 ])

@@ -1,8 +1,10 @@
 <script>
   // The era names of the Western Xia in order, each with its Tangut form where one is recorded and
   // what the form rests on: a coin, a Tangut text, or only the calendar the list is built from.
-  // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`.
+  // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
+  // imperial titles the texts write, from `app/data/tangut-titles.json`.
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
+  import TITLES from '../data/tangut-titles.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
   import { choose } from '../lib/ui.svelte.js'
   import { hex } from '../lib/db.svelte.js'
@@ -53,7 +55,7 @@
 
 <article class="ui-page eras">
   <header class="ui-page-head">
-    <h1 class="ui-page-title"><Icon name="eras" size={22}/><span>{t('nav.eras')}</span></h1>
+    <h1 class="ui-page-title"><Icon name="eras" size={22}/><span>{t('eras.title')}</span></h1>
     <p class="ui-page-intro">{t('eras.intro', counts)}</p>
   </header>
 
@@ -91,6 +93,27 @@
     </table>
   </div>
 
+  <section class="ui-section titles" id="titles">
+    <h2 class="heading">{t('eras.titles')}</h2>
+    <p class="ui-hint">{t('eras.titles.intro')}</p>
+    <div class="ui-table-wrap">
+      <table class="ui-table list">
+        <thead><tr><th scope="col">{t('eras.titles.holder')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.titles.chinese')}</th></tr></thead>
+        <tbody>
+          {#each TITLES as title (title.tangut)}
+            <tr>
+              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{/if}</th>
+              <td class="forms title-form"><span class="form" role="group" aria-label={title.tangut}>{#each [...title.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(title.sources)}</td>
+              <td class="chinese">{#if title.chinese}<span lang="zh">{title.chinese}</span>{@render cites([title.chineseSource])}{:else}<span class="ui-hint">—</span>{/if}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+    <p class="ui-hint">* {t('eras.titles.dated')}</p>
+  </section>
+
   <section class="ui-section sources">
     <h2 class="heading">{t('eras.sources')}</h2>
     <ol class="source-list">
@@ -124,6 +147,11 @@
   .cite{margin-inline-start:2px;font-size:.72em;line-height:0;vertical-align:super}
   .cite a{padding-inline:1px;color:var(--ui-color-accent);text-decoration:none}
   .cite a:hover{text-decoration:underline}
+  .titles{gap:var(--ui-space-sm)}
+  .title-form{white-space:normal}
+  .title-form .form{flex-wrap:wrap;vertical-align:middle}
+  .chinese{min-inline-size:12em;font-size:var(--ui-text-sm)}
+  .inferred{margin-inline-start:2px;color:var(--ui-color-ink-muted)}
   .heading{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold)}
   .sources{gap:var(--ui-space-sm);padding-top:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
   .source-list{margin:0;padding-inline-start:1.5em;color:var(--ui-color-ink-soft);font-size:13px;line-height:1.65}
@@ -141,5 +169,7 @@
     .list .basis{text-align:end}
     .list .forms{grid-row:2;grid-column:1 / -1;white-space:normal}
     .list .forms[data-empty]{display:none}
+    .titles .list .forms{grid-row:auto}
+    .titles .list .chinese{grid-column:1 / -1}
   }
 </style>

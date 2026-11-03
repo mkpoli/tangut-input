@@ -447,5 +447,11 @@
   "eras.kind.none.hint": "本頁所用資料均未載西夏文寫法。",
   "eras.form": "{era}的西夏文寫法{n}",
   "eras.cite": "出處{n}",
-  "eras.gloss": "西夏文《貞觀政要》以這兩字書寫唐代年號「貞觀」。"
+  "eras.gloss": "西夏文《貞觀政要》以這兩字書寫唐代年號「貞觀」。",
+  "eras.title": "年號與尊號",
+  "eras.titles": "尊號",
+  "eras.titles.intro": "本站西夏文文獻所見的皇帝、皇太后尊號，漢文照錄所引校本。這些文獻中未見諡號。",
+  "eras.titles.holder": "人物",
+  "eras.titles.chinese": "漢文",
+  "eras.titles.dated": "人物據該段文字的年代推定。"
 }

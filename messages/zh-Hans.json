@@ -447,5 +447,11 @@
   "eras.kind.none.hint": "本页所用资料均未载西夏文写法。",
   "eras.form": "{era}的西夏文写法{n}",
   "eras.cite": "出处{n}",
-  "eras.gloss": "西夏文《贞观政要》以这两字书写唐代年号“贞观”。"
+  "eras.gloss": "西夏文《贞观政要》以这两字书写唐代年号“贞观”。",
+  "eras.title": "年号与尊号",
+  "eras.titles": "尊号",
+  "eras.titles.intro": "本站西夏文文献所见的皇帝、皇太后尊号，汉文照录所引校本。这些文献中未见谥号。",
+  "eras.titles.holder": "人物",
+  "eras.titles.chinese": "汉文",
+  "eras.titles.dated": "人物据该段文字的年代推定。"
 }

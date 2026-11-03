@@ -447,5 +447,11 @@
   "eras.kind.none.hint": "여기서 쓴 자료에는 서하 문자 표기가 없습니다.",
   "eras.form": "{era}의 서하 문자 표기 {n}",
   "eras.cite": "출처 {n}",
-  "eras.gloss": "서하어 《정관정요》는 당나라 연호 ‘정관’을 이 두 글자로 적습니다."
+  "eras.gloss": "서하어 《정관정요》는 당나라 연호 ‘정관’을 이 두 글자로 적습니다.",
+  "eras.title": "연호와 존호",
+  "eras.titles": "존호",
+  "eras.titles.intro": "이 사이트의 서하 문헌에 보이는 황제와 황태후의 존호입니다. 한문은 인용한 교감본의 표기 그대로입니다. 이 문헌들에서 시호는 찾지 못했습니다.",
+  "eras.titles.holder": "인물",
+  "eras.titles.chinese": "한문",
+  "eras.titles.dated": "인물은 해당 구절의 연대로 추정했습니다."
 }

@@ -447,5 +447,11 @@
   "eras.kind.none.hint": "ここで用いた資料には西夏文の表記がないもの。",
   "eras.form": "{era}の西夏文表記{n}",
   "eras.cite": "出典{n}",
-  "eras.gloss": "西夏文『貞観政要』は唐の元号「貞観」をこの二字で書いています。"
+  "eras.gloss": "西夏文『貞観政要』は唐の元号「貞観」をこの二字で書いています。",
+  "eras.title": "元号と尊号",
+  "eras.titles": "尊号",
+  "eras.titles.intro": "このサイトの西夏文テキストに見える皇帝と皇太后の尊号です。漢文は引用した校訂本の表記のままです。これらのテキストに諡号は見つかっていません。",
+  "eras.titles.holder": "人物",
+  "eras.titles.chinese": "漢文",
+  "eras.titles.dated": "人物は、その箇所の年代から推定しています。"
 }
