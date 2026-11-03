@@ -1,0 +1,113 @@
+{
+ "repository": "https://github.com/bjargal/LCDTT-tangut",
+ "commit": "3cb572ac74c67158c7f88ecf37ad81efe87b92ae",
+ "retrieved": "2026-11-04",
+ "permission": "The project owner granted permission to use the corpus on 2026-11-04.",
+ "texts": [
+  {
+   "slug": "atisa",
+   "file": "biography_atiśa.txt",
+   "title": "Biography of Atiśa"
+  },
+  {
+   "slug": "bodhicaryavatara-1-4",
+   "file": "bodhicaryavatara_1-4.txt",
+   "title": "Bodhicaryāvatāra, chapters 1–4"
+  },
+  {
+   "slug": "bodhicaryavatara-5-8",
+   "file": "bodhicaryavatara_5_8.txt",
+   "title": "Bodhicaryāvatāra, chapters 5–8"
+  },
+  {
+   "slug": "saptaguna",
+   "file": "saptaguṇvarṇanā_parikathā.txt",
+   "title": "Saptaguṇavarṇanā parikathā"
+  },
+  {
+   "slug": "legal",
+   "file": "tangut_legal_texts.txt",
+   "title": "Tangut legal texts"
+  },
+  {
+   "slug": "dragon-king",
+   "file": "佛為海龍王說法印經.txt",
+   "title": "Dragon King’s question"
+  },
+  {
+   "slug": "zhanpobiqiu",
+   "file": "佛說瞻婆比丘經.txt",
+   "title": "Sutra of the Bhikṣu of Campā"
+  },
+  {
+   "slug": "jinyao",
+   "file": "佛說金耀童子經.txt",
+   "title": "Sutra of the Golden Light Youth"
+  },
+  {
+   "slug": "huayan",
+   "file": "修華嚴奧旨妄盡還源觀.txt",
+   "title": "Cultivating the Profound Meaning of the Avataṃsaka"
+  },
+  {
+   "slug": "tiansheng-kinship",
+   "file": "天盛律令節親門.txt",
+   "title": "Tiansheng Legal Code, Kinship Section"
+  },
+  {
+   "slug": "heart-sutra",
+   "file": "妙法蓮華心經.txt",
+   "title": "Heart Sutra of the Lotus"
+  },
+  {
+   "slug": "sunzi",
+   "file": "孫子兵法三家注.txt",
+   "title": "Sunzi’s Art of War with Three Commentaries"
+  },
+  {
+   "slug": "maitreya-vow",
+   "file": "彌勒上生經御製發願文.txt",
+   "title": "Vow for the Maitreya Upper Birth Sutra"
+  },
+  {
+   "slug": "zhigong",
+   "file": "志公大師十二時歌注解.txt",
+   "title": "Zhigong’s Twelve Hours Song with Commentary"
+  },
+  {
+   "slug": "filial-piety",
+   "file": "慈孝傳.txt",
+   "title": "New Collection on Parental Love and Filial Piety"
+  },
+  {
+   "slug": "repentance",
+   "file": "慈悲道場懺法.txt",
+   "title": "Compassionate Repentance Liturgy"
+  },
+  {
+   "slug": "repentance-preface",
+   "file": "慈悲道場懺法序.txt",
+   "title": "Preface to the Compassionate Repentance Liturgy"
+  },
+  {
+   "slug": "rescue-dharani",
+   "file": "拔濟苦難陀羅尼經.txt",
+   "title": "Dhāraṇī Sutra for Rescuing from Suffering"
+  },
+  {
+   "slug": "six-syllable",
+   "file": "聖六字增壽大明陀羅尼經.txt",
+   "title": "Noble Six-Syllable Longevity Dhāraṇī"
+  },
+  {
+   "slug": "zhenguan",
+   "file": "貞觀政要.txt",
+   "title": "Essentials of Government of the Zhenguan Era"
+  },
+  {
+   "slug": "leilin",
+   "file": "類林.txt",
+   "title": "Forest of Categories"
+  }
+ ]
+}

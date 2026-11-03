@@ -203,6 +203,7 @@
   "attest.open": "開啟頁面",
   "attest.retrieved": "{date}取得",
   "attest.revision": "版本{revision}",
+  "attest.commit": "提交{commit}",
   "attest.reading": "該行研讀",
   "attest.unread": "該行（尚未研讀）",
   "attest.lineReadings": "逐行研讀：",

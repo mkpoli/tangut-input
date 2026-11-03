@@ -1,5 +1,5 @@
 {
-  "built": "2026-11-03",
+  "built": "2026-11-04",
   "samples": [
     {
       "id": "diamond-opening",
@@ -121,6 +121,58 @@
       "text": "𗥦𗰞𗱸𗍁𗛹𗋽𗎘 𘅞𘔚𗔀𗹸𗲌𗴂𗹭 𗼎𗾧𘕿𗗙𗂧𗋕𗁁"
     },
     {
+      "id": "heart-sutra",
+      "sourceId": "lcdtt",
+      "sourceTitle": "Heart Sutra",
+      "sourceUrl": "https://github.com/bjargal/LCDTT-tangut",
+      "licence": "Used with permission",
+      "label": "line 2",
+      "famous": true,
+      "lineIds": [
+        "lcdtt:heart-sutra:line-2"
+      ],
+      "text": "𗉘𘝨𗛱𗡝𘉒𗐱𗢳𘟙𗎭𗍁𗒯𘛣𘑗𗼍𘂧𗫻，𘜶𘏞𗢈𗓚𘄽𗢈，𗅉𘜉𗴼、𘜉𗴼𘆵、𗰨𗣧𗁸、"
+    },
+    {
+      "id": "sunzi",
+      "sourceId": "lcdtt",
+      "sourceTitle": "Sunzi’s Art of War",
+      "sourceUrl": "https://github.com/bjargal/LCDTT-tangut",
+      "licence": "Used with permission",
+      "label": "line 2",
+      "famous": true,
+      "lineIds": [
+        "lcdtt:sunzi:line-2"
+      ],
+      "text": "𗐾𘈫𗫂，𘄴𗂧𘓐𘟂，𘒏𘝞𘙇𘃡，𘅰𘟙𗊡𘚥𘋩𘙌𗼒。𗊡𘚥𘒣：“𘌽𗰗𘕕𘙶𘝞，𘘮𗄊"
+    },
+    {
+      "id": "zhenguan",
+      "sourceId": "lcdtt",
+      "sourceTitle": "Zhenguan Government",
+      "sourceUrl": "https://github.com/bjargal/LCDTT-tangut",
+      "licence": "Used with permission",
+      "label": "line 1",
+      "famous": true,
+      "lineIds": [
+        "lcdtt:zhenguan:line-1"
+      ],
+      "text": "𗣼𘝯𗤒𗅁，𘜶𗸱𗨝𘀲𗫂𘝦𗅲𗫊𘐶，𗉣𗳘𗖵𘃡。𗂸𗂅𗘼𗶃𘔒《𗗎𗺉》𗍫𗰗𘐳𘙇𘃡𘂎𗋚。"
+    },
+    {
+      "id": "leilin",
+      "sourceId": "lcdtt",
+      "sourceTitle": "Forest of Categories",
+      "sourceUrl": "https://github.com/bjargal/LCDTT-tangut",
+      "licence": "Used with permission",
+      "label": "line 3",
+      "famous": true,
+      "lineIds": [
+        "lcdtt:leilin:line-3"
+      ],
+      "text": "𗔬𗩇𗺹𘅰𗒯𘅧𗲁𗪨𘕘𘃣𗻼"
+    },
+    {
       "id": "twenty-five-questions",
       "sourceId": "wikisource-twenty-five-questions",
       "sourceTitle": "Twenty-five Questions",
@@ -172,6 +224,19 @@
         "wikisource-dual-maxims:line-4"
       ],
       "text": "𘚜𗨤𗤮𘁾𗣃𗅋𘃪\n𗼇𗗙𘋥𘝿𘎪□□"
+    },
+    {
+      "id": "legal-code",
+      "sourceId": "lcdtt",
+      "sourceTitle": "Tangut Legal Code",
+      "sourceUrl": "https://github.com/bjargal/LCDTT-tangut",
+      "licence": "Used with permission",
+      "label": "line 1",
+      "famous": false,
+      "lineIds": [
+        "lcdtt:legal:line-1"
+      ],
+      "text": "𘃞𘛈𘛇𘋠𘕾𗴛𗄼𗀔𗪘𗪟𘊐𘟩𗪘𗏡𘙇"
     }
   ]
 }

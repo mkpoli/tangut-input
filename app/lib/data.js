@@ -10,7 +10,7 @@
 /** @typedef {{ id: string, kind: 'facsimile' | 'transcription', title: string, shortTitle?: string, titleTangut?: string, author: string, year?: number,
  *   publisher: string, url: string, licence: string, licenceUrl?: string, manuscript?: string, facsimile?: string,
  *   facsimileCredit?: string, reading?: string, readingUrl?: string, retrieved?: string, revision?: number, note?: string,
- *   pages?: { title: string, url: string, revision: number }[] }} AttestationSource */
+ *   pages?: { title: string, url: string, revision: number }[], commit?: string }} AttestationSource */
 /** @typedef {{ text: string, label: string, english?: string, page?: number, read?: boolean, url?: string, section?: string,
  *   chapter?: number, revision?: number }} AttestedLine */
 /** @typedef {[line: string, position: number]} Place */

@@ -39,6 +39,7 @@ ATLAS = Path(os.environ.get('GLYPH_ATLAS', '~/projects/Philology/glyph-atlas')).
 TEXTS = ATLAS / 'data/tangut'
 STRIPS = ATLAS / 'work/tangut/facsimile'
 WIKISOURCE = ROOT / 'data/wikisource/pages.json'
+LCDTT = ROOT / 'data/lcdtt'
 TANGUT = re.compile(r'^[\U00017000-\U00018AFF\U00018D00-\U00018DFF]$')
 CROP_HEIGHT = 128
 
@@ -327,6 +328,74 @@ def page_url(title):
     return 'https://wikisource.org/wiki/' + urllib.parse.quote(title.replace(' ', '_'), safe='/')
 
 
+def build_lcdtt(rows):
+    """One source for the Lausanne corpus, one line per verse or per physical line."""
+    manifest = json.loads((LCDTT / 'manifest.json').read_text(encoding='utf-8'))
+    commit = manifest['commit']
+    source = {
+        'id': 'lcdtt',
+        'kind': 'transcription',
+        'title': 'Lausanne Corpus of Digital Tangut Texts',
+        'shortTitle': 'Lausanne Corpus',
+        'author': 'LCDTT contributors',
+        'publisher': 'Lausanne Corpus of Digital Tangut Texts',
+        'url': manifest['repository'],
+        'licence': 'Used with permission',
+        'retrieved': manifest['retrieved'],
+        'commit': commit,
+        'note': 'The repository states no licence; the project owner granted permission on 2026-11-04. Each text cites the edition it was extracted from in data/lcdtt/README.md.',
+    }
+    lines = {}
+    for text in manifest['texts']:
+        slug, title = text['slug'], text['title']
+        body = (LCDTT / text['file']).read_text(encoding='utf-8')
+        blocks = lcdtt_blocks(body, slug)
+        for label, value in blocks:
+            value = clean_tangut(value)
+            if not value or is_heading(value):
+                continue
+            line_id = f'lcdtt:{slug}:{label.replace(" ", "-").lower()}'
+            lines[line_id] = {
+                'text': value,
+                'label': label,
+                'section': title,
+                'url': f"https://github.com/bjargal/LCDTT-tangut/blob/{commit}/{urllib.parse.quote(text['file'])}",
+            }
+            for position, char in enumerate(value, 1):
+                if TANGUT.match(char):
+                    rows.setdefault(char, {}).setdefault('lcdtt', []).append([line_id, position])
+    return source, lines
+
+
+def lcdtt_blocks(body, slug):
+    """Yield (label, raw text) for a file.
+
+    The two Bodhicaryāvatāra files mark verses with a line such as 1.3; each verse becomes one
+    passage. The other files have no verse numbers, so each non-empty line is a passage.
+    """
+    if slug.startswith('bodhicaryavatara'):
+        current = None
+        collected = []
+        for line in body.splitlines():
+            match = re.fullmatch(r'\s*(\d+\.\d+)\s*', line)
+            if match:
+                if current is not None and collected:
+                    yield current, ' '.join(collected)
+                current = match.group(1)
+                collected = []
+            elif current is not None and line.strip():
+                collected.append(line.strip())
+        if current is not None and collected:
+            yield current, ' '.join(collected)
+        return
+    number = 0
+    for line in body.splitlines():
+        if not any(TANGUT.match(char) for char in line):
+            continue
+        number += 1
+        yield f'line {number}', line.strip()
+
+
 def build_wikisource(rows):
     snapshot = json.loads(WIKISOURCE.read_text(encoding='utf-8'))
     pages = snapshot['pages']
@@ -424,6 +493,10 @@ def main():
     more_sources, more_lines = build_wikisource(rows)
     sources.extend(more_sources)
     lines.update(more_lines)
+
+    lcdtt_source, lcdtt_lines = build_lcdtt(rows)
+    sources.append(lcdtt_source)
+    lines.update(lcdtt_lines)
 
     characters = [char for line in lines.values() for char in line['text'] if TANGUT.match(char)]
     corpus_text = ' '.join(line['text'] for line in lines.values())

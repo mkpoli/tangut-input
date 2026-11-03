@@ -92,7 +92,7 @@
             {t('attest.lineReadings')} <a href={group.source.readingUrl} target="_blank" rel="noreferrer">{group.source.reading}</a>.</p>
         {:else}
           <p class="src ui-hint">{group.source.author} · {#if group.source.licenceUrl}<a href={group.source.licenceUrl} target="_blank" rel="noreferrer">{group.source.licence}</a>{:else}{group.source.licence}{/if}{#if group.source.retrieved} · {t('attest.retrieved', { date: group.source.retrieved })}{/if}
-            · <a href={oldid(group.source)} target="_blank" rel="noreferrer">{t('attest.revision', { revision: group.source.revision ?? '' })}</a>.</p>
+            {#if group.source.revision}· <a href={oldid(group.source)} target="_blank" rel="noreferrer">{t('attest.revision', { revision: group.source.revision })}</a>{:else if group.source.commit}· <a href={`${group.source.url}/commit/${group.source.commit}`} target="_blank" rel="noreferrer">{t('attest.commit', { commit: group.source.commit.slice(0, 7) })}</a>{/if}.</p>
         {/if}
       </section>
     {/each}

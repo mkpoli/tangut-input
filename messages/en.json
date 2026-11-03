@@ -203,6 +203,7 @@
   "attest.open": "open the page",
   "attest.retrieved": "retrieved {date}",
   "attest.revision": "revision {revision}",
+  "attest.commit": "commit {commit}",
   "attest.reading": "reading of the line",
   "attest.unread": "the line (not yet read)",
   "attest.lineReadings": "Line readings:",

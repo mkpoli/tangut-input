@@ -65,13 +65,13 @@ test('the rhyme record keeps the fields the card and the chart read', () => {
 
 const attestation = json('tangut-attestation.json.gz')
 
-test('the attestation joins the edition and the twelve Wikisource texts', () => {
+test('the attestation joins the edition, the twelve Wikisource texts and the Lausanne corpus', () => {
   expect(attestation.corpus).toEqual({
-    lines: 1305,
-    characters: 24280,
-    distinct: 2665,
-    sources: 13,
-    sha256: '675699a6d2d7663431ba4f3504c85f61caef6f8b3eaba51bf00dc2b3f6fb2860',
+    lines: 5273,
+    characters: 92509,
+    distinct: 3350,
+    sources: 14,
+    sha256: '5312f92bf9751cf88e4ef8c4306a5f4a7be4c94690f58da4eba1d88323623017',
   })
   expect(attestation.sources.map(source => source.id)).toEqual([
     'solonin-2024',
@@ -87,10 +87,11 @@ test('the attestation joins the edition and the twelve Wikisource texts', () => 
     'wikisource-liangzhou-stele',
     'wikisource-dual-maxims',
     'wikisource-tongyin-preface',
+    'lcdtt',
   ])
   expect(attestation.sources.every(source => source.url && source.licence)).toBe(true)
   expect(attestation.sources[0].facsimile).toContain('/facsimile/solonin-2024/')
-  expect(attestation.sources.slice(1).every(source => source.kind === 'transcription' && source.revision)).toBe(true)
+  expect(attestation.sources.slice(1).every(source => source.kind === 'transcription' && (source.revision || source.commit))).toBe(true)
 })
 
 test('every place points at the character it attests', () => {
@@ -110,8 +111,8 @@ test('every place points at the character it attests', () => {
 const samples = JSON.parse(readFileSync(new URL('../app/data/tangut-samples.json', import.meta.url)).toString())
 
 test('the sample passages are exact lines from the attestation', () => {
-  expect(samples.samples.length).toBe(13)
-  expect(samples.samples.filter(sample => sample.famous).length).toBe(9)
+  expect(samples.samples.length).toBe(18)
+  expect(samples.samples.filter(sample => sample.famous).length).toBe(13)
   const sourceIds = new Set(attestation.sources.map(source => source.id))
   for (const sample of samples.samples) {
     expect(sourceIds.has(sample.sourceId)).toBe(true)
