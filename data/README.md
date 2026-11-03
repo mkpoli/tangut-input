@@ -446,7 +446,7 @@ source has them.
   sound glosses it carries (up to eight and two); a reading the record lacks stays out. It
   also drops Chinese rows that only say 暫無解釋, point to another entry, or are editorial
   notes. Open Tangut merges CCAMC and Wiktionary entries and states that its vocabulary is not all
-  verified; the panel repeats what it records rather than checking it against the dictionaries.
+  verified; the data repeats what it records rather than checking it against the dictionaries.
   The builder fetches the pinned file into `cache/` and verifies its digest.
 
 Open Tangut publishes its compilation under MIT (`COPYING-open-tangut.txt`). Its records
