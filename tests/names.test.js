@@ -21,9 +21,17 @@ const TANGUT = [
   ['くくノ﹅', '𘦄'],
   ['コくノ﹅', '𘧆'],
   ['くノ﹅ノメ', '𘧶'],
+  ['ノ匕﹅', '𘢕'],
+  ['ノノ匕﹅', '𘤈'],
+  ['一匕﹅', '𘡴'],
+  ['二匕﹅', '𘣒'],
+  ['ソ一匕﹅', '𘦜'],
+  ['ラ匕﹅', '𘣭'],
+  ['コ匕﹅', '𘤾'],
+  ['コ一匕﹅', '𘦺'],
 ]
 
-test('the ten Tangut components are named by their Japanese shapes', () => {
+test('the eighteen Tangut components are named by their Japanese shapes', () => {
   const found = new Map(names
     .filter(name => name.source === 'arakawa-2023' || name.source === 'ja-wikipedia-tangut')
     .map(name => [name.name, name.char]))
