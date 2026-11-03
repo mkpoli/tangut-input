@@ -71,6 +71,10 @@
   function put(char) {
     remember()
     insert(char)
+    // Opened as another tool's picker, the pick is handed back as well as typed in.
+    if (new URLSearchParams(location.search).has('pick')) {
+      try { window.parent?.postMessage({ type: 'tangut-pick', char }, '*') } catch { /* a closed window */ }
+    }
     recent = [char, ...recent.filter(other => other !== char)].slice(0, 32)
     try { localStorage.setItem('tangut-input:recent', JSON.stringify(recent)) } catch { /* the list lives this visit */ }
     query = ''
