@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["pillow"]
+# dependencies = ["pillow>=12"]
 # ///
 """Cut a 掌中珠 canvas into bands and suggest the column boundaries in each.
 
@@ -30,8 +30,9 @@ WIDTH = 1800  # the working width the profiles are measured at
 
 
 def canvas_image(canvas):
+    """The native-size image fetch_zhangzhongzhu.py writes, fetched if it is missing."""
     CACHE.mkdir(parents=True, exist_ok=True)
-    path = CACHE / f'{canvas:02d}-full.jpg'
+    path = CACHE / f'{canvas:02d}-native-native.jpg'
     if not path.exists():
         url = f'{BASE.format(file=f"{canvas - 1:05d}")}/full/full/0/default.jpg'
         with urllib.request.urlopen(url) as response, open(path, 'wb') as out:

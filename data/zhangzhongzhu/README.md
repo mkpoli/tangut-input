@@ -44,19 +44,24 @@ not what it is. `gloss_status` is `ok`, `uncertain` or `illegible`.
 
 ### cells.tsv
 
-One row per character position in the headword. `role` is `tangut`, `transcription` or
-`gloss_spelling`. `status` is `ok`, `uncertain`, `illegible` or `absent` — `absent` means the print
-has no character at that position, which is a reading and not a gap. A position with no row is
+One row per character position and role. `role` is `tangut`, `transcription` or `gloss_spelling`,
+and positions run 1..n within each role, so a two-character headword with two transcription
+characters is four rows. `status` is `ok`, `uncertain`, `illegible` or `absent` — `absent` means the
+print has no character at that position, which is a reading and not a gap. A position with no row is
 untranscribed. `glyph` is what the print shows; `glyph_norm` is the standard form from
-`variants.tsv`.
+`variants.tsv`. `checked_against` names a second witness or edition when the reading was checked
+against one, and is empty when this print is the only evidence.
+
+`ok` requires `reviewer` and `reviewed_date`. A reading of a damaged glyph stays `uncertain` until
+a second witness confirms it, whatever the reviewer's confidence.
 
 Do not assume the transcription column has as many characters as the Tangut column. Where the counts
 differ the difference is the finding, and it belongs in `glyph_note`.
 
 ## The worksheet
 
-`scripts/segment_zhangzhongzhu.py --canvas 40` cuts the canvas into the two pages and their bands,
-writes one PNG per band under `cache/zhangzhongzhu/` with a ruler in full-resolution pixels and a
+`scripts/segment_zhangzhongzhu.py --canvas 40 --pages` cuts the canvas into the two pages and their
+bands, writes one PNG per band under `cache/zhangzhongzhu/` with a ruler in native pixels and a
 suggested boundary on every column, and prints the bands as TSV. The boundaries are a suggestion:
 the print rules the entry groups but not every column, so each one has to be confirmed by a reader
 who can tell the Tangut column from the Chinese ones. Record the confirmed boundary as a number, not
@@ -76,7 +81,8 @@ as a description.
 ## Scripts
 
 ```sh
-uv run scripts/fetch_zhangzhongzhu.py --canvas 40          # one canvas to cache/
+uv run scripts/fetch_zhangzhongzhu.py --canvas 40                    # native canvas to cache/
 uv run scripts/fetch_zhangzhongzhu.py --canvas 40 --crop 14,18,14,13 --size 1600
-uv run scripts/check_zhangzhongzhu.py                      # validate the tables
+uv run scripts/segment_zhangzhongzhu.py --canvas 40 --pages          # page and band images
+uv run scripts/check_zhangzhongzhu.py                                # validate the tables
 ```

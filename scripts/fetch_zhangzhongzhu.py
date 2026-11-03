@@ -38,7 +38,11 @@ def main():
     for canvas in canvases:
         if not 1 <= canvas <= CANVASES:
             raise SystemExit(f'canvas {canvas} is outside 1..{CANVASES}')
-        name = f'{canvas:02d}-{region.replace(",", "_").replace(":", "")}.jpg'
+        # The cache key has to carry the size: 1600 and native are different pictures
+        # of the same canvas, and a shared name would serve the wrong one later.
+        region_key = 'native' if region == 'full' else region.replace(',', '_').replace(':', '')
+        size_key = 'native' if size == 'full' else size.rstrip(',')
+        name = f'{canvas:02d}-{region_key}-{size_key}.jpg'
         url = f'{BASE.format(file=f"{canvas - 1:05d}")}/{region}/{size}/0/default.jpg'
         target = options.out / name
         if target.exists():

@@ -92,7 +92,8 @@
     "records": "bun scripts/records.mjs",
     "build:tangut-sijiao": "uv run scripts/build_tangut_sijiao.py",
     "build:tangut-rhymes": "uv run scripts/build_tangut_rhymes.py",
-    "check:design": "bun scripts/check_design.mjs"
+    "check:design": "bun scripts/check_design.mjs",
+    "check:zhangzhongzhu": "uv run scripts/check_zhangzhongzhu.py"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261102.1",
