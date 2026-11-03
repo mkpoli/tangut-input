@@ -68,6 +68,9 @@
 
   $effect(() => { void text; active = -1 })
 
+  // A picker takes the keys at once; beside a field it waits to be opened.
+  $effect(() => { if (always) queueMicrotask(() => box?.focus()) })
+
   /** @param {string} char */
   function put(char) {
     remember()

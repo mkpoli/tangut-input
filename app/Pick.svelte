@@ -22,5 +22,7 @@
 </main>
 
 <style>
-  .pick{display:grid;gap:10px;padding:14px;min-block-size:100dvh;align-content:start;background:var(--ui-color-surface)}
+  .pick{display:grid;gap:8px;padding:12px;align-content:start;background:var(--ui-color-surface);min-block-size:100dvh}
+  /* The box takes the keys as soon as the page is up: an embedded picker should not need a click. */
+  .pick :global(.ime input){outline:none}
 </style>
