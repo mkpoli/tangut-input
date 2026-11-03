@@ -35,7 +35,6 @@
   "ime.none": "一致する記録はありません。",
   "nav.sources": "出典",
   "lang.label": "言語",
-  "font.label": "西夏文字の書体",
   "font.serif": "Noto Serif",
   "font.yinchuan": "Yinchuan",
   "font.wenhai": "Wenhai",
@@ -367,5 +366,8 @@
   "palette.indigo": "藍",
   "palette.sand": "カラホト",
   "theme.label": "テーマ",
-  "draw.siblings": "{char}と部品ひとつ違いの字"
+  "draw.siblings": "{char}と部品ひとつ違いの字",
+  "settings.label": "設定",
+  "settings.close": "閉じる",
+  "font.face": "西夏文字の書体"
 }

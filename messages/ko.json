@@ -35,7 +35,6 @@
   "ime.none": "일치하는 기록이 없습니다.",
   "nav.sources": "출처",
   "lang.label": "언어",
-  "font.label": "서하 문자 서체",
   "font.serif": "Noto Serif",
   "font.yinchuan": "Yinchuan",
   "font.wenhai": "Wenhai",
@@ -367,5 +366,8 @@
   "palette.indigo": "쪽빛",
   "palette.sand": "카라호토",
   "theme.label": "테마",
-  "draw.siblings": "{char}와 부품 하나만 다른 글자"
+  "draw.siblings": "{char}와 부품 하나만 다른 글자",
+  "settings.label": "설정",
+  "settings.close": "닫기",
+  "font.face": "서하 문자 글꼴"
 }

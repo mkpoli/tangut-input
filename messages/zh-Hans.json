@@ -35,7 +35,6 @@
   "ime.none": "没有相符的记录。",
   "nav.sources": "资料来源",
   "lang.label": "语言",
-  "font.label": "西夏文字体",
   "font.serif": "Noto Serif",
   "font.yinchuan": "Yinchuan",
   "font.wenhai": "Wenhai",
@@ -367,5 +366,8 @@
   "palette.indigo": "靛蓝",
   "palette.sand": "黑水城",
   "theme.label": "主题",
-  "draw.siblings": "与「{char}」只差一个部件的字"
+  "draw.siblings": "与「{char}」只差一个部件的字",
+  "settings.label": "设置",
+  "settings.close": "关闭",
+  "font.face": "西夏字体"
 }

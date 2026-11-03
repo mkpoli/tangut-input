@@ -54,7 +54,7 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 
 ## Faces
 
-The Tangut script can be set in four faces from the switch at the right of the top bar: Noto Serif
+The Tangut script can be set in four faces in Settings: Noto Serif
 Tangut (the default, from Google Fonts), Tangut Yinchuan (景永時's design, completed by Andrew West),
 BabelStone Tangut Wenhai, and New Tangut Std (新西夏字體, the 楷書-structured face). Yinchuan and the Wenhai complement are served from the site; their
 terms are in `app/public/fonts/FONT-LICENCES.md`. `bun run build:tangut-fonts` rebuilds the two

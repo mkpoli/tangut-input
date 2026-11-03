@@ -33,20 +33,19 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 
 ## The frame
 
-**Desktop (1440×900).** One 54 px top bar: the mark, the nine finders, Sources, then the
-reconstruction, the interface language, the Tangut face and the theme. The text strip sits under
-it; the finder takes the left and the card a fixed 400 px column on the right, scrolling on its
-own. The card stays visible while candidates change, so meaning and reading are read alongside the
+**Desktop (1440×900).** One top bar: the mark, the grouped finders, the reconstruction with its
+label and sound icon, and a settings button. The settings popover carries the colour scheme, the
+light or dark side, the interface language and the Tangut face. The text strip sits under the bar;
+the finder takes the left and the card a fixed 400 px column on the right, scrolling on its own.
+The card stays visible while candidates change, so meaning and reading are read alongside the
 list.
 
-**Phone (390 wide).** The top bar keeps the mark, the reconstruction, the face and the theme. The
-finders move to a bottom bar: Find, a tab for each group (shape, sound, meaning), and More. A group
-tab opens a sheet of its finders with a one-line hint on each, and stays marked while the reader is
-on one of them. More holds Sources, the palette, the theme and the interface language. The sheet is
-a native `<dialog>`: Escape or a backdrop tap closes it, focus returns to the tab that opened it,
-and Back closes it without pulling focus off the page. The card becomes a full-height sheet that a
-tap opens and its Back button or `Esc` closes; previews from the keyboard do not open it. The text
-strip stays at the top.
+**Phone (390 wide).** The top bar keeps the mark, the reconstruction and settings; settings opens
+as a sheet from the same button. The finders move to a bottom tab bar of groups, each opening its
+pages in a sheet; More holds Sources. The sheets are native `<dialog>`s, so Escape closes them and
+focus returns to the tab that opened them. The card becomes a full-height sheet that a tap opens
+and Back or `Esc` closes; previews from the keyboard do not open it. The text strip stays at the
+top.
 
 ## The finders, and why each sits where it does
 
@@ -139,10 +138,10 @@ for every path.
 Warm paper and ink with one vermilion accent, used for what acts (the primary button, a selected
 row or candidate, the mark) and for the mark. The focus ring is ink, so a focused box does not read
 as an error. The page has three surfaces and no shadow; only menus, popovers and the toast float.
-Tangut is set in Noto Serif Tangut by default, with three further faces from the top bar; Latin
+Tangut is set in Noto Serif Tangut by default, with three further faces in settings; Latin
 headings and readings in a book serif from the system; interface text in the system sans; codes in
 the system monospace. Light and dark are `light-dark()` pairs; the theme follows the system unless
-the switch in the top bar fixes it. The card can show a character in every face the site serves,
+settings fixes it. The card can show a character in every face the site serves,
 loading the seven extra outlines only when asked. The mark is 𘅤 (U+18164), glossed “to write” in
 Open Tangut, drawn from the font into the favicon.
 
