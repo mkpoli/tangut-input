@@ -27,6 +27,8 @@ from their readings and meanings:
 - Wikidata: labels and aliases for the radicals in English, Japanese, Chinese, Korean and
   Vietnamese (Kangxi radical 120, 糸部, 실사, Bộ Thủy), CC0 1.0.
 - An editorial Hepburn and Kunrei table: the romanization of each kana name (nobun, sanzui, ukanmuri, nogihen; si, ti, tu, hu for the Kunrei spellings).
+- Arakawa 2023, Arakawa 2020 and Japanese Wikipedia: five Japanese shape names for Tangut components (くノ,
+  ノメ, ノノメ, ノメメ, くくノ), kept in `data/tangut-component-names.tsv` and merged into the table.
 
 The traditional or simplified spelling of a Chinese name is added through OpenCC (Apache 2.0) when it
 differs, except for characters that are radicals in their own right (几, 厂, 干, 尸, 里, 凶, 虫): those
@@ -68,6 +70,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "cache"
 TARGET = ROOT / "data" / "component-names.tsv"
 FOLDS_TARGET = ROOT / "data" / "component-name-folds.tsv"
+TANGUT_NAMES = ROOT / "data" / "tangut-component-names.tsv"
 REDIRECTS = ROOT / "data" / "component-name-redirects.json"
 WIKIDATA = ROOT / "data" / "component-name-wikidata.json"
 WIKIDATA_LANGUAGES = ("en", "ja", "zh", "zh-hans", "zh-hant", "ko", "vi")
@@ -513,6 +516,22 @@ JAPANESE_SOURCES = {"kanji-tools", "kanjidic2", "ja-wikipedia"}
 KANA_ONLY = re.compile(r"^[\u3041-\u3096\u30a1-\u30fa\u30fc・\s　]+$")
 
 
+def read_tangut_names(path: Path = TANGUT_NAMES) -> list[tuple[str, str, str, str]]:
+    """The Japanese shape names for Tangut components: name, component, source and detail."""
+    rows: list[tuple[str, str, str, str]] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        fields = line.split("\t")
+        if len(fields) < 3:
+            raise ValueError(f"{path.name}: {line!r} needs a name, a component and a source")
+        name, char, source, *rest = fields
+        if len(char) != 1:
+            raise ValueError(f"{path.name}: {char!r} is not one component")
+        rows.append((name.strip(), char, source.strip(), rest[0].strip() if rest else ""))
+    return rows
+
+
 def build(wikipedia: dict, wikidata: dict, unihan: dict[str, dict[str, str]]) -> list[tuple[str, str, str, str]]:
     kanji_tools = read_kanji_tools(CACHE / "kanji-tools-radicals.txt")
     palette = read_palette()
@@ -756,6 +775,12 @@ def build(wikipedia: dict, wikidata: dict, unihan: dict[str, dict[str, str]]) ->
             if len(written) >= 2:
                 romaji_rows.append((written, char, "romaji", f"{style} of {name}"))
     rows = dedupe(rows + romaji_rows)
+
+    # 13. Japanese shape names for Tangut components (くノ, ノメ, ノメメ, くくノ). They describe a
+    # component by the kana its strokes resemble; `data/tangut-component-names.tsv` carries the
+    # code points, sources and detail.
+    rows = dedupe(rows + read_tangut_names())
+
     rows.sort(key=lambda row: (ord(row[1][0]), row[0]))
     return rows
 
@@ -860,6 +885,11 @@ def header(wikipedia: dict, wikidata: dict, rows: list[tuple[str, str, str, str]
 # source romaji: Hepburn and Kunrei romanization of kana names and readings, an editorial table; the readings themselves come from the sources above
 # source opencc: traditional and simplified spellings derived with OpenCC 1.4.2, Apache 2.0; by BYVoid
 #   https://github.com/BYVoid/OpenCC
+# source arakawa-2023: 荒川慎太郎「西夏文字における「点」の出現環境と機能」『言語研究』164 (2023): 39–66, §1.4, §3.2 and n. 21; the kana descriptions of Tangut element shapes, cited, not redistributed
+# source ja-wikipedia-tangut: 日本語版ウィキペディア「西夏文字」, Unicode section, read 2026-11-03, CC BY-SA 4.0; the names ノメメ and くくノ
+#   https://ja.wikipedia.org/wiki/西夏文字
+# source arakawa-2020: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回大会予稿集; the distinction between the ノメメ and くくノ forms
+#   https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf
 # The file as a whole is shared alike under CC BY-SA 4.0, because the Wikipedia and KANJIDIC2 rows are:
 # https://creativecommons.org/licenses/by-sa/4.0/
 """

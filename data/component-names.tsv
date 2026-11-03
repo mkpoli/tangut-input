@@ -1,6 +1,6 @@
 # The names, words and readings people use for components, for the component search (src/core/names.js).
 # columns: name, char, source, detail
-# rows: 6642
+# rows: 6647
 # Built by scripts/build_component_names.py.
 # source kanji-tools: anzumura/kanji-tools data/radicals.txt at c3e52cbca38a1fdbf9a96abb1dd015450cc1411c; MIT; Copyright (c) 2022 Dan H
 #   https://github.com/anzumura/kanji-tools
@@ -26,6 +26,11 @@
 # source romaji: Hepburn and Kunrei romanization of kana names and readings, an editorial table; the readings themselves come from the sources above
 # source opencc: traditional and simplified spellings derived with OpenCC 1.4.2, Apache 2.0; by BYVoid
 #   https://github.com/BYVoid/OpenCC
+# source arakawa-2023: 荒川慎太郎「西夏文字における「点」の出現環境と機能」『言語研究』164 (2023): 39–66, §1.4, §3.2 and n. 21; the kana descriptions of Tangut element shapes, cited, not redistributed
+# source ja-wikipedia-tangut: 日本語版ウィキペディア「西夏文字」, Unicode section, read 2026-11-03, CC BY-SA 4.0; the names ノメメ and くくノ
+#   https://ja.wikipedia.org/wiki/西夏文字
+# source arakawa-2020: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回大会予稿集; the distinction between the ノメメ and くくノ forms
+#   https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf
 # The file as a whole is shared alike under CC BY-SA 4.0, because the Wikipedia and KANJIDIC2 rows are:
 # https://creativecommons.org/licenses/by-sa/4.0/
 cangzidi	㔾	pypinyin	pinyin of 仓字底
@@ -6659,6 +6664,11 @@ yuezipang	龠	pypinyin	pinyin of 龠字旁
 juanzitou	龹	pypinyin	pinyin of 卷字头
 卷字头	龹	rime-wanxiang	zh nickname
 卷字頭	龹	rime-wanxiang	zh nickname; traditional via OpenCC
+ノメ	𘡃	arakawa-2023	Arakawa calls this the ノメ型 lower-left element (n. 21)
+ノノメ	𘢌	arakawa-2023	Arakawa gives this element as ノノメ (§1.4)
+ノメメ	𘤊	ja-wikipedia-tangut	Arakawa 2020 distinguishes this 5-stroke form from くくノ; Wikipedia gives the code point
+くノ	𘫺	arakawa-2023	Arakawa calls this the くノ型 lower-left element (n. 21)
+くくノ	𘫽	ja-wikipedia-tangut	Arakawa 2020 distinguishes this form from ノメメ; Wikipedia gives the code point
 fengzikuang	𠘨	pypinyin	pinyin of 凤字框
 fengzitou	𠘨	pypinyin	pinyin of 风字头
 jizidi	𠘨	pypinyin	pinyin of 几字底

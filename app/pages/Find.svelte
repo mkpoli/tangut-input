@@ -7,7 +7,7 @@
   import G from '../ui/G.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
-  import { byCode, byMeaning, byCodePoint, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byMeaning, byCodePoint, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
 
@@ -28,6 +28,8 @@
     }
     const points = byCodePoint(text)
     if (points.length) out.push({ key: 'cp', title: t('find.group.codepoint'), total: points.length, items: points.slice(0, 48).map(char => ({ char, sub: codePoint(char) })) })
+    const named = byName(text)
+    if (named.length) out.push({ key: 'shape', title: t('find.group.shape'), total: named.length, items: named.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.name })) })
     if (/^[a-z]+$/i.test(text)) {
       const codes = byCode(text)
       if (codes.length) out.push({ key: 'code', title: t('find.group.cangjie'), page: 'cangjie', total: codes.length, items: codes.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.code })) })

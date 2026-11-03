@@ -241,9 +241,14 @@ rows), each row naming its source.
 The names, words and readings people use for components, for the parts finder's search: 絞絲 and
 绞丝 for 糸, ノ文 and のぶん for 攵, ノ木 and のぎ for 禾, 宝盖 and 寶蓋 for 宀, 倒八 for 丷,
 卷字头 for 龹, and water, silk, みず, shui, mizu, jiaosipang, 수, thủy, Bộ Thủy, Kangxi radical 120
-for the same components. 6,642 rows, 298 KB (58 KB gzipped), built by
+for the same components. 6,647 rows, 298 KB (58 KB gzipped), built by
 `scripts/build_component_names.py`. Format: `name`, `char`, `source`, `detail`, one name for one
 component per row; comments start with `#`.
+
+Five rows name Tangut components by the kana their strokes resemble: くノ for 𘫺, ノメ for 𘡃,
+ノノメ for 𘢌, ノメメ for 𘤊 and くくノ for 𘫽. Their source is `data/tangut-component-names.tsv`,
+which the build merges in; the naming convention and its limits are in
+[`docs/tangut-component-names.md`](../docs/tangut-component-names.md).
 
 The search folds a query and a name (NFKC, katakana as hiragana, Latin accents off, spaces and
 punctuation out, Chinese scripts through `component-name-folds.tsv`) and takes a name that is the
@@ -295,12 +300,43 @@ Sources:
   radicals in their own right (几, 厂, 干, 尸, 里, 凶, 虫, 斗, 鬥) are kept as they are, since 几
   must not become 幾 and 斗 must not become 鬥. A redirect naming another radical than the article
   it points to (男部 to 女部, 鳥偏 to 酉部) is left out.
+- 荒川慎太郎 2023「西夏文字における「点」の出現環境と機能」『言語研究』164: 39–66,
+  <https://www.jstage.jst.go.jp/article/gengo/164/0/164_39/_article/-char/ja/>: the names くノ,
+  ノメ and ノノメ, at §1.4, §3.2 and n. 21. The article's text is cited, not redistributed.
+- 日本語版ウィキペディア「西夏文字」, Unicode section, read 2026-11-03, CC BY-SA 4.0
+  (<https://ja.wikipedia.org/wiki/西夏文字>): the code points for ノメメ and くくノ.
+- 荒川慎太郎 2020「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回大会予稿集
+  (<https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf>):
+  the distinction between the ノメメ and くくノ forms.
 
 The kanji-tools, tudien, rime-wanxiang, MyBox, KANJIDIC2 and Unihan files are pinned by revision or
 SHA-256 in the script. The exact Wikipedia redirects used are kept in
 `data/component-name-redirects.json`, read 2026-10-26 (CC BY-SA 4.0), and Wikidata's labels and
 aliases in `data/component-name-wikidata.json`, read 2026-10-27 (CC0 1.0); `--refresh` fetches both
 again and rewrites them, and also rebuilds the folds.
+
+## tangut-component-names.tsv
+
+Five Japanese shape names for Tangut components, the rows the build adds to `component-names.tsv`:
+くノ for 𘫺, ノメ for 𘡃, ノノメ for 𘢌, ノメメ for 𘤊 and くくノ for 𘫽. The names describe the
+kana a component's strokes resemble; they are not an official nomenclature, and the wider
+vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-names.md). Format:
+`name`, `char`, `source`, `detail`; comments start with `#`.
+
+- Source `arakawa-2023`: 荒川慎太郎「西夏文字における「点」の出現環境と機能」『言語研究』164
+  (2023): 39–66, §1.4, §3.2 and n. 21
+  (<https://www.jstage.jst.go.jp/article/gengo/164/0/164_39/_article/-char/ja/>). The article's
+  text is cited, not redistributed.
+- Source `ja-wikipedia-tangut`: 日本語版ウィキペディア「西夏文字」, Unicode section, read
+  2026-11-03, CC BY-SA 4.0 (<https://ja.wikipedia.org/wiki/西夏文字>): the code points for ノメメ
+  and くくノ.
+- Source `arakawa-2020`: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回
+  大会予稿集 (<https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf>):
+  the distinction between the two forms.
+- Licence: **CC BY-SA 4.0** for the Wikipedia rows; the Arakawa rows are short shape names.
+
+`app/data/tangut-component-names.json` is the copy the site's Find page and the Parts hover card
+read; `tests/names.test.js` keeps it equal to this table.
 
 ## component-name-wikidata.json
 

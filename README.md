@@ -7,7 +7,8 @@ it into your text. <https://tangut.mkpo.li/>
 
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
-  lists code points.
+  lists code points. Tangut components also answer to their Japanese shape names, such as くノ,
+  ノメ or くくノ.
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
@@ -18,7 +19,9 @@ it into your text. <https://tangut.mkpo.li/>
   Parts in miniature.
 - **Draw**: a drawing pad ranked by glyph shape against Noto Serif Tangut. It is rough, and the
   page says how rough.
-- **Parts**: choose components; each choice narrows the characters and the remaining parts.
+- **Parts**: choose components; each choice narrows the characters and the remaining parts. The
+  filter takes a Cangjie code or a Japanese shape name, and hovering a part shows its code point,
+  component number, strokes, uses, Cangjie codes and name.
 
 The card of a character shows its code point, Cangjie codes, meanings in English, Japanese and
 Chinese, readings, structure, the lines of the recorded corpus where it stands with the scribe's
