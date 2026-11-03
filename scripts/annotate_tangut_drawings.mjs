@@ -3,7 +3,7 @@
 // given. Everything stays in the page until "Export" writes it out; the drawings never leave the
 // machine.
 //   bun scripts/annotate_tangut_drawings.mjs [out.html]
-import { readFileSync, readdirSync, writeFileSync, existsSync, statSync } from 'node:fs'
+import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, mkdirSync, copyFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { join } from 'node:path'
 import { parseShapes, indexShapes, rasterize, rankShapes } from '../app/lib/shape.js'
@@ -18,6 +18,8 @@ if (!existsSync(DATA)) {
 /** @type {{ id: string, session: string, name: string, char: string, at: string, strokes: number[][][] }[]} */
 const drawings = []
 for (const session of readdirSync(DATA).sort()) {
+  // The reviewer's own drawings are samples already; they are not up for review.
+  if (session === 'reviewer') continue
   const dir = join(DATA.pathname, session)
   if (!existsSync(dir) || !statSync(dir).isDirectory()) continue
   for (const name of readdirSync(dir).filter(name => name.endsWith('.json')).sort()) {
@@ -116,6 +118,27 @@ for (const drawing of drawings) {
   for (const pick of (candidates.get(drawing.id) ?? []).slice(0, 6)) siblings[pick] ??= siblingsOf(pick)
 }
 
+// The site's built picker, copied beside the board: same origin, so it can take the keys at once and
+// posts its pick straight back.
+const DIST = new URL('../dist/assets/', import.meta.url)
+const PICK = new URL('../docs/pick/', import.meta.url)
+let pickScript = ''
+/** @type {string[]} */
+let pickStyle = []
+if (existsSync(DIST)) {
+  const assets = readdirSync(DIST)
+  const script = assets.find(name => /^pick-.*\.js$/.test(name))
+  // The entry's own CSS plus the base sheet it imports: the picker is a Svelte app and its styles
+  // are split across chunks.
+  const styles = ['pick', 'app', 'MiniIme'].flatMap(stem => assets.filter(name => new RegExp(`^${stem}-.*\\.css$`).test(name)))
+  if (script) {
+    mkdirSync(PICK, { recursive: true })
+    copyFileSync(new URL(script, DIST), new URL(script, PICK))
+    pickScript = `/assets/${script}`
+    pickStyle = styles.map(name => `/assets/${name}`)
+  }
+}
+
 const payload = JSON.stringify({
   drawings,
   suggestions: Object.fromEntries(suggestions),
@@ -144,7 +167,15 @@ const html = `<!doctype html>
   .progress { flex:1; height:4px; background:var(--line); border-radius:2px; overflow:hidden; }
   .progress i { display:block; height:100%; background:var(--accent); width:0; transition:width .2s ease; }
   .count { color:var(--muted); font-size:13px; font-variant-numeric:tabular-nums; }
-  main { flex:1; display:grid; place-items:center; padding:24px 22px 6px; }
+  .columns { flex:1; display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:20px; padding:16px 22px 6px; align-items:start; }
+  .stage-col { display:grid; gap:6px; min-inline-size:0; }
+  .side #pick .pick { padding:0; background:transparent; }
+  .side #pick .ime .panel { inline-size:100%; box-shadow:none; border:0; padding:0; }
+  .side #pick .hits { grid-template-columns:repeat(6, 1fr); }
+  .side { position:sticky; top:64px; display:grid; gap:10px; padding:12px; border:1px solid var(--line); border-radius:12px;
+          background:color-mix(in srgb, var(--bg) 94%, var(--ink)); max-block-size:calc(100dvh - 80px); overflow:auto; }
+  @media (max-width: 1100px) { .columns { grid-template-columns:minmax(0,1fr); } .side { position:static; max-block-size:none; } }
+  main { display:grid; place-items:center; padding:8px 0 4px; }
   .card { display:flex; align-items:center; gap:44px; }
   .drawn { color:var(--accent); }
   .target { font-family:"Noto Serif Tangut", serif; font-size:104px; line-height:1; }
@@ -155,17 +186,17 @@ const html = `<!doctype html>
   .picks .tile { width:52px; height:52px; font-size:28px; position:relative; }
   .picks .tile span { position:absolute; top:1px; left:3px; font:9px ui-monospace, monospace; color:var(--muted); }
   .meta { margin:18px 0 0; text-align:center; color:var(--muted); font:12px ui-monospace, monospace; }
-  .verdicts { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; padding:6px 22px 16px; }
+  .verdicts { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; padding:6px 0 14px; }
   .verdicts button { font:inherit; font-size:16px; padding:11px 20px; border:1px solid var(--line); border-radius:10px;
                      background:transparent; color:var(--ink); cursor:pointer; display:flex; align-items:center; gap:8px; }
   .verdicts button:hover { border-color:var(--ink); }
   .verdicts button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
   .verdicts kbd { font:11px ui-monospace, monospace; opacity:.6; }
   .finder { width:min(920px, calc(100vw - 44px)); margin:0 auto 14px; display:grid; gap:8px; }
-  .frame { position:relative; height:min(70vh, 560px); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .frame { position:relative; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--bg); }
+  .frame #pick .pick { min-block-size:0; padding:10px; }
   .frame iframe { width:100%; height:100%; border:0; background:var(--bg); }
-  #site { font:inherit; font-size:13px; padding:6px 11px; border:1px solid var(--line); border-radius:8px;
-          background:transparent; color:var(--ink); cursor:pointer; }
+
   details { margin:0 auto 16px; width:min(920px, calc(100vw - 44px)); border:1px solid var(--line); border-radius:12px; }
   summary { cursor:pointer; padding:10px 14px; color:var(--muted); font-size:13px; }
   .inside { display:grid; gap:14px; padding:0 14px 16px; }
@@ -192,50 +223,47 @@ const html = `<!doctype html>
   <span class="count" id="status">saved</span>
   <span class="progress"><i id="bar"></i></span>
 </header>
-<main><div id="stage"></div><div id="picks" hidden></div></main>
-<div class="finder" id="finder" hidden>
-  <div class="row" style="justify-content:space-between;align-items:center">
-    <span class="label" style="margin:0">Find the character it should be</span>
-    <button id="site" type="button">Open the site's input method</button>
-  </div>
-  <div id="siteframe" class="frame" hidden>
-    <iframe id="embed" title="Tangut Input" src="about:blank" referrerpolicy="no-referrer"></iframe>
-  </div>
-</div>
-</div>
-<div class="verdicts" id="verdicts">
-  <button data-v="good">Good <kbd>1</kbd></button>
-  <button data-v="wrong">Wrong character <kbd>2</kbd></button>
-  <button data-v="bad">Bad strokes <kbd>3</kbd></button>
-  <button data-v="unclear">Unclear <kbd>4</kbd></button>
-  <button data-v="unattested">Not a character <kbd>5</kbd></button>
-  <button data-v="skip">Skip <kbd>space</kbd></button>
-</div>
-<details id="more">
-  <summary>Tags, correction and note</summary>
-  <div class="inside">
-    <div>
-      <p class="label">What went wrong</p>
-      <div class="row" id="tags">
-        <button data-t="missing-stroke">Missing stroke</button>
-        <button data-t="extra-stroke">Extra stroke</button>
-        <button data-t="misplaced-part">Part misplaced</button>
-        <button data-t="proportions">Proportions</button>
-        <button data-t="scribble">Scribble</button>
-        <button data-t="one-stroke">One stroke only</button>
+<div class="columns">
+  <div class="stage-col">
+    <main><div id="stage"></div><div id="picks" hidden></div></main>
+    <div class="verdicts" id="verdicts">
+      <button data-v="good">Good <kbd>1</kbd></button>
+      <button data-v="wrong">Wrong character <kbd>2</kbd></button>
+      <button data-v="bad">Bad strokes <kbd>3</kbd></button>
+      <button data-v="unclear">Unclear <kbd>4</kbd></button>
+      <button data-v="unattested">Not a character <kbd>5</kbd></button>
+      <button data-v="skip">Skip <kbd>space</kbd></button>
+    </div>
+    <details id="more">
+      <summary>Tags and note</summary>
+      <div class="inside">
+        <div>
+          <p class="label">What went wrong</p>
+          <div class="row" id="tags">
+            <button data-t="missing-stroke">Missing stroke</button>
+            <button data-t="extra-stroke">Extra stroke</button>
+            <button data-t="misplaced-part">Part misplaced</button>
+            <button data-t="proportions">Proportions</button>
+            <button data-t="scribble">Scribble</button>
+            <button data-t="one-stroke">One stroke only</button>
+          </div>
+        </div>
+        <div>
+          <p class="label">Note</p>
+          <textarea class="field" id="note" placeholder="What is worth remembering about this one"></textarea>
+        </div>
       </div>
-    </div>
-    <div>
-      <p class="label">The character it should be</p>
-      <input class="field" id="correct" placeholder="Type or paste a character" spellcheck="false">
-      <div class="tiles" id="suggest" style="margin-top:8px"></div>
-    </div>
-    <div>
-      <p class="label">Note</p>
-      <textarea class="field" id="note" placeholder="What is worth remembering about this one"></textarea>
-    </div>
+    </details>
   </div>
-</details>
+  <aside class="side" id="finder" hidden>
+    <p class="label" style="margin:0">Find the character it should be</p>
+    <div id="siteframe" hidden><div id="pick"></div></div>
+    <div class="row" style="align-items:center;gap:8px">
+      <span class="label" style="margin:0">…or type it</span>
+      <input class="field" id="manual" style="width:5em;text-align:center;font-family:'Noto Serif Tangut',serif;font-size:20px" placeholder="𗊜" spellcheck="false" autocomplete="off">
+    </div>
+  </aside>
+</div>
 <footer>
   <span id="where"></span>
   <div class="row">
@@ -244,6 +272,7 @@ const html = `<!doctype html>
     <button id="clear">Start over</button>
   </div>
 </footer>
+${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
 <script type="application/json" id="data">${payload}</script>
 <script>
   const data = JSON.parse(document.getElementById('data').textContent)
@@ -327,22 +356,15 @@ const html = `<!doctype html>
     }
     paintPicks(drawing, note)
     // The finders are for a drawing whose character is in doubt; otherwise they only take room.
-    document.getElementById('finder').hidden = !picking && note.verdict !== 'wrong' && note.verdict !== 'unattested'
-    if (document.getElementById('finder').hidden) document.getElementById('siteframe').hidden = true
+    document.getElementById('manual').value = note.correct
+    const ask = picking || note.verdict === 'wrong' || note.verdict === 'unattested'
+    document.getElementById('finder').hidden = !ask
+    document.getElementById('siteframe').hidden = !ask
     for (const button of document.querySelectorAll('#tags button')) {
       button.setAttribute('aria-pressed', String(note.tags.includes(button.dataset.t)))
     }
-    document.getElementById('correct').value = note.correct
+    document.getElementById('manual').value = note.correct
     document.getElementById('note').value = note.note
-    const box = document.getElementById('suggest')
-    box.innerHTML = ''
-    for (const char of suggestions[note.correct || drawing.char] ?? []) {
-      const button = document.createElement('button')
-      button.className = 'tile'
-      button.textContent = char
-      button.onclick = () => { note.correct = char; save(); paint() }
-      box.append(button)
-    }
   }
 
   /**
@@ -426,7 +448,17 @@ const html = `<!doctype html>
     }
   }
   document.getElementById('note').oninput = event => { const note = noteOf(current().id); note.note = event.target.value; save() }
-  document.getElementById('correct').oninput = event => { const note = noteOf(current().id); note.correct = event.target.value.trim(); save(); paint() }
+  document.getElementById('manual').oninput = event => {
+    const drawing = current()
+    if (!drawing) return
+    const note = noteOf(drawing.id)
+    const value = [...event.target.value.trim()]
+    if (!value.length) return
+    note.correct = value[0]
+    if (!note.verdict || note.verdict === 'good' || note.verdict === 'bad') note.verdict = 'wrong'
+    event.target.value = value[0]
+    save(); paint()
+  }
   document.getElementById('back').onclick = () => {
     const id = history.pop()
     if (!id) return
@@ -472,12 +504,21 @@ const html = `<!doctype html>
     document.getElementById('siteframe').hidden = true
     paint()
   })
-  document.getElementById('site').onclick = () => {
-    const frame = document.getElementById('siteframe')
-    const embed = document.getElementById('embed')
-    embed.src = 'https://tangut.mkpo.li/?pick=1'
-    frame.hidden = false
+  // Typing the character is the shortest way when it is already known: one character assigns it.
+  document.getElementById('manual').oninput = event => {
+    const value = [...event.target.value.trim()]
+    if (!value.length) return
+    const drawing = current()
+    if (!drawing) return
+    const note = noteOf(drawing.id)
+    note.correct = value[0]
+    if (!note.verdict || note.verdict === 'good' || note.verdict === 'bad') note.verdict = 'wrong'
+    save()
+    event.target.value = ''
+    paint()
   }
+  // The picker is the site's own input method on its own page, shown inline when the character is
+  // in doubt; it needs no button because it is already loaded by the time it is looked at.
 
   addEventListener('keydown', event => {
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return
@@ -489,6 +530,7 @@ const html = `<!doctype html>
 
   paint()
 </script>
+${pickScript ? `<script type="module" src="${pickScript}"></script>` : ''}
 </body>
 </html>
 `
