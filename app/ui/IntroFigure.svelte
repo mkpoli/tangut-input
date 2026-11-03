@@ -11,7 +11,7 @@
 </script>
 
 <figure class="intro-figure">
-  <img src={fig.src} width={fig.width} height={fig.height} alt="" loading={eager ? 'eager' : 'lazy'}
+  <img src={fig.src} srcset={fig.srcset} sizes="(max-width: 1000px) 520px, 280px" width={fig.width} height={fig.height} alt="" loading={eager ? 'eager' : 'lazy'}
     fetchpriority={eager ? 'high' : 'auto'} decoding="async" />
   <figcaption>
     <span class="fig-caption">{t(`intro.fig.${id}`)}</span>

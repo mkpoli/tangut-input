@@ -496,5 +496,12 @@
   "about.readingsSource": "維基詞典的擬音取自顯示它的模組，連同版本ID記錄在<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>。龔勳的GX202411取自其資料庫2025-05-07版，附摘要與DOI存於<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>。CCAMC的兩種系統與中釋義只以正規化詞條存於<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>供搜尋，任何頁面都不顯示。",
   "card.wenhai": "文海",
   "about.wenhaiTitle": "《文海》原文",
-  "about.wenhai": "《文海》（12世紀）在條目中分析字形。其原文屬公有領域；《文海》收有該字時，卡片顯示原文並附英譯。"
+  "about.wenhai": "《文海》（12世紀）在條目中分析字形。其原文屬公有領域；《文海》收有該字時，卡片顯示原文並附英譯。",
+  "intro.fig.golden": "西夏文《金光明經》書頁局部，紺紙金字。11—13世紀。",
+  "intro.fig.tombs": "銀川附近賀蘭山麓的西夏陵。",
+  "intro.fig.manuscript": "西夏文佛教偈頌寫本，發現於賀蘭山，寧夏博物館藏。",
+  "intro.fig.pearl": "《番漢合時掌中珠》（1190年）書頁。這部西夏文與漢文對照的詞語集以漢字為每個西夏字注音。",
+  "intro.fig.khara": "黑水城的佛塔與城牆。1909年，彼得·科茲洛夫在此發掘出西夏文寫本。",
+  "intro.fig.pillars": "保定的兩座陀羅尼經幢，立於1502年。幢上的西夏文是有紀年的西夏文字最晚用例。",
+  "intro.imageNote": "圖片均為原圖的縮放或裁切副本，仍依其署名中所註的授權條款；各圖署名連結至原始檔案。"
 }

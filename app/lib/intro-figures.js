@@ -4,6 +4,7 @@
 export const FIGURES = {
   golden: {
     src: '/intro/golden-light.webp',
+    srcset: '/intro/golden-light-560.webp 560w, /intro/golden-light.webp 900w',
     width: 900,
     height: 675,
     author: 'BabelStone',
@@ -13,6 +14,7 @@ export const FIGURES = {
   },
   tombs: {
     src: '/intro/tombs.webp',
+    srcset: '/intro/tombs-560.webp 560w, /intro/tombs.webp 1000w',
     width: 1000,
     height: 750,
     author: 'Thebrainchamber1',
@@ -22,6 +24,7 @@ export const FIGURES = {
   },
   manuscript: {
     src: '/intro/manuscript.webp',
+    srcset: '/intro/manuscript-560.webp 560w, /intro/manuscript.webp 1000w',
     width: 1000,
     height: 896,
     author: 'BabelStone',
@@ -31,15 +34,17 @@ export const FIGURES = {
   },
   pearl: {
     src: '/intro/pearl.webp',
+    srcset: '/intro/pearl-560.webp 560w, /intro/pearl.webp 760w',
     width: 760,
     height: 950,
-    author: 'Gule Maocai (骨勒茂才)',
+    author: 'Gule Maocai (骨勒茂才), compiler',
     license: 'Public domain',
     licenseUrl: '',
     page: 'https://commons.wikimedia.org/wiki/File:Fanhan_heshi_zhangzhongzhu.jpg',
   },
   khara: {
     src: '/intro/khara-khoto.webp',
+    srcset: '/intro/khara-khoto-560.webp 560w, /intro/khara-khoto.webp 1000w',
     width: 1000,
     height: 664,
     author: 'Fandorine1959',
@@ -49,6 +54,7 @@ export const FIGURES = {
   },
   pillars: {
     src: '/intro/dharani-pillars.webp',
+    srcset: '/intro/dharani-pillars-560.webp 560w, /intro/dharani-pillars.webp 1000w',
     width: 1000,
     height: 750,
     author: 'BabelStone',

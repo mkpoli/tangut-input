@@ -496,5 +496,12 @@
   "about.readingsSource": "Each Wiktionary reading comes from the module that renders it, fetched with its revision id and recorded in <span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>. Gong Xun's GX202411 is snapshotted from the 2025-05-07 table of his database, with its digest and DOI, in <span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>. CCAMC's two further systems and its Chinese glosses are kept only as normalized search terms in <span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>; no page renders them.",
   "card.wenhai": "Wenhai",
   "about.wenhaiTitle": "Wenhai text",
-  "about.wenhai": "The 文海 (12th century) analyses the glyph in its entry; its text is public domain and shown where the 文海 carries the character, with an English rendering."
+  "about.wenhai": "The 文海 (12th century) analyses the glyph in its entry; its text is public domain and shown where the 文海 carries the character, with an English rendering.",
+  "intro.fig.golden": "A detail of the Golden Light Sutra in Tangut, written in gold on indigo. 11th–13th century.",
+  "intro.fig.tombs": "The Western Xia mausoleums at the foot of the Helan Mountains, near Yinchuan.",
+  "intro.fig.manuscript": "A Tangut manuscript of Buddhist verses, found in the Helan Mountains and kept in the Ningxia Museum.",
+  "intro.fig.pearl": "A page of the Pearl in the Palm (1190), the Tangut–Chinese glossary that records the sound of each Tangut character with Chinese characters.",
+  "intro.fig.khara": "The stupas and walls of Khara-Khoto, where Pyotr Kozlov excavated Tangut manuscripts in 1909.",
+  "intro.fig.pillars": "The two dharani pillars at Baoding, erected in 1502. Their Tangut text is the last dated use of the script.",
+  "intro.imageNote": "The images are resized or cropped copies of the originals and remain under the licences named in their credits; each credit links to its source file."
 }
