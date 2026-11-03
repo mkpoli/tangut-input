@@ -24,6 +24,7 @@
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
   import About from './pages/About.svelte'
+  import Intro from './pages/Intro.svelte'
 
   load()
   applyTheme()
@@ -234,8 +235,8 @@
   {#if db.status === 'failed'}
     <p class="fault">{t('app.failed')}</p>
   {:else}
-    <div class="body" class:full={route.page === 'about'}>
-      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? 'nav.sources')}>
+    <div class="body" class:full={route.page === 'about' || route.page === 'intro'}>
+      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'intro' ? 'intro.title' : 'nav.sources'))}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'meaning'}<Meaning />
         {:else if route.page === 'cangjie'}<Cangjie />
@@ -246,15 +247,17 @@
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
+        {:else if route.page === 'intro'}<Intro />
         {:else}<About />{/if}
         {#if route.page !== 'about'}
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
+            {#if route.page !== 'intro'}· <a href="/intro" onclick={event => nav(event, 'intro')}>{t('nav.intro')}</a>{/if}
           </footer>
         {/if}
       </main>
-      {#if route.page !== 'about'}
+      {#if route.page !== 'about' && route.page !== 'intro'}
         <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
           <Card />
         </aside>
@@ -274,8 +277,8 @@
         <span>{t(group.tab)}<svg class="caret" viewBox="0 0 10 10" width="8" height="8" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </button>
     {/each}
-    <button class="tab" type="button" class:on={route.page === 'about'}
-      aria-current={route.page === 'about' ? 'true' : undefined}
+    <button class="tab" type="button" class:on={route.page === 'about' || route.page === 'intro'}
+      aria-current={route.page === 'about' || route.page === 'intro' ? 'true' : undefined}
       aria-haspopup="dialog" aria-expanded={menu?.kind === 'more'}
       onclick={event => openMenu(event, { kind: 'more' })}><Icon name="more" size={18}/><span>{t('nav.more')}</span></button>
   </nav>
@@ -300,6 +303,11 @@
       </div>
     {:else}
       <div class="sheet-links">
+        <a class="sheet-link" href="/intro" class:on={route.page === 'intro'} aria-current={route.page === 'intro' ? 'page' : undefined}
+          onclick={event => closeMenu(!nav(event, 'intro'))}>
+          <Icon name="book" size={18}/>
+          <span class="sheet-name">{t('nav.intro')}</span><span class="ui-hint">{t('nav.intro.hint')}</span>
+        </a>
         <a class="sheet-link" href="/about" class:on={route.page === 'about'} aria-current={route.page === 'about' ? 'page' : undefined}
           onclick={event => closeMenu(!nav(event, 'about'))}>
           <Icon name="sources" size={18}/>

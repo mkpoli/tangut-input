@@ -10,6 +10,7 @@
   <header class="ui-page-head">
     <h1 class="ui-page-title"><Icon name="sources" size={22}/><span>{t('nav.sources')}</span></h1>
     <p class="ui-page-intro">{t('about.lead')}</p>
+    <p class="ui-hint about-intro-link">{@html t('about.introLink')}</p>
   </header>
 
   <section class="ui-section">
@@ -103,5 +104,6 @@
   .corpus-title .ui-script{display:inline-block;margin-inline-start:var(--ui-space-xs)}
   .corpus-meta{margin-top:var(--ui-space-2xs) !important;font-size:var(--ui-text-xs);line-height:1.55}
   .corpus-note{margin-top:var(--ui-space-xs) !important;font-size:var(--ui-text-xs);line-height:1.55}
+  .about-intro-link :global(a){color:inherit;text-underline-offset:2px}
   .about-foot{font-size:var(--ui-text-xs);line-height:1.6;border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg)}
 </style>
