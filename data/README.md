@@ -52,9 +52,10 @@ Western Xia calendar gives them, the Tangut form, the kind (`coin`, `disputed`, 
 `app/lib/era-sources.js` and, for a form found in this repository's own texts, the `place`
 (`wikisource:<page>` or `lcdtt:<file>`). Compiled by hand from West's coin article (2007), his post
 on the law code's title (2020), Nie Hongyin (2004) as quoted by 公維章 (2020), and dated lines in
-the Wikisource and Lausanne texts. `text` rows were read in context: the form is followed by a
-year. Eras without a row rest on the calendar alone. `scripts/build_tangut_eras.py` joins it to the
-calendar and stops if a form is missing from its `place`.
+the Wikisource and Lausanne texts. A `text` row is a date, except 天盛, which rests on the law code's
+title and has no `place`. Eras without a row rest on the calendar alone.
+`scripts/build_tangut_eras.py` joins it to the calendar and stops unless a form with a `place`
+is followed there by a year.
 
 ## `tangut-frequency.json.gz`
 
