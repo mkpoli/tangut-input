@@ -1,6 +1,6 @@
 # The names, words and readings people use for components, for the component search (src/core/names.js).
 # columns: name, char, source, detail
-# rows: 6647
+# rows: 6652
 # Built by scripts/build_component_names.py.
 # source kanji-tools: anzumura/kanji-tools data/radicals.txt at c3e52cbca38a1fdbf9a96abb1dd015450cc1411c; MIT; Copyright (c) 2022 Dan H
 #   https://github.com/anzumura/kanji-tools
@@ -6666,7 +6666,12 @@ juanzitou	龹	pypinyin	pinyin of 卷字头
 卷字頭	龹	rime-wanxiang	zh nickname; traditional via OpenCC
 ノメ	𘡃	arakawa-2023	Arakawa calls this the ノメ型 lower-left element (n. 21)
 ノノメ	𘢌	arakawa-2023	Arakawa gives this element as ノノメ (§1.4)
+くノ﹅	𘢒	arakawa-2023	A1 in table 4: the くノ form with the emphatic dot
+ノくノ﹅	𘤆	arakawa-2023	A2 in table 4: the ノくノ form with the emphatic dot
 ノメメ	𘤊	ja-wikipedia-tangut	Arakawa 2020 distinguishes this 5-stroke form from くくノ; Wikipedia gives the code point
+くくノ﹅	𘦄	arakawa-2023	A4 in table 4: the くくノ form with the emphatic dot
+コくノ﹅	𘧆	arakawa-2023	A3 in table 4: the コくノ form with the emphatic dot
+くノ﹅ノメ	𘧶	arakawa-2023	A5 in table 4: a くノ with the emphatic dot above a ノメ
 くノ	𘫺	arakawa-2023	Arakawa calls this the くノ型 lower-left element (n. 21)
 くくノ	𘫽	ja-wikipedia-tangut	Arakawa 2020 distinguishes this form from ノメメ; Wikipedia gives the code point
 fengzikuang	𠘨	pypinyin	pinyin of 凤字框

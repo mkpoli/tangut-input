@@ -245,13 +245,14 @@ rows), each row naming its source.
 The names, words and readings people use for components, for the parts finder's search: 絞絲 and
 绞丝 for 糸, ノ文 and のぶん for 攵, ノ木 and のぎ for 禾, 宝盖 and 寶蓋 for 宀, 倒八 for 丷,
 卷字头 for 龹, and water, silk, みず, shui, mizu, jiaosipang, 수, thủy, Bộ Thủy, Kangxi radical 120
-for the same components. 6,647 rows, 298 KB (58 KB gzipped), built by
+for the same components. 6,652 rows, 298 KB (58 KB gzipped), built by
 `scripts/build_component_names.py`. Format: `name`, `char`, `source`, `detail`, one name for one
 component per row; comments start with `#`.
 
-Five rows name Tangut components by the kana their strokes resemble: くノ for 𘫺, ノメ for 𘡃,
-ノノメ for 𘢌, ノメメ for 𘤊 and くくノ for 𘫽. Their source is `data/tangut-component-names.tsv`,
-which the build merges in; the naming convention and its limits are in
+Ten rows name Tangut components by the kana their strokes resemble: the five base names くノ for
+𘫺, ノメ for 𘡃, ノノメ for 𘢌, ノメメ for 𘤊 and くくノ for 𘫽, and the five variants くノ﹅,
+ノくノ﹅, くくノ﹅, コくノ﹅ and くノ﹅ノメ. Their source is `data/tangut-component-names.tsv`, which the build
+merges in; the naming convention and its limits are in
 [`docs/tangut-component-names.md`](../docs/tangut-component-names.md).
 
 The search folds a query and a name (NFKC, katakana as hiragana, Latin accents off, spaces and
@@ -321,8 +322,9 @@ again and rewrites them, and also rebuilds the folds.
 
 ## tangut-component-names.tsv
 
-Five Japanese shape names for Tangut components, the rows the build adds to `component-names.tsv`:
-くノ for 𘫺, ノメ for 𘡃, ノノメ for 𘢌, ノメメ for 𘤊 and くくノ for 𘫽. The names describe the
+Ten Japanese shape names for Tangut components, the rows the build adds to `component-names.tsv`:
+the five base names くノ for 𘫺, ノメ for 𘡃, ノノメ for 𘢌, ノメメ for 𘤊 and くくノ for 𘫽, and
+the five variants くノ﹅, ノくノ﹅, くくノ﹅, コくノ﹅ and くノ﹅ノメ. The names describe the
 kana a component's strokes resemble; they are not an official nomenclature, and the wider
 vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-names.md). Format:
 `name`, `char`, `source`, `detail`; comments start with `#`.
@@ -339,8 +341,10 @@ vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-nam
   the distinction between the two forms.
 - Licence: **CC BY-SA 4.0** for the Wikipedia rows; the Arakawa rows are short shape names.
 
-`app/data/tangut-component-names.json` is the copy the site's Find page and the Parts hover card
-read; `tests/names.test.js` keeps it equal to this table.
+`app/data/tangut-component-names.json` is the copy the site's Find page and the part cards read;
+`tests/names.test.js` keeps it equal to this table. `app/data/tangut-part-names.json` is the ten-row
+comparison on Parts: Japanese shape names, the English abstract's wording for くノ and ノメ, and
+empty cells where the sources read record no name.
 
 ## component-name-wikidata.json
 
