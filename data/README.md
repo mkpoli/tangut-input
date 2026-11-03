@@ -515,21 +515,21 @@ are absent from this font version and report a missing glyph.
 
 One Chinese word for each Tangut character, for a table that reads a character by its meaning: 毒,
 佛, 日 and 世界 can be read as they stand, 【宿】 writes a sound and has no meaning to read. 6,144
-rows, 57 KB gzipped. Format: `char`, `gloss`, `tier`, `reading`; comments start with `#`.
+rows, 56 KB gzipped. Format: `char`, `gloss`, `tier`, `reading`; comments start with `#`.
 
 `gloss` is the first sense of the entry's first Chinese gloss in `app/data/tangut-entries.json.gz`.
 Senses are separated by 、；， or a space outside brackets; numbering, part-of-speech tags and
-placeholder senses (暫無解釋, 不識) are dropped, and a short bracket before a word joins it, so
-（滴）答 gives 滴答. `tier` counts the characters of the gloss: `word`, one (3,115); `phrase`, two
-to four (2,057); `long`, five or more or a note in brackets (163); `transliteration`, a foreign
-sound (728); `empty`, nothing to read (58); `redirect`, the entry points at another character, which
-this file does not gloss (23). `reading` is Gong Xun's 202411 reconstruction, which 5,829 characters
-have.
+placeholder senses (暫無解釋, 不識) are dropped. A note in brackets stays with the gloss and is
+tiered `long`, so （滴）答 is not guessed into 滴答. `tier` counts the characters of the gloss:
+`word`, one (3,117); `phrase`, two to four (2,053); `long`, five or more, a note in brackets, or a
+description that begins 用在 or 作為 (162); `transliteration`, a foreign sound (728); `empty`,
+nothing to read (61); `redirect`, the first gloss points at another character (23). `reading` is
+Gong Xun's 202411 reconstruction, which 5,829 characters have.
 
 The gloss is the dictionary's first sense, not a chosen reading: a character glossed 世界、京城 keeps
-世界, and its senses differ in how well they read. Weighted by the six attested texts, 8,121 of their
-11,168 characters (72.7%) are `word`, 1,510 `phrase`, 838 `transliteration`, 598 `long`, 100
-`empty` and 1 `redirect`.
+世界, and its senses differ in how well they read. Weighted by the 24,265 characters of the thirteen
+attested texts that the entries cover, 17,836 (73.5%) are `word`, 3,685 `phrase`, 1,462
+`transliteration`, 1,128 `long`, 151 `empty` and 3 `redirect`.
 
 Rebuild with `uv run scripts/build_tangut_gloss_words.py`, which also prints that coverage and would
 leave the file unchanged. The source is Open Tangut, whose export is MIT licensed and merges CCAMC

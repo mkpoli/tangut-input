@@ -128,14 +128,17 @@ test('the gloss word table names every character once', () => {
   expect(new Set(glossWords.map(row => row[0]))).toEqual(new Set(entries.rows.map(row => row[0])))
   const tiers = {}
   for (const [, , tier] of glossWords) tiers[tier] = (tiers[tier] ?? 0) + 1
-  expect(tiers).toEqual({ word: 3115, phrase: 2057, transliteration: 728, long: 163, empty: 58, redirect: 23 })
+  expect(tiers).toEqual({ word: 3117, phrase: 2053, transliteration: 728, long: 162, empty: 61, redirect: 23 })
   const glossOf = char => glossWords.find(row => row[0] === char)
   expect(glossOf('𗢳')).toEqual(['𗢳', '佛', 'word', 'tha̱1'])
   expect(glossOf('𘋢').slice(0, 3)).toEqual(['𘋢', '菩薩', 'phrase'])
   expect(glossOf('𗍏')[2]).toBe('transliteration')
-  // A short bracket before a word belongs to it, and a bracket later in the entry does not make
-  // the first sense a transliteration.
-  expect(glossOf('𗁋').slice(0, 3)).toEqual(['𗁋', '滴答', 'phrase'])
+  // A bracket later in the entry does not make the first sense a transliteration.
   expect(glossOf('𗓭').slice(0, 3)).toEqual(['𗓭', '富', 'word'])
+  // A bracketed note stays as it is and is left for an editor, rather than guessed into a word.
+  expect(glossOf('𗁋').slice(0, 3)).toEqual(['𗁋', '（滴）答', 'long'])
+  expect(glossOf('𗠏').slice(0, 3)).toEqual(['𗠏', '（喉嚨）咽喉', 'long'])
+  // An ASCII note before the word explains the word and is dropped.
+  expect(glossOf('𗈒')).toEqual(['𗈒', '肘', 'word', 'rkiwr2'])
   expect(glossOf('𗘓')[2]).toBe('long')
 })

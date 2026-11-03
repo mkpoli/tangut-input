@@ -10,7 +10,7 @@ which:
 
 - `word` — one Chinese character (毒, 佛, 日), which can be read as it stands
 - `phrase` — two to four characters (菩薩, 世界)
-- `long` — five or more characters, or a bracketed note (白蹄杂色马, （按：…）)
+- `long` — five or more characters, or a note (白蹄杂色马, （滴）答, 用在…)
 - `transliteration` — the character writes a foreign sound (【宿】), so there is no meaning to read
 - `empty` — nothing to read: no gloss, 暫無解釋, or 不識
 - `redirect` — the entry points at another character instead of glossing this one
@@ -45,8 +45,7 @@ TAG_ONLY = re.compile(rf"^(?:{TAGS})$")
 NUMBER = re.compile(r"^\d+\.")
 SEPARATORS = "、；;，,／/　 "
 REDIRECT = re.compile(r"^重定向至")
-# A short bracket before a word belongs to it: （滴）答 is 滴答, （工）具 is 工具.
-SHORT_BRACKET = re.compile(r"^（([^（）]{1,3})）(\S.*)$")
+
 # Senses that say only that the character has no recorded meaning.
 PLACEHOLDERS = {"暫無解釋", "不識"}
 # Senses that describe how a character is used, rather than name a meaning.
@@ -73,6 +72,11 @@ def senses(text: str) -> list[str]:
     return [part.strip() for part in out if part.strip()]
 
 
+def is_note(text: str) -> bool:
+    """A sense that is only a bracketed remark."""
+    return text.startswith(("（", "(")) and text.endswith(("）", ")"))
+
+
 def read(entry: list) -> tuple[str, str]:
     """The word to read a character by, and the tier that says what kind of word it is."""
     chinese = entry[6]
@@ -89,12 +93,14 @@ def read(entry: list) -> tuple[str, str]:
             if not tag:
                 break
             sense = sense[: tag.start()]
-        short = SHORT_BRACKET.match(sense)
-        if short:
-            sense = short.group(1) + short.group(2)
         if not sense or TAG_ONLY.match(sense) or sense in PLACEHOLDERS or sense in ("【】", "（）"):
             continue
+        if sense.startswith("不識"):
+            continue
         parts.append(sense)
+    # A note that stands alone before the word explains it: (解剖學) 肘 is 肘.
+    while len(parts) > 1 and is_note(parts[0]):
+        parts.pop(0)
     if not parts:
         return "", "empty"
     word = parts[0]
@@ -120,7 +126,11 @@ def build(entries: list[list]) -> list[tuple[str, str, str, str]]:
 
 
 def coverage(rows: list[tuple[str, str, str, str]]) -> Counter:
-    """How many characters of the attested corpus each tier holds."""
+    """How many characters of the attested corpus each tier holds.
+
+    Only the ideographs of U+17000–U+187FF are counted: the corpus also carries a few Tangut
+    Supplement characters that the entries do not cover, and the table has no row for them.
+    """
     tiers = {char: tier for char, _, tier, _ in rows}
     seen: Counter = Counter()
     corpus = json.loads(gzip.decompress(CORPUS.read_bytes()))
