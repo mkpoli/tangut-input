@@ -40,10 +40,13 @@ own. The card stays visible while candidates change, so meaning and reading are 
 list.
 
 **Phone (390 wide).** The top bar keeps the mark, the reconstruction, the face and the theme. The
-finders move to a bottom tab bar with the four a reader starts from and a More sheet for the rest,
-Sources and the interface language; the sheet is a native `<dialog>`, so Escape closes it and
-focus returns to More. The card becomes a full-height sheet that a tap opens and Back or `Esc`
-closes; previews from the keyboard do not open it. The text strip stays at the top.
+finders move to a bottom bar: Find, a tab for each group (shape, sound, meaning), and More. A group
+tab opens a sheet of its finders with a one-line hint on each, and stays marked while the reader is
+on one of them. More holds Sources, the palette, the theme and the interface language. The sheet is
+a native `<dialog>`: Escape or a backdrop tap closes it, focus returns to the tab that opened it,
+and Back closes it without pulling focus off the page. The card becomes a full-height sheet that a
+tap opens and its Back button or `Esc` closes; previews from the keyboard do not open it. The text
+strip stays at the top.
 
 ## The finders, and why each sits where it does
 
