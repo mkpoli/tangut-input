@@ -21,6 +21,7 @@
   import Fanqie from './pages/Fanqie.svelte'
   import Chart from './pages/Chart.svelte'
   import Eras from './pages/Eras.svelte'
+  import Texts from './pages/Texts.svelte'
   import Transcribe from './pages/Transcribe.svelte'
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
@@ -246,6 +247,7 @@
         {:else if route.page === 'fanqie'}<Fanqie />
         {:else if route.page === 'chart'}<Chart />
         {:else if route.page === 'eras'}<Eras />
+        {:else if route.page === 'texts'}<Texts />
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />

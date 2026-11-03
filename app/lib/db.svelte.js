@@ -23,6 +23,7 @@ export const codePoint = char => `U+${hex(char)}`
 export const db = $state({
   /** @type {'loading' | 'ready' | 'failed'} */ status: 'loading',
   /** @type {import('./data.js').Attestation | null} */ attestation: null,
+  /** Whether the attestation request failed. */ attestationFailed: false,
   /** @type {import('./data.js').Sample[]} */ samples: [],
 })
 
@@ -103,7 +104,8 @@ export async function load() {
     console.error(error)
     db.status = 'failed'
   }
-  loadAttestation().then(found => { db.attestation = found }, error => console.error(error))
+  loadAttestation().then(found => { db.attestation = found; db.attestationFailed = false },
+    error => { console.error(error); db.attestationFailed = true })
   loadSamples().then(found => { db.samples = found.samples }, error => console.error(error))
 }
 

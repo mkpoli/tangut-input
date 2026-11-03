@@ -32,6 +32,10 @@ export const PAGE_SEO = {
     title: 'Reading — Tangut Input',
     description: 'Type a Tangut reconstruction in any of eight systems — Li Fanwen, Gong Hwang-cherng, Miyake and the rest — and see the characters read so.',
   },
+  texts: {
+    title: 'Texts — Tangut Input',
+    description: 'Browse the texts behind the attested corpus, with their passages, characters and sources, and load a first passage into Transcribe.',
+  },
   transcribe: {
     title: 'Transcribe Tangut text — every character’s reading',
     description: 'Paste a line of Tangut and read every character: its reconstruction in any of eight systems, its rhyme and tone, and a table of all eight for copying.',

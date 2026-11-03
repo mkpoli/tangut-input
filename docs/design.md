@@ -21,7 +21,8 @@ The site has three parts.
   Four-corner, Reading, Fanqie, Chart, Transcribe, Draw and Parts. Their inputs differ in kind
   (letters, a reconstruction, a drawing, a set of components), so each page is laid out for its own
   input. The one shared box with tabs is the Fanqie picker, where the point is to choose two
-  characters without leaving the field.
+  characters without leaving the field. Texts sits beside them: it starts from a whole text and
+  loads its first passage into Transcribe.
 - **The card.** Everything recorded about one character, with the actions first: add to the text,
   copy the character, copy the link, copy the code point (click it) or a Cangjie code (click it).
   Below them come the things that help a reader confirm the character is the one they mean:
@@ -67,6 +68,11 @@ stacks it above the name.
   lists the family that opens that way.
 
 With an empty box, the page shows the nine finders as doors with one line each, and examples.
+
+**Texts** (`/texts`) lists the 34 texts behind the attested corpus, grouped as the edition,
+Wikisource and the Lausanne Corpus. Each row gives its passages and characters, links its source,
+and loads its first line into Transcribe. The counts come from the attestation, not from a separate
+text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
 code box takes letters, candidates are numbered 1–9, `Space` or a digit commits into the text,
