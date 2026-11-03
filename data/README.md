@@ -537,6 +537,34 @@ and Wiktionary; `app/data/tangut-entries.json.gz` is its re-pack.
 
 Licence: **MIT**, following the entries file.
 
+## `tangut-gloss-readings.tsv.gz`
+
+How to read the word the table above gives: the 3,117 characters whose gloss is a single Chinese
+character, each with whatever readings KANJIDIC2 has for that character — pinyin, Japanese on and
+Japanese kun. 45 KB gzipped. Format: `char`, `gloss`, `pinyin`, `on`, `kun`; comments start with `#`.
+
+The readings are KANJIDIC2's — database version 2026-307, created 2026-11-03, its SHA-256 in the file
+header — in the order that file gives them: 佛 is `fo2 fu2`, ブツ フツ, ほとけ; 日 is `ri4`,
+ニチ ジツ, ひ. Pinyin keeps KANJIDIC2's tone numbers. A kun reading keeps the dot of its okurigana
+stem (行 い.く); a bound form marked with a hyphen at either end is left out, because it belongs to the
+word the character ends or begins (日 -び, 上 うわ-). 3,068 rows have pinyin, 3,063 on and 2,801 kun.
+The 35 gloss characters KANJIDIC2 does not carry (說, 悅, 內, 腳, 歲), 49 rows, keep empty readings
+rather than borrow a Japanese variant's, which is a different character, or a Chinese reading from
+another system; the remaining rows without kun are Sino-Japanese words with no Japanese word of their
+own, 毒 being ドク.
+
+Only the `word` tier is read. A gloss of two or more characters is a phrase whose Japanese reading is
+not its parts joined — 世界 is セカイ, not よかい — so the phrase, long, transliteration and empty
+rows wait for an editor.
+
+Rebuild with `uv run scripts/build_tangut_gloss_readings.py`, which fetches KANJIDIC2 into `cache/`
+against the pinned SHA-256 and prints the counts above. The gloss words come from the MIT file beside
+this one.
+
+Licence: **CC BY-SA 4.0** for the readings, KANJIDIC2's
+(<https://creativecommons.org/licenses/by-sa/4.0/>), Electronic Dictionary Research and Development
+Group, Copyright EDRDG.
+
 ## Bopomofo outlines
 
 `bopomofo-outlines.json.gz` holds U+3105–U+312F and U+31A0–U+31BF (75 letters).
