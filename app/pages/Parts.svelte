@@ -88,7 +88,10 @@
   /** @param {Event} event @param {{ part: string, live: number }} p */
   function showInfo(event, p) {
     const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
-    info = { part: p.part, live: p.live, x: box.left, y: Math.max(8, Math.min(box.bottom + 6, innerHeight - 240)) }
+    const width = 300, height = 300, gap = 8
+    let x = box.right + gap
+    if (x + width > innerWidth) x = box.left - width - gap
+    info = { part: p.part, live: p.live, x: Math.max(8, Math.min(x, innerWidth - width - 8)), y: Math.max(8, Math.min(box.top, innerHeight - height)) }
   }
   function hideInfo() {
     info = null
@@ -101,7 +104,7 @@
   function partLabel(p) {
     const code = ix.codes.get(p.part)?.[0] ?? ''
     const count = p.live >= 0 ? p.live : p.uses
-    return [shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : t('common.characters', { count })].filter(Boolean).join(' · ')
+    return [p.part, shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : t('common.characters', { count })].filter(Boolean).join(' · ')
   }
 
   /** @param {KeyboardEvent} event */
