@@ -43,7 +43,7 @@
       if (codes.length) out.push({ key: 'code', title: t('find.group.cangjie'), page: 'cangjie', total: codes.length, items: codes.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.code })) })
     }
     if (/^[\p{Script=Latin}\p{M}0-9ʔɦɨɪʉɯəɛɔɑŋɣʁɲʷⁿ'·.\- ]+$/u.test(text)) {
-      const readings = searchReadings(ix.readings, text).filter(hit => hit.tier < 2)
+      const readings = searchReadings(ix.readings, text, { frequency: ix.frequency }).filter(hit => hit.tier < 2)
       if (readings.length) out.push({ key: 'reading', title: t('find.group.reading'), page: 'reading', total: readings.length,
         items: readings.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.readings[0].raw, extra: SYSTEMS.find(s => s.key === hit.readings[0].system)?.short })) })
     }

@@ -54,6 +54,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-samples.json`: eighteen passages copied from the corpus, thirteen marked famous,
   offered by the Samples button in the text strip and on Transcribe; built by
   `scripts/build_tangut_samples.py` from the attestation file.
+- `app/data/tangut-frequency.json.gz`: how often each character occurs in the corpus, built by
+  `scripts/build_tangut_frequency.py`; the finders put the commoner characters first within each
+  tier.
 - `app/data/tangut-shapes.bin.gz`: glyph pen lines for the drawing pad, rendered from Noto Serif
   Tangut 2.168 by `scripts/build_tangut_shapes.py`; `scripts/handwriting/score.mjs` measures the
   search on drawings made by hand and `scripts/eval_tangut_shapes.mjs` on drawings made from a font.

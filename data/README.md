@@ -44,6 +44,14 @@ record names its source, licence, line ids and the exact text; the thirteen famo
 `scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the Wikisource
 texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausanne Corpus.
 
+## `tangut-frequency.json.gz`
+
+One count per Tangut character: the number of places it occupies in
+`app/data/tangut-attestation.json.gz`, 92,509 places over 3,350 characters. A character repeated in a
+duplicated text counts each time. The file carries the corpus hash and the counts, sorted by count.
+Built by `scripts/build_tangut_frequency.py`; the finders read it to rank candidates inside their own
+tiers.
+
 ## `yi-bai-ids.tsv.gz`
 
 Standard IDS descriptions from Yi Bai's level-1 IDS dataset at commit
