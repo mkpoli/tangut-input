@@ -17,12 +17,15 @@
   let page = $state(0)
   const PER_PAGE = 20
 
-  // The nine initial classes of the 同音, as the rhyme books name them: the Roman numeral is the
-  // class, the Chinese word is the class's own name.
+  // The nine initial classes of the 同音: the Roman numeral is the class, `zh` its name in the rhyme
+  // books' Chinese, `tangut` the 同音's own chapter title (唇音重一品 and so on: the class's place and
+  // 音, then its number and 品), as tabulated in 孫伯君 2017.
   const CLASSES = [
-    { roman: 'Ⅰ', zh: '重唇音' }, { roman: 'Ⅱ', zh: '輕唇音' }, { roman: 'Ⅲ', zh: '舌頭音' },
-    { roman: 'Ⅳ', zh: '舌上音' }, { roman: 'Ⅴ', zh: '牙音' }, { roman: 'Ⅵ', zh: '齒頭音' },
-    { roman: 'Ⅶ', zh: '正齒音' }, { roman: 'Ⅷ', zh: '喉音' }, { roman: 'Ⅸ', zh: '來日音' },
+    { roman: 'Ⅰ', zh: '重唇音', tangut: '𗠉𗙏𗊢𘈩𘄿' }, { roman: 'Ⅱ', zh: '輕唇音', tangut: '𗠉𗙏𗥫𗍫𘄿' },
+    { roman: 'Ⅲ', zh: '舌頭音', tangut: '𗢯𘁙𗙏𘕕𘄿' }, { roman: 'Ⅳ', zh: '舌上音', tangut: '𗢯𗀔𗙏𗥃𘄿' },
+    { roman: 'Ⅴ', zh: '牙音', tangut: '𘟗𗙏𗏁𘄿' }, { roman: 'Ⅵ', zh: '齒頭音', tangut: '𘘄𘁙𗙏𗤁𘄿' },
+    { roman: 'Ⅶ', zh: '正齒音', tangut: '𘘄𗹑𗙏𗒹𘄿' }, { roman: 'Ⅷ', zh: '喉音', tangut: '𗍂𗙏𘉋𘄿' },
+    { roman: 'Ⅸ', zh: '來日音', tangut: '𘚶𘞨𗙏𗢭𘄿' },
   ]
   const GROUPS = CLASSES.map(entry => entry.roman)
   // The axes are read in the reader's reconstruction, 龔勛's unless they picked another.
@@ -340,8 +343,9 @@
           <tr>
             <th class="corner" scope="col"><span>{t('chart.rhyme')}</span> / {t('chart.group')}</th>
             {#each CLASSES as group (group.roman)}
-              <th scope="col" class="group" title={`${group.roman} · ${group.zh}${onsets.get(group.roman)?.length ? ` · ${onsets.get(group.roman)?.join(' ')}` : ''}`}>
+              <th scope="col" class="group" title={`${group.roman} · ${group.tangut} · ${group.zh}${onsets.get(group.roman)?.length ? ` · ${onsets.get(group.roman)?.join(' ')}` : ''}`}>
                 <span class="roman">{group.roman}</span>
+                <span class="tangut ui-script" lang="txg">{group.tangut}</span>
                 <span class="name" lang="zh-Hant">{group.zh}</span>
                 {#if onsets.get(group.roman)?.length}<small>{onsets.get(group.roman)?.join(' ')}</small>{/if}
               </th>
@@ -388,6 +392,7 @@
   thead th.corner{left:0;z-index:3;text-align:start;white-space:nowrap;font-family:var(--ui-font-sans);font-weight:var(--ui-weight-medium)}
   thead th.group{text-align:center;inline-size:84px}
   thead th.group .ui-script{display:block;font-size:19px;color:var(--ui-color-ink)}
+  thead th.group .tangut{display:block;font-size:13px;white-space:nowrap;color:var(--ui-color-ink)}
   thead th.group .roman{display:block;font-size:var(--ui-text-xs)}
   thead th.group .name{display:block;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft);font-weight:var(--ui-weight-normal);letter-spacing:0;text-transform:none}
   thead th.group small{display:block;font-size:10px;color:var(--ui-color-ink-muted);font-weight:var(--ui-weight-normal)}
