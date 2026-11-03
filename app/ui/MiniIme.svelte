@@ -49,7 +49,12 @@
       lists.push(['sound', searchReadings(ix.readings, text).slice(0, 24).map(hit => ({ char: hit.char, note: (hit.readings ?? []).join(' ') }))])
     }
     if ([...text].some(isTangut)) lists.push(['parts', byParts([...text].filter(isTangut)).slice(0, 24).map(char => ({ char, note: gloss(char) }))])
-    if (!lists.some(([, list]) => list.length)) lists.push(['sense', byMeaning(text).slice(0, 24).map(hit => ({ char: hit.char, note: gloss(hit.char) }))])
+    // A word in English can look like a code; when the shape searches find almost nothing, the
+    // meanings are tried as well, so the one or two code matches do not hide the word's sense.
+    const shaped = lists.reduce((sum, [, list]) => sum + list.length, 0)
+    if (!shaped || (/[a-z]{3,}/i.test(text) && shaped < 5)) {
+      lists.push(['sense', byMeaning(text).slice(0, 24).map(hit => ({ char: hit.char, note: gloss(hit.char) }))])
+    }
     const used = lists.filter(([, list]) => list.length).map(([kind]) => kind)
     /** @type {Map<string, Hit>} */
     const unique = new Map()
