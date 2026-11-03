@@ -184,6 +184,8 @@
   "samples.hint": "从已收录文献中载入一段。",
   "samples.famous": "名篇",
   "samples.replace": "将替换当前文本。",
+  "samples.back": "返回原文本",
+  "samples.clear": "清空文本",
   "samples.loading": "正在加载示例…",
   "attest.title": "文献用例",
   "attest.loading": "正在加载语料…",

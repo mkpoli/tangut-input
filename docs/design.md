@@ -213,7 +213,8 @@ the Tangut block, and anything that is not a pick or a drawing.
   and the Wikisource text CC BY-SA 4.0; each source prints its own credit.
 - **Sample passages in the text strip and Transcribe.** Eight passages copied from the attestation,
   five marked famous, sit in `app/data/tangut-samples.json`. Picking one replaces the text; on
-  Transcribe it also becomes the address's line. The list is a reading aid, not a frequency sample.
+  Transcribe it also becomes the address's line. The panel keeps the replaced text, so a reader can
+  return to it or clear the line. The list is a reading aid, not a frequency sample.
 - **Unused or unattributed data left out.** `app/data/tangut-parts.json.gz` (a list of characters
   with use counts) is deleted: the counts are recomputed from the descriptions at load.
   `data2/tangut-corpus.json.gz` (21 Tangut texts) would give frequencies for ranking, but nothing in

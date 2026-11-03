@@ -184,6 +184,8 @@
   "samples.hint": "収録した文献から一節を読み込みます。",
   "samples.famous": "有名",
   "samples.replace": "現在の本文を置き換えます。",
+  "samples.back": "元の本文に戻す",
+  "samples.clear": "本文を消去",
   "samples.loading": "例文を読み込んでいます…",
   "attest.title": "文献中の用例",
   "attest.loading": "コーパスを読み込んでいます…",

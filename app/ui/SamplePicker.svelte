@@ -3,7 +3,7 @@
   // written, so a reader can try the transcribe table on a real line without typing Tangut first.
   import { tick } from 'svelte'
   import { db } from '../lib/db.svelte.js'
-  import { setText, text } from '../lib/text.svelte.js'
+  import { setText, text, loadSample, restoreSample, sampleHistory } from '../lib/text.svelte.js'
   import { setQuery } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
 
@@ -25,8 +25,22 @@
 
   /** @param {import('../lib/data.js').Sample} sample */
   function pick(sample) {
-    setText(sample.text)
+    loadSample(sample.text)
     if (syncQuery) setQuery(sample.text)
+    open = false
+    onpick?.()
+  }
+
+  function back() {
+    restoreSample()
+    if (syncQuery) setQuery(text.value)
+    open = false
+    onpick?.()
+  }
+
+  function clear() {
+    setText('')
+    if (syncQuery) setQuery('')
     open = false
     onpick?.()
   }
@@ -96,6 +110,20 @@
         <p class="ui-hint">{t('samples.hint')}</p>
         {#if text.value}<p class="note ui-hint">{t('samples.replace')}</p>{/if}
       </header>
+      {#if sampleHistory.backup !== null || text.value}
+        <div class="actions">
+          {#if sampleHistory.backup !== null}
+            <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={back}>
+              <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M8 5 4 9l4 4M5 9h5.5a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {t('samples.back')}
+            </button>
+          {/if}
+          <button class="ui-button" data-variant="quiet" data-size="sm" type="button" disabled={!text.value} onclick={clear}>
+            <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M4 6h12M8 6V4h4v2M6.5 6l.8 9h5.4l.8-9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {t('samples.clear')}
+          </button>
+        </div>
+      {/if}
       {#if !db.samples.length}
         <p class="ui-hint">{t('samples.loading')}</p>
       {:else}
@@ -133,6 +161,8 @@
   .meta{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
   .preview{overflow:hidden;color:var(--ui-color-ink-soft);font-size:18px;line-height:1.4;text-overflow:ellipsis;white-space:nowrap}
   .note{margin:0;color:var(--ui-color-accent-ink)}
+  .actions{display:flex;justify-content:flex-end;gap:var(--ui-space-xs);padding-block:var(--ui-space-2xs) var(--ui-space-sm);border-bottom:1px solid var(--ui-color-border)}
+  .actions :global(.ui-button){gap:var(--ui-space-2xs)}
   @media (max-width:900px){
     .trigger .label{display:none}
     .trigger{padding-inline:var(--ui-space-xs)}
