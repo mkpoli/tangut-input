@@ -229,6 +229,7 @@
   "card.copyDescription": "Copy the description",
   "card.description": "the description",
   "card.withTheseParts": "Characters with these parts",
+  "card.sameOpening": "Characters that begin like this",
   "card.isComponent": "A component: it is a part of other characters, not built from parts itself.",
   "card.noDescription": "No description from parts is recorded for this character.",
   "card.usedIn": "Used in {count} characters",

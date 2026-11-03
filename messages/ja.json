@@ -229,6 +229,7 @@
   "card.copyDescription": "構成記述をコピー",
   "card.description": "構成記述",
   "card.withTheseParts": "同じ部品を持つ文字",
+  "card.sameOpening": "この書き出しで始まる文字",
   "card.isComponent": "部品：他の文字を構成する要素であり、これ自体は部品に分解されません。",
   "card.noDescription": "この文字には部品による構成記述が記録されていません。",
   "card.usedIn": "{count}字に使用",

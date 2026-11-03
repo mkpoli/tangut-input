@@ -229,6 +229,7 @@
   "card.copyDescription": "复制构字描述",
   "card.description": "构字描述",
   "card.withTheseParts": "含这些部件的字",
+  "card.sameOpening": "这样开头的字",
   "card.isComponent": "部件：用于构成其他字，本身不再由部件拼合。",
   "card.noDescription": "此字尚无部件构字描述的记录。",
   "card.usedIn": "用于{count}字",
