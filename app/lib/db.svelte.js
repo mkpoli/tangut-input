@@ -2,14 +2,12 @@
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadFanqieAliases, loadTibetan, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
 import { indexReadings } from './reading.js'
-import { OPERATORS } from './composition.js'
+import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
 
-export { OPERATORS }
+export { OPERATORS, isTangut }
 
-/** @param {string} char */
-export const isTangut = char => /^[\u{17000}-\u{18AFF}\u{18D00}-\u{18D7F}\u{18D80}-\u{18DFF}]$/u.test(char)
 /** @param {string} char */
 export const isComponent = char => /^[\u{18800}-\u{18AFF}\u{18D80}-\u{18DFF}]$/u.test(char)
 /** Whether the bundled fonts draw the character (Noto Serif Tangut 2.168 stops at U+187F7 and U+18D08). @param {string} char */
@@ -37,8 +35,9 @@ export const ix = {
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
   /** @type {import('./reading.js').Reading[]} */ readings: [],
   /** @type {Map<string, number>} */ strokes: new Map(),
-  /** The parts of each description, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
-  /** The characters whose description uses each part. @type {Map<string, Set<string>>} */ usedBy: new Map(),
+  /** The parts of each description at every layer, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
+  /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
+  /** The parts each description names directly, character parts included. @type {Map<string, string[]>} */ directPartsOf: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
@@ -77,18 +76,10 @@ export async function load() {
     ix.palette = ix.codeList.filter(([code]) => code.startsWith('p'))
     ix.readings = indexReadings(entries)
     ix.strokes = new Map(Object.entries(strokes))
-    for (const entry of entries) {
-      /** @type {Map<string, number>} */
-      const counts = new Map()
-      for (const part of entry.composition ?? '') {
-        if (OPERATORS.has(part) || !isTangut(part)) continue
-        counts.set(part, (counts.get(part) ?? 0) + 1)
-        let users = ix.usedBy.get(part)
-        if (!users) ix.usedBy.set(part, users = new Set())
-        users.add(entry.char)
-      }
-      ix.partsOf.set(entry.char, counts)
-    }
+    const index = buildPartIndex(entries)
+    ix.partsOf = index.partsOf
+    ix.usedBy = index.usedBy
+    ix.directPartsOf = index.directPartsOf
     if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
     if (aliases) for (const group of aliases.groups) for (const char of group) ix.fanqieAliases.set(char, group)
     if (rhymes) {

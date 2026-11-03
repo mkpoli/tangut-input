@@ -20,10 +20,10 @@ it into your text. <https://tangut.mkpo.li/>
   Parts in miniature.
 - **Draw**: a drawing pad ranked by glyph shape against Noto Serif Tangut. It is rough, and the
   page says how rough.
-- **Parts**: choose components; each choice narrows the characters and the remaining parts. The
-  filter takes a Cangjie code or a Japanese shape name, and hovering a part shows its code point,
-  component number, strokes, uses, Cangjie codes and name. A collapsible table compares the names
-  across the languages that record one.
+- **Parts**: choose parts, components or character-sized; each choice narrows the characters and
+  the remaining parts. The filter takes a Cangjie code or a Japanese shape name, and hovering a
+  part shows its code point, component number, strokes, uses, Cangjie codes and name. A collapsible
+  table compares the names across the languages that record one.
 
 The card of a character shows its code point, Cangjie codes, meanings in English, Japanese and
 Chinese, readings, structure, the lines of the recorded corpus where it stands with the scribe's
