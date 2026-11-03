@@ -100,7 +100,7 @@
       <table class="ui-table list">
         <thead><tr><th scope="col">{t('eras.titles.holder')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.titles.chinese')}</th></tr></thead>
         <tbody>
-          {#each TITLES as title (title.tangut)}
+          {#each TITLES as title (`${title.holder} ${title.tangut}`)}
             <tr>
               <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{/if}</th>
               <td class="forms title-form"><span class="form" role="group" aria-label={title.tangut}>{#each [...title.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}

@@ -27,7 +27,7 @@ export const ERA_SOURCES = {
     author: 'Liangzhou stele (1094), transcribed on Wikisource after Nishida Tatsuo',
     title: '𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞',
     where: 'Wikisource, revision 909760; Nishida, 西夏語の研究 I (1964), pp. 156–176',
-    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here.',
+    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here. 崇宗 and his mother are inferred from the pair 𗣼𗯿𘓺𗨺𘜹, 𗸯𗑗𘓺𘋨 before 天祐民安 4 (1093); the same pair also stands between 大安 8 and 天安禮定 2, in 惠宗\'s years, which is not explained here.',
     url: 'https://wikisource.org/w/index.php?oldid=909760',
   },
   months1185: {
@@ -76,22 +76,15 @@ export const ERA_SOURCES = {
     author: '楊志高',
     title: '國圖藏西夏文《慈悲道場懺法》卷八譯釋（一）',
     where: '西夏學 5 (2010); Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
-    note: 'The translators\' line, and 惠宗 and his mother as the translators.',
+    note: 'The translators\' line, in its word-for-word gloss; its running translation has 国正 and 民正. It names 惠宗 and the empress dowager 梁氏 as the translators; 聶鴻音 2009, p. 42 calls her his mother.',
     url: 'https://www.sinoss.net/uploadfile/2012/0528/20120528021944100.pdf',
   },
   yang2011: {
     author: '楊志高',
     title: '圖書館藏西夏文《慈悲道場懺法序》譯考',
     where: '西夏學 8 (2011), p. 100',
-    note: 'The Chinese of the translators\' line, attributing 惠宗 to 史金波 1988.',
+    note: 'Gives the line of another colophon as 禄蕃 and 主世, and attributes 惠宗 to 史金波 1988.',
     url: 'https://www.sinoss.net/uploadfile/2012/0620/20120620033537836.pdf',
-  },
-  cui2007: {
-    author: 'Wikipedia contributors, citing 崔紅芬 and 文志勇',
-    title: 'Emperor Chongzong of Western Xia',
-    where: 'English Wikipedia, accessed 4 November 2026',
-    note: 'Its citation is 西夏皇帝尊號考略, 寧夏大學學報 2007(1), whose link is dead; that article was not seen.',
-    url: 'https://en.wikipedia.org/wiki/Emperor_Chongzong_of_Western_Xia',
   },
   nie2004: {
     author: '聶鴻音',
@@ -111,5 +104,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'cui2007',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011',
 ])
