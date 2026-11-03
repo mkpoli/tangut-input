@@ -380,7 +380,6 @@
   .sheet-link.on .sheet-name{color:var(--ui-color-accent-ink)}
   .sheet-name{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold);white-space:nowrap}
 
-  @media (max-width:1300px){.reading-label{display:none}}
   @media (max-width:1180px){
     .top{gap:var(--ui-space-md);padding-inline:var(--ui-space-xl)}
     .finders a{padding-inline:var(--ui-space-xs);font-size:var(--ui-text-xs)}
