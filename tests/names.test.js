@@ -35,8 +35,16 @@ test('the Tangut source table is the one that was merged', () => {
   expect(source).toEqual(TANGUT)
 })
 
-test('the site copy holds the same names', () => {
-  expect(new Map(app.map(row => [row.name, row.char]))).toEqual(new Map(TANGUT))
+test('the site copy holds the same rows as the source table', () => {
+  const source = new Map(readFileSync(new URL('../data/tangut-component-names.tsv', import.meta.url), 'utf8')
+    .split('\n')
+    .filter(line => line && !line.startsWith('#'))
+    .map(line => {
+      const [name, char, from, detail] = line.split('\t')
+      return [name, { char, source: from, detail, credit: from === 'arakawa-2020' ? 'Arakawa 2020' : 'Japanese Wikipedia' }]
+    }))
+  const site = new Map(app.map(row => [row.name, { char: row.char, source: row.source, detail: row.detail, credit: row.credit }]))
+  expect(site).toEqual(source)
 })
 
 test('a shape name reaches its component first', () => {

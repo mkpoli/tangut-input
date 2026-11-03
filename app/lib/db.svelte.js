@@ -46,7 +46,7 @@ export const ix = {
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
   /** Tibetan phonetic glosses by character: [Wylie, Tibetan script, [[shelfmark, count]…]]. @type {Map<string, [string, string, [string, number][]][]>} */ tibetan: new Map(),
   /** The several characters that stand for one Chinese fanqie initial: each maps to its group. @type {Map<string, string[]>} */ fanqieAliases: new Map(),
-  /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, strokes: number, credit: string }[]} */ names: [],
+  /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
   /** Characters one component away, built on the first ask: a reader who means one shape and draws
    *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
   /** Whether the sibling index has been built. */ siblingsReady: false,

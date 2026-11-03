@@ -5,40 +5,35 @@
       "name": "ノメ",
       "char": "𘡃",
       "source": "arakawa-2020",
-      "detail": "Japanese shape name; 3 strokes, the lower-left element Arakawa calls ノメ型 (n. 21)",
-      "strokes": 3,
+      "detail": "Arakawa calls this the ノメ型 lower-left element (n. 21)",
       "credit": "Arakawa 2020"
     },
     {
       "name": "ノノメ",
       "char": "𘢌",
       "source": "arakawa-2020",
-      "detail": "Japanese shape name; 4 strokes (§1, §3.3)",
-      "strokes": 4,
+      "detail": "Arakawa gives this element as ノノメ (§1, §3.3)",
       "credit": "Arakawa 2020"
     },
     {
       "name": "ノメメ",
       "char": "𘤊",
       "source": "ja-wikipedia-tangut",
-      "detail": "Japanese shape name; 5 strokes, the form distinguished from くくノ",
-      "strokes": 5,
+      "detail": "The form distinguished from くくノ",
       "credit": "Japanese Wikipedia"
     },
     {
       "name": "くノ",
       "char": "𘫺",
       "source": "arakawa-2020",
-      "detail": "Japanese shape name; 2 strokes, the lower-left element Arakawa calls くノ型 (n. 21)",
-      "strokes": 2,
+      "detail": "Arakawa calls this the くノ型 lower-left element (n. 21)",
       "credit": "Arakawa 2020"
     },
     {
       "name": "くくノ",
       "char": "𘫽",
       "source": "ja-wikipedia-tangut",
-      "detail": "Japanese shape name; 3 strokes, the form distinguished from ノメメ",
-      "strokes": 3,
+      "detail": "The form distinguished from ノメメ",
       "credit": "Japanese Wikipedia"
     }
   ]

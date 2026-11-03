@@ -4,13 +4,16 @@ Japanese work on Tangut describes a component by the kana its strokes resemble. 
 shorthand for a shape: 𘡃 is ノメ and 𘫺 is くノ, and the two are told apart by their strokes (3 and
 2). The name describes strokes; the meaning is separate.
 
-| Name | Component | Strokes | Source |
-| --- | --- | --- | --- |
-| くノ | 𘫺 U+18AFA | 2 | Arakawa 2020, n. 21 |
-| ノメ | 𘡃 U+18843 | 3 | Arakawa 2020, n. 21 |
-| ノノメ | 𘢌 U+1888C | 4 | Arakawa 2020, §1 and §3.3 |
-| ノメメ | 𘤊 U+1890A | 5 | Japanese Wikipedia, 西夏文字 |
-| くくノ | 𘫽 U+18AFD | 3 | Japanese Wikipedia, 西夏文字 |
+| Name | Component | Source |
+| --- | --- | --- |
+| くノ | 𘫺 U+18AFA | Arakawa 2020, n. 21 |
+| ノメ | 𘡃 U+18843 | Arakawa 2020, n. 21 |
+| ノノメ | 𘢌 U+1888C | Arakawa 2020, §1 and §3.3 |
+| ノメメ | 𘤊 U+1890A | Japanese Wikipedia, 西夏文字 |
+| くくノ | 𘫽 U+18AFD | Japanese Wikipedia, 西夏文字 |
+
+The hover card takes a component's stroke count from the site's Unicode-derived data, which can
+differ from a count in the source.
 
 The same shorthand builds longer descriptions. Arakawa 2018 writes 一ノメ and 一ノノメ for the
 elements with a horizontal stroke above, and 一くノ and 一ノくノ for the forms he found in the

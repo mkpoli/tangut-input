@@ -2,8 +2,8 @@
 # scripts/build_component_names.py. These are descriptive shorthand used in Japanese Tangut
 # scholarship, not an official nomenclature: a component is called by the kana its strokes resemble.
 # columns: name, char, source, detail
-くノ	𘫺	arakawa-2020	Japanese shape name; 2 strokes, the lower-left element Arakawa calls くノ型 (n. 21)
-ノメ	𘡃	arakawa-2020	Japanese shape name; 3 strokes, the lower-left element Arakawa calls ノメ型 (n. 21)
-ノノメ	𘢌	arakawa-2020	Japanese shape name; 4 strokes (§1, §3.3)
-ノメメ	𘤊	ja-wikipedia-tangut	Japanese shape name; 5 strokes, the form distinguished from くくノ
-くくノ	𘫽	ja-wikipedia-tangut	Japanese shape name; 3 strokes, the form distinguished from ノメメ
+くノ	𘫺	arakawa-2020	Arakawa calls this the くノ型 lower-left element (n. 21)
+ノメ	𘡃	arakawa-2020	Arakawa calls this the ノメ型 lower-left element (n. 21)
+ノノメ	𘢌	arakawa-2020	Arakawa gives this element as ノノメ (§1, §3.3)
+ノメメ	𘤊	ja-wikipedia-tangut	The form distinguished from くくノ
+くくノ	𘫽	ja-wikipedia-tangut	The form distinguished from ノメメ
