@@ -4,7 +4,7 @@
   import { tick } from 'svelte'
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES, GROUPS, PRIMARY } from './lib/route.svelte.js'
-  import { ui, applyTangut, applyTheme, cycleTheme, setTangut, setReading, TANGUT_FACES } from './lib/ui.svelte.js'
+  import { ui, applyTangut, applyTheme, cycleTheme, setTheme, setTangut, setReading, setPalette, PALETTES, TANGUT_FACES } from './lib/ui.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
   import { i18n, LOCALES, setLocale, t } from './lib/i18n.svelte.js'
@@ -160,6 +160,15 @@
           </select>
         </span>
       </label>
+      <label class="palette" title={t('palette.label')}>
+        <span class="ui-visually-hidden">{t('palette.label')}</span>
+        <span class="ui-select-wrap">
+          <select class="ui-select" data-size="sm" value={ui.palette}
+            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setPalette(/** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (event.currentTarget.value))}>
+            {#each PALETTES as entry (entry.key)}<option value={entry.key}>{t(entry.label)}</option>{/each}
+          </select>
+        </span>
+      </label>
       <label class="lang" title={t('lang.label')}>
         <span class="ui-visually-hidden">{t('lang.label')}</span>
         <span class="ui-select-wrap">
@@ -269,15 +278,37 @@
       {/each}
     </div>
     <hr class="ui-menu-separator" />
-    <label class="sheet-lang">
-      <span class="ui-label">{t('lang.label')}</span>
-      <span class="ui-select-wrap">
-        <select class="ui-select" value={i18n.locale}
-          onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setLocale(/** @type {any} */ (event.currentTarget.value))}>
-          {#each LOCALES as locale (locale.key)}<option value={locale.key} lang={locale.key}>{locale.name}</option>{/each}
-        </select>
-      </span>
-    </label>
+    <div class="sheet-picks">
+      <label class="sheet-pick">
+        <span class="ui-label">{t('palette.label')}</span>
+        <span class="ui-select-wrap">
+          <select class="ui-select" value={ui.palette}
+            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setPalette(/** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (event.currentTarget.value))}>
+            {#each PALETTES as entry (entry.key)}<option value={entry.key}>{t(entry.label)}</option>{/each}
+          </select>
+        </span>
+      </label>
+      <label class="sheet-pick">
+        <span class="ui-label">{t('theme.label')}</span>
+        <span class="ui-select-wrap">
+          <select class="ui-select" value={ui.theme}
+            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setTheme(/** @type {'auto' | 'light' | 'dark'} */ (event.currentTarget.value))}>
+            <option value="auto">{t('theme.auto')}</option>
+            <option value="light">{t('theme.light')}</option>
+            <option value="dark">{t('theme.dark')}</option>
+          </select>
+        </span>
+      </label>
+      <label class="sheet-pick">
+        <span class="ui-label">{t('lang.label')}</span>
+        <span class="ui-select-wrap">
+          <select class="ui-select" value={i18n.locale}
+            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setLocale(/** @type {any} */ (event.currentTarget.value))}>
+            {#each LOCALES as locale (locale.key)}<option value={locale.key} lang={locale.key}>{locale.name}</option>{/each}
+          </select>
+        </span>
+      </label>
+    </div>
   </dialog>
 
   <div class="toast" role="status" aria-live="polite">{#if toast.message}<span class="ui-toast">{toast.message}</span>{/if}</div>
@@ -300,6 +331,7 @@
   .finders .group + .group, .finders .primary + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
   .aside{margin-inline-start:auto;display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .reading :global(.ui-select){inline-size:154px}
+  .palette :global(.ui-select){inline-size:96px}
   .lang :global(.ui-select){inline-size:104px}
   .font-pick{position:relative}
   .sample{font-size:18px;line-height:1}
@@ -329,7 +361,8 @@
   .sheet-link:hover,.sheet-link.on{background:var(--ui-color-surface-hover)}
   .sheet-link.on .sheet-name{color:var(--ui-color-accent-ink)}
   .sheet-name{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold);white-space:nowrap}
-  .sheet-lang{display:grid;gap:var(--ui-space-xs);margin-top:var(--ui-space-md);padding-inline:var(--ui-space-sm)}
+  .sheet-picks{display:grid;gap:var(--ui-space-md);margin-top:var(--ui-space-md);padding-inline:var(--ui-space-sm)}
+  .sheet-pick{display:grid;gap:var(--ui-space-xs)}
   .sheet .ui-menu-separator{margin-inline:var(--ui-space-sm)}
 
   @media (max-width:1180px){
@@ -340,7 +373,7 @@
   }
   /* A tablet keeps every finder: the bar takes a second row, and its rule runs the width of the
      page like the row above. The sticky chrome below it follows the new height. */
-  @media (min-width:901px) and (max-width:1180px){
+  @media (min-width:901px) and (max-width:1439px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
     .mark,.aside{block-size:55px}
@@ -351,7 +384,7 @@
   @media (max-width:900px){
     .shell{--topbar-h:54px}
     .top{gap:var(--ui-space-sm);padding-inline:var(--ui-space-lg)}
-    .finders,.lang{display:none}
+    .finders,.lang,.palette{display:none}
     .aside{gap:2px}
     .reading :global(.ui-select){inline-size:142px;font-size:var(--ui-text-2xs)}
     .body{grid-template-columns:minmax(0,1fr)}

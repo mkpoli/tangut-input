@@ -8,6 +8,15 @@ import { record } from './record.js'
 const THEME = 'tangut-input:theme'
 const TANGUT = 'tangut-input:font'
 const READING = 'tangut-input:reading'
+const PALETTE = 'tangut-input:scheme'
+
+/** The colour schemes the design system carries, in the order the switcher lists them. */
+export const PALETTES = /** @type {const} */ ([
+  { key: 'paper', label: 'palette.paper' },
+  { key: 'mineral', label: 'palette.mineral' },
+  { key: 'indigo', label: 'palette.indigo' },
+  { key: 'sand', label: 'palette.sand' },
+])
 
 /** The Tangut faces the reader can set the script in. Each is a family the stylesheet defines. */
 export const TANGUT_FACES = /** @type {const} */ ([
@@ -22,6 +31,13 @@ export const ui = $state({
   sheet: false,
   /** @type {'auto' | 'light' | 'dark'} */
   theme: /** @type {'auto' | 'light' | 'dark'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(THEME)) || 'auto'),
+  /** The colour scheme. The document already carries the one the head picked; this mirrors it. */
+  /** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */
+  palette: /** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (
+    (typeof document !== 'undefined' && document.documentElement.dataset.palette)
+    || (typeof localStorage !== 'undefined' && localStorage.getItem(PALETTE))
+    || 'paper'
+  ),
   /** The face Tangut is set in. @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */
   tangut: /** @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(TANGUT)) || 'serif'),
   /** Which reconstruction readings are shown in, wherever a system can be chosen. 龔勛's by default. */
@@ -69,10 +85,23 @@ export function put(char, context = {}) {
   say(t('toast.added', { char }))
 }
 
-export function cycleTheme() {
-  ui.theme = ui.theme === 'auto' ? 'light' : ui.theme === 'light' ? 'dark' : 'auto'
+/** @param {'auto' | 'light' | 'dark'} theme */
+export function setTheme(theme) {
+  ui.theme = theme
   applyTheme()
-  try { localStorage.setItem(THEME, ui.theme) } catch { /* ignore */ }
+  try { localStorage.setItem(THEME, theme) } catch { /* ignore */ }
+}
+
+export function cycleTheme() {
+  setTheme(ui.theme === 'auto' ? 'light' : ui.theme === 'light' ? 'dark' : 'auto')
+}
+
+/** @param {'paper' | 'mineral' | 'indigo' | 'sand'} key */
+export function setPalette(key) {
+  if (!PALETTES.some(palette => palette.key === key)) return
+  ui.palette = key
+  document.documentElement.dataset.palette = key
+  try { localStorage.setItem(PALETTE, key) } catch { /* a blocked store only loses the choice */ }
 }
 
 /** @param {'serif' | 'yinchuan' | 'wenhai' | 'kai'} key */

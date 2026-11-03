@@ -329,5 +329,11 @@
   "transcribe.count": "{count} characters",
   "transcribe.char": "Character",
   "transcribe.meaning": "Meaning",
-  "transcribe.empty": "Type or paste Tangut text above; the readings appear here."
+  "transcribe.empty": "Type or paste Tangut text above; the readings appear here.",
+  "palette.label": "Palette",
+  "palette.paper": "Paper",
+  "palette.mineral": "Yulin",
+  "palette.indigo": "Indigo",
+  "palette.sand": "Khara",
+  "theme.label": "Theme"
 }

@@ -46,7 +46,7 @@ attribute on the same root:
 <html data-palette="mineral">
 ```
 
-The site uses `mineral`; `paper` is the default when no attribute is set. A host page points the
+The site uses `paper`, its original warm-paper palette. `mineral`, `indigo` and `sand` are alternatives. A host page points the
 script tokens at its own faces; everything else is the system's:
 
 ```css
@@ -91,9 +91,9 @@ published images, not pigment measurements.
 
 | Palette | Root value | Ground and accent | Reference |
 | --- | --- | --- | --- |
-| Paper | none, or `paper` | Warm paper, ink and one vermilion | The site's first palette |
-| Yulin | `mineral` (the site's default) | Chalk and plaster, azurite blue, malachite green, cinnabar | Yulin Cave 3, west wall, Mañjuśrī (Western Xia) |
-| Indigo | `indigo` | Indigo paper, gold ink, cinnabar; the dark scheme is the manuscript | Khara-Khoto manuscript XT-180, IOM RAS |
+| Paper | none, or `paper` | Warm paper, ink and one vermilion | The site's default |
+| Yulin | `mineral` | Chalk and plaster, azurite blue, malachite green, cinnabar | Yulin Cave 3, west wall, Mañjuśrī (Western Xia) |
+| Indigo | `indigo` | Green-black indigo paper, aged gold ink, cinnabar; the dark scheme is the manuscript | Khara-Khoto manuscript XT-180, IOM RAS |
 | Khara | `sand` | Sand and gravel, desert sky, buff silk and brick red | Khara-Khoto and the Hermitage's Moon-Water Bodhisattva |
 
 The reference page has a palette switch and measures the chosen palette live. Comparison sheets for

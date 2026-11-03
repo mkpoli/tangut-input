@@ -329,5 +329,11 @@
   "transcribe.count": "{count}字",
   "transcribe.char": "字",
   "transcribe.meaning": "释义",
-  "transcribe.empty": "在上方输入或粘贴西夏文，此处即会显示拟音。"
+  "transcribe.empty": "在上方输入或粘贴西夏文，此处即会显示拟音。",
+  "palette.label": "配色",
+  "palette.paper": "纸",
+  "palette.mineral": "榆林",
+  "palette.indigo": "靛蓝",
+  "palette.sand": "黑水城",
+  "theme.label": "主题"
 }

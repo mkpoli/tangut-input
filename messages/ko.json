@@ -329,5 +329,11 @@
   "transcribe.count": "{count}자",
   "transcribe.char": "글자",
   "transcribe.meaning": "뜻",
-  "transcribe.empty": "위에 서하문을 입력하거나 붙여넣으면 재구음이 여기에 나타납니다."
+  "transcribe.empty": "위에 서하문을 입력하거나 붙여넣으면 재구음이 여기에 나타납니다.",
+  "palette.label": "배색",
+  "palette.paper": "종이",
+  "palette.mineral": "위린",
+  "palette.indigo": "쪽빛",
+  "palette.sand": "카라호토",
+  "theme.label": "테마"
 }

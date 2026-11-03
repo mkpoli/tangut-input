@@ -329,5 +329,11 @@
   "transcribe.count": "{count}字",
   "transcribe.char": "文字",
   "transcribe.meaning": "意味",
-  "transcribe.empty": "上の欄に西夏文を入力するか貼り付けると、ここに再構音が表示されます。"
+  "transcribe.empty": "上の欄に西夏文を入力するか貼り付けると、ここに再構音が表示されます。",
+  "palette.label": "配色",
+  "palette.paper": "紙",
+  "palette.mineral": "楡林",
+  "palette.indigo": "藍",
+  "palette.sand": "カラホト",
+  "theme.label": "テーマ"
 }
