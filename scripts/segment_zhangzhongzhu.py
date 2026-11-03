@@ -107,6 +107,12 @@ def main():
 
     writer = csv.writer(sys.stdout, delimiter='\t', lineterminator='\n')
     writer.writerow(['canvas', 'side', 'band', 'y0', 'y1', 'x0', 'x1', 'columns', 'image'])
+    # The columns on their own, numbered in reading order: the bands read right to
+    # left, so column 1 is the rightmost. A reader marking where an entry starts
+    # writes down a number here rather than describing a place.
+    columns_out = CACHE / f'{options.canvas:02d}-columns.tsv'
+    column_writer = csv.writer(open(columns_out, 'w', encoding='utf-8', newline=''), delimiter='\t', lineterminator='\n')
+    column_writer.writerow(['canvas', 'side', 'band', 'column', 'x0', 'x1', 'width'])
     for side, (x0, x1) in zip('lr', pages):
         # The paper, so that the black surround is not read as ink.
         paper = runs(profile(grey.crop((x0, 0, x1, grey.size[1])), 'row'), 120, 10, 200)
@@ -131,13 +137,19 @@ def main():
                 ruler.line([(tick, 0), (tick, 12)], fill=(200, 0, 0), width=2)
                 if tick % 500 == 0:
                     ruler.text((tick + 2, 14), str(left + tick), fill=(200, 0, 0))
-            for start, _ in columns:
-                ruler.line([(int(start / scale) - left, 0), (int(start / scale) - left, crop.size[1])],
+            # Column positions are relative to the page, so add x0 before scaling.
+            for number, (start, end) in enumerate(reversed(columns), start=1):
+                x0_native, x1_native = int((x0 + start) / scale), int((x0 + end) / scale)
+                ruler.line([(x0_native - left, 0), (x0_native - left, crop.size[1])],
                            fill=(0, 120, 200), width=1)
+                ruler.text((x0_native - left + 3, 22), str(number), fill=(0, 90, 160))
+                column_writer.writerow([options.canvas, side, band, number, x0_native, x1_native,
+                                        x1_native - x0_native])
             out = CACHE / f'{options.canvas:02d}-{side}-{band}.png'
             crop.save(out)
             writer.writerow([options.canvas, side, band, int(top / scale), int(bottom / scale),
                              left, right, len(columns), out.relative_to(ROOT)])
+    column_writer.close()
 
 
 if __name__ == '__main__':
