@@ -1,11 +1,14 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
-import { babelStoneAdapter } from '../src/adapter/babelstone.js'
+import { babelStoneAdapter, parseIdsTable } from '../src/adapter/babelstone.js'
 import { createCharacterInfo, characterScript } from '../src/adapter/character-info.js'
+import { createRelationSearch } from '../src/adapter/character-relations.js'
 
 const document = JSON.parse(gunzipSync(readFileSync(new URL('../data/character-info.json.gz', import.meta.url))).toString())
+const table = parseIdsTable(gunzipSync(readFileSync(new URL('../data/babelstone-ids.tsv.gz', import.meta.url))).toString())
 const info = createCharacterInfo(document)
+const index = createRelationSearch(document, null, table)
 
 describe('the character information shipped with the package', () => {
   test('is the format the adapter reads', () => {
@@ -20,6 +23,13 @@ describe('the character information shipped with the package', () => {
     expect(poison.meanings?.zh).toContain('毒')
     expect(poison.readings?.find(reading => reading.name === 'Li Fanwen 2008')?.value).toBe('do1')
     expect(poison.sources.map(source => source.note)).toContain('openTangut')
+  })
+
+  test('keeps meanings ahead of reading and usage slots in a short list', () => {
+    const water = index.search('water', { limit: 8 }).map(hit => hit.char)
+    expect(water).toContain('水')
+    expect(water).toContain('𗋽')
+    expect(index.search('fire', { limit: 24 }).map(hit => hit.char)).toContain('火')
   })
 
   test('lets the adapter find a character by its reconstruction', async () => {

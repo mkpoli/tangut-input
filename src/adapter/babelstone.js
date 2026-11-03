@@ -588,6 +588,7 @@ export function babelStoneAdapter({ ids, additionalIds, components, componentsTe
         const added = []
         if (info.relations.some(r => r.kind === 'usage')) added.push(openTangutSource, { label: 'Andrew West · Tangut IDS', url: 'https://www.babelstone.co.uk/Tangut/TangutIDS.txt', note: /** @type {const} */ ('tangutIds') })
         info.sources = mergeSources([...info.sources, ...added])
+        info.sourceSites = info.sources.map(source => source.note ?? 'component')
       }
       signal?.throwIfAborted()
       return info
