@@ -52,6 +52,10 @@ export const PAGE_SEO = {
     title: 'Parts — Tangut Input',
     description: 'Choose the components you can see in a Tangut character and narrow the list to the characters built with them.',
   },
+  intro: {
+    title: 'Tangut: people, script, language and texts — Tangut Input',
+    description: 'A short introduction to the Tanguts (党項), the Western Xia state, the Tangut script and language, the surviving texts, and how the script is used today.',
+  },
   about: {
     title: 'Sources — Tangut Input',
     description: 'Where every record on Tangut Input comes from — Open Tangut, the Tangut Cangjie table, Unicode, an edition with facsimile, twelve Wikisource texts and the Lausanne Corpus — and what the site keeps.',

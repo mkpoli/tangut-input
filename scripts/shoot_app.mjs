@@ -45,6 +45,7 @@ const SCREENS = [
       if (card && section) card.scrollTop += section.getBoundingClientRect().top - card.getBoundingClientRect().top - offset
     }, phone ? 72 : 18)
   } },
+  { name: 'intro', path: '/intro' },
   { name: 'sources', path: '/about' },
 ]
 
