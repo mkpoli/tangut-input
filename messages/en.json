@@ -188,6 +188,8 @@
   "samples.hint": "Load a passage from the recorded texts.",
   "samples.famous": "Famous",
   "samples.replace": "This replaces the current text.",
+  "samples.back": "Back to previous text",
+  "samples.clear": "Clear text",
   "samples.loading": "Loading sample texts…",
   "attest.title": "In a text",
   "attest.loading": "Loading the corpus…",

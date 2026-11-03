@@ -188,6 +188,8 @@
   "samples.hint": "수록된 문헌에서 한 대목을 불러옵니다.",
   "samples.famous": "유명",
   "samples.replace": "현재 본문을 바꿉니다.",
+  "samples.back": "이전 본문으로",
+  "samples.clear": "본문 비우기",
   "samples.loading": "예문을 불러오는 중…",
   "attest.title": "문헌 용례",
   "attest.loading": "코퍼스를 불러오는 중…",

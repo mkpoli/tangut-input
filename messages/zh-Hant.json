@@ -188,6 +188,8 @@
   "samples.hint": "從已收錄文獻中載入一段。",
   "samples.famous": "名篇",
   "samples.replace": "將替換目前文本。",
+  "samples.back": "返回原文本",
+  "samples.clear": "清空文字",
   "samples.loading": "正在載入示例…",
   "attest.title": "文獻用例",
   "attest.loading": "正在載入語料…",

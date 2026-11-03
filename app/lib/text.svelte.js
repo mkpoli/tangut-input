@@ -11,6 +11,9 @@ export const text = $state({
   end: -1,
 })
 
+/** The text a sample replaced, kept so the reader can return to it. */
+export const sampleHistory = $state({ backup: /** @type {string | null} */ (null) })
+
 /** Every field that holds this text: the writing strip and the transcribe box. @type {Set<HTMLTextAreaElement>} */
 const fields = new Set()
 /** The field an insertion follows: the focused one, else the last one attached. @type {HTMLTextAreaElement | null} */
@@ -42,6 +45,20 @@ function save() {
 export function setText(value) {
   text.value = value
   save()
+}
+
+/** Load a sample passage, remembering the text it replaces. @param {string} value */
+export function loadSample(value) {
+  if (value === text.value) return
+  if (sampleHistory.backup === null) sampleHistory.backup = text.value
+  setText(value)
+}
+
+/** Put back the text a sample replaced. */
+export function restoreSample() {
+  if (sampleHistory.backup === null) return
+  setText(sampleHistory.backup)
+  sampleHistory.backup = null
 }
 
 /** Remember the caret of the writing field. */
