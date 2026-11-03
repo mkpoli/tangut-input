@@ -89,7 +89,7 @@
     { page: 'meaning', icon: 'meaning', title: 'nav.meaning', body: 'find.door.meaning', glyph: '𗼇' },
   ])
 
-  /** @type {{ value: string, script?: boolean, lang?: string, mono?: boolean }[]} */
+  /** @type {{ value: string, script?: boolean, lang?: string, mono?: boolean, ids?: boolean }[]} */
   const EXAMPLES = [
     { value: '𗋕𘏨𘜶𗤶𗜈𗧯𘔼', script: true },
     { value: 'tiger', lang: 'en' },
@@ -99,6 +99,7 @@
     { value: 'msb', mono: true },
     { value: 'ndzi', mono: true },
     { value: 'U+1736', mono: true },
+    { value: '⿰𘤊', ids: true },
   ]
 </script>
 
@@ -113,7 +114,7 @@
     <section class="try" aria-label={t('find.try')}>
       <span class="ui-hint">{t('find.try')}</span>
       {#each EXAMPLES as example (example.value)}
-        <button type="button" class="ui-chip" class:ui-script={example.script} class:ui-mono={example.mono}
+        <button type="button" class="ui-chip" class:ui-script={example.script} class:ui-mono={example.mono} class:ui-ids={example.ids}
           lang={example.lang ?? (example.script ? 'txg' : undefined)}
           onclick={() => { query = example.value; setQuery(query) }}>{example.value}</button>
       {/each}
@@ -178,6 +179,7 @@
   .find{gap:var(--ui-space-2xl)}
   .try{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs);margin-top:calc(-1 * var(--ui-space-lg))}
   .try .ui-script{font-size:17px}
+  .try .ui-ids{font-family:var(--ui-font-ids);font-size:17px}
   .tip{font-size:var(--ui-text-sm);color:var(--ui-color-ink-soft)}
   .gloss-row{grid-template-columns:44px 9rem minmax(0,1fr)}
   .gloss-row :global(.ui-script){font-size:32px;text-align:center}
