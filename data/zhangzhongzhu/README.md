@@ -12,8 +12,8 @@ CC BY-NC 4.0. `source.yaml` and `witnesses.tsv` carry the record.
 
 It is a printed reproduction, not the Khara-Khoto manuscript. Any reading of a damaged glyph needs a
 second witness (羅福成's edition, or the facsimile in 俄藏黑水城文獻) before it is called certain.
-The images stay in `cache/` and are not redistributed; the non-commercial term travels with the
-transcription.
+The images stay in `cache/` and are not redistributed. The non-commercial term governs the images,
+not the keyed rows; the rows' own licence is not settled.
 
 ## What the page gives
 

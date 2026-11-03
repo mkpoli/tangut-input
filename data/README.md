@@ -1059,5 +1059,6 @@ The transcription of 《番漢合時掌中珠》 keyed from the scan of a 民國
 [the README](zhangzhongzhu/README.md) has the column meanings. `scripts/check_zhangzhongzhu.py`
 validates the tables; `scripts/fetch_zhangzhongzhu.py` pulls a canvas or a crop into `cache/`.
 
-Licence: **CC BY-NC 4.0**, 清光山西巖寺 / 国文学研究資料館. The images are not redistributed; the
-transcription carries the non-commercial term.
+Licence: the images are **CC BY-NC 4.0**, 清光山西巖寺 / 国文学研究資料館, and are not
+redistributed here or on the site. The keyed text is this workshop's own work over a public-domain
+text; its licence is not settled, and until it is the rows may be cited but not reused at scale.
