@@ -92,9 +92,6 @@ export function setTheme(theme) {
   try { localStorage.setItem(THEME, theme) } catch { /* ignore */ }
 }
 
-export function cycleTheme() {
-  setTheme(ui.theme === 'auto' ? 'light' : ui.theme === 'light' ? 'dark' : 'auto')
-}
 
 /** @param {'paper' | 'mineral' | 'indigo' | 'sand'} key */
 export function setPalette(key) {

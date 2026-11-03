@@ -35,7 +35,6 @@
   "ime.none": "Nothing matches.",
   "nav.sources": "Sources",
   "lang.label": "Language",
-  "font.label": "The face Tangut is set in",
   "font.serif": "Noto Serif",
   "font.yinchuan": "Yinchuan",
   "font.wenhai": "Wenhai",
@@ -369,5 +368,8 @@
   "palette.indigo": "Indigo",
   "palette.sand": "Khara",
   "theme.label": "Theme",
-  "draw.siblings": "Often meant: characters one component away from {char}"
+  "draw.siblings": "Often meant: characters one component away from {char}",
+  "settings.label": "Settings",
+  "settings.close": "Close",
+  "font.face": "Tangut face"
 }

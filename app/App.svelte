@@ -4,12 +4,13 @@
   import { tick } from 'svelte'
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES, GROUPS, PRIMARY } from './lib/route.svelte.js'
-  import { ui, applyTangut, applyTheme, cycleTheme, setTheme, setTangut, setReading, setPalette, PALETTES, TANGUT_FACES } from './lib/ui.svelte.js'
+  import { ui, applyTangut, applyTheme, setReading } from './lib/ui.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
-  import { i18n, LOCALES, setLocale, t } from './lib/i18n.svelte.js'
+  import { i18n, t } from './lib/i18n.svelte.js'
   import { applySeo } from './lib/seo.js'
   import Writing from './ui/Writing.svelte'
+  import SettingsRows from './ui/SettingsRows.svelte'
   import Card from './ui/Card.svelte'
   import Find from './pages/Find.svelte'
   import Cangjie from './pages/Cangjie.svelte'
@@ -27,11 +28,14 @@
   applyTheme()
   applyTangut()
 
-  let fontMenu = $state(false)
   /** @type {HTMLElement | null} */
-  let fontTrigger = $state(null)
+  let settingsTrigger = $state(null)
   /** @type {HTMLElement | null} */
-  let fontList = $state(null)
+  let settingsPop = $state(null)
+  let settingsOpen = $state(false)
+  let settingsSheetOpen = $state(false)
+  /** @type {HTMLDialogElement | null} */
+  let settingsDialog = $state(null)
   /** @type {null | { kind: 'more' } | { kind: 'group', label: string }} The phone's sheet. */
   let menu = $state(null)
   /** @type {HTMLDialogElement | null} */
@@ -89,47 +93,58 @@
     }
     if (event.key === 'Escape') {
       if (ui.sheet && !menu) ui.sheet = false
-      if (fontMenu) closeFont()
+      if (settingsOpen) closeSettings()
     }
   }
 
-  /** Opens the face list and puts the keyboard on the current face. */
-  async function openFont() {
-    fontMenu = true
+  /** Open the settings: an anchored popover on a wide screen, a sheet on a phone. */
+  async function openSettings() {
+    if (matchMedia('(max-width: 900px)').matches) {
+      settingsSheetOpen = true
+      return
+    }
+    settingsOpen = true
     await tick()
-    const current = fontList?.querySelector('[aria-selected="true"]')
-    ;/** @type {HTMLElement | null} */ (current ?? fontList?.querySelector('button') ?? null)?.focus()
+    settingsPop?.querySelector('select')?.focus()
   }
 
   /** @param {boolean} [restore] */
-  function closeFont(restore = true) {
-    fontMenu = false
-    if (restore) fontTrigger?.focus()
+  function closeSettings(restore = true) {
+    settingsOpen = false
+    settingsSheetOpen = false
+    if (restore) settingsTrigger?.focus()
   }
 
-  /** @param {KeyboardEvent} event */
-  function fontKeys(event) {
-    const entries = [...(fontList?.querySelectorAll('button') ?? [])]
-    const at = entries.indexOf(/** @type {HTMLButtonElement} */ (document.activeElement))
-    const step = { ArrowDown: 1, ArrowUp: -1 }[event.key]
-    if (step) {
-      event.preventDefault()
-      entries[(at + step + entries.length) % entries.length]?.focus()
-    } else if (event.key === 'Home' || event.key === 'End') {
-      event.preventDefault()
-      ;(event.key === 'Home' ? entries[0] : entries[entries.length - 1])?.focus()
-    } else if (event.key === 'Escape') {
-      event.preventDefault()
-      closeFont()
-    } else if (event.key === 'Tab') {
-      fontMenu = false
+  $effect(() => {
+    if (!settingsOpen) return
+    const outside = (/** @type {PointerEvent} */ event) => {
+      if (!(/** @type {HTMLElement} */ (event.target)).closest('.settings')) settingsOpen = false
     }
+    addEventListener('pointerdown', outside)
+    return () => removeEventListener('pointerdown', outside)
+  })
+
+  $effect(() => {
+    if (!settingsDialog) return
+    if (settingsSheetOpen && !settingsDialog.open) settingsDialog.showModal()
+    if (!settingsSheetOpen && settingsDialog.open) settingsDialog.close()
+  })
+
+  // Settings belongs to the layout it was opened in: a breakpoint change closes it.
+  $effect(() => {
+    const wide = matchMedia('(min-width: 901px)')
+    const close = () => { if (settingsOpen || settingsSheetOpen) closeSettings(false) }
+    wide.addEventListener('change', close)
+    return () => wide.removeEventListener('change', close)
+  })
+
+  /** @param {FocusEvent} event */
+  function settingsBlur(event) {
+    const next = /** @type {Node | null} */ (event.relatedTarget)
+    if (settingsOpen && next && !(/** @type {HTMLElement} */ (event.currentTarget)).contains(next)) settingsOpen = false
   }
 
-  /** @param {MouseEvent} event */
-  function outsideFont(event) {
-    if (fontMenu && !(/** @type {HTMLElement} */ (event.target)).closest('.font-pick')) fontMenu = false
-  }
+  const readingSystem = $derived(SYSTEMS.find(system => system.key === ui.reading) ?? SYSTEMS[0])
 
   // Back or forward closes the sheet without pulling focus off the page that just opened.
   $effect(() => {
@@ -146,19 +161,6 @@
     return () => wide.removeEventListener('change', close)
   })
 
-  // A menu that sits over the page closes when the pointer goes anywhere else.
-  $effect(() => {
-    if (!fontMenu) return
-    const close = () => { fontMenu = false }
-    addEventListener('pointerdown', outsideFont)
-    addEventListener('blur', close)
-    return () => {
-      removeEventListener('pointerdown', outsideFont)
-      removeEventListener('blur', close)
-    }
-  })
-
-  const THEMES = $derived({ auto: t('theme.auto'), light: t('theme.light'), dark: t('theme.dark') })
   /** @param {null | { kind: 'more' } | { kind: 'group', label: string }} state */
   function groupOf(state) {
     if (!state || state.kind !== 'group') return undefined
@@ -190,7 +192,11 @@
       {/each}
     </nav>
     <div class="aside">
-      <label class="reading" title={t('reading.system')}>
+      <label class="reading" title={`${t('reading.system')}: ${systemTitle(readingSystem)}`}>
+        <span class="reading-label" aria-hidden="true">{t('reading.system')}</span>
+        <span class="reading-icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20" width="16" height="16"><path d="M3 8h3l4-3v10l-4-3H3z" fill="currentColor"/><path d="M13 7a4 4 0 0 1 0 6M15.4 4.6a7 7 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </span>
         <span class="ui-visually-hidden">{t('reading.system')}</span>
         <span class="ui-select-wrap">
           <select class="ui-select" data-size="sm" value={ui.reading}
@@ -199,55 +205,23 @@
           </select>
         </span>
       </label>
-      <label class="palette" title={t('palette.label')}>
-        <span class="ui-visually-hidden">{t('palette.label')}</span>
-        <span class="ui-select-wrap">
-          <select class="ui-select" data-size="sm" value={ui.palette}
-            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setPalette(/** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (event.currentTarget.value))}>
-            {#each PALETTES as entry (entry.key)}<option value={entry.key}>{t(entry.label)}</option>{/each}
-          </select>
-        </span>
-      </label>
-      <label class="lang" title={t('lang.label')}>
-        <span class="ui-visually-hidden">{t('lang.label')}</span>
-        <span class="ui-select-wrap">
-          <select class="ui-select" data-size="sm" value={i18n.locale}
-            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setLocale(/** @type {any} */ (event.currentTarget.value))}>
-            {#each LOCALES as locale (locale.key)}<option value={locale.key} lang={locale.key}>{locale.name}</option>{/each}
-          </select>
-        </span>
-      </label>
-      <div class="font-pick">
-        <button class="ui-button" data-variant="quiet" data-size="sm" type="button" bind:this={fontTrigger}
-          aria-label={t('font.label')} aria-haspopup="listbox" aria-expanded={fontMenu}
-          title={t(TANGUT_FACES.find(face => face.key === ui.tangut)?.label ?? 'font.serif')}
-          onclick={() => { fontMenu ? closeFont(false) : openFont() }}>
-          <span class="ui-script sample" aria-hidden="true">𘅤</span>
-          <span class="face-name">{t(TANGUT_FACES.find(face => face.key === ui.tangut)?.label ?? 'font.serif')}</span>
+      <div class="settings" onfocusout={settingsBlur}>
+        <button class="ui-button" data-variant="quiet" data-size="icon" type="button" bind:this={settingsTrigger}
+          aria-label={t('settings.label')} title={t('settings.label')} aria-haspopup="dialog"
+          aria-expanded={settingsOpen || settingsSheetOpen}
+          onclick={() => { settingsOpen || settingsSheetOpen ? closeSettings() : openSettings() }}>
+          <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
         </button>
-        {#if fontMenu}
-          <ul class="ui-menu font-menu" role="listbox" aria-label={t('font.label')} bind:this={fontList} onkeydown={fontKeys}>
-            {#each TANGUT_FACES as face (face.key)}
-              <li role="none">
-                <button type="button" role="option" class="ui-menu-item" aria-selected={ui.tangut === face.key}
-                  onclick={() => { setTangut(face.key); closeFont() }}>
-                  <span class="ui-script sample" style:font-family={face.family} aria-hidden="true">𗀀</span>
-                  <span>{t(face.label)}</span>
-                </button>
-              </li>
-            {/each}
-          </ul>
+        {#if settingsOpen}
+          <div class="settings-pop ui-popover" role="dialog" aria-label={t('settings.label')} bind:this={settingsPop}>
+            <div class="settings-head">
+              <span class="ui-label">{t('settings.label')}</span>
+              <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('settings.close')} onclick={() => closeSettings()}>×</button>
+            </div>
+            <SettingsRows />
+          </div>
         {/if}
       </div>
-      <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" onclick={cycleTheme} title={THEMES[ui.theme]} aria-label={THEMES[ui.theme]}>
-        {#if ui.theme === 'light'}
-          <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="currentColor"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 1.8v2.4M10 15.8v2.4M1.8 10h2.4M15.8 10h2.4M4.2 4.2l1.7 1.7M14.1 14.1l1.7 1.7M4.2 15.8l1.7-1.7M14.1 5.9l1.7-1.7"/></g></svg>
-        {:else if ui.theme === 'dark'}
-          <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><path d="M15.5 12.6A6.5 6.5 0 0 1 7.4 4.5a6.5 6.5 0 1 0 8.1 8.1Z" fill="currentColor"/></svg>
-        {:else}
-          <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 3a7 7 0 0 1 0 14Z" fill="currentColor"/></svg>
-        {/if}
-      </button>
     </div>
   </header>
 
@@ -326,39 +300,18 @@
           <span class="sheet-name">{t('nav.sources')}</span><span class="ui-hint">{t('nav.sources.hint')}</span>
         </a>
       </div>
-      <hr class="ui-menu-separator" />
-      <div class="sheet-picks">
-        <label class="sheet-pick">
-          <span class="ui-label">{t('palette.label')}</span>
-          <span class="ui-select-wrap">
-            <select class="ui-select" value={ui.palette}
-              onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setPalette(/** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (event.currentTarget.value))}>
-              {#each PALETTES as entry (entry.key)}<option value={entry.key}>{t(entry.label)}</option>{/each}
-            </select>
-          </span>
-        </label>
-        <label class="sheet-pick">
-          <span class="ui-label">{t('theme.label')}</span>
-          <span class="ui-select-wrap">
-            <select class="ui-select" value={ui.theme}
-              onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setTheme(/** @type {'auto' | 'light' | 'dark'} */ (event.currentTarget.value))}>
-              <option value="auto">{t('theme.auto')}</option>
-              <option value="light">{t('theme.light')}</option>
-              <option value="dark">{t('theme.dark')}</option>
-            </select>
-          </span>
-        </label>
-        <label class="sheet-pick">
-          <span class="ui-label">{t('lang.label')}</span>
-          <span class="ui-select-wrap">
-            <select class="ui-select" value={i18n.locale}
-              onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setLocale(/** @type {any} */ (event.currentTarget.value))}>
-              {#each LOCALES as locale (locale.key)}<option value={locale.key} lang={locale.key}>{locale.name}</option>{/each}
-            </select>
-          </span>
-        </label>
-      </div>
     {/if}
+  </dialog>
+
+  <dialog class="sheet settings-sheet" bind:this={settingsDialog} aria-label={t('settings.label')}
+    onclose={() => { settingsSheetOpen = false; settingsTrigger?.focus() }}
+    onclick={(/** @type {MouseEvent} */ event) => { if (event.target === settingsDialog) closeSettings() }}>
+    <div class="sheet-head">
+      <p class="ui-label">{t('settings.label')}</p>
+      <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('settings.close')}
+        onclick={() => closeSettings()}>×</button>
+    </div>
+    <SettingsRows />
   </dialog>
 
   <div class="toast" role="status" aria-live="polite">{#if toast.message}<span class="ui-toast">{toast.message}</span>{/if}</div>
@@ -380,15 +333,13 @@
   .finders .primary{font-weight:var(--ui-weight-semibold)}
   .finders .group + .group, .finders .primary + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
   .aside{margin-inline-start:auto;display:flex;align-items:center;gap:var(--ui-space-2xs)}
+  .reading{display:flex;align-items:center;gap:var(--ui-space-xs)}
+  .reading-label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
+  .reading-icon{display:grid;place-items:center;color:var(--ui-color-ink-muted)}
   .reading :global(.ui-select){inline-size:154px}
-  .palette :global(.ui-select){inline-size:96px}
-  .lang :global(.ui-select){inline-size:104px}
-  .font-pick{position:relative}
-  .sample{font-size:18px;line-height:1}
-  .face-name{display:none;font-size:var(--ui-text-xs);color:var(--ui-color-ink-soft)}
-  @media (min-width:1181px){.face-name{display:inline}}
-  .font-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);min-inline-size:200px}
-  .font-menu .sample{font-size:19px;inline-size:22px;text-align:center}
+  .settings{position:relative}
+  .settings-pop{position:absolute;inset-inline-end:0;inset-block-start:calc(100% + var(--ui-space-sm));z-index:var(--ui-z-menu);inline-size:360px;padding:var(--ui-space-2xs) var(--ui-space-lg) var(--ui-space-sm)}
+  .settings-head{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm);padding-block:var(--ui-space-2xs) var(--ui-space-xs);border-bottom:1px solid var(--ui-color-border)}
 
   .body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 400px;align-items:start}
   .body.full{grid-template-columns:minmax(0,1fr)}
@@ -401,7 +352,7 @@
 
   .toast{position:fixed;left:50%;bottom:var(--ui-space-3xl);transform:translateX(-50%);z-index:var(--ui-z-toast);pointer-events:none}
 
-  .sheet{position:fixed;inset:auto 0 0 0;margin:0;padding:var(--ui-space-lg) var(--ui-space-xl) calc(var(--ui-space-2xl) + env(safe-area-inset-bottom));inline-size:100%;max-inline-size:none;max-block-size:82dvh;border:0;border-top:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-2xl) var(--ui-radius-2xl) 0 0;background:var(--ui-color-surface);color:var(--ui-color-ink)}
+  .sheet{position:fixed;inset:auto 0 0 0;margin:0;overflow:auto;overscroll-behavior:contain;padding:var(--ui-space-lg) var(--ui-space-xl) calc(var(--ui-space-2xl) + env(safe-area-inset-bottom));inline-size:100%;max-inline-size:none;max-block-size:82dvh;border:0;border-top:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-2xl) var(--ui-radius-2xl) 0 0;background:var(--ui-color-surface);color:var(--ui-color-ink)}
   .sheet::backdrop{background:var(--ui-color-overlay)}
   .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--ui-space-sm);padding-inline:var(--ui-space-sm)}
   .sheet-links{display:grid;gap:1px}
@@ -409,10 +360,8 @@
   .sheet-link:hover,.sheet-link.on{background:var(--ui-color-surface-hover)}
   .sheet-link.on .sheet-name{color:var(--ui-color-accent-ink)}
   .sheet-name{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold);white-space:nowrap}
-  .sheet-picks{display:grid;gap:var(--ui-space-md);margin-top:var(--ui-space-md);padding-inline:var(--ui-space-sm)}
-  .sheet-pick{display:grid;gap:var(--ui-space-xs)}
-  .sheet .ui-menu-separator{margin-inline:var(--ui-space-sm)}
 
+  @media (max-width:1300px){.reading-label{display:none}}
   @media (max-width:1180px){
     .top{gap:var(--ui-space-md);padding-inline:var(--ui-space-xl)}
     .finders a{padding-inline:var(--ui-space-xs);font-size:var(--ui-text-xs)}
@@ -421,7 +370,7 @@
   }
   /* A tablet keeps every finder: the bar takes a second row, and its rule runs the width of the
      page like the row above. The sticky chrome below it follows the new height. */
-  @media (min-width:901px) and (max-width:1439px){
+  @media (min-width:901px) and (max-width:1180px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
     .mark,.aside{block-size:55px}
@@ -432,7 +381,8 @@
   @media (max-width:900px){
     .shell{--topbar-h:54px}
     .top{gap:var(--ui-space-sm);padding-inline:var(--ui-space-lg)}
-    .finders,.lang,.palette{display:none}
+    .finders{display:none}
+    .settings-pop{display:none}
     .aside{gap:2px}
     .reading :global(.ui-select){inline-size:142px;font-size:var(--ui-text-2xs)}
     .body{grid-template-columns:minmax(0,1fr)}
