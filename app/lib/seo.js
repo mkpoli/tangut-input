@@ -54,7 +54,7 @@ export const PAGE_SEO = {
   },
   about: {
     title: 'Sources — Tangut Input',
-    description: 'Where every record on Tangut Input comes from — Open Tangut, the Tangut Cangjie table, Unicode, an edition with facsimile and twelve Wikisource texts — and what the site keeps.',
+    description: 'Where every record on Tangut Input comes from — Open Tangut, the Tangut Cangjie table, Unicode, an edition with facsimile, twelve Wikisource texts and the Lausanne Corpus — and what the site keeps.',
   },
 }
 

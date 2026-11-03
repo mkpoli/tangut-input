@@ -41,7 +41,7 @@
               </p>
               <p class="corpus-meta">{source.author}{source.year ? ` ${source.year}` : ''} · {source.publisher} · {#if source.licenceUrl}<a href={source.licenceUrl}>{source.licence}</a>{:else}{source.licence}{/if}
                 {#if source.retrieved} · {t('attest.retrieved', { date: source.retrieved })}{/if}
-                {#if source.revision} · <a href={`https://wikisource.org/w/index.php?oldid=${source.revision}`}>{t('attest.revision', { revision: source.revision })}</a>{/if}
+                {#if source.revision} · <a href={`https://wikisource.org/w/index.php?oldid=${source.revision}`}>{t('attest.revision', { revision: source.revision })}</a>{:else if source.commit} · <a href={`${source.url}/commit/${source.commit}`}>{t('attest.commit', { commit: source.commit.slice(0, 7) })}</a>{/if}
               </p>
               {#if source.manuscript}<p class="corpus-note">{source.manuscript}.</p>{/if}
               {#if source.note}<p class="corpus-note">{source.note}</p>{/if}

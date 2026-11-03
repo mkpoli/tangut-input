@@ -29,10 +29,15 @@ SAMPLES = [
     {'id': 'monthly-pleasures', 'source': 'wikisource-monthly-pleasures', 'lines': ['wikisource-monthly-pleasures:line-6'], 'label': '1st month', 'famous': True},
     {'id': 'liangzhou-stele', 'source': 'wikisource-liangzhou-stele', 'lines': ['wikisource-liangzhou-stele:line-1'], 'label': 'line 1', 'famous': True},
     {'id': 'hymn-origin', 'source': 'wikisource-hymn-origin', 'lines': ['wikisource-hymn-origin:line-2'], 'label': 'verse 1', 'famous': True},
+    {'id': 'heart-sutra', 'source': 'lcdtt', 'lines': ['lcdtt:heart-sutra:line-2'], 'label': 'line 2', 'famous': True, 'sourceTitle': 'Heart Sutra'},
+    {'id': 'sunzi', 'source': 'lcdtt', 'lines': ['lcdtt:sunzi:line-2'], 'label': 'line 2', 'famous': True, 'sourceTitle': 'Sunzi’s Art of War'},
+    {'id': 'zhenguan', 'source': 'lcdtt', 'lines': ['lcdtt:zhenguan:line-1'], 'label': 'line 1', 'famous': True, 'sourceTitle': 'Zhenguan Government'},
+    {'id': 'leilin', 'source': 'lcdtt', 'lines': ['lcdtt:leilin:line-3'], 'label': 'line 3', 'famous': True, 'sourceTitle': 'Forest of Categories'},
     {'id': 'twenty-five-questions', 'source': 'wikisource-twenty-five-questions', 'lines': ['wikisource-twenty-five-questions:q1'], 'label': 'Question 1', 'famous': False},
     {'id': 'dragon-king', 'source': 'wikisource-dragon-king', 'lines': ['wikisource-dragon-king:line-1'], 'label': 'line 1', 'famous': False},
     {'id': 'bodhicaryavatara', 'source': 'solonin-2024', 'lines': ['solonin-2024:2.1.1'], 'label': '2.1.1', 'famous': False},
     {'id': 'dual-maxims', 'source': 'wikisource-dual-maxims', 'lines': ['wikisource-dual-maxims:line-3', 'wikisource-dual-maxims:line-4'], 'label': 'proverb 1', 'famous': False},
+    {'id': 'legal-code', 'source': 'lcdtt', 'lines': ['lcdtt:legal:line-1'], 'label': 'line 1', 'famous': False, 'sourceTitle': 'Tangut Legal Code'},
 ]
 
 
@@ -57,8 +62,8 @@ def main():
         samples.append({
             'id': spec['id'],
             'sourceId': source['id'],
-            'sourceTitle': source.get('shortTitle') or source['title'],
-            'sourceUrl': source['url'],
+            'sourceTitle': spec.get('sourceTitle') or source.get('shortTitle') or source['title'],
+            'sourceUrl': spec.get('sourceUrl') or source['url'],
             'licence': source['licence'],
             'label': spec['label'],
             'famous': spec['famous'],

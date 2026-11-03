@@ -203,6 +203,7 @@
   "attest.open": "페이지 열기",
   "attest.retrieved": "{date} 수집",
   "attest.revision": "리비전 {revision}",
+  "attest.commit": "커밋 {commit}",
   "attest.reading": "이 행의 강독",
   "attest.unread": "이 행 (미강독)",
   "attest.lineReadings": "행별 강독:",

@@ -17,17 +17,32 @@ snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
 underlying editions are in `wikisource/README.md` and in the source records of the built file.
 
+## `lcdtt/`
+
+The 21 text files of the Lausanne Corpus of Digital Tangut Texts
+([bjargal/LCDTT-tangut](https://github.com/bjargal/LCDTT-tangut)) at commit
+`3cb572ac74c67158c7f88ecf37ad81efe87b92ae`, read 2026-11-04: the Tangut text of each file, the
+manifest, and the corpus README with the edition or study each text was extracted from. The two
+JSON dictionaries are not copied.
+
+The repository states no licence. The project owner granted permission to use the corpus on
+2026-11-04. The two Bodhicaryāvatāra files come from Solonin and Arakawa's edition, whose two ILCAA
+volumes are CC BY 4.0; the other texts keep the terms of the editions cited in `lcdtt/README.md`.
+`scripts/build_tangut_attestation.py` reads the manifest and adds the 21 texts as one source,
+`lcdtt`.
+
 ## `tangut-samples.json`
 
-Thirteen passages copied from `app/data/tangut-attestation.json.gz` for the Samples picker: three
+Eighteen passages copied from `app/data/tangut-attestation.json.gz` for the Samples picker: three
 from the Diamond Sutra (the opening, the mark passage and the closing gāthā), the Great Compassion
 Dharani's opening, the High King Avalokitesvara Sutra, the Grains of Gold, the first month of the
 Monthly Pleasures, the Liangzhou stele, the Hymn of the Holy Origin, the Twenty-five Questions, the
-Dragon King's question, the Bodhicaryāvatāra's opening and the first Precious Dual Maxim. Each
-record names its source, licence, line ids and the exact text; the nine famous passages carry
+Dragon King's question, the Bodhicaryāvatāra's opening, the first Precious Dual Maxim, the Heart
+Sutra, Sunzi, the Zhenguan government, the Forest of Categories and the Tangut legal code. Each
+record names its source, licence, line ids and the exact text; the thirteen famous passages carry
 `famous: true`. Built by
-`scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the five
-Wikisource texts and CC BY 4.0 for the Bodhicaryāvatāra edition.
+`scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the Wikisource
+texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausanne Corpus.
 
 ## `yi-bai-ids.tsv.gz`
 

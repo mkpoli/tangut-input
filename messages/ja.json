@@ -203,6 +203,7 @@
   "attest.open": "ページを開く",
   "attest.retrieved": "{date}取得",
   "attest.revision": "版{revision}",
+  "attest.commit": "コミット{commit}",
   "attest.reading": "この行の講読",
   "attest.unread": "この行（未講読）",
   "attest.lineReadings": "行ごとの講読：",
