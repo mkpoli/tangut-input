@@ -13,6 +13,9 @@ it into your text. <https://tangut.mkpo.li/>
   keys no code continues with. Every component is listed under its own code (beginning `p`).
 - **Reading**: a reconstruction in any of eight systems (Li Fanwen, Gong Hwang-cherng, Gong Xun,
   Arakawa, Miyake, Nishida, Kychanov, Sofronov), with or without diacritics, with an optional tone.
+- **Fanqie**: type the two characters a rhyme book spells a character with, or pick each from a
+  compact panel beside the field that offers Find, Meaning, Cangjie, Four-corner, Reading, Draw and
+  Parts in miniature.
 - **Draw**: a drawing pad ranked by glyph shape against Noto Serif Tangut. It is rough, and the
   page says how rough.
 - **Parts**: choose components; each choice narrows the characters and the remaining parts.
