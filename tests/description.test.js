@@ -9,6 +9,7 @@ const entries = [
   { char: '𗾈', composition: '⿰𘫽𘫺' },
   { char: '𗾋', composition: '⿰𘤊𘢅' },
   { char: '𗾌', composition: '⿰𘤊𘢬' },
+  { char: '𗔿', composition: '⿰⿸𘡋𘠮𘠢' },
   { char: '𘤊' },
 ]
 
@@ -33,6 +34,19 @@ test('a description no record begins with finds nothing', () => {
 test('a description opens with its operator and first part', () => {
   expect(openingOf('⿰𘤊𘠡')).toBe('⿰𘤊')
   expect(openingOf('⿱𘠀⿰𘢰𘠆')).toBe('⿱𘠀')
+  expect(openingOf('⿲𘠀𘠁𘠂')).toBe('⿲𘠀')
   expect(openingOf('𘤊')).toBe('')
   expect(openingOf('')).toBe('')
+})
+
+test('a first part that is itself described is taken whole', () => {
+  expect(openingOf('⿰⿸𘡋𘠮𘠢')).toBe('⿰⿸𘡋𘠮')
+  expect(openingOf('⿱⿰𘠠𘢌𘡪')).toBe('⿱⿰𘠠𘢌')
+})
+
+test('an opening taken from a record is a query that finds it', () => {
+  for (const entry of entries) {
+    const opening = openingOf(entry.composition)
+    if (opening) expect(describedBy(entries, opening)).toContain(entry.char)
+  }
 })

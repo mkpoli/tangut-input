@@ -24,8 +24,8 @@
     // A description, whole or cut after its opening part, is read against the records' own.
     const described = byDescription(text)
     if (described.length) {
-      out.push({ key: 'ids', title: t('find.group.description'), total: described.length,
-        items: described.slice(0, 48).map(char => ({ char, sub: gloss(char) })) })
+      out.push({ key: 'description', title: t('find.group.description'), total: described.length,
+        items: described.map(char => ({ char, sub: gloss(char) })) })
       return out
     }
     const chars = tangutIn(text)

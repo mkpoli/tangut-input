@@ -22,12 +22,26 @@ export function describedBy(entries, text) {
   return hits.sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
 
+// Operators that take three parts; the rest take two.
+const ARITY = /** @type {Record<string, number>} */ ({ '⿲': 3, '⿳': 3 })
+
+/** The index just past the description node that starts at `at`. @param {string[]} chars @param {number} at */
+function after(chars, at) {
+  if (!OPERATORS.has(chars[at])) return at + 1
+  let end = at + 1
+  for (let k = 0; k < (ARITY[chars[at]] ?? 2); k++) end = after(chars, end)
+  return end
+}
+
 /**
- * The operator and first part a description opens with, as the string a prefix query takes.
+ * The operator and the first part a description opens with, the part's whole subtree when it is
+ * itself described, as the string a prefix query takes.
  * @param {string} [composition]
  * @returns {string}
  */
 export function openingOf(composition) {
   const chars = [...(composition ?? '')]
-  return chars.length > 1 && OPERATORS.has(chars[0]) ? chars.slice(0, 2).join('') : ''
+  if (chars.length < 2 || !OPERATORS.has(chars[0])) return ''
+  const end = after(chars, 1)
+  return end <= chars.length ? chars.slice(0, end).join('') : ''
 }

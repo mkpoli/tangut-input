@@ -9,7 +9,7 @@
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
-  import { partsIn } from '../lib/search.js'
+  import { byDescription, partsIn } from '../lib/search.js'
   import { openingOf } from '../lib/description.js'
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
@@ -61,6 +61,7 @@
   const parts = $derived(ready && char ? partsIn(char) : [])
   // The description's opening, which Find reads as a prefix: the family of characters built from it.
   const opening = $derived(openingOf(entry?.composition))
+  const openingCount = $derived(ready && opening ? byDescription(opening).length : 0)
 
   /** The faces a character can be compared in. All but the first are fetched when asked for, so a
    *  reader who never opens the row pays nothing for the 50 MB of outlines behind it. */
@@ -228,7 +229,7 @@
           <span class="ui-formula" title={entry.composition}>{entry.composition}</span>
           <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
           {#if parts.length}<a class="ids-link" href={link('parts', char, parts.join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
-          {#if opening}<a class="ids-link" href={link('', char, opening)}><Icon name="find" size={13}/>{t('card.sameOpening')}</a>{/if}
+          {#if openingCount > 1}<a class="ids-link" href={link('', char, opening)}><Icon name="find" size={13}/>{t('card.sameOpening')}</a>{/if}
         </p>
       {:else if isComponent(char)}
         <p class="ui-hint">{t('card.isComponent')}</p>
