@@ -46,6 +46,9 @@ attribute on the same root:
 <html data-palette="mineral">
 ```
 
+A nested element can carry `data-palette` too: its `--p-*` variables then give a swatch the preview
+of another scheme.
+
 The site uses `paper`, its original warm-paper palette. `mineral`, `indigo` and `sand` are alternatives. A host page points the
 script tokens at its own faces; everything else is the system's:
 

@@ -8,6 +8,7 @@
    Rules:
    - Components read semantic tokens, never a raw colour.
    - A page may override a token on :root; it may not restyle the control classes.
+   - A palette may also be set on a nested element, so a swatch can preview another scheme.
    - Text tokens clear 4.5:1 on the surfaces they sit on; control boundaries clear 3:1. */
 
 :root {
@@ -22,7 +23,8 @@
   color-scheme: dark;
 }
 
-:root {
+:root,
+[data-palette='paper'] {
   /* Palette primitives. A palette changes these; the semantic tokens below stay put. `paper`
      is the default here; design/palettes.css carries the alternatives. */
   --p-canvas: light-dark(#f4efe5, #141210);

@@ -2,8 +2,9 @@
   // The reader's display settings: the theme and palette in Appearance, the interface language and
   // the Tangut face in Text. The same rows serve the desktop popover and the phone's settings sheet.
   import { i18n, LOCALES, setLocale, t } from '../lib/i18n.svelte.js'
-  import { PALETTES, TANGUT_FACES, setPalette, setTangut, setTheme, ui } from '../lib/ui.svelte.js'
+  import { TANGUT_FACES, setTangut, setTheme, ui } from '../lib/ui.svelte.js'
   import Icon from './Icon.svelte'
+  import PaletteSelect from './PaletteSelect.svelte'
 
   const uid = $props.id()
   const face = $derived(TANGUT_FACES.find(entry => entry.key === ui.tangut) ?? TANGUT_FACES[0])
@@ -34,15 +35,10 @@
       </div>
     </div>
 
-    <label class="settings-row">
+    <div class="settings-row palette-row">
       <span class="settings-name"><Icon name="palette" size={14} />{t('palette.label')}</span>
-      <span class="ui-select-wrap">
-        <select class="ui-select" value={ui.palette}
-          onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setPalette(/** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (event.currentTarget.value))}>
-          {#each PALETTES as entry (entry.key)}<option value={entry.key}>{t(entry.label)}</option>{/each}
-        </select>
-      </span>
-    </label>
+      <PaletteSelect />
+    </div>
   </section>
 
   <section class="settings-group">
@@ -79,6 +75,8 @@
   .settings-title{margin:0;padding-block:var(--ui-space-xs) var(--ui-space-2xs)}
   .settings-row{display:grid;grid-template-columns:108px minmax(0,1fr);align-items:center;gap:var(--ui-space-sm);padding-block:var(--ui-space-md);border-bottom:1px solid var(--ui-color-border)}
   .settings-row:last-child{border-bottom:0}
+  .palette-row{align-items:start}
+  .palette-row .settings-name{padding-block-start:8px}
   .settings-name{display:flex;align-items:center;gap:var(--ui-space-xs);min-inline-size:0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-sm)}
   .settings-name :global(svg){color:var(--ui-color-ink-muted)}
   .settings-row > :global(.ui-select-wrap){inline-size:100%}
