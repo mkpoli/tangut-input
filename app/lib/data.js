@@ -89,6 +89,9 @@ function expandEntries(packed) {
 /** Cangjie codes as [character, code] pairs, from the RIME Tangut Cangjie table. @returns {Promise<[string, string][]>} */
 export const loadCodes = () => once('codes', () => readJson(new URL('../data/tangut-cangjie.json.gz', import.meta.url)))
 
+/** The word a Tangut character is read by, with its on and kun readings: `[word, on, kun]`. @returns {Promise<Record<string, [string, string, string]>>} */
+export const loadGlossReadings = () => once('gloss-readings', async () => (await readJson(new URL('../data/tangut-gloss-readings.json.gz', import.meta.url))).rows)
+
 /** Japanese shape names for Tangut components. @returns {Promise<{ name: string, char: string, source: string, detail: string, credit: string }[]>} */
 export const loadTangutNames = () => once('tangut-names', async () => (await readJson(new URL('../data/tangut-component-names.json', import.meta.url))).names)
 

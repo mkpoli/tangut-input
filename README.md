@@ -20,6 +20,9 @@ it into your text. <https://tangut.mkpo.li/>
   Parts in miniature.
 - **Draw**: a drawing pad ranked by glyph shape against Noto Serif Tangut. It is rough, and the
   page says how rough.
+- **Read**: a pasted text read by meaning: under each character that has one, the Chinese word it is
+  glossed by, and under that the word's Japanese on and kun readings; a click opens the character's
+  card.
 - **Parts**: choose parts, components or character-sized; each choice narrows the characters and
   the remaining parts. The filter takes a Cangjie code or a Japanese shape name, and hovering a
   part shows its code point, component number, strokes, uses, Cangjie codes and name. A collapsible
@@ -57,6 +60,10 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-frequency.json.gz`: how often each character occurs in the corpus, built by
   `scripts/build_tangut_frequency.py`; the finders put the commoner characters first within each
   tier.
+- `app/data/tangut-gloss-readings.json.gz`: the Chinese word each character is glossed by, with that
+  word's Japanese on and kun readings, for the Read page; built by
+  `scripts/build_tangut_gloss_readings_app.py` from `data/tangut-gloss-words.tsv.gz` and
+  `data/tangut-gloss-readings.tsv.gz`.
 - `app/data/tangut-shapes.bin.gz`: glyph pen lines for the drawing pad, rendered from Noto Serif
   Tangut 2.168 by `scripts/build_tangut_shapes.py`; `scripts/handwriting/score.mjs` measures the
   search on drawings made by hand and `scripts/eval_tangut_shapes.mjs` on drawings made from a font.

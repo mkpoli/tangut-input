@@ -182,3 +182,20 @@ test('the frequency table counts every place in the corpus', () => {
   expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(92509)
   expect(frequency.counts['𗋕']).toBe(711)
 })
+
+const readPage = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-gloss-readings.json.gz', import.meta.url))).toString())
+
+test('the read page has a word and its readings for every character that carries one', () => {
+  expect(readPage.format).toBe('tangut-input/gloss-readings')
+  const rows = readPage.rows
+  expect(Object.keys(rows).length).toBe(5170)
+  expect(rows['𗢳']).toEqual(['佛', 'ブツ', 'ほとけ'])
+  expect(rows['𗀀']).toEqual(['毒', 'ドク', ''])
+  // A phrase gloss has a word and no single reading.
+  expect(rows['𘋢']).toEqual(['菩薩', '', ''])
+  // A transliteration and a description have no word to read, so the page file leaves them out.
+  expect(rows['𗍏']).toBeUndefined()
+  expect(rows['𗧓']).toBeUndefined()
+  const known = new Set(entries.rows.map(row => row[0]))
+  expect(Object.keys(rows).every(char => known.has(char))).toBe(true)
+})

@@ -23,6 +23,7 @@
   import Eras from './pages/Eras.svelte'
   import Transcribe from './pages/Transcribe.svelte'
   import Meaning from './pages/Meaning.svelte'
+  import Read from './pages/Read.svelte'
   import Parts from './pages/Parts.svelte'
   import About from './pages/About.svelte'
   import Intro from './pages/Intro.svelte'
@@ -240,6 +241,7 @@
       <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'intro' ? 'intro.title' : 'nav.sources'))}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'meaning'}<Meaning />
+        {:else if route.page === 'read'}<Read />
         {:else if route.page === 'cangjie'}<Cangjie />
         {:else if route.page === 'sijiao'}<Sijiao />
         {:else if route.page === 'reading'}<Reading />
