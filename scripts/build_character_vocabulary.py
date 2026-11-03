@@ -38,7 +38,7 @@ IDS = ROOT / "data" / "babelstone-ids.tsv.gz"
 TARGET = ROOT / "data" / "character-vocabulary.tsv.gz"
 
 KANJIDIC2_URL = "https://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
-KANJIDIC2_SHA256 = "554c23fa1d4a0528c6d839017123cb752dff81f0d53696e12e2cef72dbb72dc1"
+KANJIDIC2_SHA256 = "fb6b3e73acd412b7b1b3a390eab24aa6a543a2779edc72be330419a0ec445a4a"
 UNIHAN_URL = "https://www.unicode.org/Public/18.0.0/ucd/Unihan.zip"
 UNIHAN_SHA256 = "4c93ea9c1f636451729a840978f1667a53886af37ba854fdcce109721c63d43e"
 
@@ -239,7 +239,7 @@ def header(rows: list[tuple[str, str, str, str, str]]) -> str:
 # Built by scripts/build_character_vocabulary.py.
 # source unihan: Unihan 18.0.0 (Unicode Character Database), Unicode License v3, Copyright Unicode, Inc.; kDefinition, kMandarin, kJapaneseOn, kJapaneseKun, kHangul, kVietnamese and kIICore; SHA-256 {UNIHAN_SHA256}
 #   https://www.unicode.org/Public/18.0.0/ucd/Unihan.zip
-# source kanjidic2: KANJIDIC2 (file version 4, database version 2026-301, created 2026-10-28), Electronic Dictionary Research and Development Group, CC BY-SA 4.0; Copyright EDRDG
+# source kanjidic2: KANJIDIC2 (file version 4, database version 2026-307, created 2026-11-03), Electronic Dictionary Research and Development Group, CC BY-SA 4.0; Copyright EDRDG
 #   meanings, Japanese, Korean and Vietnamese readings, pinyin and nanori; https://www.edrdg.org/kanjidic/kanjidic2.xml.gz
 # The characters are every IDS character with a Unihan or KANJIDIC2 name.
 # The file as a whole is shared alike under CC BY-SA 4.0, because the KANJIDIC2 rows are:
