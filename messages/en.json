@@ -343,5 +343,11 @@
   "transcribe.char": "Character",
   "transcribe.meaning": "Meaning",
   "transcribe.empty": "Type or paste Tangut text above; the readings appear here.",
-  "cangjie.near": "No code begins with {code}; these differ by one key, which a second analysis of the same shape often does."
+  "cangjie.near": "No code begins with {code}; these differ by one key, which a second analysis of the same shape often does.",
+  "palette.label": "Palette",
+  "palette.paper": "Paper",
+  "palette.mineral": "Yulin",
+  "palette.indigo": "Indigo",
+  "palette.sand": "Khara",
+  "theme.label": "Theme"
 }

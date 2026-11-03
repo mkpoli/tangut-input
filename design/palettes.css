@@ -48,38 +48,39 @@
 /* ---------- Indigo: the golden manuscript ---------- */
 
 /* Khara-Khoto manuscript XT-180, Institute of Oriental Manuscripts, RAS: indigo-dyed paper,
-   gold ink, one surviving example of such a book from Kozlov's excavation. The dark scheme is
-   the object; the light scheme takes the cool paper and the bronze of the ink.
+   gold ink, one surviving example of such a book from Kozlov's excavation. Aged indigo reads
+   as a green-black ground; the light scheme keeps the faint green of that paper and the bronze
+   of the ink.
    Reference: Alexander Zorin, "On a 'Golden' Khara-Khoto Manuscript", Revue d'Etudes Tibétaines
    56 (2020), 161–169. */
 :root[data-palette='indigo'] {
-  --p-canvas: light-dark(#e9e9e6, #0e1526);
-  --p-surface: light-dark(#f7f6f1, #141d33);
-  --p-sunken: light-dark(#dfdfdc, #0a1020);
-  --p-hover: light-dark(#efefeb, #1b2742);
-  --p-active: light-dark(#e4e4e0, #23324f);
-  --p-ink: light-dark(#151b29, #e8dfc7);
-  --p-soft: light-dark(#3d4657, #c5bda9);
-  --p-muted: light-dark(#596170, #948d79);
-  --p-border: light-dark(#d3d4d7, #26324b);
-  --p-border-strong: light-dark(#b3b6bd, #3a4866);
-  --p-control: light-dark(#7a8090, #6c7894);
-  --p-control-hover: light-dark(#606776, #8a96b1);
-  --p-accent: light-dark(#8a6417, #d4aa4e);
-  --p-accent-hover: light-dark(#6f4f10, #e6c063);
-  --p-accent-active: light-dark(#5a3f0b, #f0d27c);
-  --p-accent-soft: light-dark(#efe5cc, #2b2514);
-  --p-accent-ink: light-dark(#6f4f10, #e6c063);
-  --p-on-accent: light-dark(#fffaef, #1a1408);
-  --p-danger: light-dark(#a13c2b, #e08a72);
-  --p-danger-hover: light-dark(#863021, #f0a28c);
-  --p-danger-soft: light-dark(#f3e2de, #3b211b);
+  --p-canvas: light-dark(#e8eae4, #0c1513);
+  --p-surface: light-dark(#f6f7f1, #121d18);
+  --p-sunken: light-dark(#dfe3da, #08100d);
+  --p-hover: light-dark(#eff1e9, #18241e);
+  --p-active: light-dark(#e4e7dd, #203028);
+  --p-ink: light-dark(#151d19, #e3d3a4);
+  --p-soft: light-dark(#3d4a42, #c3b585);
+  --p-muted: light-dark(#59675c, #9d9070);
+  --p-border: light-dark(#d3d8ce, #26332a);
+  --p-border-strong: light-dark(#b0b9ab, #3c4a3c);
+  --p-control: light-dark(#77857a, #6f7d69);
+  --p-control-hover: light-dark(#5e6c61, #8d9a86);
+  --p-accent: light-dark(#7d5f1c, #c9a24a);
+  --p-accent-hover: light-dark(#654b12, #ddb75f);
+  --p-accent-active: light-dark(#513b0b, #e8c777);
+  --p-accent-soft: light-dark(#efe7cd, #2a2412);
+  --p-accent-ink: light-dark(#654b12, #e0bd68);
+  --p-on-accent: light-dark(#fffaef, #141007);
+  --p-danger: light-dark(#a13c2b, #d97a5a);
+  --p-danger-hover: light-dark(#863021, #ea9178);
+  --p-danger-soft: light-dark(#f3e2de, #38211b);
   --p-on-danger: light-dark(#fdf5ef, #2a0f09);
-  --p-inverse-surface: light-dark(#151b29, #e8dfc7);
-  --p-inverse-ink: light-dark(#f7f6f1, #0e1526);
-  --p-selection: light-dark(#e6ddc6, #3a3016);
-  --p-scrollbar: light-dark(#b3b6bd, #3a4866);
-  --p-scrollbar-hover: light-dark(#7a8090, #6c7894);
+  --p-inverse-surface: light-dark(#151d19, #e3d3a4);
+  --p-inverse-ink: light-dark(#f7f6f1, #0c1513);
+  --p-selection: light-dark(#e4e8d9, #1e3327);
+  --p-scrollbar: light-dark(#b0b9ab, #3c4a3c);
+  --p-scrollbar-hover: light-dark(#77857a, #6f7d69);
 }
 
 /* ---------- Khara: the ruined city ---------- */

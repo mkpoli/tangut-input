@@ -4,7 +4,7 @@ import './app.css'
 import './design-preview.css'
 
 const KEY = 'tangut-input:theme'
-const PALETTE_KEY = 'tangut-input:palette'
+const PALETTE_KEY = 'tangut-input:scheme'
 
 /** @param {string} token */
 function read(token) {
@@ -148,7 +148,7 @@ function render() {
 const PALETTES = {
   paper: {
     name: 'Paper',
-    source: 'Warm paper and ink, the site\u2019s first palette; one vermilion marks what acts.',
+    source: 'Warm paper and ink, the site\u2019s default; one vermilion marks what acts.',
   },
   mineral: {
     name: 'Yulin',
@@ -156,7 +156,7 @@ const PALETTES = {
   },
   indigo: {
     name: 'Indigo',
-    source: 'Khara-Khoto manuscript XT-180, Institute of Oriental Manuscripts, RAS: indigo-dyed paper and gold ink, with cinnabar. Zorin, Revue d\u2019Études Tibétaines 56 (2020).',
+    source: 'Khara-Khoto manuscript XT-180, Institute of Oriental Manuscripts, RAS: aged indigo paper, green-black, with gold ink and cinnabar. Zorin, Revue d\u2019Études Tibétaines 56 (2020).',
   },
   sand: {
     name: 'Khara',
@@ -170,15 +170,15 @@ const sourceNote = /** @type {HTMLElement | null} */ (document.getElementById('p
 function currentPalette() {
   try {
     const kept = localStorage.getItem(PALETTE_KEY)
-    return kept && kept in PALETTES ? kept : 'mineral'
+    return kept && kept in PALETTES ? kept : 'paper'
   } catch {
-    return 'mineral'
+    return 'paper'
   }
 }
 
 /** @param {string} palette */
 function setPalette(palette) {
-  const key = palette in PALETTES ? palette : 'mineral'
+  const key = palette in PALETTES ? palette : 'paper'
   document.documentElement.dataset.palette = key
   try { localStorage.setItem(PALETTE_KEY, key) } catch {}
   for (const radio of paletteRadios) radio.checked = radio.value === key
