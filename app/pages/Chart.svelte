@@ -94,7 +94,7 @@
 
   /**
    * The Chinese fanqie records, each naming the character it spells, its two characters and the
-   * 直音 it is glossed with. @type {{ char: string, upper: string, lower: string, zhiyin: string }[]}
+   * 直音 it is glossed with, and whether a 合 marks its rounding.
    */
   const hanRecords = $derived(ready ? hanFanqie(ix.entries) : [])
 
