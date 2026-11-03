@@ -19,7 +19,7 @@ const TANGUT = [
 
 test('the five Tangut components are named by their Japanese shapes', () => {
   const found = new Map(names
-    .filter(name => name.source === 'arakawa-2020' || name.source === 'ja-wikipedia-tangut')
+    .filter(name => name.source === 'arakawa-2023' || name.source === 'ja-wikipedia-tangut')
     .map(name => [name.name, name.char]))
   expect(found).toEqual(new Map(TANGUT))
 })
@@ -41,7 +41,7 @@ test('the site copy holds the same rows as the source table', () => {
     .filter(line => line && !line.startsWith('#'))
     .map(line => {
       const [name, char, from, detail] = line.split('\t')
-      return [name, { char, source: from, detail, credit: from === 'arakawa-2020' ? 'Arakawa 2020' : 'Japanese Wikipedia' }]
+      return [name, { char, source: from, detail, credit: from === 'arakawa-2023' ? 'Arakawa 2023' : 'Arakawa 2020 · Japanese Wikipedia' }]
     }))
   const site = new Map(app.map(row => [row.name, { char: row.char, source: row.source, detail: row.detail, credit: row.credit }]))
   expect(site).toEqual(source)

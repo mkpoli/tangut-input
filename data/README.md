@@ -300,11 +300,14 @@ Sources:
   radicals in their own right (几, 厂, 干, 尸, 里, 凶, 虫, 斗, 鬥) are kept as they are, since 几
   must not become 幾 and 斗 must not become 鬥. A redirect naming another radical than the article
   it points to (男部 to 女部, 鳥偏 to 酉部) is left out.
-- 荒川慎太郎 2020「西夏文字における「点」の出現環境と機能」『言語研究』164: 39–66,
+- 荒川慎太郎 2023「西夏文字における「点」の出現環境と機能」『言語研究』164: 39–66,
   <https://www.jstage.jst.go.jp/article/gengo/164/0/164_39/_article/-char/ja/>: the names くノ,
-  ノメ and ノノメ, at §1, §3.3 and n. 21. The article's text is cited, not redistributed.
+  ノメ and ノノメ, at §1.4, §3.2 and n. 21. The article's text is cited, not redistributed.
 - 日本語版ウィキペディア「西夏文字」, Unicode section, read 2026-11-03, CC BY-SA 4.0
-  (<https://ja.wikipedia.org/wiki/西夏文字>): the names ノメメ and くくノ.
+  (<https://ja.wikipedia.org/wiki/西夏文字>): the code points for ノメメ and くくノ.
+- 荒川慎太郎 2020「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回大会予稿集
+  (<https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf>):
+  the distinction between the ノメメ and くくノ forms.
 
 The kanji-tools, tudien, rime-wanxiang, MyBox, KANJIDIC2 and Unihan files are pinned by revision or
 SHA-256 in the script. The exact Wikipedia redirects used are kept in
@@ -320,12 +323,16 @@ kana a component's strokes resemble; they are not an official nomenclature, and 
 vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-names.md). Format:
 `name`, `char`, `source`, `detail`; comments start with `#`.
 
-- Source `arakawa-2020`: 荒川慎太郎「西夏文字における「点」の出現環境と機能」『言語研究』164
-  (2020): 39–66, §1, §3.3 and n. 21
+- Source `arakawa-2023`: 荒川慎太郎「西夏文字における「点」の出現環境と機能」『言語研究』164
+  (2023): 39–66, §1.4, §3.2 and n. 21
   (<https://www.jstage.jst.go.jp/article/gengo/164/0/164_39/_article/-char/ja/>). The article's
   text is cited, not redistributed.
 - Source `ja-wikipedia-tangut`: 日本語版ウィキペディア「西夏文字」, Unicode section, read
-  2026-11-03, CC BY-SA 4.0 (<https://ja.wikipedia.org/wiki/西夏文字>).
+  2026-11-03, CC BY-SA 4.0 (<https://ja.wikipedia.org/wiki/西夏文字>): the code points for ノメメ
+  and くくノ.
+- Source `arakawa-2020`: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回
+  大会予稿集 (<https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf>):
+  the distinction between the two forms.
 - Licence: **CC BY-SA 4.0** for the Wikipedia rows; the Arakawa rows are short shape names.
 
 `app/data/tangut-component-names.json` is the copy the site's Find page and the Parts hover card
