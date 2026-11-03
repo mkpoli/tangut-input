@@ -88,8 +88,7 @@
   /** @param {Event} event @param {{ part: string, live: number }} p */
   function showInfo(event, p) {
     const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
-    const below = box.bottom + 6
-    info = { part: p.part, live: p.live, x: box.left, y: below + 360 > innerHeight ? Math.max(8, box.top - 366) : below }
+    info = { part: p.part, live: p.live, x: box.left, y: Math.max(8, Math.min(box.bottom + 6, innerHeight - 240)) }
   }
   function hideInfo() {
     info = null

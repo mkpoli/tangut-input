@@ -17,7 +17,7 @@
   const code = $derived(part.codePointAt(0) ?? 0)
   const number = $derived(code >= 0x18800 && code <= 0x18AFF ? code - 0x18800 + 1 : 0)
   const left = $derived(Math.max(8, Math.min(x, (globalThis.innerWidth ?? 1280) - 316)))
-  const top = $derived(Math.max(8, Math.min(y, (globalThis.innerHeight ?? 800) - 360)))
+  const top = $derived(Math.max(8, Math.min(y, (globalThis.innerHeight ?? 800) - 240)))
 </script>
 
 <aside id="part-info" class="part-info ui-popover" style:left="{left}px" style:top="{top}px" role="tooltip">
