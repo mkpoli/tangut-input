@@ -1,0 +1,146 @@
+{
+  "note": "Names recorded for the nine Tangut components with Japanese shape names. A dash means no name is recorded in the sources read.",
+  "languages": [
+    "ja",
+    "en",
+    "zh",
+    "ru",
+    "ko"
+  ],
+  "rows": [
+    {
+      "char": "𘡃",
+      "names": {
+        "ja": [
+          "ノメ"
+        ],
+        "en": [
+          "“ノメ”"
+        ],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023"
+    },
+    {
+      "char": "𘢌",
+      "names": {
+        "ja": [
+          "ノノメ"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023"
+    },
+    {
+      "char": "𘢒",
+      "names": {
+        "ja": [
+          "くノ﹅"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023, table 4"
+    },
+    {
+      "char": "𘤆",
+      "names": {
+        "ja": [
+          "ノくノ﹅"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023, table 4"
+    },
+    {
+      "char": "𘤊",
+      "names": {
+        "ja": [
+          "ノメメ"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2020; Wikipedia"
+    },
+    {
+      "char": "𘦄",
+      "names": {
+        "ja": [
+          "くくノ﹅"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023, table 4"
+    },
+    {
+      "char": "𘧆",
+      "names": {
+        "ja": [
+          "コくノ﹅"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023, table 4"
+    },
+    {
+      "char": "𘧶",
+      "names": {
+        "ja": [
+          "くノ﹅ノメ"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023, table 4"
+    },
+    {
+      "char": "𘫺",
+      "names": {
+        "ja": [
+          "くノ"
+        ],
+        "en": [
+          "“くノ”-type"
+        ],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023"
+    },
+    {
+      "char": "𘫽",
+      "names": {
+        "ja": [
+          "くくノ"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2020; Wikipedia"
+    }
+  ]
+}

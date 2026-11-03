@@ -16,11 +16,46 @@
       "credit": "Arakawa 2023"
     },
     {
+      "name": "くノ﹅",
+      "char": "𘢒",
+      "source": "arakawa-2023",
+      "detail": "A1 in table 4: the くノ form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "ノくノ﹅",
+      "char": "𘤆",
+      "source": "arakawa-2023",
+      "detail": "A2 in table 4: the ノくノ form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
       "name": "ノメメ",
       "char": "𘤊",
       "source": "ja-wikipedia-tangut",
       "detail": "Arakawa 2020 distinguishes this 5-stroke form from くくノ; Wikipedia gives the code point",
       "credit": "Arakawa 2020 · Japanese Wikipedia"
+    },
+    {
+      "name": "くくノ﹅",
+      "char": "𘦄",
+      "source": "arakawa-2023",
+      "detail": "A4 in table 4: the くくノ form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "コくノ﹅",
+      "char": "𘧆",
+      "source": "arakawa-2023",
+      "detail": "A3 in table 4: the コくノ form with the emphatic dot",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "くノ﹅ノメ",
+      "char": "𘧶",
+      "source": "arakawa-2023",
+      "detail": "A5 in table 4: a くノ with the emphatic dot above a ノメ",
+      "credit": "Arakawa 2023"
     },
     {
       "name": "くノ",

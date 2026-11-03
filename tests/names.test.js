@@ -8,6 +8,7 @@ import { searchShapeNames } from '../app/lib/names.js'
 const names = readNames(readFileSync(new URL('../data/component-names.tsv', import.meta.url), 'utf8'))
 const search = createNameSearch(names)
 const app = JSON.parse(readFileSync(new URL('../app/data/tangut-component-names.json', import.meta.url), 'utf8')).names
+const comparison = JSON.parse(readFileSync(new URL('../app/data/tangut-part-names.json', import.meta.url), 'utf8'))
 
 const TANGUT = [
   ['くノ', '𘫺'],
@@ -15,9 +16,14 @@ const TANGUT = [
   ['ノノメ', '𘢌'],
   ['ノメメ', '𘤊'],
   ['くくノ', '𘫽'],
+  ['くノ﹅', '𘢒'],
+  ['ノくノ﹅', '𘤆'],
+  ['くくノ﹅', '𘦄'],
+  ['コくノ﹅', '𘧆'],
+  ['くノ﹅ノメ', '𘧶'],
 ]
 
-test('the five Tangut components are named by their Japanese shapes', () => {
+test('the ten Tangut components are named by their Japanese shapes', () => {
   const found = new Map(names
     .filter(name => name.source === 'arakawa-2023' || name.source === 'ja-wikipedia-tangut')
     .map(name => [name.name, name.char]))
@@ -45,6 +51,12 @@ test('the site copy holds the same rows as the source table', () => {
     }))
   const site = new Map(app.map(row => [row.name, { char: row.char, source: row.source, detail: row.detail, credit: row.credit }]))
   expect(site).toEqual(source)
+})
+
+test('the comparison table covers every named part', () => {
+  expect(comparison.languages).toEqual(['ja', 'en', 'zh', 'ru', 'ko'])
+  expect(new Set(comparison.rows.map(row => row.char))).toEqual(new Set(TANGUT.map(([, char]) => char)))
+  for (const row of comparison.rows) expect(row.names.ja.length).toBeGreaterThan(0)
 })
 
 test('a shape name reaches its component first', () => {

@@ -2,13 +2,14 @@
   // Parts: build a character from the components it is drawn from, as the script itself is built.
   // Each chosen part narrows the characters to those whose description holds it, and the palette
   // narrows with them to the parts that still occur, so the next choice always leads somewhere.
-  import { db, ix, gloss, isTangut } from '../lib/db.svelte.js'
+  import { db, ix, gloss, isTangut, codePoint } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import PartInfo from '../ui/PartInfo.svelte'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview } from '../lib/ui.svelte.js'
   import { byParts, partsAmong, partsIn } from '../lib/search.js'
   import { foldShapeName } from '../lib/names.js'
+  import { partInfoPlacement } from '../lib/part-info.js'
   import { LAYOUTS } from '../ui/Ids.svelte'
   import Layout from '../ui/Layout.svelte'
   import Candidates from '../ui/Candidates.svelte'
@@ -89,10 +90,7 @@
   /** @param {Event} event @param {{ part: string, live: number }} p */
   function showInfo(event, p) {
     const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
-    const width = 300, height = 300, gap = 8
-    let x = box.right + gap
-    if (x + width > innerWidth) x = box.left - width - gap
-    info = { part: p.part, live: p.live, x: Math.max(8, Math.min(x, innerWidth - width - 8)), y: Math.max(8, Math.min(box.top, innerHeight - height)) }
+    info = { part: p.part, live: p.live, ...partInfoPlacement(box) }
   }
   function hideInfo() {
     info = null
@@ -162,6 +160,34 @@
     {/if}
   </section>
 
+  {#if ready && ix.partNames?.rows.length}
+    <details class="name-table">
+      <summary>{t('parts.names.title')}</summary>
+      <p class="ui-hint">{t('parts.names.hint')}</p>
+      <div class="table-wrap">
+        <table class="ui-table">
+          <thead>
+            <tr>
+              <th>{t('parts.names.component')}</th>
+              {#each ix.partNames.languages as language (language)}<th>{t(`parts.names.${language}`)}</th>{/each}
+              <th>{t('parts.names.source')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each ix.partNames.rows as row (row.char)}
+              <tr>
+                <th scope="row"><G char={row.char} /> <span class="ui-mono">{codePoint(row.char)}</span></th>
+                {#each ix.partNames.languages as language (language)}
+                  <td>{#if row.names[language]?.length}{row.names[language].join(' · ')}{:else}<span class="ui-hint">—</span>{/if}</td>
+                {/each}
+                <td class="source">{row.source}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  {/if}
   <section class="palette" aria-label={t('parts.paletteLabel')}>
     <div class="ui-section-head">
       <h2 class="ui-label">{among && !everything ? t('parts.stillOccur') : t('parts.allComponents')}</h2>
@@ -190,6 +216,7 @@
       {/each}
     </div>
   </section>
+
   {#if info}<PartInfo part={info.part} x={info.x} y={info.y} live={info.live} />{/if}
 </div>
 
@@ -218,6 +245,14 @@
   .comp :global(.ui-nog){font-size:9px}
   .comp .use{position:absolute;right:3px;bottom:1px;color:var(--ui-color-ink-muted);font-size:9.5px;font-variant-numeric:tabular-nums}
   .comp[data-dim]{opacity:.32}
+  .name-table{margin-top:var(--ui-space-xl);border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg)}
+  .name-table summary{cursor:pointer;font-weight:var(--ui-weight-semibold)}
+  .name-table .ui-hint{margin:var(--ui-space-xs) 0 var(--ui-space-sm)}
+  .table-wrap{overflow-x:auto}
+  .name-table th[scope='row']{white-space:nowrap;font-weight:400}
+  .name-table th[scope='row'] :global(.ui-script){font-size:22px;margin-inline-end:4px}
+  .name-table td{vertical-align:top}
+  .name-table .source{white-space:nowrap;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
   @media (max-width:900px){
     .filter-wrap{inline-size:100%;margin-inline-start:0}
     .filter-wrap .ui-input{inline-size:100%}

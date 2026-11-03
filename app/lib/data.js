@@ -89,6 +89,9 @@ export const loadCodes = () => once('codes', () => readJson(new URL('../data/tan
 /** Japanese shape names for Tangut components. @returns {Promise<{ name: string, char: string, source: string, detail: string, credit: string }[]>} */
 export const loadTangutNames = () => once('tangut-names', async () => (await readJson(new URL('../data/tangut-component-names.json', import.meta.url))).names)
 
+/** The same names compared across the languages that record one. @returns {Promise<{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] }>} */
+export const loadPartNames = () => once('part-names', () => readJson(new URL('../data/tangut-part-names.json', import.meta.url)))
+
 /** Four-corner codes as [character, six digits] pairs, from the rhyme-dictionary table. @returns {Promise<[string, string][]>} */
 export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/tangut-sijiao.json.gz', import.meta.url)))
 
