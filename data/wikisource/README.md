@@ -1,11 +1,11 @@
 # Wikisource corpus
 
-`pages.json` is a pinned snapshot of the 37 pages in
-[Category:Buddhist texts in Tangut](https://wikisource.org/wiki/Category:Buddhist_texts_in_Tangut) on
-Wikisource, read 2026-11-03. It keeps each page's revision id, timestamp, editor and wikitext, so
+`pages.json` is a pinned snapshot of the 46 Tangut text pages in
+[Category:𗼇𗟲](https://wikisource.org/wiki/Category:%F0%97%BC%87%F0%97%9F%B2) on Wikisource, read
+2026-11-03. It keeps each page's revision id, timestamp, editor and wikitext, so
 `scripts/build_tangut_attestation.py` can rebuild the same corpus without the network.
 
-The category holds five texts:
+The category holds twelve texts:
 
 | Root page | Text | Pages |
 | --- | --- | ---: |
@@ -14,6 +14,13 @@ The category holds five texts:
 | `𗵒𘗁𘄒𘎑𘏞𗓽𗕥𗸰𗖰𗚩` | Diamond Sutra | 33 |
 | `𗹌𘐘𗍫𗰗𗏁𗤄𗊬` | Newly-carved Twenty-five Questions and Answers | 1 |
 | `𗼃𘝯𘝵𗦳𘜶𗈁𗤶𗄊𗧯𗣩𘉐𗖰𗖵𗰖` | Mahākāruṇika-nāma-ārya-avalokiteśvara dhāraṇī | 1 |
+| `𘚜𗼃𗰜𗡙𗨮` | Hymn of the Holy Origin of Tanguts | 1 |
+| `𗵒𗭭𘃎𘐏𘝞` | Newly Collected Grains of Gold in the Palm of the Hand | 1 |
+| `𗼑𗼑𗫉𗊱` | Ode on Monthly Pleasures | 1 |
+| `𗴮𘊳` | The Forest of Categories (volumes II–III) | 3 |
+| `𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞` | Record of the Spiritual Pagoda at Liángzhōu | 1 |
+| `𗆧𗰖𗬻𘜼𘋥𘝿` | Newly Assembled Precious Dual Maxims | 1 |
+| `𗙏𘙰𗫸𘜏𘁨` | Preface to the Revised Tongyin | 1 |
 
 The root page's header carries the English title, the manuscript or edition, and the transcription's
 basis; its `==Sources==` section carries the printed bibliography. The build keeps the header note

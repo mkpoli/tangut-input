@@ -9,9 +9,9 @@ Two kinds of source are merged:
 - the Glyph Atlas record of chapter 2 of the Tangut Bodhicaryāvatāra, with the edition's English
   translation, the link to ぶんぽ's reading of each line, and one box per character on the
   edition's facsimile;
-- the Wikisource category of Tangut Buddhist texts, whose pages carry the running text only. The
-  category snapshot is pinned by revision in `data/wikisource/pages.json`; this script reads that
-  file, never the network.
+- the Wikisource Tangut texts, whose pages carry the running text only. The category snapshot is
+  pinned by revision in `data/wikisource/pages.json`; this script reads that file, never the
+  network.
 
 For every character the output keeps the places that attest it. A character missing from it has no
 attestation yet, and the page says so. Each facsimile box is cut from its strip as a small greyscale
@@ -68,6 +68,13 @@ WIKISOURCE_TEXTS = [
     {'pageid': 287138, 'slug': 'diamond', 'shortTitle': 'Diamond Sutra'},
     {'pageid': 287230, 'slug': 'twenty-five-questions', 'shortTitle': 'Twenty-five Questions'},
     {'pageid': 287253, 'slug': 'dharani', 'shortTitle': 'Great Compassion Dharani'},
+    {'pageid': 153976, 'slug': 'hymn-origin', 'shortTitle': 'Hymn of the Holy Origin'},
+    {'pageid': 260266, 'slug': 'grains-of-gold', 'shortTitle': 'Grains of Gold'},
+    {'pageid': 260280, 'slug': 'monthly-pleasures', 'shortTitle': 'Monthly Pleasures'},
+    {'pageid': 287220, 'slug': 'leilin', 'shortTitle': 'Forest of Categories'},
+    {'pageid': 287280, 'slug': 'liangzhou-stele', 'shortTitle': 'Liangzhou Stele'},
+    {'pageid': 347419, 'slug': 'dual-maxims', 'shortTitle': 'Precious Dual Maxims'},
+    {'pageid': 402322, 'slug': 'tongyin-preface', 'shortTitle': 'Tongyin Preface', 'title': 'Preface to the Revised Tongyin'},
 ]
 
 # The punctuation and editorial marks kept beside the Tangut characters. Everything else in a
@@ -334,6 +341,7 @@ def build_wikisource(rows):
         root = pages[root_title]
         header = header_of(root['content'])
         title_tangut, title = header_title(header)
+        title = entry.get('title', title)
         source_id = f'wikisource-{entry["slug"]}'
         subpages = sorted(
             (found for found in snapshot['titles'] if found.startswith(root_title + '/')),
@@ -354,7 +362,7 @@ def build_wikisource(rows):
             'licenceUrl': 'https://creativecommons.org/licenses/by-sa/4.0/',
             'retrieved': snapshot['retrieved'],
             'revision': root['revision'],
-            'note': plain(header_field(header, 'notes')),
+            'note': plain(header_field(header, 'notes')) or 'Wikisource transcription. The page names no printed edition.',
             'pages': page_records,
         })
 

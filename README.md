@@ -38,15 +38,14 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-strokes.json.gz`: stroke counts, ideographs from Unicode's TangutSources.txt,
   components counted from their glyphs (copied from `data2/`).
 - `app/data/tangut-attestation.json.gz` and `app/public/facsimile/`: where each character stands in
-  six texts, built by `scripts/build_tangut_attestation.py`. One is the Glyph Atlas record of
+  thirteen texts, built by `scripts/build_tangut_attestation.py`. One is the Glyph Atlas record of
   Solonin and Arakawa's *Bodhicaryāvatāra in Tangut Translation*, chapter 2 (CC BY 4.0), with its
-  facsimile crops, English translation and links to ぶんぽ's line readings. Five are the Buddhist
-  texts in Tangut on Wikisource (CC BY-SA 4.0): the Dragon King's question, the High King
-  Avalokitesvara Sutra, the Diamond Sutra, the Twenty-five Questions and Answers, and the Great
-  Compassion Dharani. `data/wikisource/pages.json` pins their revisions; refresh it with
-  `python3 scripts/fetch_tangut_wikisource.py`.
-- `app/data/tangut-samples.json`: eight passages copied from the six texts, five of them famous
-  sutras or dhāraṇī, offered by the Samples button in the text strip and on Transcribe; built by
+  facsimile crops, English translation and links to ぶんぽ's line readings. The other twelve are on
+  Wikisource (CC BY-SA 4.0): five Buddhist texts, the three poems, the Liangzhou stele, the Forest of
+  Categories, the Precious Dual Maxims and the Tongyin preface. `data/wikisource/pages.json` pins
+  their revisions; refresh it with `python3 scripts/fetch_tangut_wikisource.py`.
+- `app/data/tangut-samples.json`: thirteen passages copied from the corpus, nine marked famous,
+  offered by the Samples button in the text strip and on Transcribe; built by
   `scripts/build_tangut_samples.py` from the attestation file.
 - `app/data/tangut-shapes.bin.gz`: glyph pen lines for the drawing pad, rendered from Noto Serif
   Tangut 2.168 by `scripts/build_tangut_shapes.py`; `scripts/handwriting/score.mjs` measures the

@@ -65,13 +65,13 @@ test('the rhyme record keeps the fields the card and the chart read', () => {
 
 const attestation = json('tangut-attestation.json.gz')
 
-test('the attestation joins the edition and the five Wikisource texts', () => {
+test('the attestation joins the edition and the twelve Wikisource texts', () => {
   expect(attestation.corpus).toEqual({
-    lines: 321,
-    characters: 11168,
-    distinct: 967,
-    sources: 6,
-    sha256: '7a79caf2bdf3fa48aea60dbd0e243965c50d22ea341810812ffa3248069d9f1b',
+    lines: 1305,
+    characters: 24280,
+    distinct: 2665,
+    sources: 13,
+    sha256: '675699a6d2d7663431ba4f3504c85f61caef6f8b3eaba51bf00dc2b3f6fb2860',
   })
   expect(attestation.sources.map(source => source.id)).toEqual([
     'solonin-2024',
@@ -80,6 +80,13 @@ test('the attestation joins the edition and the five Wikisource texts', () => {
     'wikisource-diamond',
     'wikisource-twenty-five-questions',
     'wikisource-dharani',
+    'wikisource-hymn-origin',
+    'wikisource-grains-of-gold',
+    'wikisource-monthly-pleasures',
+    'wikisource-leilin',
+    'wikisource-liangzhou-stele',
+    'wikisource-dual-maxims',
+    'wikisource-tongyin-preface',
   ])
   expect(attestation.sources.every(source => source.url && source.licence)).toBe(true)
   expect(attestation.sources[0].facsimile).toContain('/facsimile/solonin-2024/')
@@ -103,8 +110,8 @@ test('every place points at the character it attests', () => {
 const samples = JSON.parse(readFileSync(new URL('../app/data/tangut-samples.json', import.meta.url)).toString())
 
 test('the sample passages are exact lines from the attestation', () => {
-  expect(samples.samples.length).toBe(8)
-  expect(samples.samples.filter(sample => sample.famous).length).toBe(5)
+  expect(samples.samples.length).toBe(13)
+  expect(samples.samples.filter(sample => sample.famous).length).toBe(9)
   const sourceIds = new Set(attestation.sources.map(source => source.id))
   for (const sample of samples.samples) {
     expect(sourceIds.has(sample.sourceId)).toBe(true)

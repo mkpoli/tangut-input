@@ -219,12 +219,12 @@ the Tangut block, and anything that is not a pick or a drawing.
 - **Attestation rebuilt from Glyph Atlas and Wikisource.** The old file carried only line numbers.
   The builder now carries each line's text, and for the edition's 40 lines its English translation,
   page and reading link, plus 280 facsimile crops (greyscale WebP, 128 px high, 385 KB, loaded
-  lazily). To that it joins the five Buddhist texts in Tangut on Wikisource: 281 passages, pinned by
+  lazily). To that it joins the twelve Tangut texts on Wikisource: 1,265 passages, pinned by
   revision in `data/wikisource/pages.json`. There is no facsimile or translation for those pages, so
   a place shows the passage around the character and links to the page. The edition is CC BY 4.0
-  and the Wikisource text CC BY-SA 4.0; each source prints its own credit.
-- **Sample passages in the text strip and Transcribe.** Eight passages copied from the attestation,
-  five marked famous, sit in `app/data/tangut-samples.json`. Picking one replaces the text; on
+  and the Wikisource texts CC BY-SA 4.0; each source prints its own credit.
+- **Sample passages in the text strip and Transcribe.** Thirteen passages copied from the attestation,
+  nine marked famous, sit in `app/data/tangut-samples.json`. Picking one replaces the text; on
   Transcribe it also becomes the address's line. The panel keeps the replaced text, so a reader can
   return to it or clear the line. The list is a reading aid, not a frequency sample.
 - **Unused or unattributed data left out.** `app/data/tangut-parts.json.gz` (a list of characters
@@ -243,8 +243,8 @@ the Tangut block, and anything that is not a pick or a drawing.
 **Real, against the data:** all five finders; Cangjie prefix search over 11,805 codes with
 next-letter counts; reading search over 29,525 readings in eight systems; drawing search over
 6,913 glyphs; part search over 6,136 descriptions; the card with every field the records carry;
-attestation of 967 characters in 321 passages from six texts, with 280 facsimile crops; a picker
-of eight corpus passages, five marked famous, in the text strip and on Transcribe; the text buffer
+attestation of 2,665 characters in 1,305 passages from thirteen texts, with 280 facsimile crops; a
+picker of thirteen corpus passages, nine marked famous, in the text strip and on Transcribe; the text buffer
 with three copy formats; shareable URLs; light and dark; phone layout.
 
 **Rough by nature:** drawing search (figures above); the reading folds are a convenience mapping,
