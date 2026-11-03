@@ -426,14 +426,14 @@
   "pick.clear": "Clear the pad",
   "nav.eras": "Eras",
   "nav.eras.hint": "Western Xia era names in Tangut",
-  "eras.intro": "The {total} era names of the Western Xia, in order. {forms} have a Tangut form on record, and {backed} of those are read on a coin or in a Tangut text; the rest come from a calendar that names no source for them. Click a character to open it.",
+  "eras.intro": "The {total} era names of the Western Xia, in order. {forms} have a Tangut form here: {clear} read clearly on coins or in a Tangut text, {disputed} on coins whose reading is disputed, and the rest only in a calendar that names no source for them. Click a character to open it.",
   "eras.era": "Era",
   "eras.years": "Years",
   "eras.tangut": "Tangut",
   "eras.basis": "Rests on",
   "eras.or": "or",
-  "eras.open": "Open {char}",
-  "eras.doubt": "Nie Hongyin (2004) counts this era among those with no known Tangut form.",
+  "eras.open": "Open {char} (U+{code})",
+  "eras.doubt": "Nie Hongyin (2004) says no Tangut form of this era was known.",
   "eras.sources": "Sources",
   "eras.kind.coin": "Coin",
   "eras.kind.coin.hint": "Read on coins of the era, with a clear reading.",
@@ -444,5 +444,7 @@
   "eras.kind.calendar": "Calendar only",
   "eras.kind.calendar.hint": "In West’s calendar, which names no source for its Tangut forms.",
   "eras.kind.none": "Not recorded",
-  "eras.kind.none.hint": "No Tangut form is on record."
+  "eras.kind.none.hint": "None of the sources used here gives a Tangut form.",
+  "eras.form": "Tangut form {n} of {era}",
+  "eras.cite": "Source {n}"
 }

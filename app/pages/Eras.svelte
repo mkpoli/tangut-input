@@ -5,38 +5,42 @@
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
   import { choose } from '../lib/ui.svelte.js'
+  import { hex } from '../lib/db.svelte.js'
   import { route } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
 
-  /** @typedef {{ era: string, from: string, to: string | null, calendar: string[], evidence: { tangut: string, kind: string, source: string }[] }} Era */
+  /** @typedef {{ era: string, from: string, to: string | null, years: [number, number | null], calendar: string[], evidence: { tangut: string, kind: string, source: string }[] }} Era */
 
   /** @param {string} key */
   const number = key => ERA_SOURCE_ORDER.indexOf(/** @type {keyof typeof ERA_SOURCES} */ (key)) + 1
 
   /**
-   * What an era's form rests on, strongest first, and the forms to show.
+   * What an era's form rests on and the forms to show. A disputed reading outweighs a clear one, so
+   * an era is never tagged more surely than its weakest backed form; the build keeps every backed
+   * form among the calendar's.
    * @param {Era} era
    */
   function basis(era) {
     const attested = era.evidence.filter(e => e.tangut)
-    const kind = ['coin', 'text', 'disputed'].find(k => attested.some(e => e.kind === k))
+    const kind = ['disputed', 'coin', 'text'].find(k => attested.some(e => e.kind === k))
       ?? (era.calendar.length ? 'calendar' : 'none')
-    const forms = attested.length ? attested.map(e => e.tangut) : era.calendar
+    const forms = era.calendar
     const sources = [...new Set(kind === 'calendar' ? ['calendar'] : attested.map(e => e.source))]
     const doubt = era.evidence.find(e => e.kind === 'unknown')
     return { kind, forms, sources, doubt }
   }
 
   /** @param {Era} era */
-  const years = era => era.to ? (era.from.slice(0, 4) === era.to.slice(0, 4) ? era.from.slice(0, 4) : `${era.from.slice(0, 4)}–${era.to.slice(0, 4)}`) : `${era.from.slice(0, 4)}–`
+  const years = era => era.years[1] === null ? `${era.years[0]}–` : era.years[0] === era.years[1] ? `${era.years[0]}` : `${era.years[0]}–${era.years[1]}`
 
   const rows = (/** @type {Era[]} */ (ERAS)).map(era => ({ era, ...basis(era) }))
   const counts = {
     total: rows.length,
     forms: rows.filter(row => row.forms.length).length,
-    backed: rows.filter(row => ['coin', 'text', 'disputed'].includes(row.kind)).length,
+    clear: rows.filter(row => row.kind === 'coin' || row.kind === 'text').length,
+    disputed: rows.filter(row => row.kind === 'disputed').length,
   }
 </script>
 
@@ -63,13 +67,13 @@
             <td class="forms" data-empty={!row.forms.length || undefined}>
               {#each row.forms as form, i (form)}
                 {#if i}<span class="or">{t('eras.or')}</span>{/if}
-                <span class="form">{#each [...form] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                  aria-label={t('eras.open', { char })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>
+                <span class="form" role="group" aria-label={t('eras.form', { era: row.era.era, n: i + 1 })}>{#each [...form] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                  aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>
               {:else}<span class="ui-hint">—</span>{/each}
             </td>
             <td class="basis">
-              <span class="tag" data-kind={row.kind}>{t(`eras.kind.${row.kind}`)}</span>{#if row.sources.length}<sup class="cite">{#each row.sources as key, i (key)}{#if i},{/if}<a href={`#era-source-${number(key)}`}>{number(key)}</a>{/each}</sup>{/if}
-              {#if row.doubt}<p class="doubt">{t('eras.doubt')}<sup class="cite"><a href={`#era-source-${number(row.doubt.source)}`}>{number(row.doubt.source)}</a></sup></p>{/if}
+              <span class="tag" data-kind={row.kind}>{t(`eras.kind.${row.kind}`)}</span>{#if row.sources.length}<sup class="cite">{#each row.sources as key, i (key)}{#if i},{/if}<a href={`#era-source-${number(key)}`} aria-label={t('eras.cite', { n: number(key) })}>{number(key)}</a>{/each}</sup>{/if}
+              {#if row.doubt}<p class="doubt">{t('eras.doubt')}<sup class="cite"><a href={`#era-source-${number(row.doubt.source)}`} aria-label={t('eras.cite', { n: number(row.doubt.source) })}>{number(row.doubt.source)}</a></sup></p>{/if}
             </td>
           </tr>
         {/each}
@@ -82,7 +86,7 @@
     <ol class="source-list">
       {#each ERA_SOURCE_ORDER as key, i (key)}
         {@const source = ERA_SOURCES[key]}
-        <li id={`era-source-${i + 1}`}>{source.author}. <a href={source.url}><i>{source.title}</i></a>. {source.publisher}, {source.year}. {source.note}.</li>
+        <li id={`era-source-${i + 1}`}>{source.author}. {#if source.url}<a href={source.url}><i>{source.title}</i></a>{:else}<i>{source.title}</i>{/if}. {source.where}.{#if source.note}{' '}{source.note}{/if}</li>
       {/each}
     </ol>
   </section>
