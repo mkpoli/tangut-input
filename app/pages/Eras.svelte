@@ -42,7 +42,7 @@
   const counts = {
     total: rows.length,
     forms: rows.filter(row => row.forms.length).length,
-    clear: rows.filter(row => row.tags.some(tag => tag.kind === 'coin' || tag.kind === 'text')).length,
+    clear: rows.filter(row => row.tags.every(tag => tag.kind === 'coin' || tag.kind === 'text')).length,
     disputed: rows.filter(row => row.tags.some(tag => tag.kind === 'disputed')).length,
   }
 </script>
@@ -82,8 +82,8 @@
               {#each row.tags as tag (tag.kind)}
                 <span class="tagged"><span class="tag" data-kind={tag.kind}>{t(`eras.kind.${tag.kind}`)}</span>{@render cites(tag.sources)}</span>
               {/each}
-              {#if row.gloss}<p class="doubt">{t('eras.gloss')}{@render cites([row.gloss.source])}</p>{/if}
-              {#if row.doubt}<p class="doubt">{t('eras.doubt')}{@render cites([row.doubt.source])}</p>{/if}
+              {#if row.gloss}<p class="note">{t('eras.gloss')}{@render cites([row.gloss.source])}</p>{/if}
+              {#if row.doubt}<p class="note">{t('eras.doubt')}{@render cites([row.doubt.source])}</p>{/if}
             </td>
           </tr>
         {/each}
@@ -120,7 +120,7 @@
   .tag[data-kind='coin'],.tag[data-kind='text']{border-color:var(--ui-color-accent);color:var(--ui-color-accent)}
   .tag[data-kind='none']{border-style:dashed;color:var(--ui-color-ink-muted)}
   tr[data-kind='none'] th{color:var(--ui-color-ink-soft)}
-  .doubt{margin:4px 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
+  .note{margin:4px 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .cite{margin-inline-start:2px;font-size:.72em;line-height:0;vertical-align:super}
   .cite a{padding-inline:1px;color:var(--ui-color-accent);text-decoration:none}
   .cite a:hover{text-decoration:underline}

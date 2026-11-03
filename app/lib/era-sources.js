@@ -27,7 +27,7 @@ export const ERA_SOURCES = {
     author: 'Liangzhou stele (1094), transcribed on Wikisource after Nishida Tatsuo',
     title: '𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞',
     where: 'Wikisource, revision 909760; Nishida, 西夏語の研究 I (1964), pp. 156–176',
-    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5.',
+    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here.',
     url: 'https://wikisource.org/w/index.php?oldid=909760',
   },
   months1185: {
@@ -41,13 +41,13 @@ export const ERA_SOURCES = {
     author: 'Newly Assembled Precious Dual Maxims, transcribed on Wikisource',
     title: '𗆧𗰖𗬻𘜼𘋥𘝿',
     where: 'Wikisource, revision 1021341; Kychanov 1974; 聶鴻音, 西夏學 2 (2007), pp. 134–166',
-    note: 'The colophon is dated 乾祐 18 (1187).',
+    note: 'The colophon, transcribed after 聶鴻音 2007, pp. 157–158, names 乾祐 7 (1176) and is dated 乾祐 18 (1187).',
     url: 'https://wikisource.org/w/index.php?oldid=1021341',
   },
   nie2009: {
     author: '聶鴻音',
     title: '乾祐二十年《彌勒上生經御製發願文》的夏漢對勘研究',
-    where: '2009; Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
+    where: '西夏學 4 (2009), pp. 42–45; Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
     note: 'The prayer is dated 乾祐 20 (1189).',
     url: 'https://www.sinoss.net/uploadfile/2010/1130/10732.pdf',
   },
@@ -55,7 +55,7 @@ export const ERA_SOURCES = {
     author: 'Guillaume Jacques',
     title: 'Leilin database',
     where: 'Tangut 類林; read in the Lausanne Corpus of Digital Tangut Texts',
-    note: 'Two passages are dated 乾祐 12.',
+    note: 'The colophons of two fascicles are dated 乾祐 12 (1181).',
     url: 'https://www.academia.edu/25078937/Leilin_database',
   },
   kychanov2010: {
