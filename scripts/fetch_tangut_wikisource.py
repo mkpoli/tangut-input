@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Fetch the Wikisource category of Tangut Buddhist texts into `data/wikisource/pages.json`.
+"""Fetch the Wikisource Tangut text pages into `data/wikisource/pages.json`.
 
+The category `Category:𗼇𗟲` holds the Buddhist texts, the poems and the translations from Chinese.
 The snapshot pins each page's revision and timestamp, so a transcription can be rebuilt after the
 wiki changes. `scripts/build_tangut_attestation.py` reads this file and never the network.
 
-    python3 scripts/fetch_tangut_wikisource.py [--category "Category:Buddhist texts in Tangut"]
+    python3 scripts/fetch_tangut_wikisource.py [--category "Category:𗼇𗟲"]
 
-The text is CC BY-SA 4.0; see `data/wikisource/README.md`.
+Only main-namespace pages with Tangut characters are kept. The text is CC BY-SA 4.0; see
+`data/wikisource/README.md`.
 """
 import argparse
 import json
+import re
 import urllib.parse
 import urllib.request
 from datetime import date
@@ -20,7 +23,8 @@ OUT = ROOT / 'data/wikisource/pages.json'
 SITE = 'https://wikisource.org'
 API = f'{SITE}/w/api.php'
 USER_AGENT = 'tangut-input/0.1 (https://tangut.mkpo.li; corpus snapshot)'
-DEFAULT_CATEGORY = 'Category:Buddhist texts in Tangut'
+DEFAULT_CATEGORY = 'Category:𗼇𗟲'
+TANGUT = re.compile(r'[\U00017000-\U00018AFF\U00018D00-\U00018DFF]')
 
 
 def api(params):
@@ -36,7 +40,7 @@ def category_members(category):
     while True:
         result = api({'action': 'query', 'list': 'categorymembers', 'cmtitle': category,
                       'cmlimit': '500', **cont})['query']
-        members.extend(member['title'] for member in result['categorymembers'])
+        members.extend((member['title'], member['ns']) for member in result['categorymembers'])
         if 'continue' not in result:
             return members
         cont = result['continue']
@@ -66,7 +70,8 @@ def main():
     parser.add_argument('--category', default=DEFAULT_CATEGORY)
     args = parser.parse_args()
 
-    titles = category_members(args.category)
+    members = category_members(args.category)
+    titles = [title for title, namespace in members if namespace == 0 and TANGUT.search(title)]
     pages = revisions(titles)
     missing = [title for title in titles if title not in pages]
     if missing:

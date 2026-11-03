@@ -25,9 +25,14 @@ SAMPLES = [
     {'id': 'diamond-closing', 'source': 'wikisource-diamond', 'lines': ['wikisource-diamond:32.2', 'wikisource-diamond:32.3'], 'label': '32.2–32.3', 'famous': True},
     {'id': 'dharani-opening', 'source': 'wikisource-dharani', 'lines': ['wikisource-dharani:line-1', 'wikisource-dharani:line-2'], 'label': 'lines 1–2', 'famous': True},
     {'id': 'high-king-sutra', 'source': 'wikisource-high-king', 'lines': ['wikisource-high-king:line-3'], 'label': 'line 3', 'famous': True},
+    {'id': 'grains-of-gold', 'source': 'wikisource-grains-of-gold', 'lines': ['wikisource-grains-of-gold:line-2'], 'label': 'line 2', 'famous': True},
+    {'id': 'monthly-pleasures', 'source': 'wikisource-monthly-pleasures', 'lines': ['wikisource-monthly-pleasures:line-6'], 'label': '1st month', 'famous': True},
+    {'id': 'liangzhou-stele', 'source': 'wikisource-liangzhou-stele', 'lines': ['wikisource-liangzhou-stele:line-1'], 'label': 'line 1', 'famous': True},
+    {'id': 'hymn-origin', 'source': 'wikisource-hymn-origin', 'lines': ['wikisource-hymn-origin:line-2'], 'label': 'verse 1', 'famous': True},
     {'id': 'twenty-five-questions', 'source': 'wikisource-twenty-five-questions', 'lines': ['wikisource-twenty-five-questions:q1'], 'label': 'Question 1', 'famous': False},
     {'id': 'dragon-king', 'source': 'wikisource-dragon-king', 'lines': ['wikisource-dragon-king:line-1'], 'label': 'line 1', 'famous': False},
     {'id': 'bodhicaryavatara', 'source': 'solonin-2024', 'lines': ['solonin-2024:2.1.1'], 'label': '2.1.1', 'famous': False},
+    {'id': 'dual-maxims', 'source': 'wikisource-dual-maxims', 'lines': ['wikisource-dual-maxims:line-3', 'wikisource-dual-maxims:line-4'], 'label': 'proverb 1', 'famous': False},
 ]
 
 

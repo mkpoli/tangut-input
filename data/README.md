@@ -4,11 +4,13 @@ Each file keeps its own licence; the MIT licence of the code does not cover them
 
 ## `wikisource/pages.json`
 
-The 37 pages of Wikisource's [Category:Buddhist texts in
-Tangut](https://wikisource.org/wiki/Category:Buddhist_texts_in_Tangut), read 2026-11-03: the
-wikitext, each page's revision id, timestamp and editor, and the category order. The five texts are
-the Dragon King's question, the High King Avalokitesvara Sutra, the Diamond Sutra (32 chapter pages
-and a front-matter page), the Twenty-five Questions and Answers, and the Great Compassion Dharani.
+The 46 Tangut text pages of Wikisource's [Category:𗼇𗟲](https://wikisource.org/wiki/Category:%F0%97%BC%87%F0%97%9F%B2),
+read 2026-11-03: the wikitext, each page's revision id, timestamp and editor, and the category order.
+The twelve texts are the five Buddhist ones (the Dragon King's question, the High King
+Avalokitesvara Sutra, the Diamond Sutra with its 32 chapter pages and front matter, the Twenty-five
+Questions and Answers and the Great Compassion Dharani), the Hymn of the Holy Origin of Tanguts,
+the Grains of Gold, the Ode on Monthly Pleasures, the Forest of Categories (roots II and III), the
+Liangzhou stele record, the Precious Dual Maxims and the Tongyin preface.
 `scripts/fetch_tangut_wikisource.py` refreshes it; `scripts/build_tangut_attestation.py` reads the
 snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 
@@ -17,11 +19,13 @@ underlying editions are in `wikisource/README.md` and in the source records of t
 
 ## `tangut-samples.json`
 
-Eight passages copied from `app/data/tangut-attestation.json.gz` for the Samples picker: three from
-the Diamond Sutra (the opening, the mark passage, and the closing gāthā), the Great Compassion
-Dharani's opening, the High King Avalokitesvara Sutra, the Twenty-five Questions, the Dragon King's
-question, and the Bodhicaryāvatāra's opening. Each record names its source, licence, line ids and
-the exact text; the five famous passages carry `famous: true`. Built by
+Thirteen passages copied from `app/data/tangut-attestation.json.gz` for the Samples picker: three
+from the Diamond Sutra (the opening, the mark passage and the closing gāthā), the Great Compassion
+Dharani's opening, the High King Avalokitesvara Sutra, the Grains of Gold, the first month of the
+Monthly Pleasures, the Liangzhou stele, the Hymn of the Holy Origin, the Twenty-five Questions, the
+Dragon King's question, the Bodhicaryāvatāra's opening and the first Precious Dual Maxim. Each
+record names its source, licence, line ids and the exact text; the nine famous passages carry
+`famous: true`. Built by
 `scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the five
 Wikisource texts and CC BY 4.0 for the Bodhicaryāvatāra edition.
 
