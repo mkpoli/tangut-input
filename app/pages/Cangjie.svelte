@@ -221,7 +221,7 @@
 
 <style>
   .composer{display:grid;gap:var(--ui-space-md)}
-  .near{margin:0 0 var(--ui-space-sm)}
+  .near{grid-column:1 / -1;margin:0 0 var(--ui-space-sm)}
   .box{display:flex;align-items:center;gap:var(--ui-space-xl)}
   .code-input{flex:1;min-inline-size:0;min-block-size:60px;padding:var(--ui-space-md) var(--ui-space-xl);border-radius:var(--ui-radius-lg);font-size:30px;letter-spacing:.14em;text-transform:lowercase}
   .code-input::placeholder{font-family:var(--ui-font-sans);font-size:var(--ui-text-lg);letter-spacing:.02em}
