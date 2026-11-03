@@ -7,10 +7,12 @@
   import { db, ix, gloss, hasGlyph } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
+  import PartInfo from '../ui/PartInfo.svelte'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { backspace } from '../lib/text.svelte.js'
   import { byCode } from '../lib/search.js'
+  import { partInfoPlacement } from '../lib/part-info.js'
   import { t } from '../lib/i18n.svelte.js'
 
   const PAGE = 9
@@ -19,6 +21,8 @@
   let code = $state(route.q.toLowerCase().replace(/[^a-z]/g, ''))
   let page = $state(0)
   let active = $state(0)
+  /** @type {{ part: string, x: number, y: number } | null} */
+  let info = $state(null)
   let palette = $state(/** @type {'all' | string} */ ('all'))
   /** @type {HTMLInputElement | null} */
   let input = $state(null)
@@ -106,6 +110,29 @@
       if (code) commit(active)
     } else setCode(code + letter)
     if (!touch) input?.focus()
+  }
+
+  /** @param {Event} event @param {{ char: string }} item */
+  function showInfo(event, item) {
+    const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
+    info = { part: item.char, ...partInfoPlacement(box) }
+  }
+  function hideInfo() {
+    info = null
+  }
+  /** @param {string} char */
+  function partName(char) {
+    return ix.names.find(row => row.char === char)?.name ?? ''
+  }
+  /** @param {string} char */
+  function openPart(char) {
+    info = null
+    choose(char)
+  }
+  /** @param {string} char */
+  function putPart(char) {
+    info = null
+    put(char)
   }
 
   /** @param {number} delta */
@@ -208,7 +235,10 @@
             <div class="ui-tiles comps" style:--ui-tile-size="54px">
               {#each items as item (item.char)}
                 <button type="button" class="ui-tile comp" data-open={route.c === item.char ? '' : undefined}
-                  onclick={() => choose(item.char)} ondblclick={() => put(item.char)} title={t('cangjie.componentTitle', { code: item.code, count: ix.usedBy.get(item.char)?.size ?? 0 })}>
+                  aria-describedby={info?.part === item.char ? 'part-info' : undefined}
+                  aria-label={[item.char, partName(item.char), t('cangjie.componentTitle', { code: item.code, count: ix.usedBy.get(item.char)?.size ?? 0 })].filter(Boolean).join(' · ')}
+                  onclick={() => openPart(item.char)} ondblclick={() => putPart(item.char)}
+                  onmouseenter={event => showInfo(event, item)} onmouseleave={hideInfo} onfocus={event => showInfo(event, item)} onblur={hideInfo}>
                   <G char={item.char} /><span class="ui-tile-note ui-mono">{item.code}</span>
                 </button>
               {/each}
@@ -218,6 +248,7 @@
       </div>
     </section>
   </div>
+  {#if info}<PartInfo part={info.part} x={info.x} y={info.y} />{/if}
 </div>
 
 <style>
