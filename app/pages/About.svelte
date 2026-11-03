@@ -2,12 +2,13 @@
   // Where every record on the site comes from, and how each finder treats it.
   import { db } from '../lib/db.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
+  import Icon from '../ui/Icon.svelte'
   const corpus = $derived(db.attestation?.corpus)
 </script>
 
 <article class="ui-page about" data-width="narrow">
   <header class="ui-page-head">
-    <h1 class="ui-page-title">{t('nav.sources')}</h1>
+    <h1 class="ui-page-title"><Icon name="sources" size={22}/><span>{t('nav.sources')}</span></h1>
     <p class="ui-page-intro">{t('about.lead')}</p>
   </header>
 

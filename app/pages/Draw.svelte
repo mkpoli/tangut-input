@@ -10,6 +10,7 @@
   import { attachPad, put, choose } from '../lib/ui.svelte.js'
   import Candidates from '../ui/Candidates.svelte'
   import G from '../ui/G.svelte'
+  import Icon from '../ui/Icon.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
   /** @type {HTMLCanvasElement | null} */
@@ -190,7 +191,7 @@
 <div class="ui-page draw" data-width="wide">
   <section class="pad-column" aria-label={t('draw.padLabel')}>
     <header class="ui-page-head">
-      <h1 class="ui-page-title">{t('nav.draw')}</h1>
+      <h1 class="ui-page-title"><Icon name="draw" size={22}/><span>{t('nav.draw')}</span></h1>
       <p class="ui-page-intro">{t('draw.intro')}</p>
     </header>
     <div class="pad">
@@ -199,8 +200,8 @@
       {#if !strokes.length}<p class="hint" aria-hidden="true">{t('draw.here')}</p>{/if}
     </div>
     <div class="tools">
-      <button type="button" class="ui-button" data-size="sm" onclick={undo} disabled={!strokes.length}>{t('draw.undo')}</button>
-      <button type="button" class="ui-button" data-size="sm" onclick={clear} disabled={!strokes.length}>{t('draw.clear')}</button>
+      <button type="button" class="ui-button" data-size="sm" onclick={undo} disabled={!strokes.length}><Icon name="undo" size={14}/>{t('draw.undo')}</button>
+      <button type="button" class="ui-button" data-size="sm" onclick={clear} disabled={!strokes.length}><Icon name="clear" size={14}/>{t('draw.clear')}</button>
       <span class="ui-count strokes">{t('draw.strokes', { count: strokes.length })}</span>
     </div>
   </section>

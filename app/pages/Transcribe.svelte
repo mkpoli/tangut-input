@@ -13,6 +13,7 @@
   import G from '../ui/G.svelte'
   import MiniIme from '../ui/MiniIme.svelte'
   import SamplePicker from '../ui/SamplePicker.svelte'
+  import Icon from '../ui/Icon.svelte'
 
   /** @type {HTMLTextAreaElement | null} */
   let box = $state(null)
@@ -71,7 +72,7 @@
 
 <div class="ui-page transcribe" data-width="wide">
   <header class="ui-page-head">
-    <h1 class="ui-page-title">{t('nav.transcribe')}</h1>
+    <h1 class="ui-page-title"><Icon name="transcribe" size={22}/><span>{t('nav.transcribe')}</span></h1>
     <p class="ui-page-intro">{t('transcribe.intro')}</p>
   </header>
 
@@ -90,8 +91,8 @@
       </span>
     </label>
     <button type="button" class="ui-chip" aria-pressed={all} onclick={() => { all = !all }}>{t('transcribe.allSystems')}</button>
-    <button type="button" class="ui-button" data-size="sm" disabled={!chars.length} onclick={() => copy(transcription)}>{t('transcribe.copyLine')}</button>
-    <button type="button" class="ui-button" data-size="sm" disabled={!chars.length} onclick={() => copy(table)}>{t('transcribe.copyTable')}</button>
+    <button type="button" class="ui-button" data-size="sm" disabled={!chars.length} onclick={() => copy(transcription)}><Icon name="copy" size={14}/>{t('transcribe.copyLine')}</button>
+    <button type="button" class="ui-button" data-size="sm" disabled={!chars.length} onclick={() => copy(table)}><Icon name="copy" size={14}/>{t('transcribe.copyTable')}</button>
     <span class="ui-count toolbar-end">{t('transcribe.count', { count: chars.length })}</span>
   </div>
 

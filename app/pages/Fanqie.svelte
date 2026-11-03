@@ -9,6 +9,7 @@
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { record } from '../lib/record.js'
   import MiniFinder from '../ui/MiniFinder.svelte'
+  import Icon from '../ui/Icon.svelte'
 
   let query = $state(route.q)
   // Which reconstruction the results are read in: the reader's choice, remembered across pages.
@@ -55,7 +56,7 @@
 
 <div class="ui-page fanqie">
   <header class="ui-page-head">
-    <h1 class="ui-page-title">{t('nav.fanqie')}</h1>
+    <h1 class="ui-page-title"><Icon name="fanqie" size={22}/><span>{t('nav.fanqie')}</span></h1>
     <p class="ui-page-intro">{t('fanqie.intro')}</p>
   </header>
 
@@ -127,7 +128,7 @@
           </button>
           <button type="button" class="ui-row-action ui-button" data-variant="quiet" data-size="icon-sm"
             aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
-            <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <Icon name="add" size={15}/>
           </button>
         </li>
       {/each}

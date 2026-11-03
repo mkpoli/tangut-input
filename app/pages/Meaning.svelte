@@ -7,6 +7,7 @@
   import { byMeaning, MEANING_LANGUAGES } from '../lib/search.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from '../ui/G.svelte'
+  import Icon from '../ui/Icon.svelte'
 
   let query = $state(route.q)
   /** @type {string[]} an empty list searches all three */
@@ -52,7 +53,7 @@
 
 <div class="ui-page meaning">
   <header class="ui-page-head">
-    <h1 class="ui-page-title">{t('nav.meaning')}</h1>
+    <h1 class="ui-page-title"><Icon name="meaning" size={22}/><span>{t('nav.meaning')}</span></h1>
     <p class="ui-page-intro">{t('meaning.intro')}</p>
   </header>
 
@@ -96,7 +97,7 @@
           </button>
           <button type="button" class="ui-row-action ui-button" data-variant="quiet" data-size="icon-sm"
             aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
-            <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <Icon name="add" size={15}/>
           </button>
         </li>
       {/each}
