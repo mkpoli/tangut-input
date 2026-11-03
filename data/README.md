@@ -44,6 +44,15 @@ record names its source, licence, line ids and the exact text; the thirteen famo
 `scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the Wikisource
 texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausanne Corpus.
 
+## `tangut-era-evidence.tsv`
+
+What each Tangut era form rests on, one row per form and source: the era and its first year as the
+Western Xia calendar gives them, the Tangut form, the kind (`coin`, `disputed`, `text`, or `unknown`
+when a source says no form is known, with the form left empty) and the source's key in
+`app/lib/era-sources.js`. Compiled by hand from West's coin article (2007), his post on the law
+code's title (2020) and Nie Hongyin (2004) as quoted by 公維章 (2020). Eras without a row rest on
+the calendar alone. `scripts/build_tangut_eras.py` joins it to the calendar.
+
 ## `tangut-frequency.json.gz`
 
 One count per Tangut character: the number of places it occupies in
