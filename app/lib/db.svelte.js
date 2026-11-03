@@ -45,6 +45,9 @@ export const ix = {
   /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
   /** The several characters that stand for one Chinese fanqie initial: each maps to its group. @type {Map<string, string[]>} */ fanqieAliases: new Map(),
+  /** Characters one component away, built on the first ask: a reader who means one shape and draws
+   *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
+  /** Whether the sibling index has been built. */ siblingsReady: false,
 }
 
 export async function load() {

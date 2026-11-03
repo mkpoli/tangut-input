@@ -349,5 +349,6 @@
   "palette.mineral": "위린",
   "palette.indigo": "쪽빛",
   "palette.sand": "카라호토",
-  "theme.label": "테마"
+  "theme.label": "테마",
+  "draw.siblings": "{char}와 부품 하나만 다른 글자"
 }

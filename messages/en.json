@@ -349,5 +349,6 @@
   "palette.mineral": "Yulin",
   "palette.indigo": "Indigo",
   "palette.sand": "Khara",
-  "theme.label": "Theme"
+  "theme.label": "Theme",
+  "draw.siblings": "Often meant: characters one component away from {char}"
 }

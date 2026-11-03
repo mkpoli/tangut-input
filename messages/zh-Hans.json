@@ -349,5 +349,6 @@
   "palette.mineral": "榆林",
   "palette.indigo": "靛蓝",
   "palette.sand": "黑水城",
-  "theme.label": "主题"
+  "theme.label": "主题",
+  "draw.siblings": "与「{char}」只差一个部件的字"
 }

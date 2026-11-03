@@ -349,5 +349,6 @@
   "palette.mineral": "楡林",
   "palette.indigo": "藍",
   "palette.sand": "カラホト",
-  "theme.label": "テーマ"
+  "theme.label": "テーマ",
+  "draw.siblings": "{char}と部品ひとつ違いの字"
 }

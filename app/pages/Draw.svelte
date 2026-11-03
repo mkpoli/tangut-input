@@ -6,8 +6,10 @@
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import { loadShapes, SHAPE_FACES } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
-  import { attachPad, put } from '../lib/ui.svelte.js'
+  import { siblingIndex } from '../lib/composition.js'
+  import { attachPad, put, choose } from '../lib/ui.svelte.js'
   import Candidates from '../ui/Candidates.svelte'
+  import G from '../ui/G.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
   /** @type {HTMLCanvasElement | null} */
@@ -92,6 +94,19 @@
     return rankEveryFace(mask).filter(hit => components || !/[\u{18800}-\u{18AFF}]/u.test(hit.char)).slice(0, 48)
   })
   const items = $derived(hits.map(hit => ({ char: hit.char, sub: gloss(hit.char), title: `${ix.strokes.get(hit.char) ?? '?'} strokes` })))
+
+  // The characters one component from the best match. A drawing that replaces a component with a
+  // neighbour of it is matched to what was drawn; the intended character is usually one of these.
+  const siblings = $derived.by(() => {
+    if (!hits.length || db.status !== 'ready') return []
+    if (!ix.siblingsReady) {
+      ix.siblings = siblingIndex(ix.entries)
+      ix.siblingsReady = true
+      ix.siblings = new Map(ix.siblings)
+    }
+    void ix.siblingsReady
+    return (ix.siblings.get(hits[0].char) ?? []).filter(char => !hits.slice(0, 12).some(hit => hit.char === char)).slice(0, 16)
+  })
 
   function resize() {
     if (!canvas) return
@@ -205,6 +220,18 @@
     </div>
     {#if items.length}
       <Candidates bind:this={grid} {items} bind:active size={70} label={t('draw.results')} />
+      {#if siblings.length}
+        <div class="kin">
+          <p class="ui-hint">{t('draw.siblings', { char: hits[0]?.char ?? '' })}</p>
+          <div class="ui-tiles" style:--ui-tile-size="52px">
+            {#each siblings as char (char)}
+              <button type="button" class="ui-tile" onclick={() => choose(char)} title={gloss(char)}>
+                <G char={char} />
+              </button>
+            {/each}
+          </div>
+        </div>
+      {/if}
       <p class="ui-hint keys">{@html t('draw.keys')}</p>
     {:else}
       <p class="ui-empty">{t('draw.empty')}</p>
@@ -217,6 +244,7 @@
   .pad-column{grid-area:pad;display:grid;gap:var(--ui-space-lg)}
   .notes{grid-area:notes;display:grid;gap:var(--ui-space-md)}
   .results{grid-area:results;min-inline-size:0}
+  .kin{display:grid;gap:6px;margin-top:18px}
   .pad{position:relative;aspect-ratio:1;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-xl);background:var(--ui-color-surface-sunken);overflow:hidden}
   .pad::before,.pad::after{content:"";position:absolute;background:var(--ui-color-border);pointer-events:none}
   .pad::before{left:50%;top:14px;bottom:14px;width:1px}
