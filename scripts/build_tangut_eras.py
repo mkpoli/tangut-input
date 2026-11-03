@@ -11,8 +11,10 @@ the forms rest on is in `data/tangut-era-evidence.tsv`, one row per form and sou
 - `coin`: read on a coin; `disputed`: read on a coin, but the reading or the era it names is
   disputed; `text`: written in a Tangut text; `unknown`: a source says no Tangut form is known.
 
-An era's dates are those of its first and last day in the calendar (Julian). The calendar runs
-past the end of the state, so the last era is given its start alone.
+An era's dates are its first and last day in the calendar (Julian), and its years are the lunar
+years those days fall in, counted by the Julian year in which each lunar year begins, so an era
+that ends in January does not seem to overlap the next. The calendar runs past the end of the
+state, so the last era is given its start alone.
 
     uv run scripts/build_tangut_eras.py [--zip FILE]
 """
@@ -47,17 +49,20 @@ def main() -> None:
         raise SystemExit('the calendar is not the one this list was checked against')
     text = zipfile.ZipFile(io.BytesIO(raw)).read('XixiaCalendar.txt').decode('utf-8-sig')
 
-    # One row per day; an era runs until the Chinese era name changes. 大慶 is used twice.
-    eras = []
+    # One row per day; an era runs until the Chinese era name changes. 大慶 is used twice. A lunar
+    # year begins on the day the cyclical year changes.
+    eras, cycle, lunar = [], None, None
     for row in csv.DictReader(io.StringIO(text), delimiter='\t'):
         name, form, day = row['Xia Era (Chinese)'], row['Xia Era (Tangut)'], row['Year-Month-Day']
+        if row['Cyclical Year'] != cycle:
+            cycle, lunar = row['Cyclical Year'], int(day[:4])
         if not eras or eras[-1]['era'] != name:
             forms = [f.strip() for f in form.split(' or ')] if form else []
             if not all(map(tangut, forms)):
                 raise SystemExit(f'unread Tangut form for {name}: {form!r}')
-            eras.append({'era': name, 'from': day, 'to': day, 'calendar': forms, 'evidence': []})
-        eras[-1]['to'] = day
-    eras[-1]['to'] = None
+            eras.append({'era': name, 'from': day, 'to': day, 'years': [lunar, lunar], 'calendar': forms, 'evidence': []})
+        eras[-1]['to'], eras[-1]['years'][1] = day, lunar
+    eras[-1]['to'], eras[-1]['years'][1] = None, None
 
     with EVIDENCE.open(encoding='utf-8') as file:
         for row in csv.DictReader(file, delimiter='\t'):
@@ -68,6 +73,8 @@ def main() -> None:
             era = next((e for e in eras if e['era'] == row['era'] and e['from'][:4] == row['from']), None)
             if not era:
                 raise SystemExit(f'no such era in the calendar: {row}')
+            if row['tangut'] and row['tangut'] not in era['calendar']:
+                raise SystemExit(f'the form differs from the calendar\'s, which the page would hide: {row}')
             era['evidence'].append({'tangut': row['tangut'], 'kind': row['kind'], 'source': row['source']})
 
     OUT.write_text(json.dumps(eras, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
