@@ -60,7 +60,7 @@ is followed there by a year.
 ## `tangut-titles.tsv`
 
 Imperial titles as the Tangut texts in this repository write them, one row per title and text: the
-holder; `identified`, `stated` by an edition or `dated`, inferred from the date of the passage; the
+holder; `identified`, `stated` by a study or `dated`, inferred from the date of the passage; the
 Tangut; the Chinese exactly as `chinese_source` prints it, if any; the source's key in
 `app/lib/era-sources.js`; and the `place`. Compiled by hand. `scripts/build_tangut_titles.py` stops
 if a title does not occur in its place.
