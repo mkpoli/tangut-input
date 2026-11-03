@@ -3,16 +3,19 @@
 A 文海 entry opens with at most four characters that say how the glyph is built from parts of other
 characters: the whole, left, middle, right, top, bottom or surrounding part of a source character.
 The 60 cells use those seven terms, and a source with no term after it is read as the whole
-character. This script reads the 60 construction cells in BabelStone's draft (Wenhai.html), turns
-their Private Use Area glyphs into Unicode through the WHYJ index and nkay0's Li Fanwen 2008 table,
+character. This script reads them from BabelStone's draft (Wenhai.html), or from a JSONL table,
 cuts the named part out of the source character's IDS, and compares the parts with the head
-character's own IDS.
+character's own IDS. The BabelStone path turns its Private Use Area glyphs into Unicode through the
+WHYJ index and nkay0's Li Fanwen 2008 table.
 
 Nothing is written; the script prints the counts and every mismatch.
 
-    uv run python scripts/eval_wenhai_composition.py [--pages DIR] [--csv FILE] [--ids FILE]
+    uv run python scripts/eval_wenhai_composition.py [--pages DIR] [--csv FILE] [--formulas FILE]
+        [--ids FILE]
 
-DIR holds saved copies of the three BabelStone pages under their own names.  The construction's
+DIR holds saved copies of the three BabelStone pages under their own names. A JSONL --formulas
+table, one {"character", "formula", "position"} object per line, can stand in for the pages; the
+formula is the construction's characters in order.  The construction's
 part terms and their readings are from Andrew West, "Untangling the Web of Characters" (2010):
 whole 𘓳, left 𘊱, middle 𘁝, right 𗡼, top 𗥦, bottom 𗘡, surrounding 𘍞.
 """
@@ -23,6 +26,7 @@ import csv
 import gzip
 import hashlib
 import io
+import json
 import sys
 from pathlib import Path
 
@@ -153,6 +157,39 @@ def glyph_characters(glyph: str, numbers: dict[str, list[str]], number_char: dic
     return exact or loose
 
 
+def is_tangut(character: str) -> bool:
+    """Whether a character is one of the Tangut ideographs or components."""
+    return 0x17000 <= ord(character) <= 0x18AFF
+
+
+def read_formulas(path: Path) -> list[dict[str, str]]:
+    """A construction table as JSONL: one object per line, with character, formula and optional
+    position. The formula is the entry's construction characters in order."""
+    rows = []
+    with path.open(encoding='utf-8') as source:
+        for number, line in enumerate(source, 1):
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError as error:
+                raise SystemExit(f'{path}:{number}: {error}')
+            if not isinstance(row, dict):
+                raise SystemExit(f'{path}:{number}: expected an object')
+            character = row.get('character')
+            formula = row.get('formula')
+            if not isinstance(character, str) or len(character) != 1 or not is_tangut(character):
+                raise SystemExit(f'{path}:{number}: character must be one Tangut character')
+            if (not isinstance(formula, str) or not 1 <= len(formula) <= 4
+                    or not all(is_tangut(char) for char in formula)):
+                raise SystemExit(f'{path}:{number}: formula must be one to four Tangut characters')
+            rows.append({'character': character, 'formula': formula,
+                         'position': str(row.get('position') or number)})
+    if not rows:
+        raise SystemExit(f'{path}: no constructions')
+    return rows
+
+
 def read_ids(path: Path) -> dict[str, str]:
     """The IDS table: one character and its description per row."""
     ids = {}
@@ -167,42 +204,54 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pages', type=Path, help='a folder of saved copies of the three pages')
     parser.add_argument('--csv', type=Path, help="a copy of nkay0's table, instead of fetching it")
+    parser.add_argument('--formulas', type=Path,
+                        help='a JSONL construction table, instead of the BabelStone pages')
     parser.add_argument('--ids', type=Path, default=IDS,
                         help='the IDS table (default: data/tangut-ids.tsv.gz)')
     options = parser.parse_args()
+    if options.formulas and (options.pages or options.csv):
+        parser.error('--formulas cannot be combined with --pages or --csv')
 
-    pages = {name: (options.pages / name).read_bytes() if options.pages
-             else check.fetch(check.BASE + name) for name in check.PAGES}
-    wenhai, listing, index = (pages[name].decode('utf-8') for name in check.PAGES)
-    raw = options.csv.read_bytes() if options.csv else check.fetch(check.TABLE)
-    if hashlib.sha256(raw).hexdigest() != check.SHA256:
-        raise SystemExit('the table is not the one the site is built from')
+    if options.formulas:
+        cells = [(row['position'], row['formula'], row['character'])
+                 for row in read_formulas(options.formulas)]
+    else:
+        pages = {name: (options.pages / name).read_bytes() if options.pages
+                 else check.fetch(check.BASE + name) for name in check.PAGES}
+        wenhai, listing, index = (pages[name].decode('utf-8') for name in check.PAGES)
+        raw = options.csv.read_bytes() if options.csv else check.fetch(check.TABLE)
+        if hashlib.sha256(raw).hexdigest() != check.SHA256:
+            raise SystemExit('the table is not the one the site is built from')
 
-    skeleton = check.skeleton_rows(wenhai)
-    heads = check.listing_rows(listing)
-    numbers = check.index_numbers(index)
-    table = list(csv.DictReader(io.StringIO(raw.decode('utf-8-sig'))))
-    number_char = {row['李範文 2008'][1:].lstrip('0'): row['文字']
-                   for row in table if row['李範文 2008'].startswith('L')}
+        skeleton = check.skeleton_rows(wenhai)
+        heads = check.listing_rows(listing)
+        numbers = check.index_numbers(index)
+        table = list(csv.DictReader(io.StringIO(raw.decode('utf-8-sig'))))
+        number_char = {row['李範文 2008'][1:].lstrip('0'): row['文字']
+                       for row in table if row['李範文 2008'].startswith('L')}
+        cells = [(key, value[3], heads.get(key))
+                 for key, value in sorted(skeleton.items()) if value[3]]
+
     ids = read_ids(options.ids)
-
-    cells = [(key, value[3]) for key, value in sorted(skeleton.items()) if value[3]]
     counts = collections.Counter()
     failures = []
-    for key, construction in cells:
-        found = [glyph_characters(glyph, numbers, number_char) for glyph in construction]
-        if any(len(mapped) != 1 for mapped in found):
-            counts['unreadable'] += 1
-            continue
-        counts['readable'] += 1
-        characters = ''.join(mapped[0] for mapped in found)
+    for key, construction, head in cells:
+        if options.formulas:
+            characters = construction
+            counts['readable'] += 1
+        else:
+            found = [glyph_characters(glyph, numbers, number_char) for glyph in construction]
+            if any(len(mapped) != 1 for mapped in found):
+                counts['unreadable'] += 1
+                continue
+            counts['readable'] += 1
+            characters = ''.join(mapped[0] for mapped in found)
         try:
             parts = formula_parts(characters)
         except ValueError:
             counts['unreadable formula'] += 1
             continue
         counts[f'{len(parts)} parts'] += 1
-        head = heads.get(key)
         if not head or head not in ids:
             counts['no head'] += 1
             continue

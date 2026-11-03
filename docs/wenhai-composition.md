@@ -92,11 +92,24 @@ definition. The counts describe this sample, not the whole 文海.
 ## Run
 
 ```sh
-uv run python scripts/eval_wenhai_composition.py [--pages DIR] [--csv FILE] [--ids FILE]
+uv run python scripts/eval_wenhai_composition.py [--pages DIR] [--csv FILE] [--formulas FILE] [--ids FILE]
 uv run python -m unittest discover -s scripts -p test_wenhai_composition.py
 ```
 
 `DIR` holds saved copies of the three BabelStone pages under their own names.
+
+## Other corpora
+
+`--formulas FILE` reads a JSONL table instead of BabelStone's pages, one object per line:
+
+```json
+{"position": "1.05.131", "character": "𘀏", "formula": "𘀑𘊱𗩝𗡼"}
+```
+
+`formula` is the entry's construction characters in order, using the seven terms above; `position`
+is optional. A construction that uses another term needs the vocabulary extended first. The 2008
+夏漢字典's fuller construction text can be converted to this form; the caller cites the edition. The
+same table was run on BabelStone's 60 rows: the two paths print identical counts and failures.
 
 ## Sources
 

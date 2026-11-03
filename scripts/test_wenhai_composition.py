@@ -1,5 +1,8 @@
 """Run with: python3 -m unittest discover -s scripts -p test_wenhai_composition.py."""
+import json
+import tempfile
 import unittest
+from pathlib import Path
 
 import eval_wenhai_composition as wenhai
 
@@ -77,6 +80,46 @@ class TreeTest(unittest.TestCase):
     def test_a_trailing_character_is_not_one_description(self):
         self.assertIsNone(wenhai.ids_top('⿰AB C'))
         self.assertIsNone(wenhai.ids_top('⿰A'))
+
+
+class FormulaTableTest(unittest.TestCase):
+    def write(self, rows):
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        path = Path(folder.name) / 'formulas.jsonl'
+        path.write_text('\n'.join(json.dumps(row, ensure_ascii=False) for row in rows) + '\n',
+                        encoding='utf-8')
+        return path
+
+    def test_reads_rows_and_numbers_a_missing_position(self):
+        rows = wenhai.read_formulas(self.write([
+            {'position': '1.05.131', 'character': '𘀏', 'formula': '𘀑𘊱𗩝𗡼'},
+            {'character': '𘀑', 'formula': '𘀏𘍞𗿼𘊱'},
+        ]))
+        self.assertEqual(rows[0], {'position': '1.05.131', 'character': '𘀏',
+                                   'formula': '𘀑𘊱𗩝𗡼'})
+        self.assertEqual(rows[1]['position'], '2')
+        self.assertEqual(rows[1]['character'], '𘀑')
+
+    def test_rejects_a_non_tangut_character(self):
+        with self.assertRaises(SystemExit):
+            wenhai.read_formulas(self.write([
+                {'character': 'A', 'formula': '𘀑𘊱𗩝𗡼'},
+            ]))
+
+    def test_rejects_a_non_object_line(self):
+        with self.assertRaises(SystemExit):
+            wenhai.read_formulas(self.write([[]]))
+
+    def test_rejects_a_long_formula(self):
+        with self.assertRaises(SystemExit):
+            wenhai.read_formulas(self.write([
+                {'character': '𘀏', 'formula': '𘀑𘊱𗩝𗡼𘀑'},
+            ]))
+
+    def test_rejects_an_empty_file(self):
+        with self.assertRaises(SystemExit):
+            wenhai.read_formulas(self.write([]))
 
 
 class GlyphTest(unittest.TestCase):
