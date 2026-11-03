@@ -226,6 +226,7 @@
   "card.readings": "독음",
   "card.soundGloss": "음주, {name}",
   "card.wenhai": "文海 풀이",
+  "card.wenhaiConstruction": "文海 자형 구성",
   "card.builtFrom": "짜임",
   "card.copyDescription": "자형 기술 복사",
   "card.description": "자형 기술",
