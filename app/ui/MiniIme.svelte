@@ -4,7 +4,7 @@
   // cannot type, so it stays open between picks.
   import { tick } from 'svelte'
   import { db, ix, isTangut, gloss } from '../lib/db.svelte.js'
-  import { byMeaning, byParts, byCode, bySijiao } from '../lib/search.js'
+  import { byMeaning, byParts, byCode, bySijiao, byCodePoint } from '../lib/search.js'
   import { searchReadings } from '../lib/reading.js'
   import { insert, remember } from '../lib/text.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
@@ -24,43 +24,41 @@
   const ready = $derived(db.status === 'ready')
   const text = $derived(query.trim())
 
-  /**
-   * What the query can mean, judged from its own characters: digits are a four-corner code, Latin
-   * letters are a Cangjie code or a reading, Tangut characters are the parts of a shape, and
-   * anything else is a meaning. Nothing has to be switched by hand.
-   */
-  const kinds = $derived.by(() => {
-    if (!text) return []
-    if (/^[0-9]+$/.test(text)) return /** @type {const} */ (['sijiao'])
-    if (/^[a-z]+$/i.test(text)) return /** @type {const} */ (['code', 'sound'])
-    if ([...text].some(isTangut)) return /** @type {const} */ (['parts'])
-    return /** @type {const} */ (['sense'])
-  })
-
   /** Recent picks, most recent first, so the same character twice is one key away. */
   let recent = $state(/** @type {string[]} */ ([]))
   try { recent = JSON.parse(localStorage.getItem('tangut-input:recent') ?? '[]') } catch { recent = [] }
 
   /** @typedef {{ char: string, note: string }} Hit */
-  /** @type {Hit[]} */
-  const hits = $derived.by(() => {
-    if (!ready) return []
-    if (!text) return recent.slice(0, 32).map(char => ({ char, note: gloss(char) }))
-    /** @type {Hit[]} */
-    const found = []
-    for (const kind of kinds) {
-      if (kind === 'code') for (const hit of byCode(text).slice(0, 24)) found.push({ char: hit.char, note: hit.code })
-      if (kind === 'sijiao') for (const hit of bySijiao(text).slice(0, 24)) found.push({ char: hit.char, note: '四角' })
-      if (kind === 'sound') for (const hit of searchReadings(ix.readings, text).slice(0, 24)) found.push({ char: hit.char, note: (hit.readings ?? []).join(' ') })
-      if (kind === 'sense') for (const hit of byMeaning(text).slice(0, 24)) found.push({ char: hit.char, note: gloss(hit.char) })
-      if (kind === 'parts') for (const char of byParts([...text].filter(isTangut)).slice(0, 24)) found.push({ char, note: gloss(char) })
+  /** @typedef {{ list: Hit[], kinds: string[] }} Found */
+
+  /**
+   * What the query can mean, judged from its own characters: digits are a four-corner code, letters
+   * a Cangjie code and a reading at once, Tangut characters the parts of a shape. A query that finds
+   * nothing that way is looked up as a meaning, so a word typed in English still lands somewhere.
+   * @returns {Found}
+   */
+  const found = $derived.by(() => {
+    if (!ready) return { list: [], kinds: [] }
+    if (!text) return { list: recent.slice(0, 32).map(char => ({ char, note: gloss(char) })), kinds: ['recent'] }
+    /** @type {[string, Hit[]][]} */
+    const lists = []
+    if (/^u\+?[0-9a-f]{3,5}$/i.test(text)) lists.push(['codepoint', byCodePoint(text).slice(0, 24).map(char => ({ char, note: char }))])
+    else if (/^[0-9]+$/.test(text)) lists.push(['sijiao', bySijiao(text).slice(0, 24).map(hit => ({ char: hit.char, note: hit.code }))])
+    if (/^[a-z]+$/i.test(text)) {
+      lists.push(['code', byCode(text).slice(0, 24).map(hit => ({ char: hit.char, note: hit.code }))])
+      lists.push(['sound', searchReadings(ix.readings, text).slice(0, 24).map(hit => ({ char: hit.char, note: (hit.readings ?? []).join(' ') }))])
     }
-    // One entry per character, the first mention keeping its place.
+    if ([...text].some(isTangut)) lists.push(['parts', byParts([...text].filter(isTangut)).slice(0, 24).map(char => ({ char, note: gloss(char) }))])
+    if (!lists.some(([, list]) => list.length)) lists.push(['sense', byMeaning(text).slice(0, 24).map(hit => ({ char: hit.char, note: gloss(hit.char) }))])
+    const used = lists.filter(([, list]) => list.length).map(([kind]) => kind)
     /** @type {Map<string, Hit>} */
     const unique = new Map()
-    for (const hit of found) if (!unique.has(hit.char)) unique.set(hit.char, hit)
-    return [...unique.values()].slice(0, 48)
+    for (const [, list] of lists) for (const hit of list) if (!unique.has(hit.char)) unique.set(hit.char, hit)
+    return { list: [...unique.values()].slice(0, 48), kinds: used }
   })
+
+  const hits = $derived(found.list)
+  const kinds = $derived(found.kinds)
 
   $effect(() => { void text; active = -1 })
 

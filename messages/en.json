@@ -399,5 +399,6 @@
   "ime.kind.sijiao": "Four-corner code",
   "ime.kind.sound": "Reading",
   "ime.kind.sense": "Meaning",
-  "ime.kind.parts": "Components"
+  "ime.kind.parts": "Components",
+  "ime.kind.codepoint": "Code point"
 }

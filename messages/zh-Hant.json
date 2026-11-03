@@ -399,5 +399,6 @@
   "ime.kind.sijiao": "四角號碼",
   "ime.kind.sound": "讀音",
   "ime.kind.sense": "釋義",
-  "ime.kind.parts": "部件"
+  "ime.kind.parts": "部件",
+  "ime.kind.codepoint": "碼位"
 }

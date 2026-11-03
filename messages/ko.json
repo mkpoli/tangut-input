@@ -399,5 +399,6 @@
   "ime.kind.sijiao": "사각 번호",
   "ime.kind.sound": "발음",
   "ime.kind.sense": "뜻",
-  "ime.kind.parts": "부품"
+  "ime.kind.parts": "부품",
+  "ime.kind.codepoint": "부호 위치"
 }
