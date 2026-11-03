@@ -1,7 +1,7 @@
 // Reading a description as a query: the records' own descriptions are the index, so the whole of a
 // description names one character and a description cut after its opening part names a family.
 import { expect, test } from 'bun:test'
-import { describedBy } from '../app/lib/description.js'
+import { describedBy, openingOf } from '../app/lib/description.js'
 
 const entries = [
   { char: '𗾆', composition: '⿱𘡃𘘘' },
@@ -28,4 +28,11 @@ test('a part or an operator alone is not a description', () => {
 
 test('a description no record begins with finds nothing', () => {
   expect(describedBy(entries, '⿲𘤊')).toEqual([])
+})
+
+test('a description opens with its operator and first part', () => {
+  expect(openingOf('⿰𘤊𘠡')).toBe('⿰𘤊')
+  expect(openingOf('⿱𘠀⿰𘢰𘠆')).toBe('⿱𘠀')
+  expect(openingOf('𘤊')).toBe('')
+  expect(openingOf('')).toBe('')
 })

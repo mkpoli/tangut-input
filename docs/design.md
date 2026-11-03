@@ -124,6 +124,8 @@ recorded with the fanqie it was made for.
 - 文海 gloss where the records have one (twelve entries).
 - **Built from**: the description drawn as nested frames that follow its layout (a row for ⿰, a
   column for ⿱, and so on), every part a button to its own card; the raw IDS string, click to copy.
+  Two links leave the frame: the characters with these parts, and the characters that begin like
+  this description.
 - **In a text**: for each place in the corpus, the passage with the character marked (other
   characters open their cards). A facsimile source adds the scribe's form cut from the page, the
   edition's English line, the page and a link to ぶんぽ's reading; a transcription adds the passage

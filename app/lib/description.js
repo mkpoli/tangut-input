@@ -21,3 +21,13 @@ export function describedBy(entries, text) {
   }
   return hits.sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
+
+/**
+ * The operator and first part a description opens with, as the string a prefix query takes.
+ * @param {string} [composition]
+ * @returns {string}
+ */
+export function openingOf(composition) {
+  const chars = [...(composition ?? '')]
+  return chars.length > 1 && OPERATORS.has(chars[0]) ? chars.slice(0, 2).join('') : ''
+}
