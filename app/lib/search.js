@@ -2,7 +2,7 @@
 // Readings live in reading.js and drawings in shape.js.
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 
-/** @typedef {{ char: string, code: string }} CodeHit */
+/** @typedef {{ char: string, code: string, near?: boolean }} CodeHit */
 
 /**
  * Characters whose Cangjie code begins with the typed letters: an exact code first, then shorter
@@ -28,9 +28,40 @@ export function byCode(letters, options = {}) {
     const known = best.get(char)
     if (known === undefined || rank(code, typed) < rank(known, typed)) best.set(char, code)
   }
-  return [...best].map(([char, code]) => ({ char, code }))
-    .sort((a, b) => rank(a.code, typed) - rank(b.code, typed) || a.code.localeCompare(b.code)
-      || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+  if (best.size) {
+    return [...best].map(([char, code]) => ({ char, code, near: false }))
+      .sort((a, b) => rank(a.code, typed) - rank(b.code, typed) || a.code.localeCompare(b.code)
+        || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+  }
+  // Nothing begins with the typed code. A code one key away is what a reader most often typed:
+  // a letter misread from the chart, or a second analysis of the same shape.
+  /** @type {Map<string, string>} */
+  const near = new Map()
+  for (const [code, char] of list) {
+    if (Math.abs(code.length - typed.length) > 1) continue
+    if (!within(code, typed)) continue
+    const known = near.get(char)
+    if (known === undefined || code.length < known.length) near.set(char, code)
+  }
+  return [...near].map(([char, code]) => ({ char, code, near: true }))
+    .sort((a, b) => a.code.length - b.code.length || a.code.localeCompare(b.code))
+}
+
+/**
+ * Whether two codes differ by at most one key: one letter added, dropped or replaced.
+ * @param {string} a @param {string} b
+ */
+function within(a, b) {
+  if (a === b) return false
+  const [short, long] = a.length <= b.length ? [a, b] : [b, a]
+  if (long.length - short.length > 1) return false
+  let i = 0, j = 0, edits = 0
+  while (i < short.length && j < long.length) {
+    if (short[i] === long[j]) { i++; j++; continue }
+    if (++edits > 1) return false
+    if (short.length === long.length) { i++; j++ } else j++
+  }
+  return edits + (long.length - j) + (short.length - i) <= 1
 }
 
 /** @param {string} code @param {string} typed */

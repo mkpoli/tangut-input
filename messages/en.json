@@ -336,5 +336,6 @@
   "transcribe.count": "{count} characters",
   "transcribe.char": "Character",
   "transcribe.meaning": "Meaning",
-  "transcribe.empty": "Type or paste Tangut text above; the readings appear here."
+  "transcribe.empty": "Type or paste Tangut text above; the readings appear here.",
+  "cangjie.near": "No code begins with {code}; these differ by one key, which a second analysis of the same shape often does."
 }

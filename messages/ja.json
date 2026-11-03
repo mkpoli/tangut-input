@@ -336,5 +336,6 @@
   "transcribe.count": "{count}字",
   "transcribe.char": "文字",
   "transcribe.meaning": "意味",
-  "transcribe.empty": "上の欄に西夏文を入力するか貼り付けると、ここに再構音が表示されます。"
+  "transcribe.empty": "上の欄に西夏文を入力するか貼り付けると、ここに再構音が表示されます。",
+  "cangjie.near": "「{code}」で始まるコードはありません。同じ字形を別に分析すると1字だけ違うコードになることがあり、ここにその候補を出しています。"
 }

@@ -336,5 +336,6 @@
   "transcribe.count": "{count}字",
   "transcribe.char": "字",
   "transcribe.meaning": "释义",
-  "transcribe.empty": "在上方输入或粘贴西夏文，此处即会显示拟音。"
+  "transcribe.empty": "在上方输入或粘贴西夏文，此处即会显示拟音。",
+  "cangjie.near": "没有以「{code}」开头的编码。同一字形换一种拆法，往往只差一个键，下面列出这类候选。"
 }

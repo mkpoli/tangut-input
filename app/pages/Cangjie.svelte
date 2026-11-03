@@ -25,6 +25,7 @@
 
   const ready = $derived(db.status === 'ready')
   const hits = $derived(ready ? byCode(code) : [])
+  const fuzz = $derived(hits.length > 0 && hits[0].near === true)
   const pages = $derived(Math.max(1, Math.ceil(hits.length / PAGE)))
   const shown = $derived(hits.slice(page * PAGE, page * PAGE + PAGE))
 
@@ -141,6 +142,7 @@
     </div>
 
     <div class="ui-candidates" role="listbox" aria-label={t('common.candidates')} data-idle={!code ? '' : undefined}>
+      {#if code && fuzz}<p class="ui-hint near">{t('cangjie.near', { code })}</p>{/if}
       {#if code && shown.length}
         {#each shown as hit, i (hit.char)}
           {@const [typed, rest] = split(hit.code)}
@@ -219,6 +221,7 @@
 
 <style>
   .composer{display:grid;gap:var(--ui-space-md)}
+  .near{margin:0 0 var(--ui-space-sm)}
   .box{display:flex;align-items:center;gap:var(--ui-space-xl)}
   .code-input{flex:1;min-inline-size:0;min-block-size:60px;padding:var(--ui-space-md) var(--ui-space-xl);border-radius:var(--ui-radius-lg);font-size:30px;letter-spacing:.14em;text-transform:lowercase}
   .code-input::placeholder{font-family:var(--ui-font-sans);font-size:var(--ui-text-lg);letter-spacing:.02em}
