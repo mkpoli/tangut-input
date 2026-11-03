@@ -195,7 +195,7 @@
     <div class="aside">
       <label class="reading" title={`${t('reading.system')}: ${systemTitle(readingSystem)}`}>
         <span class="reading-label" aria-hidden="true">{t('reading.system')}</span>
-        <span class="reading-icon" aria-hidden="true"><Icon name="sound" size={16}/></span>
+        <span class="reading-icon" aria-hidden="true"><Icon name="reconstruction" size={16}/></span>
         <span class="ui-visually-hidden">{t('reading.system')}</span>
         <span class="ui-select-wrap">
           <select class="ui-select" data-size="sm" value={ui.reading}

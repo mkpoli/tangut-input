@@ -11,6 +11,7 @@
     fanqie: '<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><path d="M13 6v8M9 10h8"/>',
     chart: '<rect x="3" y="3" width="14" height="14" rx="1"/><path d="M3 8h14M3 12.5h14M8 3v14M12.5 3v14"/>',
     reading: '<path d="M2.5 10h2l1.8-4.5 3 9 2.2-6 1.8 3h4.2"/>',
+    reconstruction: '<path d="M10 3v14M3.9 6.5l12.2 7M16.1 6.5 3.9 13.5"/>',
     transcribe: '<path d="M5 3h7l3 3v11H5z"/><path d="M12 3v3h3M7.5 9.5h5M7.5 12.5h5M7.5 15.5h3"/>',
     meaning: '<path d="M10 6.5C8 5 5.5 4.5 3 5v10c2.5-.5 5 0 7 1.5 2-1.5 4.5-2 7-1.5V5c-2.5-.5-5 0-7 1.5z"/><path d="M10 6.5v10"/>',
     sources: '<rect x="3.5" y="4" width="13" height="3.4" rx="1"/><rect x="3.5" y="8.6" width="13" height="3.4" rx="1"/><rect x="3.5" y="13.2" width="9" height="3.4" rx="1"/>',
