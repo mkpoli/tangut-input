@@ -32,20 +32,18 @@
   let fontTrigger = $state(null)
   /** @type {HTMLElement | null} */
   let fontList = $state(null)
-  /** The phone's tab strip, scrolled to keep the current finder in view. @type {HTMLElement | null} */
-  let tabs = $state(null)
-  /** On a phone the strip holds the four finders a reader starts from; the rest wait in a sheet. */
-  const EXTRAS = new Set(['sijiao', 'fanqie', 'chart', 'transcribe', 'draw', 'parts'])
-  let menu = $state(false)
+  /** @type {null | { kind: 'more' } | { kind: 'group', label: string }} The phone's sheet. */
+  let menu = $state(null)
   /** @type {HTMLDialogElement | null} */
   let sheet = $state(null)
-  /** @type {HTMLElement | null} */
-  let moreButton = $state(null)
+  /** The tab that opened the sheet, so closing it puts the keyboard back there. @type {HTMLElement | null} */
+  let menuTrigger = $state(null)
+  /** Whether closing the sheet should return focus to its tab; a link that opens a page keeps the page's focus. */
+  let returnFocus = true
 
   $effect(() => {
     void route.page
     applySeo(route.page)
-    tabs?.querySelector('a.on')?.scrollIntoView({ block: 'nearest', inline: 'center' })
   })
 
   // The phone sheet is a real dialog: the browser traps focus in it, closes it on Escape and
@@ -56,12 +54,30 @@
     if (!menu && sheet.open) sheet.close()
   })
 
-  /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page */
+  /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page @returns {boolean} whether the page changes */
   function nav(event, page) {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return false
     event.preventDefault()
+    if (page === route.page) return false
     go(page)
+    return true
   }
+
+  /** @param {MouseEvent} event @param {{ kind: 'more' } | { kind: 'group', label: string }} next */
+  function openMenu(event, next) {
+    menuTrigger = /** @type {HTMLElement} */ (event.currentTarget)
+    returnFocus = true
+    menu = next
+  }
+
+  /** @param {boolean} [restore] whether to put the keyboard back on the tab */
+  function closeMenu(restore = true) {
+    returnFocus = restore
+    menu = null
+  }
+
+  /** @param {string} label */
+  const groupOpen = label => menu?.kind === 'group' && menu.label === label
 
   /** `/` focuses the page's input from anywhere outside a field. @param {KeyboardEvent} event */
   function keys(event) {
@@ -72,7 +88,7 @@
       if (input) { event.preventDefault(); input.focus() }
     }
     if (event.key === 'Escape') {
-      if (ui.sheet) ui.sheet = false
+      if (ui.sheet && !menu) ui.sheet = false
       if (fontMenu) closeFont()
     }
   }
@@ -115,6 +131,21 @@
     if (fontMenu && !(/** @type {HTMLElement} */ (event.target)).closest('.font-pick')) fontMenu = false
   }
 
+  // Back or forward closes the sheet without pulling focus off the page that just opened.
+  $effect(() => {
+    const close = () => closeMenu(false)
+    addEventListener('popstate', close)
+    return () => removeEventListener('popstate', close)
+  })
+
+  // The sheet belongs to the phone's bar: a window that grows past it takes the sheet with it.
+  $effect(() => {
+    const wide = matchMedia('(min-width: 901px)')
+    const close = () => { if (wide.matches) closeMenu(false) }
+    wide.addEventListener('change', close)
+    return () => wide.removeEventListener('change', close)
+  })
+
   // A menu that sits over the page closes when the pointer goes anywhere else.
   $effect(() => {
     if (!fontMenu) return
@@ -128,6 +159,14 @@
   })
 
   const THEMES = $derived({ auto: t('theme.auto'), light: t('theme.light'), dark: t('theme.dark') })
+  /** @param {null | { kind: 'more' } | { kind: 'group', label: string }} state */
+  function groupOf(state) {
+    if (!state || state.kind !== 'group') return undefined
+    const { label } = state
+    return GROUPS.find(group => group.label === label)
+  }
+  const menuGroup = $derived(groupOf(menu))
+  const menuTitle = $derived(menuGroup ? t(menuGroup.label) : t('nav.more'))
 </script>
 
 <svelte:window onkeydown={keys} />
@@ -245,70 +284,81 @@
     </div>
   {/if}
 
-  <nav class="tabs" aria-label={t('nav.label')} bind:this={tabs}>
-    {#each PAGES as page (page.path)}
-      <a href="/{page.path}" class:on={route.page === page.path} class:extra={EXTRAS.has(page.path)}
-        aria-current={route.page === page.path ? 'page' : undefined}
-        onclick={event => nav(event, page.path)}>{t(page.label)}</a>
+  <nav class="tabs" aria-label={t('nav.label')}>
+    <a class="tab" href="/" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
+      onclick={event => nav(event, '')}>{t(PRIMARY.tab)}</a>
+    {#each GROUPS as group (group.label)}
+      <button class="tab" type="button" class:on={group.pages.some(page => page.path === route.page)}
+        aria-current={group.pages.some(page => page.path === route.page) ? 'true' : undefined}
+        aria-haspopup="dialog" aria-expanded={groupOpen(group.label)}
+        onclick={event => openMenu(event, { kind: 'group', label: group.label })}>
+        {t(group.tab)}
+        <svg class="caret" viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     {/each}
-    <button class="more" class:on={EXTRAS.has(route.page) || route.page === 'about'} type="button" bind:this={moreButton}
-      aria-expanded={menu} aria-haspopup="dialog" onclick={() => { menu = true }}>{t('nav.more')}</button>
+    <button class="tab" type="button" class:on={route.page === 'about'}
+      aria-current={route.page === 'about' ? 'true' : undefined}
+      aria-haspopup="dialog" aria-expanded={menu?.kind === 'more'}
+      onclick={event => openMenu(event, { kind: 'more' })}>{t('nav.more')}</button>
   </nav>
 
-  <dialog class="sheet" bind:this={sheet} aria-label={t('nav.label')}
-    onclose={() => { menu = false; moreButton?.focus() }}
-    onclick={(/** @type {MouseEvent} */ event) => { if (event.target === sheet) menu = false }}>
+  <dialog class="sheet" bind:this={sheet} aria-label={menuTitle}
+    onclose={() => { menu = null; if (returnFocus) menuTrigger?.focus(); returnFocus = true }}
+    onclick={(/** @type {MouseEvent} */ event) => { if (event.target === sheet) closeMenu() }}>
     <div class="sheet-head">
-      <p class="ui-label">{t('nav.more')}</p>
+      <p class="ui-label">{menuTitle}</p>
       <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('nav.menuClose')}
-        onclick={() => { menu = false }}>×</button>
+        onclick={() => closeMenu()}>×</button>
     </div>
-    <div class="sheet-links">
-      {#each GROUPS as group (group.label)}
-        {@const extras = group.pages.filter(page => EXTRAS.has(page.path))}
-        {#if extras.length}
-          <p class="ui-label sheet-group">{t(group.label)}</p>
-          {#each extras as page (page.path)}
-            <a class="sheet-link" href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
-              onclick={event => { menu = false; nav(event, page.path) }}>
-              <span class="sheet-name">{t(page.label)}</span><span class="ui-hint">{t(page.hint)}</span>
-            </a>
-          {/each}
-        {/if}
-      {/each}
-    </div>
-    <hr class="ui-menu-separator" />
-    <div class="sheet-picks">
-      <label class="sheet-pick">
-        <span class="ui-label">{t('palette.label')}</span>
-        <span class="ui-select-wrap">
-          <select class="ui-select" value={ui.palette}
-            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setPalette(/** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (event.currentTarget.value))}>
-            {#each PALETTES as entry (entry.key)}<option value={entry.key}>{t(entry.label)}</option>{/each}
-          </select>
-        </span>
-      </label>
-      <label class="sheet-pick">
-        <span class="ui-label">{t('theme.label')}</span>
-        <span class="ui-select-wrap">
-          <select class="ui-select" value={ui.theme}
-            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setTheme(/** @type {'auto' | 'light' | 'dark'} */ (event.currentTarget.value))}>
-            <option value="auto">{t('theme.auto')}</option>
-            <option value="light">{t('theme.light')}</option>
-            <option value="dark">{t('theme.dark')}</option>
-          </select>
-        </span>
-      </label>
-      <label class="sheet-pick">
-        <span class="ui-label">{t('lang.label')}</span>
-        <span class="ui-select-wrap">
-          <select class="ui-select" value={i18n.locale}
-            onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setLocale(/** @type {any} */ (event.currentTarget.value))}>
-            {#each LOCALES as locale (locale.key)}<option value={locale.key} lang={locale.key}>{locale.name}</option>{/each}
-          </select>
-        </span>
-      </label>
-    </div>
+    {#if menuGroup}
+      <div class="sheet-links">
+        {#each menuGroup.pages as page (page.path)}
+          <a class="sheet-link" href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
+            onclick={event => closeMenu(!nav(event, page.path))}>
+            <span class="sheet-name">{t(page.label)}</span><span class="ui-hint">{t(page.hint)}</span>
+          </a>
+        {/each}
+      </div>
+    {:else}
+      <div class="sheet-links">
+        <a class="sheet-link" href="/about" class:on={route.page === 'about'} aria-current={route.page === 'about' ? 'page' : undefined}
+          onclick={event => closeMenu(!nav(event, 'about'))}>
+          <span class="sheet-name">{t('nav.sources')}</span><span class="ui-hint">{t('nav.sources.hint')}</span>
+        </a>
+      </div>
+      <hr class="ui-menu-separator" />
+      <div class="sheet-picks">
+        <label class="sheet-pick">
+          <span class="ui-label">{t('palette.label')}</span>
+          <span class="ui-select-wrap">
+            <select class="ui-select" value={ui.palette}
+              onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setPalette(/** @type {'paper' | 'mineral' | 'indigo' | 'sand'} */ (event.currentTarget.value))}>
+              {#each PALETTES as entry (entry.key)}<option value={entry.key}>{t(entry.label)}</option>{/each}
+            </select>
+          </span>
+        </label>
+        <label class="sheet-pick">
+          <span class="ui-label">{t('theme.label')}</span>
+          <span class="ui-select-wrap">
+            <select class="ui-select" value={ui.theme}
+              onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setTheme(/** @type {'auto' | 'light' | 'dark'} */ (event.currentTarget.value))}>
+              <option value="auto">{t('theme.auto')}</option>
+              <option value="light">{t('theme.light')}</option>
+              <option value="dark">{t('theme.dark')}</option>
+            </select>
+          </span>
+        </label>
+        <label class="sheet-pick">
+          <span class="ui-label">{t('lang.label')}</span>
+          <span class="ui-select-wrap">
+            <select class="ui-select" value={i18n.locale}
+              onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setLocale(/** @type {any} */ (event.currentTarget.value))}>
+              {#each LOCALES as locale (locale.key)}<option value={locale.key} lang={locale.key}>{locale.name}</option>{/each}
+            </select>
+          </span>
+        </label>
+      </div>
+    {/if}
   </dialog>
 
   <div class="toast" role="status" aria-live="polite">{#if toast.message}<span class="ui-toast">{toast.message}</span>{/if}</div>
@@ -355,8 +405,6 @@
   .sheet::backdrop{background:var(--ui-color-overlay)}
   .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--ui-space-sm);padding-inline:var(--ui-space-sm)}
   .sheet-links{display:grid;gap:1px}
-  .sheet-group{padding:var(--ui-space-sm) var(--ui-space-sm) var(--ui-space-2xs);color:var(--ui-color-ink-soft)}
-  .sheet-group:not(:first-child){margin-top:var(--ui-space-xs)}
   .sheet-link{display:flex;align-items:baseline;gap:var(--ui-space-md);padding:var(--ui-space-md) var(--ui-space-sm);border-radius:var(--ui-radius-sm);color:var(--ui-color-ink);text-decoration:none}
   .sheet-link:hover,.sheet-link.on{background:var(--ui-color-surface-hover)}
   .sheet-link.on .sheet-name{color:var(--ui-color-accent-ink)}
@@ -393,9 +441,9 @@
     .card.open{transform:none;visibility:visible}
     .name{display:none}
     .tabs{position:fixed;inset-inline:0;bottom:0;z-index:var(--ui-z-chrome);display:flex;gap:2px;padding:var(--ui-space-xs) var(--ui-space-sm) calc(var(--ui-space-xs) + env(safe-area-inset-bottom));background:var(--ui-color-surface);border-top:1px solid var(--ui-color-border)}
-    .tabs a,.tabs .more{flex:1 1 0;padding:9px 4px;border:0;border-radius:var(--ui-radius-sm);text-align:center;color:var(--ui-color-ink-soft);background:none;text-decoration:none;font-size:var(--ui-text-xs);font-weight:var(--ui-weight-medium);white-space:nowrap}
-    .tabs a.extra{display:none}
-    .tabs a.on,.tabs .more.on{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
+    .tabs .tab{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:2px;padding:9px 3px;border:0;border-radius:var(--ui-radius-sm);color:var(--ui-color-ink-soft);background:none;text-decoration:none;font-family:inherit;font-size:var(--ui-text-xs);font-weight:var(--ui-weight-medium);white-space:nowrap;cursor:pointer}
+    .tabs .tab.on{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
+    .caret{flex:none;opacity:.55}
     .toast{bottom:calc(76px + env(safe-area-inset-bottom))}
   }
   @media (prefers-reduced-motion:reduce){.card{transition:none}}

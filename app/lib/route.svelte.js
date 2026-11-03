@@ -3,12 +3,14 @@
 
 // Each page's name and one-line hint are message keys, so the bar reads in the reader's language.
 // One box takes anything and stands before the bar; the finders behind it are grouped by what the
-// reader already has: a shape, a sound, a meaning.
-export const PRIMARY = { path: '', label: 'nav.find', hint: 'nav.find.hint' }
+// reader already has: a shape, a sound, a meaning. A group's `tab` is its short name in the phone's
+// bottom bar, where the long label would not fit.
+export const PRIMARY = { path: '', label: 'nav.find', tab: 'nav.find.tab', hint: 'nav.find.hint' }
 
 export const GROUPS = /** @type {const} */ ([
   {
     label: 'nav.group.shape',
+    tab: 'nav.group.shape.tab',
     pages: [
       { path: 'cangjie', label: 'nav.cangjie', hint: 'nav.cangjie.hint' },
       { path: 'sijiao', label: 'nav.sijiao', hint: 'nav.sijiao.hint' },
@@ -18,6 +20,7 @@ export const GROUPS = /** @type {const} */ ([
   },
   {
     label: 'nav.group.sound',
+    tab: 'nav.group.sound.tab',
     pages: [
       { path: 'fanqie', label: 'nav.fanqie', hint: 'nav.fanqie.hint' },
       { path: 'chart', label: 'nav.chart', hint: 'nav.chart.hint' },
@@ -27,6 +30,7 @@ export const GROUPS = /** @type {const} */ ([
   },
   {
     label: 'nav.group.sense',
+    tab: 'nav.group.sense.tab',
     pages: [{ path: 'meaning', label: 'nav.meaning', hint: 'nav.meaning.hint' }],
   },
 ])
