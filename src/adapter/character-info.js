@@ -1,12 +1,17 @@
 // @ts-check
 import { isSmallSeal } from './seal-data.js'
+import { READING_SYSTEMS, SOUND_SYSTEMS } from '../core/tangut-readings.js'
 
-/** @typedef {{ label: string, url: string, license?: string }} InfoSource */
+/** Which kind each source record is; the card names the site and the note by this key. */
+export const SOURCE_KINDS = /** @type {const} */ (['editorial', 'unicodeSealSource', 'sealSource', 'openTangut', 'unihan', 'component', 'tangutIds'])
+/** @typedef {(typeof SOURCE_KINDS)[number]} SourceKind */
+/** @typedef {{ label: string, url: string, license?: string, note?: SourceKind }} InfoSource */
 /** @typedef {{ en: string[], han: string[], emoji: string }} MeaningAid */
-/** @typedef {{ en: string[], source: 'unihan' | 'wiktionary', aids?: number[] }} GlossEntry */
+/** @typedef {{ en: string[], ja?: string[], zh?: string[], readings?: Record<string, string>, sounds?: Record<string, string>, source: 'unihan' | 'openTangut', aids?: number[] }} GlossEntry */
 /** @typedef {{ format: string, entries: Record<string, GlossEntry>, aids: MeaningAid[], components: Record<string, { en: string, sense?: string, han: string[], emoji: string, source: InfoSource }> }} CharacterInfoData */
 /** @typedef {{ char: string, kind: 'han' | 'tangut' | 'seal' | 'modern' | 'usage', meaning?: string }} CharacterRelation */
-/** @typedef {{ char: string, script: 'han' | 'tangut' | 'component' | 'seal', glosses: string[], association?: string, emoji: { text: string, meaning: string }[], relations: CharacterRelation[], sources: InfoSource[] }} CharacterInfo */
+/** @typedef {{ name: string, zh: string, value: string }} InfoReading */
+/** @typedef {{ char: string, script: 'han' | 'tangut' | 'component' | 'seal', glosses: string[], meanings?: { ja?: string[], zh?: string[] }, readings?: InfoReading[], soundGlosses?: InfoReading[], association?: string, emoji: { text: string, meaning: string }[], relations: CharacterRelation[], sources: InfoSource[], sourceSites?: string[] }} CharacterInfo */
 
 /** @param {string} char */
 export const characterScript = char => [...char].length !== 1 ? null : isSmallSeal(char) ? 'seal'
@@ -14,21 +19,34 @@ export const characterScript = char => [...char].length !== 1 ? null : isSmallSe
   : /^[\u{17000}-\u{187FF}\u{18D00}-\u{18DFF}]$/u.test(char) ? 'tangut'
   : /^[\p{Unified_Ideograph}\p{Radical}\uF900-\uFAFF\u{2F800}-\u{2FA1F}〇]$/u.test(char) ? 'han' : null
 
-const editorial = { label: 'Editorial meaning aids', url: 'https://github.com/mkpoli/ids-input/blob/main/data/README.md#character-information-panels' }
-const unicodeSealSource = { label: 'Unicode · SealSources', url: 'https://github.com/frankslin/kaiyuan-small-seal-font/blob/97433695858330ec9fdb7de9c4604da2f635eba6/third_party/unicode/ucd/SealSources.txt', license: 'Unicode License v3' }
-const sealSource = { label: 'CHISE · Jiguge Small Seal', url: 'https://gitlab.chise.org/CHISE/ids', license: 'GPL-2.0-or-later' }
+const editorial = { label: 'Editorial meaning aids', url: 'https://github.com/mkpoli/ids-input/blob/main/data/README.md#character-information-panels', note: /** @type {const} */ ('editorial') }
+const unicodeSealSource = { label: 'Unicode · SealSources', url: 'https://github.com/frankslin/kaiyuan-small-seal-font/blob/97433695858330ec9fdb7de9c4604da2f635eba6/third_party/unicode/ucd/SealSources.txt', license: 'Unicode License v3', note: /** @type {const} */ ('unicodeSealSource') }
+const sealSource = { label: 'CHISE · Jiguge Small Seal', url: 'https://gitlab.chise.org/CHISE/ids', license: 'GPL-2.0-or-later', note: /** @type {const} */ ('sealSource') }
+const openTangut = { label: 'Open Tangut', url: 'https://github.com/imlooh/open-tangut', license: 'MIT', note: /** @type {const} */ ('openTangut') }
 /** @param {string} char */
-const wiktionary = char => ({ label: 'Wiktionary contributors', url: `https://en.wiktionary.org/wiki/${encodeURIComponent(char)}#Tangut`, license: 'CC BY-SA 4.0' })
-/** @param {string} char */
-const unihan = char => ({ label: 'Unicode · Unihan kDefinition', url: `https://www.unicode.org/cgi-bin/GetUnihanData.pl?codepoint=${char.codePointAt(0)?.toString(16).toUpperCase()}`, license: 'Unicode License v3' })
+const unihan = char => /** @type {const} */ ({ label: 'Unicode · Unihan kDefinition', url: `https://www.unicode.org/cgi-bin/GetUnihanData.pl?codepoint=${char.codePointAt(0)?.toString(16).toUpperCase()}`, license: 'Unicode License v3', note: 'unihan' })
+
+/** Every record a character is built from, tagged with its kind and deduplicated the way the card
+ *  shows them: one entry per kind, named by its first record, so Unihan, Open Tangut, CHISE, the
+ *  Unicode seal list and the editorial aids each appear once whatever number of records feed them.
+ *  @param {InfoSource[]} records @returns {InfoSource[]} */
+export function mergeSources(records) {
+  /** @type {InfoSource[]} */
+  const merged = []
+  for (const record of records) {
+    const kind = record.note ?? 'component'
+    if (!merged.some(other => (other.note ?? 'component') === kind)) merged.push({ ...record, note: kind })
+  }
+  return merged
+}
 
 /** @param {CharacterInfoData} doc @param {import('./seal-data.js').SmallSealData | null} [seal] */
 export function createCharacterInfo(doc, seal = null) {
-  if (doc.format !== 'ids-character-info-1') throw new Error('Unsupported character information format')
+  if (doc.format !== 'ids-character-info-2') throw new Error('Unsupported character information format')
   /** @type {Map<string, CharacterRelation[]>} */
   const translations = new Map()
   for (const [char, entry] of Object.entries(doc.entries)) {
-    if (entry.source !== 'wiktionary') continue
+    if (entry.source !== 'openTangut') continue
     for (const i of entry.aids ?? []) {
       const aid = doc.aids[i]
       for (const han of aid.han) {
@@ -56,7 +74,10 @@ export function createCharacterInfo(doc, seal = null) {
     const entry = doc.entries[char], component = doc.components[char]
     /** @type {CharacterInfo} */
     const result = { char, script, glosses: entry?.en ?? [], emoji: [], relations: [], sources: [] }
-    if (entry) result.sources.push(entry.source === 'unihan' ? unihan(char) : wiktionary(char))
+    if (entry) result.sources.push(entry.source === 'unihan' ? unihan(char) : openTangut)
+    if (entry?.ja?.length || entry?.zh?.length) result.meanings = { ...(entry.ja?.length ? { ja: entry.ja } : {}), ...(entry.zh?.length ? { zh: entry.zh } : {}) }
+    if (entry?.readings) result.readings = READING_SYSTEMS.flatMap(({ key, name, zh }) => entry.readings?.[key] ? [{ name, zh, value: entry.readings[key] }] : [])
+    if (entry?.sounds) result.soundGlosses = SOUND_SYSTEMS.flatMap(({ key, name, zh }) => entry.sounds?.[key] ? [{ name, zh, value: entry.sounds[key] }] : [])
     for (const i of entry?.aids ?? []) {
       const aid = doc.aids[i]
       result.emoji.push({ text: aid.emoji, meaning: aid.en[0] })
@@ -66,11 +87,12 @@ export function createCharacterInfo(doc, seal = null) {
       result.association = component.en
       result.emoji.push({ text: component.emoji, meaning: component.en })
       result.relations.push(...component.han.map(han => ({ char: han, kind: /** @type {const} */ ('han'), meaning: component.en })))
-      result.sources.push(component.source)
+      result.sources.push({ ...component.source, note: /** @type {const} */ ('component') })
     }
     if (script === 'han') {
       result.relations.push(...(translations.get(char) ?? []))
-      for (const relation of result.relations) result.sources.push(wiktionary(relation.char))
+      // Open Tangut gives the Tangut relation its Han translation; the record's site is the way in.
+      if (result.relations.some(relation => relation.kind === 'tangut')) result.sources.push(openTangut)
       result.relations.push(...(seals.get(char) ?? []).map(old => ({ char: old, kind: /** @type {const} */ ('seal') })))
     } else if (script === 'seal') {
       result.relations.push(...directModern(seal?.modern[char] ?? []).map(han => ({ char: han, kind: /** @type {const} */ ('modern') })))
@@ -79,7 +101,8 @@ export function createCharacterInfo(doc, seal = null) {
     if (result.emoji.length || result.relations.some(r => r.kind === 'tangut')) result.sources.push(editorial)
     result.emoji = result.emoji.filter((e, i, all) => all.findIndex(v => v.text === e.text && v.meaning === e.meaning) === i)
     result.relations = result.relations.filter((r, i, all) => all.findIndex(v => v.char === r.char && v.kind === r.kind && v.meaning === r.meaning) === i)
-    result.sources = result.sources.filter((s, i, all) => all.findIndex(v => v.url === s.url) === i)
+    result.sources = mergeSources(result.sources)
+    result.sourceSites = /** @type {SourceKind[]} */ (result.sources.map(source => source.note))
     return result
   }
 }
@@ -87,7 +110,7 @@ export function createCharacterInfo(doc, seal = null) {
 /** Explicit component occurrences in recorded IDS, with dictionary meanings. No inferred component gloss.
  * @param {string} char @param {CharacterInfoData} doc @param {Map<string, import('../core/decompose.js').Sequence[]>} table */
 export function componentExamples(char, doc, table) {
-  return Object.entries(doc.entries).filter(([word, entry]) => entry.source === 'wiktionary' && table.get(word)?.some(s => s.text.includes(char)))
+  return Object.entries(doc.entries).filter(([word, entry]) => entry.source === 'openTangut' && entry.en.length && table.get(word)?.some(s => s.text.includes(char)))
     .slice(0, 4).map(([word, entry]) => ({ char: word, kind: /** @type {const} */ ('usage'), meaning: entry.en[0] }))
 }
-export { wiktionary as tangutGlossSource }
+export { openTangut as openTangutSource }

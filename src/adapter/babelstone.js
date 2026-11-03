@@ -2,7 +2,7 @@
 // The default adapter: BabelStone IDS from a compact table, and the parts palette, read from URLs the
 // host serves (all ship in this package's `data/`). Nothing is asked of a server beyond those files.
 import { createRelationSearch } from './character-relations.js'
-import { createCharacterInfo, componentExamples, tangutGlossSource } from './character-info.js'
+import { createCharacterInfo, componentExamples, mergeSources, openTangutSource } from './character-info.js'
 import { sealTable, sealNames, sealForms, isSmallSeal } from './seal-data.js'
 import { shuishuNames, shuishuTable } from './shuishu-data.js'
 import { componentIndex } from './containing.js'
@@ -585,8 +585,9 @@ export function babelStoneAdapter({ ids, additionalIds, components, componentsTe
       const info = lookup(char)
       if (info?.script === 'component' && (given || ids || smallSeal)) {
         info.relations.push(...componentExamples(char, doc, await read()))
-        for (const row of info.relations.filter(r => r.kind === 'usage')) info.sources.push(tangutGlossSource(row.char))
-        if (info.relations.some(r => r.kind === 'usage')) info.sources.push({ label: 'Andrew West · Tangut IDS', url: 'https://www.babelstone.co.uk/Tangut/TangutIDS.txt' })
+        const added = []
+        if (info.relations.some(r => r.kind === 'usage')) added.push(openTangutSource, { label: 'Andrew West · Tangut IDS', url: 'https://www.babelstone.co.uk/Tangut/TangutIDS.txt', note: /** @type {const} */ ('tangutIds') })
+        info.sources = mergeSources([...info.sources, ...added])
       }
       signal?.throwIfAborted()
       return info
