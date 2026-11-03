@@ -11,3 +11,5 @@ __pycache__/
 /dist-worker/
 data/handwriting/
 app/public/fonts/.cache/
+docs/handwriting-annotate.html
+docs/handwriting-gallery.html
