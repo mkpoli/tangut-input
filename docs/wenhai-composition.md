@@ -111,6 +111,20 @@ is optional. A construction that uses another term needs the vocabulary extended
 夏漢字典's fuller construction text can be converted to this form; the caller cites the edition. The
 same table was run on BabelStone's 60 rows: the two paths print identical counts and failures.
 
+## The card's table
+
+The card reads [`app/data/wenhai-composition.json`](../app/data/wenhai-composition.json).
+`scripts/build_wenhai_composition.py` writes it from BabelStone's pages; with `--formulas FILE
+--source '…'` it writes it from a construction table, so the fuller 2008 corpus can replace the 60
+rows without hand editing. Both paths produce the same entries; the page path writes the committed
+file's citation, so it matches byte for byte, and the table path matches when `--source` is that
+citation.
+
+```sh
+uv run python scripts/build_wenhai_composition.py --pages DIR --csv FILE
+uv run python scripts/build_wenhai_composition.py --formulas FILE --source 'edition'
+```
+
 ## Sources
 
 - [CCAMC, 文海](http://www.ccamc.org/tangut_wenhai.php) — the three-part entry and the parts a
