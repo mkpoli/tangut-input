@@ -369,7 +369,7 @@
                 <td>
                   {#if row.columns.get(group)?.length}
                     {#each row.columns.get(group) ?? [] as char (char)}
-                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan" lang="bo">{ix.tibetan.get(char)?.map(([, script]) => script).join(' ')}</small>{/if}</button>
+                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan" lang="bo">{ix.tibetan.get(char)?.map(([wylie, script]) => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}${wylie.includes('[?]') ? '?' : ''}`).join(' ')}</small>{/if}</button>
                     {/each}
                   {/if}
                 </td>

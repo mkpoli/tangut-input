@@ -97,7 +97,7 @@ export const loadFanqieAliases = () => once('fanqie-aliases', () => readJson(new
 
 /** Tibetan phonetic glosses by character, from BabelStone's index of five British Library manuscripts:
  * each gloss is [Wylie, Tibetan script, [[shelfmark, count]…]].
- * @returns {Promise<{ source: string, author: string, modified: string | null, glosses: Record<string, [string, string, [string, number][]][]> }>} */
+ * @returns {Promise<{ format: string, source: string, author: string, modified: string | null, retrieved: string, note: string, glosses: Record<string, [string, string, [string, number][]][]> }>} */
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */
