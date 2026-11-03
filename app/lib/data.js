@@ -19,6 +19,7 @@
 /** @typedef {{ id: string, sourceId: string, sourceTitle: string, sourceUrl: string, licence: string, label: string,
  *   famous: boolean, lineIds: string[], text: string }} Sample */
 /** @typedef {{ built: string, samples: Sample[] }} Samples */
+/** @typedef {{ source: string, entries: Record<string, { position: string, parts: [string, string | null][] }> }} WenhaiComposition */
 
 /**
  * Fetch a gzipped file. The dev server may hand it over already decoded, so the magic bytes decide
@@ -114,6 +115,9 @@ export const loadAttestation = () => once('attestation', () => readJson(new URL(
 
 /** Sample passages copied from the corpus. @returns {Promise<Samples>} */
 export const loadSamples = () => once('samples', () => readJson(new URL('../data/tangut-samples.json', import.meta.url)))
+
+/** The 60 文海 constructions: each head character's page and its source/part pairs. @returns {Promise<WenhaiComposition>} */
+export const loadWenhaiComposition = () => once('wenhai-composition', () => readJson(new URL('../data/wenhai-composition.json', import.meta.url)))
 
 /** The faces a drawing is compared with, best first: the shapes tabulated for each face. */
 export const SHAPE_FACES = /** @type {const} */ ([

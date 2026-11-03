@@ -3,6 +3,7 @@
   // first, then what helps a reader confirm it is the one they mean (meaning, readings, structure,
   // where it stands in a text), then the characters near it.
   import { db, ix, codePoint, gloss, isComponent } from '../lib/db.svelte.js'
+  import { onMount } from 'svelte'
   import G from './G.svelte'
   import Icon from './Icon.svelte'
   import { route, link } from '../lib/route.svelte.js'
@@ -14,11 +15,19 @@
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
   import Attest from './Attest.svelte'
+  import { loadWenhaiComposition } from '../lib/data.js'
   import Peek from './Peek.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
+  /** @type {{ entries: Record<string, { position: string, parts: [string, string | null][] }> }} */
+  let compositions = $state({ entries: {} })
+  onMount(async () => { compositions = await loadWenhaiComposition() })
+  const construction = $derived(char ? compositions.entries[char] : undefined)
+  const PART_TERMS = { whole: '全', left: '左', middle: '中', right: '右', top: '上', bottom: '下', surrounding: '圍' }
+  /** @param {string | null} part */
+  const partTerm = part => part ? (PART_TERMS[/** @type {keyof typeof PART_TERMS} */ (part)] ?? part) : ''
   const entry = $derived(ready && char ? ix.byChar.get(char) : undefined)
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
@@ -213,6 +222,18 @@
       </section>
     {/if}
 
+    {#if construction}
+      <section>
+        <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhaiConstruction')}<span class="wenhai-position ui-hint">{construction.position}</span></h3>
+        <p class="wenhai-construction">
+          {#each construction.parts as [source, part], i}
+            {#if i > 0}<span class="wenhai-sep" aria-hidden="true">·</span>{/if}
+            <span class="wenhai-part">{#if part}<span class="wenhai-term" lang="zh-Hant">{partTerm(part)}</span>{/if}<G char={source} /></span>
+          {/each}
+        </p>
+      </section>
+    {/if}
+
     {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
@@ -353,6 +374,12 @@
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm)}
   .ids .ui-formula{font-size:20px}
   .ids-link{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}
+  .wenhai-construction{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);margin:0;font-size:var(--ui-text-lg)}
+  .wenhai-part{display:inline-flex;align-items:center;gap:5px}
+  .wenhai-part :global(.ui-script){font-size:22px;line-height:1}
+  .wenhai-term{color:var(--ui-color-ink-muted);font-family:var(--ui-font-serif);font-size:var(--ui-text-sm)}
+  .wenhai-sep{color:var(--ui-color-ink-muted)}
+  .wenhai-position{margin-inline-start:auto;font-size:var(--ui-text-2xs);letter-spacing:0}
   .rel{gap:3px}
   .rel .ui-tile-note{font-size:var(--ui-text-2xs)}
   .rel :global(.ui-script){font-size:26px}

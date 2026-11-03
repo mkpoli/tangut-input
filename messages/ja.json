@@ -226,6 +226,7 @@
   "card.readings": "字音",
   "card.soundGloss": "音注・{name}",
   "card.wenhai": "文海の釈義",
+  "card.wenhaiConstruction": "文海の字形構成",
   "card.builtFrom": "構成",
   "card.copyDescription": "構成記述をコピー",
   "card.description": "構成記述",

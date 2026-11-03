@@ -226,6 +226,7 @@
   "card.readings": "讀音",
   "card.soundGloss": "音注·{name}",
   "card.wenhai": "文海釋義",
+  "card.wenhaiConstruction": "文海字形構造",
   "card.builtFrom": "字形結構",
   "card.copyDescription": "複製構字描述",
   "card.description": "構字描述",
