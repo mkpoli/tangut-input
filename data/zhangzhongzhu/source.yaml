@@ -1,0 +1,41 @@
+# 番漢合時掌中珠, the 1190 Tangut–Chinese glossary, in the copy digitised by the
+# National Institute of Japanese Literature. This record is the source; the
+# witness record in witnesses.tsv is the physical copy, because the same text
+# survives in more than one printing and the transcription must say which one
+# it was keyed from.
+#
+# The scan is a Republican-era 貽安堂 print, not the Khara-Khoto manuscript.
+# Its Chinese transcription column is what makes the text worth keying: one
+# Chinese character per Tangut character, which no other source gives.
+
+id: zhangzhongzhu
+title: 番漢合時掌中珠
+title_reading: ばんかんごうじしょうちゅうじゅ
+title_latin: Fan-Han heshi zhangzhongzhu
+author: 骨勒茂才
+date: 1190
+date_note: 西夏乾祐二十一年
+kind: bilingual-glossary
+languages: [txg, lzh]
+url: https://kokusho.nijl.ac.jp/biblio/100354804
+doi: 10.20730/100354804
+licence: CC-BY-NC-4.0
+licence_evidence: https://kokusho.nijl.ac.jp/biblio/100354804/manifest (license field); https://creativecommons.org/licenses/by-nc/4.0/deed.ja
+attribution: 清光山西巖寺蔵、国文学研究資料館撮影、国書データベース（DOI 10.20730/100354804）
+access:
+  manifest: https://kokusho.nijl.ac.jp/biblio/100354804/manifest
+  canvas: https://kokusho.nijl.ac.jp/biblio/100354804/canvas/{canvas}
+  image: https://kokusho.nijl.ac.jp/api/iiif/100354804/v4/SAIG/SAIG-00219/SAIG-00219-{file}.tif/full/full/0/default.jpg
+  file_pattern: canvas n → SAIG-00219-%05d.tif with n-1
+counts:
+  canvases: 46
+  entries: null
+  leaves_surveyed: 0
+format:
+  layout: entries run down the page in bands, columns read right to left; a Tangut headword, its Chinese transcription, and the Chinese gloss, with the Tangut spelling of the Chinese in the original
+  transcription: one Chinese character per Tangut character
+  images: 5766 × 4978 px per canvas at full size
+notes:
+  - The 掌中珠 is a classified glossary of about a thousand entries, in nine sections (天, 地, 人 …).
+  - The images are CC BY-NC 4.0. They are fetched to cache/ and not redistributed with the site; the transcription is the derived work and carries the same non-commercial term.
+  - The text is also printed in 羅福成's edition and in the 俄藏黑水城文獻 facsimiles; a second witness is needed before any reading of a damaged glyph is called certain.
