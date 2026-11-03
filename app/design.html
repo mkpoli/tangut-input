@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-palette="mineral">
+<html lang="en" data-palette="paper">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -12,8 +12,8 @@
     try {
       const theme = localStorage.getItem('tangut-input:theme')
       if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
-      const palette = localStorage.getItem('tangut-input:palette')
-      document.documentElement.dataset.palette = ['paper', 'mineral', 'indigo', 'sand'].includes(palette) ? palette : 'mineral'
+      const palette = localStorage.getItem('tangut-input:scheme')
+      document.documentElement.dataset.palette = ['paper', 'mineral', 'indigo', 'sand'].includes(palette) ? palette : 'paper'
     } catch {}
   </script>
 </head>

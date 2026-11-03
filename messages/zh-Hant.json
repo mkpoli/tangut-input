@@ -343,5 +343,11 @@
   "transcribe.char": "字",
   "transcribe.meaning": "釋義",
   "transcribe.empty": "在上方輸入或貼上西夏文，此處即會顯示擬音。",
-  "cangjie.near": "沒有以「{code}」開頭的編碼。同一字形換一種拆法，往往只差一個鍵，下面列出這類候選。"
+  "cangjie.near": "沒有以「{code}」開頭的編碼。同一字形換一種拆法，往往只差一個鍵，下面列出這類候選。",
+  "palette.label": "配色",
+  "palette.paper": "紙",
+  "palette.mineral": "榆林",
+  "palette.indigo": "靛藍",
+  "palette.sand": "黑水城",
+  "theme.label": "主題"
 }

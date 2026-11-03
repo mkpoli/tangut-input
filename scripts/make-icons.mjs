@@ -17,11 +17,11 @@ const mark = readFileSync(join(PUBLIC, 'favicon.svg'), 'utf8')
 const glyph = mark
   .replace(/<style>.*?<\/style>/, '')
   .replace(/<rect[^>]*\/>/, '')
-  .replace(/<path/, '<path fill="#f8f3e7"')
+  .replace(/<path/, '<path fill="#fffaf2"')
 
-const INK = '#2b2620'
-const PAPER = '#ece4d3'
-const ACCENT = '#2f6f96'
+const INK = '#1e1b17'
+const PAPER = '#f4efe5'
+const ACCENT = '#b23a1e'
 
 function browserPath() {
   const cache = join(homedir(), '.cache/ms-playwright')

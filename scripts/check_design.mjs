@@ -265,7 +265,7 @@ async function checkTheme(page, scheme) {
   await page.waitForTimeout(120)
   assert.equal(await page.evaluate(() => document.documentElement.dataset.theme ?? ''), '', 'System removes data-theme')
   // Leave the site's own palette selected for the screenshot and the rest of the run.
-  await page.getByRole('radio', { name: 'Yulin', exact: true }).click()
+  await page.getByRole('radio', { name: 'Paper', exact: true }).click()
   await page.waitForTimeout(80)
 }
 
