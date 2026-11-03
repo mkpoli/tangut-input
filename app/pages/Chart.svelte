@@ -248,6 +248,13 @@
     return list.sort((a, b) => (a.lower.codePointAt(0) ?? 0) - (b.lower.codePointAt(0) ?? 0))
   })
 
+  /** A Tibetan gloss as the cell shows it: a lone vowel sign on a dotted circle, and a ? where the
+   * Wylie has a letter that could not be read. @param {string} wylie @param {string} script */
+  const tibetanShown = (wylie, script) => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}${wylie.includes('[?]') ? '?' : ''}`
+  /** A Tibetan gloss's own hover text: its Wylie, and each manuscript it is written in with how often.
+   * @param {string} wylie @param {[string, number][]} where */
+  const tibetanTitle = (wylie, where) => `${wylie} · ${where.map(([shelf, count]) => `${shelf} ×${count}`).join(', ')}`
+
   /** What a cell says about one character when opened: its fanqie, class and gloss. @param {string} char */
   function detail(char) {
     const value = ix.rhymes.get(char)
@@ -369,7 +376,7 @@
                 <td>
                   {#if row.columns.get(group)?.length}
                     {#each row.columns.get(group) ?? [] as char (char)}
-                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan" lang="bo">{ix.tibetan.get(char)?.map(([wylie, script]) => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}${wylie.includes('[?]') ? '?' : ''}`).join(' ')}</small>{/if}</button>
+                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan">{#each ix.tibetan.get(char) ?? [] as [wylie, script, where], index (index)}{index ? ' ' : ''}<span lang="bo" title={tibetanTitle(wylie, where)}>{tibetanShown(wylie, script)}</span>{/each}</small>{/if}</button>
                     {/each}
                   {/if}
                 </td>
