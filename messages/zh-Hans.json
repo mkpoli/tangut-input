@@ -66,6 +66,7 @@
   "find.group.cangjie": "作为仓颉码",
   "find.group.reading": "作为拟音",
   "find.group.meaning": "按释义",
+  "find.group.description": "按构字描述",
   "find.door.cangjie": "逐字母输入字形编码，候选字带有编号，便于快速上屏。屏幕键盘兼作字根表，每个部件都有各自的编码。",
   "find.door.reading": "以八种拟音体系中的任意一种输入读音，候选字会标出对应的体系与读法。",
   "find.door.draw": "手写描绘字形，浏览形状最接近的字。匹配较为粗略，通常需要在列表中往下找。",

@@ -66,6 +66,7 @@
   "find.group.cangjie": "창힐 부호",
   "find.group.reading": "재구음",
   "find.group.meaning": "뜻으로",
+  "find.group.description": "자형 기술로",
   "find.door.cangjie": "자형 부호를 한 글자씩 입력하며, 번호가 매겨진 후보를 빠르게 넣을 수 있습니다. 화면 키보드는 자근표를 겸하며 모든 부품에 고유 부호가 있습니다.",
   "find.door.reading": "여덟 가지 재구 체계 중 하나로 음을 입력합니다. 후보마다 어느 체계의 독음인지 함께 표시됩니다.",
   "find.door.draw": "글자를 그려 모양이 가장 가까운 자형을 살펴봅니다. 판정이 거칠므로 목록을 죽 훑어보아야 합니다.",

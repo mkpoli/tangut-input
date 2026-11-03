@@ -8,7 +8,8 @@ it into your text. <https://tangut.mkpo.li/>
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
   lists code points. Tangut components also answer to their Japanese shape names, such as くノ,
-  ノメ or くくノ.
+  ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
+  opening part it lists the characters that open that way.
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).

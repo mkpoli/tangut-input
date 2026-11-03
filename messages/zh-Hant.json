@@ -66,6 +66,7 @@
   "find.group.cangjie": "作為倉頡碼",
   "find.group.reading": "作為擬音",
   "find.group.meaning": "按釋義",
+  "find.group.description": "按構字描述",
   "find.door.cangjie": "逐字母輸入字形編碼，候選字帶有編號，便於快速上屏。螢幕鍵盤兼作字根表，每個部件都有各自的編碼。",
   "find.door.reading": "以八種擬音體系中的任意一種輸入讀音，候選字會標出對應的體系與讀法。",
   "find.door.draw": "手寫描繪字形，瀏覽形狀最接近的字。比對較為粗略，通常需要在列表中往下找。",

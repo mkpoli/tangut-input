@@ -2,7 +2,7 @@
 // from it by a single part — the neighbours a reader most often means when a component is drawn
 // slightly wrong.
 
-const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
+export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
 
 /** The parts of a description, in the order they are written. @param {string} composition */
 export function partsOf(composition) {
