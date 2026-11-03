@@ -66,7 +66,7 @@ differ the difference is the finding, and it belongs in `glyph_note`.
 
 ## The worksheet
 
-`scripts/segment_zhangzhongzhu.py --canvas 40 --pages` cuts the canvas into the two pages and their
+`scripts/segment_zhangzhongzhu.py --canvas 40 --pages` cuts one canvas into its two pages and their
 bands, writes one PNG per band under `cache/zhangzhongzhu/` with a ruler in native pixels and a
 suggested boundary on every column with its number in reading order, and prints the bands as TSV.
 The columns are numbered right to left, column 1 at the right edge of the page, and the same numbers
@@ -74,6 +74,16 @@ are written to `cache/zhangzhongzhu/<canvas>-columns.tsv` with their native-pixe
 boundaries are a suggestion: the print rules the entry groups but not every column, so each one has
 to be confirmed by a reader who can tell the Tangut column from the Chinese ones. Record the
 confirmed boundary as a number, not as a description.
+
+Run it over the whole book when starting a review:
+
+```sh
+for i in $(seq 1 46); do uv run scripts/segment_zhangzhongzhu.py --canvas $i --pages; done
+```
+
+Canvases 2 and 46 are the covers and the script declines them; the other 44 give 216 bands and 2,062
+numbered columns, written under `cache/zhangzhongzhu/` as `<canvas>-page-l.png`, `<canvas>-l-<band>.png`
+and so on, with `<canvas>-columns.tsv` holding the numbered ranges.
 
 ## Work still to settle
 

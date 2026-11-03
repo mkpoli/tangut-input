@@ -2,18 +2,18 @@
 # requires-python = ">=3.11"
 # dependencies = ["pillow>=12"]
 # ///
-"""Cut a 掌中珠 canvas into bands and suggest the column boundaries in each.
+"""Cut a 掌中珠 canvas into pages, bands and suggested columns.
 
 The transcription needs to know where one column ends and the next begins before
-any character is keyed. The print rules the entry groups but not every column,
-so the suggestion here is a starting point for a reader to confirm, not an
-answer: the bands are found from the row profile and the columns from the
-column profile, and both are printed with their pixel ranges so a disagreement
-can be written down as a number.
+any character is keyed. The print rules the page frame but not every column, so
+what this writes is a starting point for a reader to confirm: bands found from
+the row profile, columns from the column profile, both printed with native-pixel
+ranges so a disagreement can be written down as a number.
 
-Writes one PNG per band under cache/zhangzhongzhu/, with a ruler along the top
-in full-resolution pixels, and prints a TSV of the bands and their suggested
-columns.
+For each canvas it writes page images with a ruler, one image per band with the
+columns numbered in reading order (the bands read right to left, so column 1 is
+at the right edge), and two tables: the bands, and the columns with their
+native-pixel ranges. Images and tables go to cache/, which git ignores.
 """
 import argparse
 import csv
@@ -40,9 +40,24 @@ def canvas_image(canvas):
     return Image.open(path).convert('L')
 
 
-def runs(profile, threshold, merge, shortest):
+def pixels(image):
+    """The pixel values, through whichever accessor the installed Pillow provides."""
+    newer = getattr(image, 'get_flattened_data', None)
+    return list(newer()) if newer else list(image.getdata())
+
+
+def profile(box, axis):
+    """Per-row or per-column means: grey levels for a grey image, ink for a binary one."""
+    width, height = box.size
+    if axis == 'row':
+        return pixels(box.resize((1, height), Image.BOX))
+    return pixels(box.resize((width, 1), Image.BOX))
+
+
+def runs(values, threshold, merge, shortest):
+    """Runs above a threshold, joined across small gaps and dropped when too short."""
     found, start = [], None
-    for index, value in enumerate(profile):
+    for index, value in enumerate(values):
         if value > threshold:
             if start is None:
                 start = index
@@ -50,7 +65,7 @@ def runs(profile, threshold, merge, shortest):
             found.append([start, index - 1])
             start = None
     if start is not None:
-        found.append([start, len(profile) - 1])
+        found.append([start, len(values) - 1])
     merged = []
     for run in found:
         if merged and run[0] - merged[-1][1] <= merge:
@@ -60,12 +75,25 @@ def runs(profile, threshold, merge, shortest):
     return [(a, b) for a, b in merged if b - a + 1 >= shortest]
 
 
-def profile(box, axis):
-    """Per-row or per-column sums: grey levels for a grey image, ink pixels for a binary one."""
-    width, height = box.size
-    if axis == 'row':
-        return list(box.resize((1, height), Image.BOX).get_flattened_data())
-    return list(box.resize((width, 1), Image.BOX).get_flattened_data())
+def pages_of(grey):
+    """The two pages of the spread. The gutter is dark, or darkest at the fold."""
+    pages = runs(profile(grey, 'column'), 120, 4, 200)
+    if len(pages) == 1 and pages[0][1] - pages[0][0] > 0.6 * WIDTH:
+        start, end = pages[0]
+        third = (end - start) // 3
+        low, high = start + third, end - third
+        folded = pixels(grey.crop((low, 0, high, grey.size[1])).resize((high - low, 1), Image.BOX))
+        cut = low + min(range(len(folded)), key=lambda i: folded[i])
+        pages = [(start, cut), (cut + 1, end)]
+    return pages
+
+
+def paper_of(grey, x0, x1):
+    """The rows of the page itself, so the black surround is not read as ink."""
+    rows = runs(profile(grey.crop((x0, 0, x1, grey.size[1])), 'row'), 120, 10, 200)
+    if not rows:
+        return None
+    return max(rows, key=lambda run: run[1] - run[0])
 
 
 def main():
@@ -82,16 +110,16 @@ def main():
     grey = image.resize((WIDTH, round(full_height * scale)), Image.BOX)
     work = grey.point(lambda p: 255 if p < options.ink else 0)
 
-    # The two pages: bright runs across the grey photograph, the gutter between them.
-    pages = runs(profile(grey, 'column'), 120, 4, 200)
+    pages = pages_of(grey)[:2]
     if len(pages) < 2:
         sys.exit('could not find two pages; the canvas may be a cover')
-    pages = pages[:2]
 
     if options.pages:
         for side, (x0, x1) in zip('lr', pages):
-            paper = runs(profile(grey.crop((x0, 0, x1, grey.size[1])), 'row'), 120, 10, 200)
-            top, bottom = max(paper, key=lambda run: run[1] - run[0])
+            paper = paper_of(grey, x0, x1)
+            if not paper:
+                continue
+            top, bottom = paper
             left, right = int(x0 / scale), int(x1 / scale)
             crop = image.crop((left, int(top / scale), right, int(bottom / scale))).convert('RGB')
             ruler = ImageDraw.Draw(crop)
@@ -110,15 +138,15 @@ def main():
     # The columns on their own, numbered in reading order: the bands read right to
     # left, so column 1 is the rightmost. A reader marking where an entry starts
     # writes down a number here rather than describing a place.
-    columns_out = CACHE / f'{options.canvas:02d}-columns.tsv'
-    column_writer = csv.writer(open(columns_out, 'w', encoding='utf-8', newline=''), delimiter='\t', lineterminator='\n')
+    columns_file = open(CACHE / f'{options.canvas:02d}-columns.tsv', 'w', encoding='utf-8', newline='')
+    column_writer = csv.writer(columns_file, delimiter='\t', lineterminator='\n')
     column_writer.writerow(['canvas', 'side', 'band', 'column', 'x0', 'x1', 'width'])
+
     for side, (x0, x1) in zip('lr', pages):
-        # The paper, so that the black surround is not read as ink.
-        paper = runs(profile(grey.crop((x0, 0, x1, grey.size[1])), 'row'), 120, 10, 200)
+        paper = paper_of(grey, x0, x1)
         if not paper:
             continue
-        y0, y1 = max(paper, key=lambda run: run[1] - run[0])
+        y0, y1 = paper
         # Bands: rows of ink on the paper, joined across the gaps between characters.
         rows = runs(profile(work.crop((x0, y0, x1, y1)), 'row'), 12, 25, 50)
         for band, (band0, band1) in enumerate(rows, 1):
@@ -131,8 +159,7 @@ def main():
             left, right = int(x0 / scale), int(x1 / scale)
             crop = image.crop((left, int(top / scale), right, int(bottom / scale))).convert('RGB')
             ruler = ImageDraw.Draw(crop)
-            # A ruler in full-resolution pixels, ticks every 100, so a reader can
-            # name a boundary instead of describing it.
+            # A ruler in native pixels, ticks every 100, so a boundary can be named.
             for tick in range(0, crop.size[0], 100):
                 ruler.line([(tick, 0), (tick, 12)], fill=(200, 0, 0), width=2)
                 if tick % 500 == 0:
@@ -149,7 +176,8 @@ def main():
             crop.save(out)
             writer.writerow([options.canvas, side, band, int(top / scale), int(bottom / scale),
                              left, right, len(columns), out.relative_to(ROOT)])
-    column_writer.close()
+
+    columns_file.close()
 
 
 if __name__ == '__main__':
