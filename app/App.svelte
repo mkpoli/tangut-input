@@ -20,6 +20,7 @@
   import Draw from './pages/Draw.svelte'
   import Fanqie from './pages/Fanqie.svelte'
   import Chart from './pages/Chart.svelte'
+  import Eras from './pages/Eras.svelte'
   import Transcribe from './pages/Transcribe.svelte'
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
@@ -244,6 +245,7 @@
         {:else if route.page === 'reading'}<Reading />
         {:else if route.page === 'fanqie'}<Fanqie />
         {:else if route.page === 'chart'}<Chart />
+        {:else if route.page === 'eras'}<Eras />
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
@@ -350,6 +352,7 @@
   .reading{display:flex;align-items:center;gap:var(--ui-space-xs)}
   .reading-label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
   .reading-icon{display:grid;place-items:center;color:var(--ui-color-ink-muted)}
+  @media (max-width:1600px){.reading-label{display:none}}
   .reading :global(.ui-select){inline-size:154px}
   .settings{position:relative}
   .settings-pop{position:absolute;inset-inline-end:0;inset-block-start:calc(100% + var(--ui-space-sm));z-index:var(--ui-z-menu);inline-size:360px;padding:var(--ui-space-2xs) var(--ui-space-lg) var(--ui-space-sm)}
@@ -377,7 +380,6 @@
   .sheet-link.on .sheet-name{color:var(--ui-color-accent-ink)}
   .sheet-name{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold);white-space:nowrap}
 
-  @media (max-width:1300px){.reading-label{display:none}}
   @media (max-width:1180px){
     .top{gap:var(--ui-space-md);padding-inline:var(--ui-space-xl)}
     .finders a{padding-inline:var(--ui-space-xs);font-size:var(--ui-text-xs)}
