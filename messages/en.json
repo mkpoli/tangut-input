@@ -446,5 +446,6 @@
   "eras.kind.none": "Not recorded",
   "eras.kind.none.hint": "None of the sources used here gives a Tangut form.",
   "eras.form": "Tangut form {n} of {era}",
-  "eras.cite": "Source {n}"
+  "eras.cite": "Source {n}",
+  "pick.loadingPad": "Loading the pad…"
 }

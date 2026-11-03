@@ -446,5 +446,6 @@
   "eras.kind.none": "기록 없음",
   "eras.kind.none.hint": "여기서 쓴 자료에는 서하 문자 표기가 없습니다.",
   "eras.form": "{era}의 서하 문자 표기 {n}",
-  "eras.cite": "출처 {n}"
+  "eras.cite": "출처 {n}",
+  "pick.loadingPad": "손글씨를 준비하는 중…"
 }

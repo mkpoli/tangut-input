@@ -446,5 +446,6 @@
   "eras.kind.none": "記録なし",
   "eras.kind.none.hint": "ここで用いた資料には西夏文の表記がないもの。",
   "eras.form": "{era}の西夏文表記{n}",
-  "eras.cite": "出典{n}"
+  "eras.cite": "出典{n}",
+  "pick.loadingPad": "手書きの準備中…"
 }
