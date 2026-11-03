@@ -363,7 +363,7 @@
   "about.howCangjie": "输入编码后，会列出全码或简码以该串开头的所有字：完全匹配居首，其后按编码由短到长排列。码表中原有的错码亦按原样检出。",
   "about.howReading": "八种体系的拟音均折算为普通拉丁字母：去除附加符号，将国际音标替换为最接近的拉丁字母（<span class=\"ui-mono\">ɨ ɪ → i</span>、<span class=\"ui-mono\">ə → e</span>、<span class=\"ui-mono\">ŋ → ng</span>），并去掉分隔符。末尾数字表声调。近似匹配还会忽略介音<span class=\"ui-mono\">j</span>、<span class=\"ui-mono\">y</span>以及塞音前的冠鼻音。",
   "about.howDraw": "手写线条与各字字形均按较长一边缩放到同一32像素方格内，将字形沿笔迹抽成单格宽的细线，再按双方线条的间距及各点运笔方向加以比对。笔顺不计。在一位读者手写的八十字中，目标字排在首位的约占十分之四，进入前五的约占二分之一。",
-  "about.howParts": "当一字的构字描述包含所有已选部件且出现次数不少于所选次数时，即视为匹配。构字描述取自Open Tangut，仅使用部件。",
+  "about.howParts": "无论追到哪一层，只要一字所含的部件包含全部已选部件且次数不少于所选次数，即视为匹配。若一串部件正好构成另一个字，就接着按那个字向内追溯。原始构字描述取自Open Tangut，仅用部件书写。",
   "about.howAttest": "语料库以外的字<em>目前</em>尚无书证：已收录文献只是现存资料的一小部分，未见收录并不说明该字本身的任何情况。",
   "about.markText": "<span class=\"ui-script\">𘅤</span>（U+18164），Open Tangut释为“to write（写）”，李范文拟音作<i>rjar¹</i>。",
   "about.keptTitle": "记录内容",
