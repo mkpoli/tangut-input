@@ -4,12 +4,12 @@
   // the text, Backspace in an empty box deletes from the text. The keyboard below doubles as the
   // key chart: each key shows the shapes it stands for and dims when no code continues with it.
   // The component palette beside it lists every component under its own code.
-  import { db, ix, gloss, hasGlyph } from '../lib/db.svelte.js'
+  import { db, ix, gloss, hasGlyph, readingOf } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
   import PartInfo from '../ui/PartInfo.svelte'
   import { route, setQuery } from '../lib/route.svelte.js'
-  import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
+  import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
   import { backspace } from '../lib/text.svelte.js'
   import { byCode } from '../lib/search.js'
   import { partInfoPlacement } from '../lib/part-info.js'
@@ -234,12 +234,13 @@
             <h3 class="group-head"><span class="ui-mono">p{letter}</span> <span class="ui-script group-glyphs">{(roots.get(letter) ?? []).join(' ')}</span></h3>
             <div class="ui-tiles comps" style:--ui-tile-size="54px">
               {#each items as item (item.char)}
+                {@const sound = readingOf(item.char, ui.reading)}
                 <button type="button" class="ui-tile comp" data-open={route.c === item.char ? '' : undefined}
                   aria-describedby={info?.part === item.char ? 'part-info' : undefined}
-                  aria-label={[item.char, partName(item.char), t('cangjie.componentTitle', { code: item.code, count: ix.usedBy.get(item.char)?.size ?? 0 })].filter(Boolean).join(' · ')}
+                  aria-label={[item.char, sound, partName(item.char), t('cangjie.componentTitle', { code: item.code, count: ix.usedBy.get(item.char)?.size ?? 0 })].filter(Boolean).join(' · ')}
                   onclick={() => openPart(item.char)} ondblclick={() => putPart(item.char)}
                   onmouseenter={event => showInfo(event, item)} onmouseleave={hideInfo} onfocus={event => showInfo(event, item)} onblur={hideInfo}>
-                  <G char={item.char} /><span class="ui-tile-note ui-mono">{item.code}</span>
+                  <G char={item.char} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note ui-mono">{item.code}</span>
                 </button>
               {/each}
             </div>
@@ -269,7 +270,7 @@
   .groups{display:grid;gap:var(--ui-space-xl);max-block-size:calc(100dvh - 390px);min-block-size:320px;overflow:auto;padding-inline-end:var(--ui-space-2xs)}
   .group-head{position:sticky;top:0;z-index:1;display:flex;align-items:baseline;gap:var(--ui-space-sm);padding:var(--ui-space-2xs) 0;background:var(--ui-color-canvas);color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold)}
   .group-glyphs{font-size:15px;color:var(--ui-color-ink-muted)}
-  .comp{aspect-ratio:1/1.08}
+  .comp{min-block-size:calc(var(--ui-tile-size, 54px) * 1.08)}
   .comp :global(.ui-script){font-size:26px}
   .comp :global(.ui-nog){font-size:9px}
   .comp[data-open]{background:var(--ui-color-accent-soft)}

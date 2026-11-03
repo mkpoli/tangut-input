@@ -3,11 +3,11 @@
   // recognizer for the whole script; this compares where ink lies with the printed glyphs of Noto
   // Serif Tangut, and says so beside the results.
   import { onDestroy, onMount } from 'svelte'
-  import { db, ix, gloss } from '../lib/db.svelte.js'
+  import { db, ix, gloss, readingOf } from '../lib/db.svelte.js'
   import { loadShapes, SHAPE_FACES } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
   import { siblingIndex } from '../lib/composition.js'
-  import { attachPad, put, choose } from '../lib/ui.svelte.js'
+  import { attachPad, put, choose, ui } from '../lib/ui.svelte.js'
   import Candidates from '../ui/Candidates.svelte'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
@@ -226,8 +226,9 @@
           <p class="ui-hint">{t('draw.siblings', { char: hits[0]?.char ?? '' })}</p>
           <div class="ui-tiles" style:--ui-tile-size="52px">
             {#each siblings as char (char)}
+              {@const sound = readingOf(char, ui.reading)}
               <button type="button" class="ui-tile" onclick={() => choose(char)} title={gloss(char)}>
-                <G char={char} />
+                <G char={char} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
               </button>
             {/each}
           </div>

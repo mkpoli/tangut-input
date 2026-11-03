@@ -3,7 +3,7 @@
   // its gloss and reading, so a pasted line can be read character by character. Latin letters are
   // tried as a Cangjie code, a reading and an English meaning at once, each in its own group; a
   // code point opens its range; Chinese or Japanese is read as a meaning.
-  import { db, ix, gloss, codePoint } from '../lib/db.svelte.js'
+  import { db, ix, gloss, codePoint, readingOf } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
@@ -19,7 +19,7 @@
 
   const groups = $derived.by(() => {
     if (!ready || !text) return []
-    /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string }[] }[]} */
+    /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string, sound?: string }[] }[]} */
     const out = []
     // A description, whole or cut after its opening part, is read against the records' own.
     const described = byDescription(text)
@@ -45,7 +45,13 @@
     if (/^[\p{Script=Latin}\p{M}0-9ʔɦɨɪʉɯəɛɔɑŋɣʁɲʷⁿ'·.\- ]+$/u.test(text)) {
       const readings = searchReadings(ix.readings, text, { frequency: ix.frequency, hidden: ix.hiddenReadings }).filter(hit => hit.tier < 2)
       if (readings.length) out.push({ key: 'reading', title: t('find.group.reading'), page: 'reading', total: readings.length,
-        items: readings.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.via === 'ccamc' ? '' : hit.readings[0].raw, extra: hit.via === 'ccamc' ? 'CCAMC' : SYSTEMS.find(s => s.key === hit.readings[0].system)?.short })) })
+        items: readings.slice(0, 24).map(hit => {
+          if (hit.via === 'ccamc') return { char: hit.char, sub: 'CCAMC' }
+          const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
+          const system = SYSTEMS.find(s => s.key === reading.system)
+          const tag = system && system.key !== ui.reading ? ` (${system.short})` : ''
+          return { char: hit.char, sub: gloss(hit.char), sound: `${reading.raw}${tag}` }
+        }) })
     }
     const meanings = byMeaning(text)
     if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: hit.via === 'ccamc' ? t('find.viaCcamc') : gloss(hit.char), extra: hit.via === 'ccamc' ? 'CCAMC' : undefined })) })
@@ -163,9 +169,10 @@
         {:else}
           <div class="ui-tiles" role="listbox" aria-label={group.title} style:--ui-tile-size="72px">
             {#each group.items as item, i (item.char)}
+              {@const sound = item.sound ?? readingOf(item.char, ui.reading)}
               <button type="button" role="option" class="ui-tile" data-index={offset + i} aria-selected={offset + i === active || (active < 0 && route.c === item.char)}
                 title={gloss(item.char)} onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char, { place: offset + i })}>
-                <G char={item.char} /><span class="ui-tile-note">{item.extra ? `${item.extra} ` : ''}{item.sub}</span>
+                <G char={item.char} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{item.sub}</span>
               </button>
             {/each}
           </div>

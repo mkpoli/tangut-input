@@ -123,6 +123,16 @@ export function gloss(char) {
   return first.split(/[;,]/)[0].trim()
 }
 
+/**
+ * A character's reconstruction in one of the eight systems, when the records give one. The caller
+ * passes the system the reader chose, or the one a reading search matched.
+ * @param {string} char
+ * @param {string} system
+ */
+export function readingOf(char, system) {
+  return ix.byChar.get(char)?.pronunciations?.[system]?.trim() ?? ''
+}
+
 /** The places in the recorded corpus that attest a character. @param {string} char */
 export function attested(char) {
   const found = db.attestation
