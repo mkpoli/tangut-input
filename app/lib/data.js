@@ -95,6 +95,11 @@ export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/t
 /** Groups of Chinese fanqie characters that stand for one initial. @returns {Promise<{ note: string, groups: string[][] }>} */
 export const loadFanqieAliases = () => once('fanqie-aliases', () => readJson(new URL('../data/tangut-fanqie-aliases.json', import.meta.url)))
 
+/** Tibetan phonetic glosses by character, from BabelStone's index of five British Library manuscripts:
+ * each gloss is [Wylie, Tibetan script, [[shelfmark, count]…]].
+ * @returns {Promise<{ source: string, author: string, modified: string | null, glosses: Record<string, [string, string, [string, number][]][]> }>} */
+export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
+
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */
 export const loadStrokes = () => once('strokes', async () => (await readJson(new URL('../data/tangut-strokes.json.gz', import.meta.url))).values)
 
