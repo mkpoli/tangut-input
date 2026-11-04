@@ -148,13 +148,13 @@
   // 龔煌城's system is known here rhyme by rhyme, with no reading for any character, so only this page
   // can offer it. The choice lasts until the reader's own system changes, here or in the top bar.
   const GONG_HC = { key: 'gong_hwang_cherng', name: 'Gong Hwang-cherng 2005', zh: '龔煌城' }
-  const gongChosen = $state(/** @type {{ over: string | null }} */ ({ over: null }))
-  const byGong = $derived(String(view.mode) === 'rhyme' && gongChosen.over === ui.reading)
+  const gongChosen = $state({ on: false })
+  $effect.pre(() => { void ui.reading; gongChosen.on = false })
+  const byGong = $derived(String(view.mode) === 'rhyme' && gongChosen.on)
   /** @param {string} key */
   function chooseSystem(key) {
-    if (key === GONG_HC.key) { gongChosen.over = ui.reading; return }
-    gongChosen.over = null
-    setReading(key)
+    gongChosen.on = key === GONG_HC.key
+    if (!gongChosen.on) setReading(key)
   }
   /** @param {{ key: string, rhyme: number }} row */
   const shownFinals = row => (byGong ? (ix.gongRhymes[row.rhyme] ? [ix.gongRhymes[row.rhyme]] : []) : finals.get(row.key))

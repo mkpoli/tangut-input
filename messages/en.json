@@ -302,7 +302,7 @@
   "chart.group": "Initial",
   "chart.tone.unknown": "Tone unrecorded",
   "chart.legend": "The 105 rhymes and nine initial groups are the rhyme books’ own; the crossings are read from the 同音 and 文海 tables. Each cell holds the characters; hover one for its fanqie and Chinese sound gloss. 194 characters also show the Tibetan transcription written beside them in British Library manuscripts, with “?” where a letter could not be read; hover a transcription for its Wylie and the manuscripts it comes from. Each group is headed by its title in the 同音, after 孫伯君 (2017). Tibetan at the foot of a cell is what 李範文 (1994, pp. 270–281) lists for that rhyme and initial as a whole, and a few may stand one column off.",
-  "chart.gongLegend": "With 龔煌城 chosen, each rhyme shows his value, from 《西夏语概要》 (2005) as tabulated by 郭抒遠 (2019). His values here describe whole rhymes, so the columns show no initials.",
+  "chart.gongLegend": "With 龔煌城 chosen, each rhyme shows his value, from 《西夏语概要》 (2005) as tabulated by 郭抒遠 (2019). His values here describe whole rhymes, so the column headers show no initial sounds.",
   "fanqie.inferred": "No source gives this character a reading; inferred from the spelling it shares with {char}.",
   "chart.axis": "Axes",
   "chart.mode.rhyme": "By rhyme and initial",
