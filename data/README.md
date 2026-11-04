@@ -555,7 +555,9 @@ meanings are CC BY-SA 4.0; GX202411 is cited from the Tangut Pronunciation Datab
 Limited Public Use licence; the description is public domain; the radical and stroke data are
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
 `data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
-`data/gong-xun/gx202411.json.gz`, `data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
+`data/gong-xun/gx202411.json.gz`, `data/wenhai/entry-text.json.gz`, `data/readings/readings.tsv` and
+the files above. The builder records no CCAMC value; the keyed readings and their citations are its
+own input and come from the editions.
 
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
 two systems the site does not show (Gong Hwang-cherng and Arakawa Shintarō) and normalized English

@@ -13,7 +13,7 @@ test('the packed records keep every character, the five Wiktionary readings and 
   expect(entries.rows.length).toBe(6144)
   expect(entries.systems).toEqual([
     'li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida',
-    'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'gong_huangcheng',
+    'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'gong_huangcheng', 'tibetan',
   ])
   const first = entries.rows[0]
   expect(first[0]).toBe('𗀀')

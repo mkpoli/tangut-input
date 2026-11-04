@@ -30,7 +30,7 @@ Fields:
 | `sound_li_fanwen` | 李范文's reading: the 聲類, the fanqie, the 直音 | `xiahan-zidian` |
 | `sound_nie_lishan` | 聂历山's reading | `nevsky-1960` |
 | `arakawa_shintaro` | Arakawa's reconstruction | `arakawa-tsuin` |
-| `gong_huangcheng` | Gong Hwang-cherng's reconstruction | `ghc-2002`, `ghc-2005`, `gong-xun` |
+| `gong_huangcheng` | Gong Hwang-cherng's reconstruction | `ghc-2002`, `ghc-2005` |
 | `tibetan` | the 藏文對音 field, which is not a book and names its source in `note` | `-` |
 | `wenhai_zh` | the 文海's own text on the character | `wenhai-yanjiu` |
 | `gloss_zh` | the Chinese meaning, a dictionary's own wording | `xiahan-zidian` |
@@ -41,16 +41,19 @@ second reading. `uv run scripts/check_readings.py` holds the shape; it does not 
 
 ## Locators
 
-- `zhangzhongzhu`: `canvas <n>`, then `band <n>`, `seq <n>` counting columns from the right edge.
-- a book with `pages` in `source.yaml`: `p.<n>`, line and column where the entry is not alone on the
-  page, e.g. `p.742 col 2`.
-- `nevsky-1960`: `vol <n> p.<n>`; the two volumes are separate files.
+- `zhangzhongzhu`: `canvas <n>`, `band <n>` and `t<n>`, the position of the Tangut column within its
+  role — the transcription stands one column to its left.
+- a book with `pages` in `source.yaml`: `p.<n>`, with a line and a column where the entry is not
+  alone on the page, e.g. `p.742 col 2`.
+- `nevsky-1960`: `vol <n> p.<n>`; the two volumes are separate files. A work printed in one volume
+  takes no `vol`.
 
 ## What a row must carry
 
 A value stands alone only when the page prints it plainly. A damaged or doubtful glyph is
 `uncertain`, and gets a second witness — the other 掌中珠 copy, or the dictionary's own recap — before
-the status rises. Nothing here is retyped from another site: a value that only CCAMC carries is
+the status rises. An uncertain row is held back from the build until then, so the card never shows a
+reading nobody has confirmed; its `note` says what is doubtful. Nothing here is retyped from another site: a value that only CCAMC carries is
 keyed again from the edition and the page is found afresh.
 
 The non-commercial terms of the 掌中珠 photographs and the copyright in the other editions govern the

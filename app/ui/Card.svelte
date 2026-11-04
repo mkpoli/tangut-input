@@ -61,9 +61,15 @@
     if (!entry?.composition) return []
     return ix.entries.filter(other => other.char !== char && other.composition === entry.composition).map(other => other.char)
   })
+  /**
+   * The books and pages a keyed value stands on. @param {string} field
+   * @returns {{ work: string, locator: string, note: string }[]}
+   */
+  const cites = field => ix.citations[char]?.[field] ?? []
+
   // The readings 音（李范文） and 音（聂历山）, keyed from the editions with the page they stand on.
   const fanqie = $derived(READING_FIELDS
-    .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cite: ix.citations[char]?.[field.key] }))
+    .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cites: cites(field.key) }))
     .filter(field => field.value))
 
   const homophones = $derived.by(() => {
@@ -202,7 +208,15 @@
         <dl class="means">
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
-          {#if meanings.zh?.length}<dt>zh</dt><dd lang="zh-Hant">{meanings.zh.join('；')}</dd>{/if}
+          {#if meanings.zh?.length}
+            <dt>zh</dt>
+            <dd lang="zh-Hant">
+              {meanings.zh.join('；')}
+              {#each cites('gloss_zh') as cite (cite.locator)}
+                <span class="cite">{bookTitle(cite.work) || cite.note}<span class="ui-hint"> {cite.locator}</span></span>
+              {/each}
+            </dd>
+          {/if}
         </dl>
       </section>
     {/if}
@@ -213,7 +227,15 @@
         <table class="readings">
           <tbody>
             {#each readings as reading (reading.key)}
-              <tr><th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th><td>{reading.value}</td></tr>
+              <tr>
+                <th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th>
+                <td>
+                  {reading.value}
+                  {#each cites(reading.key) as cite (cite.locator)}
+                    <span class="cite">{bookTitle(cite.work) || cite.note}<span class="ui-hint"> {cite.locator}</span></span>
+                  {/each}
+                </td>
+              </tr>
             {/each}
             {#if rhymeClass}
               <tr><th scope="row">{t('card.rhyme')}</th><td>{rhymeClass}{#if toneName}<span class="ui-hint"> · {t(toneName)}</span>{/if}</td></tr>
@@ -236,9 +258,9 @@
                 <th scope="row" title={field.name}>{i18n.locale.startsWith('ja') || i18n.locale.startsWith('zh') || i18n.locale.startsWith('ko') ? field.zh : field.name}</th>
                 <td class="cjk">
                   <span class="ui-script">{field.value}</span>
-                  {#if field.cite}
-                    <span class="cite">{bookTitle(field.cite.work)}<span class="ui-hint"> {field.cite.locator}</span></span>
-                  {/if}
+                  {#each field.cites as cite (cite.locator)}
+                    <span class="cite">{bookTitle(cite.work) || cite.note}<span class="ui-hint"> {cite.locator}</span></span>
+                  {/each}
                 </td>
               </tr>
             {/each}
@@ -258,7 +280,14 @@
     {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
-        {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
+        {#if entry.wenhai_text_zh}
+          <p lang="zh-Hant">
+            {entry.wenhai_text_zh}
+            {#each cites('wenhai_zh') as cite (cite.locator)}
+              <span class="cite">{bookTitle(cite.work) || cite.note}<span class="ui-hint"> {cite.locator}</span></span>
+            {/each}
+          </p>
+        {/if}
         {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
       </section>
     {/if}

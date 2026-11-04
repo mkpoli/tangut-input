@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Turn keyed 掌中珠 cells into reading rows.
 
-`data/zhangzhongzhu/cells.tsv` holds a page's columns in order, with the role each plays. This walks
-those bands and writes one `sound_li_fanwen` row per Tangut character whose Chinese transcription
-character stands beside it: the transcription is the 直音, and the cell's canvas and position make the
-locator.
+`data/zhangzhongzhu/cells.tsv` holds each entry's columns by role and position; `entries.tsv` says
+which canvas and band the entry stands on. This pairs every Tangut character with the Chinese
+character printed for it — that character is the 直音 — and writes one row per pair, with the canvas,
+the band and the Tangut character's own position as the locator.
 
     uv run scripts/key_zzz_readings.py >> data/readings/readings.tsv
 """
@@ -12,66 +12,64 @@ locator.
 from __future__ import annotations
 
 import argparse
-import re
 import sys
 from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CELLS = ROOT / "data" / "zhangzhongzhu" / "cells.tsv"
+DIR = ROOT / "data" / "zhangzhongzhu"
 WORK = "zhangzhongzhu"
-DAYS = date.today().isoformat()
+DOUBTFUL = {"uncertain", "illegible"}
 
 
-def cells(path: Path) -> list[dict[str, str]]:
+def table(path: Path, columns: tuple[str, ...]) -> list[dict[str, str]]:
     lines = path.read_text(encoding="utf-8").splitlines()
     head = lines[0].split("\t")
-    for column in ("entry_id", "position", "role", "glyph"):
-        if column not in head:
-            sys.exit(f"{path} has no {column} column")
+    absent = set(columns) - set(head)
+    if absent:
+        sys.exit(f"{path} has no {', '.join(sorted(absent))} column")
     return [dict(zip(head, line.split("\t"))) for line in lines[1:] if line.strip()]
-
-
-def where(entry_id: str) -> tuple[str, str] | None:
-    """The canvas and band from an entry id, and the sequence within the band."""
-    found = re.fullmatch(r"zzz:[\w-]+:(\d+)(?:\.(\d+))?", entry_id)
-    if not found:
-        return None
-    canvas = str(int(found.group(1)))
-    return canvas, found.group(2) or ""
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cells", type=Path, default=CELLS)
+    parser.add_argument("--cells", type=Path, default=DIR / "cells.tsv")
+    parser.add_argument("--entries", type=Path, default=DIR / "entries.tsv")
+    parser.add_argument("--sketched", action="store_true", help="date the rows today instead of asking")
     args = parser.parse_args()
 
-    rows = cells(args.cells)
+    entries = {row["entry_id"]: row for row in table(args.entries, ("entry_id", "canvas", "band"))}
+    cells = table(args.cells, ("entry_id", "position", "role", "glyph", "status", "glyph_note"))
     written = 0
-    for row in rows:
-        if row["role"] != "transcription":
-            continue
-        place = where(row["entry_id"])
-        text = row["glyph"].strip()
-        if not place or len(text) != 1:
-            continue
-        canvas, band = place
-        # The Tangut column of the same entry: the transcription stands one column to its left.
-        seq = int(row["position"])
-        tangut = next((other for other in rows
-                       if other["entry_id"] == row["entry_id"]
-                       and other["role"] == "tangut"
-                       and int(other["position"]) == seq - 1), None)
-        if tangut is None:
-            continue
-        glyph = tangut["glyph"].strip()
-        if len(glyph) != 1:
-            continue
-        note = " ".join(value for value in (tangut.get("glyph_note", ""), row.get("glyph_note", "")) if value)
-        status = "uncertain" if "uncertain" in (tangut.get("status", "") + row.get("status", "")) else "keyed"
-        locator = f"canvas {canvas} band {band} seq {seq}" if band else f"canvas {canvas}"
-        print("\t".join((glyph, "sound_li_fanwen", text, WORK, locator, note, status, DAYS)))
-        written += 1
+    for entry_id, entry in entries.items():
+        own = [row for row in cells if row["entry_id"] == entry_id]
+        tangut = {int(row["position"]): row for row in own if row["role"] == "tangut"}
+        written_for = 0
+        for row in own:
+            if row["role"] != "transcription":
+                continue
+            position = int(row["position"])
+            # The transcription stands one column left of its Tangut character and holds one
+            # character for it, so the two are matched by their position within their own role.
+            head = tangut.get(position)
+            if head is None or len(head["glyph"].strip()) != 1 or len(row["glyph"].strip()) != 1:
+                continue
+            doubts = [name for name in (head["glyph_note"], row["glyph_note"]) if name]
+            doubtful = head["status"] in DOUBTFUL or row["status"] in DOUBTFUL
+            if doubtful and not doubts:
+                doubts = ["cell marked " + (head["status"] if head["status"] in DOUBTFUL else row["status"])]
+            place = f"canvas {entry['canvas']}"
+            if entry.get("band"):
+                place += f" band {entry['band']}"
+            print("\t".join((
+                head["glyph"].strip(), "sound_li_fanwen", row["glyph"].strip(), WORK,
+                f"{place} t{position}", " ".join(doubts),
+                "uncertain" if doubtful else "keyed", date.today().isoformat(),
+            )))
+            written += 1
+            written_for += 1
+        if own and not written_for:
+            print(f"{entry_id}: nothing paired", file=sys.stderr)
     print(f"{written} rows", file=sys.stderr)
     return 0 if written else 1
 

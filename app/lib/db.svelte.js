@@ -54,7 +54,7 @@ export const ix = {
   /** Characters one component away, built on the first ask: a reader who means one shape and draws
    *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
   /** Whether the sibling index has been built. */ siblingsReady: false,
-  /** Where a keyed reading stands: char → field → book and page. @type {Record<string, Record<string, { work: string, locator: string }>>} */ citations: {},
+  /** Where a keyed value stands: char → field → the books and pages it was read from. @type {Record<string, Record<string, { work: string, locator: string, note: string }[]>>} */ citations: {},
 }
 
 export async function load() {

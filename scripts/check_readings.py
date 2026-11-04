@@ -47,6 +47,17 @@ def works() -> set[str]:
     }
 
 
+def volumes() -> set[str]:
+    """The works printed in volumes, which is the only case `vol` belongs to a locator."""
+    found, current = set(), ""
+    for line in BOOKS.read_text(encoding="utf-8").splitlines():
+        if line.startswith("  - id: "):
+            current = line.split(":", 1)[1].strip()
+        elif line.startswith("    volumes:"):
+            found.add(current)
+    return found
+
+
 def corpus() -> set[str]:
     with gzip.open(ENTRIES, "rt", encoding="utf-8") as handle:
         return {row[0] for row in json.load(handle)["rows"]}
@@ -65,10 +76,7 @@ def rows() -> list[tuple[int, list[str]]]:
         if not line.strip():
             continue
         fields = line.split("\t")
-        if len(fields) != len(COLUMNS):
-            out.append((number, fields + [""] * (len(COLUMNS) - len(fields))))
-        else:
-            out.append((number, fields))
+        out.append((number, fields))
     return out
 
 
@@ -76,6 +84,7 @@ def main() -> int:
     bad = 0
     known = works()
     chars = corpus()
+    volumed = volumes()
 
     def report(number: int, why: str) -> None:
         nonlocal bad
@@ -83,7 +92,12 @@ def main() -> int:
         bad += 1
 
     seen: Counter[tuple[str, str, str]] = Counter()
+    where: dict[tuple[str, str, str], int] = {}
+    today = date.today().isoformat()
     for number, fields in rows():
+        if len(fields) != len(COLUMNS):
+            report(number, f"{len(fields)} fields where the table has {len(COLUMNS)}")
+            continue
         row = dict(zip(COLUMNS, fields))
         char, field, value, work = row["char"], row["field"], row["value"], row["work"]
         if len(char) != 1 or not 0x17000 <= ord(char) <= 0x187FF:
@@ -101,31 +115,34 @@ def main() -> int:
             report(number, "empty value")
         elif value != value.strip():
             report(number, "value has a space at an edge")
-        elif "\t" in value:
-            report(number, "value holds a tab")
         if not row["locator"].strip():
             report(number, "no locator")
         elif work in PLAIN:
-            if not re.fullmatch(r"canvas \d+( band \d+ seq \d+)?", row["locator"]):
-                report(number, f"locator {row['locator']!r} is not 'canvas <n> [band <n> seq <n>]'")
-        elif work != "-" and not re.fullmatch(r"(vol \d+ )?p\.\d+( col \d+)?", row["locator"]):
+            if not re.fullmatch(r"canvas \d+( band \d+)?( t\d+)?", row["locator"]):
+                report(number, f"locator {row['locator']!r} is not 'canvas <n> [band <n>] [t<n>]'")
+        elif work != "-" and not re.fullmatch(r"(vol \d+ )?p\.\d+( line \d+)?( col \d+)?", row["locator"]):
             report(number, f"locator {row['locator']!r} is not 'p.<n>' or 'vol <n> p.<n>'")
+        elif work not in volumed and row["locator"].startswith("vol "):
+            report(number, f"{work} is one volume, so the locator needs no volume")
         if row["status"] not in STATUSES:
             report(number, f"status {row['status']!r} is not one of {sorted(STATUSES)}")
         elif row["status"] == "uncertain" and not row["note"].strip():
             report(number, "an uncertain row says what is doubtful in note")
-        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", row["checked"]):
+        try:
+            checked = date.fromisoformat(row["checked"])
+        except ValueError:
             report(number, f"checked {row['checked']!r} is not a date")
-        elif row["checked"] > date.today().isoformat():
-            report(number, f"checked {row['checked']} is in the future")
-        seen[(char, field, work)] += 1
+        else:
+            if checked.isoformat() > today:
+                report(number, f"checked {row['checked']} is in the future")
+        key = (char, field, work)
+        if key in where:
+            print(f"readings.tsv:{number}: {char} repeats the {field} row at line {where[key]}")
+            bad += 1
+        where.setdefault(key, number)
+        seen[key] += 1
         if work == "-" and not row["note"].strip():
             report(number, "a row without a work names its source in note")
-
-    for (char, field, work), count in seen.items():
-        if count > 1:
-            print(f"{char} has {count} rows for {field} from {work}")
-            bad += 1
 
     print(f"{len(seen)} values over {len({char for char, _, _ in seen})} characters")
     return 1 if bad else 0

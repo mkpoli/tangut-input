@@ -24,7 +24,11 @@ The ``--ccamc`` file must be a copy of the old Open Tangut/CCAMC records, made b
 replaces ``app/data/tangut-entries.json.gz``. It is only read here; the index it produces holds
 folded readings and lower-cased terms, not the records.
 
-Writes ``app/data/tangut-entries.json.gz`` and ``app/data/tangut-ccamc-index.json.gz``.
+Keyed readings come from ``data/readings/readings.tsv`` unless ``--readings`` names another file; a
+rebuild without them drops every keyed value, so the default is the table itself.
+
+Writes ``app/data/tangut-entries.json.gz``, ``app/data/tangut-ccamc-index.json.gz`` and
+``app/data/tangut-reading-sources.json.gz``.
 """
 import argparse
 import gzip
@@ -39,7 +43,8 @@ INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
 SOURCES = ROOT / 'app/data/tangut-reading-sources.json.gz'
 FORMAT = 'tangut-input/entries/3'
 SYSTEMS = ['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida',
-           'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'gong_huangcheng']
+           'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'gong_huangcheng', 'tibetan']
+READINGS = ROOT / 'data/readings/readings.tsv'
 CCAMC_SYSTEMS = ['gong_huangcheng', 'arakawa_shintaro']
 
 LETTERS = {
@@ -68,9 +73,13 @@ def plain(value):
 
 
 def keyed(path):
-    """The readings keyed from the books, per character: {char: {field: [value, work, locator]}}."""
+    """The readings keyed from the books, per character: {char: {field: [[value, work, locator], ...]}}.
+
+    Two witnesses to one value are both kept and joined at build time; a row still marked uncertain
+    is held back until a second reading lifts it.
+    """
     out = {}
-    if not path:
+    if not path or not path.exists():
         return out
     lines = path.read_text(encoding='utf-8').splitlines()
     head = lines[0].split('\t')
@@ -78,10 +87,10 @@ def keyed(path):
         if not line.strip():
             continue
         row = dict(zip(head, line.split('\t')))
-        if row['status'] == 'uncertain':
+        if row.get('status') == 'uncertain':
             continue
-        out.setdefault(row['char'], {}).setdefault(
-            row['field'], [row['value'], row['work'], row['locator']])
+        out.setdefault(row['char'], {}).setdefault(row['field'], []).append(
+            [row['value'], row['work'], row['locator'], row.get('note', '')])
     return out
 
 
@@ -148,7 +157,8 @@ def hidden(entries, systems, index):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ccamc', type=Path, help='a copy of the old Open Tangut/CCAMC records')
-    parser.add_argument('--readings', type=Path, help='keyed readings, data/readings/readings.tsv')
+    parser.add_argument('--readings', type=Path, default=READINGS,
+                        help='keyed readings (default data/readings/readings.tsv)')
     args = parser.parse_args()
 
     old = gz(ENTRIES)
@@ -169,7 +179,7 @@ def main():
         definitions_en = en.get(char, [])
         definitions_ja = ja.get(char, {}).get('definitions') or []
         keyed_fields = keyed_readings.get(char, {})
-        definitions_zh = [keyed_fields['gloss_zh'][0]] if 'gloss_zh' in keyed_fields else []
+        definitions_zh = [value[0] for value in keyed_fields.get('gloss_zh', [])]
         pron = [
             readings['li_fanwen'].get(char, ''),
             gong_xun.get(char, ''),
@@ -177,16 +187,16 @@ def main():
             readings['kychanov'].get(char, ''),
             readings['sofronov'].get(char, ''),
             readings['nishida'].get(char, ''),
-            *(keyed_fields.get(key, [''])[0] for key in SYSTEMS[6:]),
+            *('；'.join(value[0] for value in keyed_fields.get(key, [])) for key in SYSTEMS[6:]),
         ]
         if keyed_fields:
             citations[char] = {
-                key: {'work': value[1], 'locator': value[2]}
-                for key, value in keyed_fields.items() if key not in ('gloss_zh', 'wenhai_zh')
+                key: [{'work': value[1], 'locator': value[2], 'note': value[3]} for value in values]
+                for key, values in keyed_fields.items()
             }
         text = wenhai.get(char, {})
         text = {'en': text.get('en', ''),
-                'zh': keyed_fields['wenhai_zh'][0] if 'wenhai_zh' in keyed_fields else text.get('zh', '')}
+                'zh': keyed_fields['wenhai_zh'][0][0] if 'wenhai_zh' in keyed_fields else text.get('zh', '')}
         out.append([
             char,
             ids.get(char) or composition,
