@@ -145,6 +145,22 @@
     return found
   })
 
+  // 龔煌城's system is known here rhyme by rhyme, with no reading for any character, so only this page
+  // can offer it. The choice lasts until the reader's own system changes, here or in the top bar.
+  const GONG_HC = { key: 'gong_hwang_cherng', name: 'Gong Hwang-cherng 2005', zh: '龔煌城' }
+  const gongChosen = $state(/** @type {{ over: string | null }} */ ({ over: null }))
+  const byGong = $derived(String(view.mode) === 'rhyme' && gongChosen.over === ui.reading)
+  /** @param {string} key */
+  function chooseSystem(key) {
+    if (key === GONG_HC.key) { gongChosen.over = ui.reading; return }
+    gongChosen.over = null
+    setReading(key)
+  }
+  /** @param {{ key: string, rhyme: number }} row */
+  const shownFinals = row => (byGong ? (ix.gongRhymes[row.rhyme] ? [ix.gongRhymes[row.rhyme]] : []) : finals.get(row.key))
+  /** @param {string} roman */
+  const shownOnsets = roman => (byGong ? [] : onsets.get(roman))
+
   const pages = $derived(Math.max(1, Math.ceil(uppers.length / PER_PAGE)))
   const shownUppers = $derived(uppers.slice(page * PER_PAGE, (page + 1) * PER_PAGE))
   /** The lowers that have a character under one of the uppers on this page. */
@@ -186,8 +202,9 @@
       <label class="choose">
         <span class="ui-label">{t('chart.system')}</span>
         <span class="ui-select-wrap">
-          <select class="ui-select" data-size="sm" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('chart.system')}>
+          <select class="ui-select" data-size="sm" value={byGong ? GONG_HC.key : ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => chooseSystem(event.currentTarget.value)} aria-label={t('chart.system')}>
             {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+            {#if String(view.mode) === 'rhyme'}<option value={GONG_HC.key} title={systemTitle(GONG_HC)}>{systemName(GONG_HC, i18n.locale)}</option>{/if}
           </select>
         </span>
       </label>
@@ -233,11 +250,11 @@
           <tr>
             <th class="corner" scope="col"><span>{t('chart.rhyme')}</span> / {t('chart.group')}</th>
             {#each CLASSES as group (group.roman)}
-              <th scope="col" class="group" title={`${group.roman} · ${group.tangut} · ${group.zh}${onsets.get(group.roman)?.length ? ` · ${onsets.get(group.roman)?.join(' ')}` : ''}`}>
+              <th scope="col" class="group" title={`${group.roman} · ${group.tangut} · ${group.zh}${shownOnsets(group.roman)?.length ? ` · ${shownOnsets(group.roman)?.join(' ')}` : ''}`}>
                 <span class="roman">{group.roman}</span>
                 <span class="tangut ui-script" lang="txg">{group.tangut}</span>
                 <span class="name" lang="zh-Hant">{group.zh}</span>
-                {#if onsets.get(group.roman)?.length}<small>{onsets.get(group.roman)?.join(' ')}</small>{/if}
+                {#if shownOnsets(group.roman)?.length}<small>{shownOnsets(group.roman)?.join(' ')}</small>{/if}
               </th>
             {/each}
           </tr>
@@ -251,8 +268,7 @@
               <th scope="row" class="head-cell rhyme">
                 <span class="rhyme-number">{row.rhyme}</span>
                 {#if view2.adjacent}<span class="tone-label">{t(TONE_KEY[row.tone])}</span>{/if}
-                {#if finals.get(row.key)?.length}<span class="final">{finals.get(row.key)?.join(' ')}</span>{/if}
-                {#if ix.gongRhymes[row.rhyme]}<span class="gong" title={t('chart.gongTitle')}><span lang="zh-Hant">龔</span> {ix.gongRhymes[row.rhyme]}</span>{/if}
+                {#if shownFinals(row)?.length}<span class="final">{shownFinals(row)?.join(' ')}</span>{/if}
                 <small class="ui-count">{row.count}</small>
               </th>
               {#each GROUPS as group (group)}
@@ -262,6 +278,9 @@
                       <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan">{#each ix.tibetan.get(char) ?? [] as [wylie, script, where], index (index)}{index ? ' ' : ''}<span lang="bo" title={tibetanTitle(wylie, where)}>{tibetanShown(wylie, script)}</span>{/each}</small>{/if}</button>
                     {/each}
                   {/if}
+                  {#if ix.tibetanRhymes[row.key]?.[group]?.length}
+                    <p class="spellings" lang="bo">{ix.tibetanRhymes[row.key][group].join(' ')}</p>
+                  {/if}
                 </td>
               {/each}
             </tr>
@@ -270,7 +289,7 @@
       </table>
     </div>
     <p class="ui-hint">{t('chart.legend')}</p>
-    <p class="ui-hint">{t('chart.gongLegend')}</p>
+    {#if byGong}<p class="ui-hint">{t('chart.gongLegend')}</p>{/if}
   {/if}
 </div>
 
@@ -295,13 +314,13 @@
   tbody th.head-cell small{display:block;font-weight:var(--ui-weight-normal);font-size:10px;color:var(--ui-color-ink-muted)}
   tbody th.head-cell .rhyme-number{font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);color:var(--ui-color-ink)}
   tbody th.head-cell .final{display:block;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
-  tbody th.head-cell .gong{display:block;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   tbody th.head-cell .tone-label{display:block;font-family:var(--ui-font-sans);font-size:10px;color:var(--ui-color-ink-muted)}
   tr.tone th{position:sticky;left:0;background:var(--ui-color-surface-sunken);color:var(--ui-color-ink-muted);text-align:start;padding:var(--ui-space-2xs) var(--ui-space-sm);font-size:var(--ui-text-2xs);letter-spacing:var(--ui-tracking-caps);text-transform:uppercase;border-top:1px solid var(--ui-color-border-strong)}
   td{vertical-align:top;border-top:1px solid var(--ui-color-border);border-inline-start:1px solid var(--ui-color-border);padding:3px;min-inline-size:84px}
   .cell{vertical-align:top;padding:1px 3px;border:1px solid transparent;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font-size:19px;line-height:1.12}
   .cell:hover{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover)}
   .cell small.tibetan{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.3;color:var(--ui-color-ink-soft)}
+  .spellings{margin:2px 0 0;padding:1px 3px 0;border-top:1px dotted var(--ui-color-border-strong);font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.35;color:var(--ui-color-ink-soft)}
   .cell small{display:block;font-family:var(--ui-font-sans);font-size:9.5px;color:var(--ui-color-ink-muted);line-height:1.1}
   @media (max-width:900px){
     .choose{margin-inline-start:0}
