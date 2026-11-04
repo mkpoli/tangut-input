@@ -57,8 +57,8 @@ stacks it above the name.
 
 **Find** (`/`) is the landing page and the general lookup. One box reads whatever is typed:
 
-- Tangut text is split into its characters, each with its gloss and reading (Li Fanwen, or the
-  first system that has one). A student can paste a line and read it character by character.
+- Tangut text is split into its characters, each with its gloss and reading (in the reader's chosen
+  system, or the first that has one, labelled). A student can paste a line and read it character by character.
 - Latin letters are tried at once as a Cangjie code, as a reading and as an English meaning. Each
   interpretation is a separate group with a link to continue in its own finder, so the ambiguity of
   `do` (code or reading?) is shown instead of guessed.

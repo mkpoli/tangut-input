@@ -4,6 +4,7 @@ import { insert } from './text.svelte.js'
 import { say } from './clip.svelte.js'
 import { i18n, t } from './i18n.svelte.js'
 import { record } from './record.js'
+import { readingFromStore } from './reading.js'
 
 const THEME = 'tangut-input:theme'
 const TANGUT = 'tangut-input:font'
@@ -40,12 +41,8 @@ export const ui = $state({
   ),
   /** The face Tangut is set in. @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */
   tangut: /** @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(TANGUT)) || 'serif'),
-  /** Which reconstruction readings are shown in, wherever a system can be chosen. Li Fanwen's by
-   *  default; a value left by an older version is ignored. */
-  reading: (() => {
-    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(READING) : null
-    return stored && ['li_fanwen', 'miyake', 'kychanov', 'sofronov', 'nishida'].includes(stored) ? stored : 'li_fanwen'
-  })(),
+  /** Which reconstruction readings are shown in, wherever a system can be chosen. */
+  reading: readingFromStore(typeof localStorage !== 'undefined' ? localStorage.getItem(READING) : null),
 })
 
 /** Remember the reconstruction a reader picked, for the pages that show readings. @param {string} key */

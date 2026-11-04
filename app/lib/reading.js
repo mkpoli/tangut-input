@@ -8,7 +8,7 @@
 // spelling is the name's own title, so both are a hover away.
 export const SYSTEMS = /** @type {const} */ ([
   { key: 'li_fanwen', short: 'Li', name: 'Li Fanwen 2008', zh: '李範文', tones: true },
-  { key: 'gong_huangcheng', short: 'Gong', name: 'Gong Hwang-cherng', zh: '龔煌城', tones: false },
+  { key: 'gong_huangcheng', short: 'Gong', name: 'Gong Hwang-cherng 2005', zh: '龔煌城', tones: true },
   { key: 'arakawa_shintaro', short: 'Ar', name: 'Arakawa Shintarō', zh: '荒川慎太郎', tones: false },
   { key: 'gong_xun_202411', short: 'GX', name: 'Gong Xun 2024-11', zh: '龔勛', tones: true },
   { key: 'miyake', short: 'My', name: 'Marc Miyake', zh: '三宅', tones: true },
@@ -16,6 +16,13 @@ export const SYSTEMS = /** @type {const} */ ([
   { key: 'kychanov', short: 'Ky', name: 'Kychanov 2006', zh: '克恰諾夫', tones: true },
   { key: 'sofronov', short: 'So', name: 'Sofronov 1968', zh: '索弗羅諾夫', tones: true },
 ])
+
+/** The system readings are shown in until a reader picks another. */
+export const DEFAULT_READING = 'gong_xun_202411'
+
+/** The system to show for a stored choice; a value left by an older version falls back to the default.
+ * @param {string | null} stored */
+export const readingFromStore = stored => (SYSTEMS.some(system => system.key === stored) ? /** @type {string} */ (stored) : DEFAULT_READING)
 
 /**
  * A system's name for a reader of a language: the characters a Chinese, Japanese or Korean reader
@@ -29,8 +36,8 @@ export const systemName = (system, locale) => (/^(ja|zh|ko)/.test(locale) ? syst
 export const systemTitle = system => `${system.name} · ${system.zh}`
 
 /** @typedef {typeof SYSTEMS[number]['key']} SystemKey */
-/** A reading from the records, or one of CCAMC's three extra systems, which is searchable but not
- * shown. @typedef {{ char: string, system: SystemKey | 'ccamc', raw: string, folded: string, loose: string, tone: string }} Reading */
+/** A reading from the records, or CCAMC's extra system, which is searchable but not shown.
+ * @typedef {{ char: string, system: SystemKey | 'ccamc', raw: string, folded: string, loose: string, tone: string }} Reading */
 /** @typedef {{ char: string, system: string, token: string }} HiddenReading */
 
 const LETTERS = /** @type {Record<string, string>} */ ({
@@ -127,7 +134,7 @@ export function searchReadings(readings, query, options = {}) {
     if (!hit || tier < hit.tier) hits.set(reading.char, { char: reading.char, tier, readings: [reading] })
     else if (tier === hit.tier) hit.readings.push(reading)
   }
-  // CCAMC's three extra systems answer the search, but the result says only that CCAMC records the
+  // CCAMC's extra system answers the search, but the result says only that CCAMC records the
   // character and links there; the matched reading itself stays out of the page.
   const hidden = options.hidden ?? []
   if (hidden.length && (!options.systems?.size || options.systems.has('ccamc'))) {

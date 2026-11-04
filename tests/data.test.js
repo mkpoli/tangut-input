@@ -8,16 +8,16 @@ const json = name => JSON.parse(gunzipSync(readFileSync(new URL(`../app/data/${n
 const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
-test('the packed records keep every character, the five Wiktionary readings and Gong Xun\'s', () => {
+test('the packed records keep every character, the five Wiktionary readings and the two Database readings', () => {
   expect(entries.format).toBe('tangut-input/entries/3')
   expect(entries.rows.length).toBe(6144)
   expect(entries.systems).toEqual([
-    'li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida',
-    'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'gong_huangcheng', 'tibetan',
+    'li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
+    'nishida', 'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'tibetan',
   ])
   const first = entries.rows[0]
   expect(first[0]).toBe('𗀀')
-  expect(first[7].slice(0, 6)).toEqual(['do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
+  expect(first[7].slice(0, 7)).toEqual(['do1', 'do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
   expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
   expect(first[5]).toEqual(['毒'])
   expect(first[6]).toEqual([])
@@ -37,16 +37,44 @@ test('the displayable meanings cover only the Wiktionary entries', () => {
   expect(count(6)).toBe(0)
 })
 
+test('every Tibetan spelling stands at a crossing the chart draws', () => {
+  const { cells } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-rhymes.json', import.meta.url), 'utf8'))
+  const drawn = new Set(Object.values(rhymes.chars).map(row => `${row[0]}·${row[1]}`))
+  expect(Object.keys(cells).filter(key => !drawn.has(key))).toEqual([])
+  expect(Object.keys(cells).length).toBe(124)
+  // 2.1 is rhyme 1 in the rising tone, 2.9 rhyme 10: the two tones number their rhymes apart.
+  expect(cells['1·2'].Ⅰ).toEqual(['ཕུ'])
+  expect(Object.keys(cells['10·2'] ?? {}).length).toBeGreaterThan(0)
+})
+
+test('every rhyme the chart draws has 龔煌城\'s value', () => {
+  const { values } = JSON.parse(readFileSync(new URL('../app/data/tangut-gong-rhymes.json', import.meta.url), 'utf8'))
+  expect(Object.keys(values).length).toBe(105)
+  const drawn = new Set(Object.values(rhymes.chars).map(row => row[0]).filter(rhyme => typeof rhyme === 'number'))
+  expect([...drawn].filter(rhyme => !values[rhyme])).toEqual([])
+  expect([values[1], values[33], values[65], values[105]]).toEqual(['u', 'iəə/jɨɨ', 'jɨ̣j', 'jwa'])
+})
+
+test('the Chinese transcription characters stand under rhymes the chart draws', () => {
+  const { rhymes: list } = JSON.parse(readFileSync(new URL('../app/data/tangut-chinese-rhymes.json', import.meta.url), 'utf8'))
+  const drawn = new Set(Object.values(rhymes.chars).map(row => String(row[0])))
+  expect(Object.keys(list).filter(rhyme => !drawn.has(rhyme))).toEqual([])
+  expect(Object.keys(list).length).toBe(58)
+  expect(list['1'][0]).toEqual(['菩', 'u'])
+  // In the thesis table, left out of the repost: no final is known for them.
+  expect(list['100']).toEqual([['棱']])
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {
   expect(ccamc.format).toBe('tangut-input/ccamc-index')
-  expect(Object.keys(ccamc.readings).sort()).toEqual(['arakawa_shintaro', 'gong_huangcheng'])
+  expect(Object.keys(ccamc.readings).sort()).toEqual(['arakawa_shintaro'])
   expect(Object.keys(ccamc.meanings).sort()).toEqual(['en', 'zh'])
   expect(ccamc.wenhai).toBeUndefined()
   expect(ccamc.meanings.zh['𗀀']).toEqual(['毒', '下毒者', '毒死', '毒 蠱 名詞'])
-  const gongXun = entries.rows.filter(row => row[7][1]).length
-  expect(gongXun).toBe(5869)
+  expect(entries.rows.filter(row => row[7][1]).length).toBe(5869)
+  expect(entries.rows.filter(row => row[7][2]).length).toBe(5869)
   // The index is not a record: no original diacritics survive, and no 文海 sentence is stored.
   expect(JSON.stringify(ccamc.readings)).not.toContain('¹')
 })
