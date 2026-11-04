@@ -3,7 +3,7 @@
 // given. Everything stays in the page until "Export" writes it out; the drawings never leave the
 // machine.
 //   bun scripts/annotate_tangut_drawings.mjs [out.html]
-import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, mkdirSync, copyFileSync } from 'node:fs'
+import { readFileSync, readdirSync, writeFileSync, existsSync, statSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { join } from 'node:path'
 import { parseShapes, indexShapes, rasterize, rankShapes } from '../app/lib/shape.js'
@@ -118,27 +118,6 @@ for (const drawing of drawings) {
   for (const pick of (candidates.get(drawing.id) ?? []).slice(0, 6)) siblings[pick] ??= siblingsOf(pick)
 }
 
-// The site's built picker, copied beside the board: same origin, so it can take the keys at once and
-// posts its pick straight back.
-const DIST = new URL('../dist/assets/', import.meta.url)
-const PICK = new URL('../docs/pick/', import.meta.url)
-let pickScript = ''
-/** @type {string[]} */
-let pickStyle = []
-if (existsSync(DIST)) {
-  const assets = readdirSync(DIST)
-  const script = assets.find(name => /^pick-.*\.js$/.test(name))
-  // The entry's own CSS plus the base sheet it imports: the picker is a Svelte app and its styles
-  // are split across chunks.
-  const styles = ['pick', 'app', 'MiniIme'].flatMap(stem => assets.filter(name => new RegExp(`^${stem}-.*\\.css$`).test(name)))
-  if (script) {
-    mkdirSync(PICK, { recursive: true })
-    copyFileSync(new URL(script, DIST), new URL(script, PICK))
-    pickScript = `/assets/${script}`
-    pickStyle = styles.map(name => `/assets/${name}`)
-  }
-}
-
 const payload = JSON.stringify({
   drawings,
   suggestions: Object.fromEntries(suggestions),
@@ -168,13 +147,14 @@ const html = `<!doctype html>
   .progress i { display:block; height:100%; background:var(--accent); width:0; transition:width .2s ease; }
   .count { color:var(--muted); font-size:13px; font-variant-numeric:tabular-nums; }
   .columns { flex:1; display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:20px; padding:16px 22px 6px; align-items:start; }
-  .stage-col { display:grid; gap:6px; min-inline-size:0; }
-  .side #pick .pick { padding:0; background:transparent; }
-  .side #pick .ime .panel { inline-size:100%; box-shadow:none; border:0; padding:0; }
-  .side #pick .hits { grid-template-columns:repeat(6, 1fr); }
-  .side { position:sticky; top:64px; display:grid; gap:10px; padding:12px; border:1px solid var(--line); border-radius:12px;
-          background:color-mix(in srgb, var(--bg) 94%, var(--ink)); max-block-size:calc(100dvh - 80px); overflow:auto; }
-  @media (max-width: 1100px) { .columns { grid-template-columns:minmax(0,1fr); } .side { position:static; max-block-size:none; } }
+  .stage-col { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; min-inline-size:0; }
+  /* The results scroll inside the picker's own frame, so the column keeps a height of its own. */
+  .side { position:sticky; top:64px; display:flex; flex-direction:column; gap:10px; padding:12px; border:1px solid var(--line); border-radius:12px;
+          background:color-mix(in srgb, var(--bg) 94%, var(--ink)); block-size:calc(100dvh - 80px); min-block-size:480px; }
+  .side iframe { flex:1; min-block-size:0; inline-size:100%; border:1px solid var(--line); border-radius:8px; background:var(--bg); }
+  /* display:flex above would otherwise outrank the attribute and leave an empty frame on the page. */
+  .side[hidden] { display:none; }
+  @media (max-width: 1100px) { .columns { grid-template-columns:minmax(0,1fr); } .side { position:static; block-size:640px; } }
   main { display:grid; place-items:center; padding:8px 0 4px; }
   .card { display:flex; align-items:center; gap:44px; }
   .drawn { color:var(--accent); }
@@ -192,12 +172,8 @@ const html = `<!doctype html>
   .verdicts button:hover { border-color:var(--ink); }
   .verdicts button[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
   .verdicts kbd { font:11px ui-monospace, monospace; opacity:.6; }
-  .finder { width:min(920px, calc(100vw - 44px)); margin:0 auto 14px; display:grid; gap:8px; }
-  .frame { position:relative; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--bg); }
-  .frame #pick .pick { min-block-size:0; padding:10px; }
-  .frame iframe { width:100%; height:100%; border:0; background:var(--bg); }
 
-  details { margin:0 auto 16px; width:min(920px, calc(100vw - 44px)); border:1px solid var(--line); border-radius:12px; }
+  details { margin:0 auto 16px; inline-size:100%; max-inline-size:920px; border:1px solid var(--line); border-radius:12px; }
   summary { cursor:pointer; padding:10px 14px; color:var(--muted); font-size:13px; }
   .inside { display:grid; gap:14px; padding:0 14px 16px; }
   .row { display:flex; flex-wrap:wrap; gap:6px; }
@@ -255,9 +231,9 @@ const html = `<!doctype html>
       </div>
     </details>
   </div>
-  <aside class="side" id="finder" hidden>
+  <aside class="side" id="finder">
     <p class="label" style="margin:0">Find the character it should be</p>
-    <div id="siteframe" hidden><div id="pick"></div></div>
+    <iframe id="picker" src="/pick.html" title="Character picker"></iframe>
     <div class="row" style="align-items:center;gap:8px">
       <span class="label" style="margin:0">…or type it</span>
       <input class="field" id="manual" style="width:5em;text-align:center;font-family:'Noto Serif Tangut',serif;font-size:20px" placeholder="𗊜" spellcheck="false" autocomplete="off">
@@ -272,7 +248,6 @@ const html = `<!doctype html>
     <button id="clear">Start over</button>
   </div>
 </footer>
-${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
 <script type="application/json" id="data">${payload}</script>
 <script>
   const data = JSON.parse(document.getElementById('data').textContent)
@@ -293,6 +268,8 @@ ${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
   const bar = document.getElementById('bar')
   const where = document.getElementById('where')
   const more = document.getElementById('more')
+  const finder = document.getElementById('finder')
+  const picker = document.getElementById('picker')
   let index = 0
   let history = []
   let picking = false
@@ -343,6 +320,8 @@ ${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
     const drawing = current()
     if (!drawing) {
       stage.innerHTML = '<div class="done"><h2>Nothing left to review</h2><p class="count">Every drawing is either good, out of the dataset, or corrected.</p></div>'
+      finder.hidden = true
+      document.getElementById('picks').hidden = true
       return
     }
     const note = noteOf(drawing.id)
@@ -355,11 +334,9 @@ ${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
       button.setAttribute('aria-pressed', String(note.verdict === button.dataset.v))
     }
     paintPicks(drawing, note)
-    // The finders are for a drawing whose character is in doubt; otherwise they only take room.
-    document.getElementById('manual').value = note.correct
-    const ask = picking || note.verdict === 'wrong' || note.verdict === 'unattested'
-    document.getElementById('finder').hidden = !ask
-    document.getElementById('siteframe').hidden = !ask
+    // Whether a drawing is wrong is often settled by looking its character up, so the picker stays in
+    // view before any verdict is given.
+    finder.hidden = false
     for (const button of document.querySelectorAll('#tags button')) {
       button.setAttribute('aria-pressed', String(note.tags.includes(button.dataset.t)))
     }
@@ -462,7 +439,8 @@ ${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
   document.getElementById('back').onclick = () => {
     const id = history.pop()
     if (!id) return
-    if (notes[id]) notes[id].verdict = undefined
+    // Going back takes the judgement back whole, or an undone pick would still be exported.
+    if (notes[id]) { notes[id].verdict = undefined; notes[id].correct = '' }
     save()
     index = Math.max(0, queue().findIndex(drawing => drawing.id === id))
     paint()
@@ -483,26 +461,26 @@ ${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
   }
   document.getElementById('clear').onclick = () => { notes = {}; history = []; save(); index = 0; paint() }
 
-  // The site's own input method, embedded: whatever way the reviewer finds the character there —
-  // code, corners, reading, meaning, parts, the pad — it comes back here as the correction.
+  // The site's own picker, embedded: whatever way the reviewer finds the character there — code,
+  // corners, reading, meaning, parts, the pad — it comes back here as the correction.
   addEventListener('message', event => {
+    if (event.source !== picker.contentWindow) return
     const data = event.data
     if (!data || data.type !== 'tangut-pick' || typeof data.char !== 'string' || !data.char) return
     const drawing = current()
     if (!drawing) return
     const note = noteOf(drawing.id)
     note.correct = data.char
-    // The reviewer's own drawing of the character is kept too, marked as theirs.
-    if (Array.isArray(data.strokes) && data.strokes.length) {
-      fetch('/api/reviewer', { method: 'POST', body: JSON.stringify({ char: data.char, strokes: data.strokes, for: drawing.id }) })
-        .then(response => response.ok ? response.json() : null)
-        .then(saved => { if (saved?.file) { note.reviewer = saved.file; save() } })
-        .catch(() => {})
-    }
     if (note.verdict === 'good' || note.verdict === 'bad' || !note.verdict) note.verdict = 'wrong'
+    // A corrected drawing leaves the queue, so Back has to know the way to it.
+    history.push(drawing.id)
     save()
-    document.getElementById('siteframe').hidden = true
+    picking = false
+    index = 0
     paint()
+    // Keys typed in the frame never reach this page: the verdict keys need the focus back.
+    picker.blur()
+    window.focus()
   })
   // Typing the character is the shortest way when it is already known: one character assigns it.
   document.getElementById('manual').oninput = event => {
@@ -517,8 +495,6 @@ ${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
     event.target.value = ''
     paint()
   }
-  // The picker is the site's own input method on its own page, shown inline when the character is
-  // in doubt; it needs no button because it is already loaded by the time it is looked at.
 
   addEventListener('keydown', event => {
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return
@@ -530,7 +506,6 @@ ${pickStyle.map(href => `<link rel="stylesheet" href="${href}">`).join('\n')}
 
   paint()
 </script>
-${pickScript ? `<script type="module" src="${pickScript}"></script>` : ''}
 </body>
 </html>
 `
