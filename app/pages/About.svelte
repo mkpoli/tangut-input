@@ -28,6 +28,10 @@
       <dd>{@html t('about.classNames')}</dd>
       <dt>{t('about.tibetanTitle')}</dt>
       <dd>{@html t('about.tibetan')}</dd>
+      <dt>{t('about.gongTitle')}</dt>
+      <dd>{@html t('about.gong')}</dd>
+      <dt>{t('about.chineseTitle')}</dt>
+      <dd>{@html t('about.chinese')}</dd>
       <dt>{t('about.readingsTitle')}</dt>
       <dd>{@html t('about.readingsSource')}</dd>
       <dt>{t('about.strokesTitle')}</dt>

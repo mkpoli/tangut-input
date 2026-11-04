@@ -47,11 +47,47 @@ texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausa
 ## `tangut-era-evidence.tsv`
 
 What each Tangut era form rests on, one row per form and source: the era and its first year as the
-Western Xia calendar gives them, the Tangut form, the kind (`coin`, `disputed`, `text`, or `unknown`
-when a source says no form is known, with the form left empty) and the source's key in
-`app/lib/era-sources.js`. Compiled by hand from West's coin article (2007), his post on the law
-code's title (2020) and Nie Hongyin (2004) as quoted by 公維章 (2020). Eras without a row rest on
-the calendar alone. `scripts/build_tangut_eras.py` joins it to the calendar.
+Western Xia calendar gives them, the Tangut form, the kind (`coin`, `disputed`, `text`, `gloss`, `post`, or
+`unknown` when a source says no form is known, with the form left empty), the source's key in
+`app/lib/era-sources.js` and, for a form found in this repository's own texts, the `place`
+(`wikisource:<page>` or `lcdtt:<file>`). Compiled by hand from West's coin article (2007), his post
+on the law code's title (2020), Nie Hongyin (2004) as quoted by 公維章 (2020), and dated lines in
+the Wikisource and Lausanne texts. A `text` row is a date, except 天盛, which rests on the law code's
+title and has no `place`. A `post` form comes from a social media post and may differ from the
+calendar's. Eras without a row rest on the calendar alone.
+`scripts/build_tangut_eras.py` joins it to the calendar and stops unless a form with a `place`
+is followed there by a year.
+
+## `tangut-posthumous.tsv`
+
+Posthumous, temple and tomb names, one row per emperor or empress: `kind`, the names, an empress's `relation` to a ruler, Tangut with its
+`tangut_source` where a source gives it, and the `quote` from 宋史 卷485–486 that names them. Compiled
+by hand. `scripts/build_tangut_posthumous.py` stops if a name is not in its quotation.
+
+## `tangut-state-names.tsv`
+
+Names of the state, one row per name and citing work: the Chinese, if a source gives it, with the
+`chinese_source` printing it; the Tangut, if known; an English `gloss` a source gives; a `note` key for a message on the row;
+the source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the
+Tangut; and `backs`, whether the work bears on the Tangut, the Chinese or the note. Compiled by hand.
+`scripts/build_tangut_state_names.py` stops if a name does not occur in its place.
+
+## `tangut-later-eras.tsv`
+
+Era names matching Yuan eras, in Tangut, one row per era: the era, the Tangut and the source's key in
+`app/lib/era-sources.js`. Read by hand from an image in a post by @zoenshiueh_lieu, which does not say whose
+eras these are. `scripts/build_tangut_later_eras.py` builds the page's data.
+
+## `tangut-titles.tsv`
+
+Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or
+history, `caption`, stated only by a Commons caption, `decoded`, matched here to the font codes of a title a
+study prints, `dated`, inferred from the date of the passage,
+or `disputed`; the Tangut, if known; the Chinese exactly as `chinese_source` prints it, if any; the
+source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the Tangut;
+and `backs`, whether the work supports the Tangut or the Chinese. Compiled by hand.
+`scripts/build_tangut_titles.py` stops if a title does not occur in its place, and marks each title
+`text`, `reported` or `chinese` by what its Tangut rests on.
 
 ## `tangut-frequency.json.gz`
 

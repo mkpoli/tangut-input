@@ -34,6 +34,34 @@ test('the displayable meanings cover only the Wiktionary entries', () => {
   expect(count(6)).toBe(0)
 })
 
+test('every Tibetan spelling stands at a crossing the chart draws', () => {
+  const { cells } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-rhymes.json', import.meta.url), 'utf8'))
+  const drawn = new Set(Object.values(rhymes.chars).map(row => `${row[0]}·${row[1]}`))
+  expect(Object.keys(cells).filter(key => !drawn.has(key))).toEqual([])
+  expect(Object.keys(cells).length).toBe(124)
+  // 2.1 is rhyme 1 in the rising tone, 2.9 rhyme 10: the two tones number their rhymes apart.
+  expect(cells['1·2'].Ⅰ).toEqual(['ཕུ'])
+  expect(Object.keys(cells['10·2'] ?? {}).length).toBeGreaterThan(0)
+})
+
+test('every rhyme the chart draws has 龔煌城\'s value', () => {
+  const { values } = JSON.parse(readFileSync(new URL('../app/data/tangut-gong-rhymes.json', import.meta.url), 'utf8'))
+  expect(Object.keys(values).length).toBe(105)
+  const drawn = new Set(Object.values(rhymes.chars).map(row => row[0]).filter(rhyme => typeof rhyme === 'number'))
+  expect([...drawn].filter(rhyme => !values[rhyme])).toEqual([])
+  expect([values[1], values[33], values[65], values[105]]).toEqual(['u', 'iəə/jɨɨ', 'jɨ̣j', 'jwa'])
+})
+
+test('the Chinese transcription characters stand under rhymes the chart draws', () => {
+  const { rhymes: list } = JSON.parse(readFileSync(new URL('../app/data/tangut-chinese-rhymes.json', import.meta.url), 'utf8'))
+  const drawn = new Set(Object.values(rhymes.chars).map(row => String(row[0])))
+  expect(Object.keys(list).filter(rhyme => !drawn.has(rhyme))).toEqual([])
+  expect(Object.keys(list).length).toBe(58)
+  expect(list['1'][0]).toEqual(['菩', 'u'])
+  // In the thesis table, left out of the repost: no final is known for them.
+  expect(list['100']).toEqual([['棱']])
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {
