@@ -11,7 +11,7 @@ Tangut. `backs` says which column the work supports. `identified` says how the h
 the date of the passage, or `disputed` among the sources. A title's `basis` follows from these:
 `text` when a place backs its Tangut, `reported` when a source gives Tangut that no text here
 confirms, `chinese` when only Chinese is listed. The build stops unless the title occurs in its place, outside
-wikitext comments and notes. Spaces and line numbers in a running text are ignored, since the
+wikitext headers, comments and notes. Spaces and line numbers in a running text are ignored, since the
 Lausanne files keep the edition's line breaks. Rows for one title must agree on everything but the
 source and the place.
 
@@ -35,7 +35,7 @@ def place_text(place: str) -> str:
         text = (ROOT / f'data/lcdtt/{name}.txt').read_text(encoding='utf-8')
     elif corpus == 'wikisource':
         text = json.loads((ROOT / 'data/wikisource/pages.json').read_text(encoding='utf-8'))['pages'][name]['content']
-        text = re.sub(r'(?s)<ref[^>]*/>|<ref.*?</ref>|<!--.*?-->', '', text)
+        text = re.sub(r'(?s)\{\{header.*?\n\}\}|<ref[^>]*/>|<ref.*?</ref>|<!--.*?-->', '', text)
     else:
         raise SystemExit(f'unknown corpus: {place}')
     return NOT_TANGUT.sub('', text)
