@@ -40,6 +40,8 @@
   // is read from. 文海 where it has one, 合編 where it does not.
   const rhyme = $derived(ready && char ? ix.rhymes.get(char) : undefined)
   const rhymeClass = $derived(rhyme?.[0] ? String(rhyme[0]) : '')
+  // Tibetan and Sanskrit spellings from a study known only through a repost: see the sources page.
+  const hands = $derived(ready && char ? ix.tibetanHands[char] : undefined)
   const toneName = $derived(
     rhyme?.[1] === 1 ? 'card.tone.level'
       : rhyme?.[1] === 2 ? 'card.tone.rising'
@@ -210,6 +212,12 @@
             {/if}
             {#if spelling}
               <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="ui-script spelling">{spelling}</span></td></tr>
+            {/if}
+            {#if hands?.tibetan?.length}
+              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">{#each hands.tibetan as [hand, spelt, count], index (index)}{index ? ' · ' : ''}<span class="ui-hint">{hand}</span> {spelt}{count > 1 ? ` ×${count}` : ''}{/each}</td></tr>
+            {/if}
+            {#if hands?.sanskrit?.length}
+              <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
             {/if}
           </tbody>
         </table>

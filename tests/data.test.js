@@ -62,6 +62,19 @@ test('the Chinese transcription characters stand under rhymes the chart draws', 
   expect(list['100']).toEqual([['棱']])
 })
 
+test('the Tibetan spellings by hand class belong to known characters', () => {
+  const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
+  expect(Object.keys(chars).filter(char => !rhymes.chars[char])).toEqual([])
+  for (const { tibetan = [] } of Object.values(chars)) {
+    for (const [hand, spelt, count] of tibetan) {
+      expect('ABCDE').toContain(hand)
+      expect(spelt.length).toBeGreaterThan(0)
+      expect(count).toBeGreaterThanOrEqual(0)
+    }
+  }
+  expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1]])
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {
