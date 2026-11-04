@@ -86,6 +86,62 @@ export const ERA_SOURCES = {
     note: 'Gives the line of another colophon as 禄蕃 and 主世, and attributes 惠宗 to 史金波 1988.',
     url: 'https://www.sinoss.net/uploadfile/2012/0620/20120620033537836.pdf',
   },
+  songshi: {
+    author: '脫脫等',
+    title: '宋史, 卷四百八十五至四百八十六, 夏國傳',
+    where: 'Wikisource, revisions 2325722 and 2325721',
+    note: 'A history compiled under the Yuan, translating or describing the titles in Chinese. It writes 太祖\'s title once as 孝光 and once as 光孝, and says 兀卒 is the same word as 吾祖, "like the title khan". 仁宗\'s 制義去邪 is given as a title his officials offered, under the 紹興 years.',
+    url: 'https://zh.wikisource.org/wiki/宋史/卷485',
+  },
+  commons: {
+    author: '唐吉訶德的侍從 (Wikimedia Commons user)',
+    title: 'Captions of the images in the category Deciphered Tangut text',
+    where: 'Wikimedia Commons, 2022',
+    note: 'A user\'s own images and captions, a weak source. They give the Tangut in Unicode with the 李範文《夏漢字典》 numbers, and pages only for 風角城 (p. 172), 護城聖德至懿 (p. 90) and 兀卒 (p. 961); the dictionary was not seen. zh Wikipedia, 夏惠宗, also gives 貴梁城 and 珍陵城 for 𘅞𗹼𗍁, and cites 崔紅芬 and 文志勇 for 城號, which it says are unexplained and which some scholars treat as near to posthumous titles.',
+    url: 'https://commons.wikimedia.org/wiki/Category:Deciphered_Tangut_text',
+  },
+  shi2003: {
+    author: '史金波',
+    title: '西夏的佛教信仰和風俗',
+    where: '普門學報 14 (2003), pp. 9, 10 and 14 of the PDF',
+    note: 'Quotes 聖文英武崇仁至孝皇帝 from the 大夏國葬舍利碣銘 of 大慶 3, before the state was proclaimed, 歸天廣祖皇帝 for 崇宗 from a 人慶 2 (1145) prayer, and 護城皇帝 from a 千佛名經 prayer, saying 護城皇帝 is 仁宗. It reads the 天力 title as 天力大治、孝智淨廣、宜德納忠、長平 and places its holder after 仁孝.',
+    url: 'https://dlbs.liberal.ntu.edu.tw/FULLTEXT/JR-MAG/mag104049.pdf',
+  },
+  sun2021: {
+    author: '孫穎新',
+    title: '西夏文《大寶積經·無量壽如來會》對勘研究',
+    where: 'Chapter 二, 西夏佛經的初譯和校譯活動, read on QQ閱讀 without page numbers',
+    note: 'Prints the colophon formats with Tangut in a custom font, which was not decoded here, so only the Chinese is listed. It also renders the 天力 title 天力大治智孝广净宣德去邪纳忠永平, from Инв. № 561.',
+    url: 'https://m.chuangshi.qq.com/read/26322215/8',
+  },
+  yaoshi: {
+    author: 'Chapter in 佛學思想與佛教文化研究',
+    title: '西夏文《藥師琉璃光七佛本願功德經》及相關問題考略',
+    where: 'Read on QQ閱讀 without page numbers or the author\'s name',
+    note: 'The chapter calls 崔紅芬 and 文志勇, 西夏皇帝尊號考略 (寧夏大學學報 2006(5), of which only the abstract was seen; zh Wikipedia gives 2007) the author\'s own earlier work. It assigns the 天力 title to 仁宗 from 乾祐 1 (1170), against 史金波 2003, so the holder is disputed. It dates 制義去邪 from 大慶 2 (1141). zh Wikipedia, after the same article, gives 崇宗 as 神功胜录教德治庶仁净.',
+    url: 'https://m.inf.qq.com/read/1022468787/5',
+  },
+  du2008: {
+    author: '杜建錄',
+    title: '中國藏西夏文獻敘錄',
+    where: '西夏學 3 (2008), pp. 75 and 129',
+    note: 'p. 75 gives 奉白高大夏国仁尊圣德珠城皇帝敕重校 from a 金光明最勝王經 (B11·024), calling it 仁宗\'s title. p. 129 reads the stele head of tomb 7 as 白高国大/护城圣德/至懿皇帝/寿陵志文 (N42·009).',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10553.pdf',
+  },
+  wang2010: {
+    author: '王培培',
+    title: '俄藏西夏文《維摩詰經》殘卷考補',
+    where: '西夏學 5 (2010)',
+    note: 'Renders the same line 天生善院番禄法古正国皇太后 and 就德主国增福正民大明皇帝.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0528/20120528022252806.pdf',
+  },
+  nishida: {
+    author: '西田龍雄, tr. 劉紅軍',
+    title: '西夏語佛典目錄編纂諸問題',
+    where: '西夏學 4 (2009)',
+    note: 'Calls a line rendered 德政国主福政民正明大皇帝 崇宗\'s title, against the 惠宗 of the works above.',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10730.pdf',
+  },
   nie2004: {
     author: '聶鴻音',
     title: '西夏文《過去莊嚴劫千佛名經》發願文中的兩個年號',
@@ -104,5 +160,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'commons',
 ])

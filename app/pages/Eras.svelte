@@ -2,7 +2,7 @@
   // The era names of the Western Xia in order, each with its Tangut form where one is recorded and
   // what the form rests on: a coin, a Tangut text, or only the calendar the list is built from.
   // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
-  // imperial titles the texts write, from `app/data/tangut-titles.json`.
+  // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on.
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
@@ -96,22 +96,28 @@
   <section class="ui-section titles" id="titles">
     <h2 class="heading">{t('eras.titles')}</h2>
     <p class="ui-hint">{t('eras.titles.intro')}</p>
+    <dl class="key">
+      {#each ['text', 'reported', 'chinese'] as basis (basis)}
+        <div><dt><span class="tag" data-kind={basis}>{t(`eras.titles.basis.${basis}`)}</span></dt><dd>{t(`eras.titles.basis.${basis}.hint`)}</dd></div>
+      {/each}
+    </dl>
     <div class="ui-table-wrap">
       <table class="ui-table list">
-        <thead><tr><th scope="col">{t('eras.titles.holder')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.titles.chinese')}</th></tr></thead>
+        <thead><tr><th scope="col">{t('eras.titles.holder')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.titles.chinese')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
         <tbody>
-          {#each TITLES as title (`${title.holder} ${title.tangut}`)}
+          {#each TITLES as title (`${title.holder} ${title.tangut || title.chinese}`)}
             <tr>
-              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{/if}</th>
-              <td class="forms title-form"><span class="form" role="group" aria-label={title.tangut}>{#each [...title.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(title.sources)}</td>
-              <td class="chinese">{#if title.chinese}<span lang="zh">{title.chinese}</span>{@render cites([title.chineseSource])}{:else}<span class="ui-hint">—</span>{/if}</td>
+              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{:else if title.identified === 'disputed'}<span class="inferred" title={t('eras.titles.disputed')} aria-label={t('eras.titles.disputed')}>?</span>{/if}</th>
+              <td class="forms title-form" data-empty={!title.tangut || undefined}>{#if title.tangut}<span class="form" role="group" aria-label={title.tangut}>{#each [...title.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{:else}<span class="ui-hint">—</span>{/if}</td>
+              <td class="chinese">{#if title.chinese}<span lang="zh">{title.chinese}</span>{#if !title.sources.includes(title.chineseSource)}{@render cites([title.chineseSource])}{/if}{:else}<span class="ui-hint">—</span>{/if}</td>
+              <td class="basis"><span class="tagged"><span class="tag" data-kind={title.basis}>{t(`eras.titles.basis.${title.basis}`)}</span>{@render cites(title.sources)}</span></td>
             </tr>
           {/each}
         </tbody>
       </table>
     </div>
-    <p class="ui-hint">* {t('eras.titles.dated')}</p>
+    <p class="ui-hint">* {t('eras.titles.dated')} ? {t('eras.titles.disputed')}</p>
   </section>
 
   <section class="ui-section sources">
@@ -141,7 +147,7 @@
   .tagged{display:inline-block;margin-inline-end:var(--ui-space-xs)}
   .tag{display:inline-block;padding:1px 7px;border:1px solid var(--ui-color-border);border-radius:999px;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs);white-space:nowrap}
   .tag[data-kind='coin'],.tag[data-kind='text']{border-color:var(--ui-color-accent);color:var(--ui-color-accent)}
-  .tag[data-kind='none']{border-style:dashed;color:var(--ui-color-ink-muted)}
+  .tag[data-kind='none'],.tag[data-kind='chinese']{border-style:dashed;color:var(--ui-color-ink-muted)}
   tr[data-kind='none'] th{color:var(--ui-color-ink-soft)}
   .note{margin:4px 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .cite{margin-inline-start:2px;font-size:.72em;line-height:0;vertical-align:super}

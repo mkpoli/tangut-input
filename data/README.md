@@ -59,11 +59,12 @@ is followed there by a year.
 
 ## `tangut-titles.tsv`
 
-Imperial titles as the Tangut texts in this repository write them, one row per title and text: the
-holder; `identified`, `stated` by a study or `dated`, inferred from the date of the passage; the
-Tangut; the Chinese exactly as `chinese_source` prints it, if any; the source's key in
-`app/lib/era-sources.js`; and the `place`. Compiled by hand. `scripts/build_tangut_titles.py` stops
-if a title does not occur in its place.
+Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a source,
+`dated`, inferred from the date of the passage, or `disputed`; the Tangut, if known; the Chinese
+exactly as `chinese_source` prints it, if any; the source's key in `app/lib/era-sources.js`; and a
+`place` when a text in this repository writes the Tangut. Compiled by hand.
+`scripts/build_tangut_titles.py` stops if a title does not occur in its place, and marks each title
+`text`, `reported` or `chinese` by what its Tangut rests on.
 
 ## `tangut-frequency.json.gz`
 
