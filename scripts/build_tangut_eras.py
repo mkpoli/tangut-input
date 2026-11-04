@@ -15,8 +15,9 @@ the forms rest on is in `data/tangut-era-evidence.tsv`, one row per form and sou
   source says no Tangut form is known.
 
 A row with a `place` names a dated line in this repository's texts, `wikisource:<page>` or
-`lcdtt:<file>`, and the build stops unless the form occurs there followed by a year: an optional
-cyclical pair, a numeral and 𗤒. Tags belong to an era, so an era with two competing forms, apart from a post's, can only
+`lcdtt:<file>`, and the build stops unless the form occurs there followed by a year: a cyclical pair
+the calendar uses, if any, a numeral and 𗤒. Tags belong to an era, so an era with two competing
+forms, apart from a post's, can only
 carry `disputed` evidence.
 
 An era's dates are its first and last day in the calendar (Julian), and its years are the lunar
@@ -73,9 +74,10 @@ def main() -> None:
 
     # One row per day; an era runs until the Chinese era name changes. 大慶 is used twice. A lunar
     # year begins on the day the cyclical year changes.
-    eras, cycle, lunar = [], None, None
+    eras, cycle, lunar, pairs = [], None, None, set()
     for row in csv.DictReader(io.StringIO(text), delimiter='\t'):
         name, form, day = row['Xia Era (Chinese)'], row['Xia Era (Tangut)'], row['Year-Month-Day']
+        pairs.add(row['Cyclical Year (Tangut)'])
         if row['Cyclical Year'] != cycle:
             cycle, lunar = row['Cyclical Year'], int(day[:4])
         if not eras or eras[-1]['era'] != name:
@@ -86,6 +88,7 @@ def main() -> None:
         eras[-1]['to'], eras[-1]['years'][1] = day, lunar
     eras[-1]['to'], eras[-1]['years'][1] = None, None
 
+    pair = '|'.join(sorted(filter(None, pairs)))
     with EVIDENCE.open(encoding='utf-8') as file:
         for row in csv.DictReader(file, delimiter='\t'):
             if row['kind'] not in KINDS:
@@ -101,7 +104,7 @@ def main() -> None:
                 raise SystemExit(f'a post form would look backed by this era\'s coin or text: {row}')
             if row['kind'] != 'post' and row['tangut'] and row['tangut'] not in era['calendar']:
                 raise SystemExit(f'the form differs from the calendar\'s, which the page would hide: {row}')
-            if row['place'] and not re.search(f'{row["tangut"]}.{{0,2}}[{NUMERALS}]{{1,3}}𗤒', corpus_text(row['place'])):
+            if row['place'] and not re.search(f'{row["tangut"]}(?:{pair})?[{NUMERALS}]{{1,3}}𗤒', corpus_text(row['place'])):
                 raise SystemExit(f'the form is not followed by a year in the text named: {row}')
             if len(era['calendar']) > 1 and row['kind'] in ('coin', 'text'):
                 raise SystemExit(f'an era with two competing forms cannot carry this tag: {row}')
