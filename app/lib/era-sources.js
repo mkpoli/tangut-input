@@ -90,14 +90,14 @@ export const ERA_SOURCES = {
     author: '脫脫等',
     title: '宋史, 卷四百八十五至四百八十六, 夏國傳',
     where: 'Wikisource, revisions 2325722 and 2325721',
-    note: 'A history compiled under the Yuan, translating or describing the titles in Chinese. It writes 太祖\'s title once as 孝光 and once as 光孝, and says 兀卒 is the same word as 吾祖, "like the title khan". 仁宗\'s 制義去邪 is given as a title his officials offered, under the 紹興 years.',
+    note: 'A history compiled under the Yuan, translating or describing the titles in Chinese. It writes 太祖\'s title once as 孝光 and once as 光孝, and says 兀卒 is the same word as 吾祖, "like the title khan". 仁宗\'s 制義去邪 is given as a title offered under the 紹興 years. It gives 太祖 a second temple name, 武宗, and says its names draw in part on 夏國樞要 and may differ from older histories. It gives no temple or posthumous name for the last ruler, 睍. zh Wikipedia writes 襄宗 as 敬慕 where 宋史 has 敬穆.',
     url: 'https://zh.wikisource.org/wiki/宋史/卷485',
   },
   commons: {
     author: '唐吉訶德的侍從 (Wikimedia Commons user)',
     title: 'Captions of the images in the category Deciphered Tangut text',
     where: 'Wikimedia Commons, 2022',
-    note: 'A user\'s own images and captions, a weak source. They give the Tangut in Unicode with the 李範文《夏漢字典》 numbers, and pages only for 風角城 (p. 172), 護城聖德至懿 (p. 90) and 兀卒 (p. 961); the dictionary was not seen. zh Wikipedia, 夏惠宗, also gives 貴梁城 and 珍陵城 for 𘅞𗹼𗍁, and cites 崔紅芬 and 文志勇 for 城號, which it says are unexplained and which some scholars treat as near to posthumous titles.',
+    note: 'A user\'s own images and captions, a weak source. They give the Tangut in Unicode with the 李範文《夏漢字典》 numbers, and pages only for 風角城 (p. 172), 護城聖德至懿 (p. 90) and 兀卒 (p. 961); the dictionary was not seen. zh Wikipedia, 夏惠宗, also gives 貴梁城 and 珍陵城 for 𘅞𗹼𗍁, and cites 崔紅芬 and 文志勇 for 城號, which it says are unexplained and which some scholars treat as near to posthumous titles. A caption gives 𗭼𘜶𘓺𘋨 as 桓宗\'s 昭簡 (p. 813); the same four characters close 惠宗\'s title in the 慈悲道場懺法 line, where 楊志高 2010 renders them 大明皇帝.',
     url: 'https://commons.wikimedia.org/wiki/Category:Deciphered_Tangut_text',
   },
   shi2003: {

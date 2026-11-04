@@ -2,9 +2,11 @@
   // The era names of the Western Xia in order, each with its Tangut form where one is recorded and
   // what the form rests on: a coin, a Tangut text, or only the calendar the list is built from.
   // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
-  // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on.
+  // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on, and
+  // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`.
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
+  import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
   import { choose } from '../lib/ui.svelte.js'
   import { hex } from '../lib/db.svelte.js'
@@ -120,6 +122,34 @@
     <p class="ui-hint">* {t('eras.titles.dated')} ? {t('eras.titles.disputed')}</p>
   </section>
 
+  <section class="ui-section titles" id="posthumous">
+    <h2 class="heading">{t('eras.posthumous')}</h2>
+    <p class="ui-hint">{t('eras.posthumous.intro')}{@render cites(['songshi'])}</p>
+    <div class="ui-table-wrap">
+      <table class="ui-table plain">
+        <thead><tr><th scope="col">{t('eras.posthumous.temple')}</th><th scope="col">{t('eras.posthumous.name')}</th><th scope="col">{t('eras.posthumous.posthumous')}</th><th scope="col">{t('eras.posthumous.tomb')}</th></tr></thead>
+        <tbody lang="zh-Hant">
+          {#each POSTHUMOUS.filter(row => row.kind === 'emperor') as row (row.temple)}
+            <tr>
+              <th scope="row">{row.temple}</th>
+              <td>{row.name}</td>
+              <td>{row.posthumous || '—'}{#if row.tangut}<span class="form posthumous-form" role="group" aria-label={row.tangut}>{#each [...row.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites([row.tanguts])}{/if}</td>
+              <td>{row.tomb || '—'}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+    <h3 class="subheading">{t('eras.posthumous.empresses')}</h3>
+    <p class="ui-hint">{t('eras.posthumous.empresses.intro')}</p>
+    <ul class="empresses" lang="zh-Hant">
+      {#each POSTHUMOUS.filter(row => row.kind === 'empress') as row (row.posthumous)}
+        <li>{row.posthumous}{row.name}</li>
+      {/each}
+    </ul>
+  </section>
+
   <section class="ui-section sources">
     <h2 class="heading">{t('eras.sources')}</h2>
     <ol class="source-list">
@@ -159,12 +189,20 @@
   .chinese{min-inline-size:12em;font-size:var(--ui-text-sm)}
   .inferred{margin-inline-start:2px;color:var(--ui-color-ink-muted)}
   .heading{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold)}
+  .plain td,.plain th{font-size:var(--ui-text-sm)}
+  .plain th[scope='row']{font-weight:var(--ui-weight-medium);white-space:nowrap}
+  .posthumous-form{margin-inline-start:var(--ui-space-sm);vertical-align:middle}
+  .subheading{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold)}
+  .empresses{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;padding:0;list-style:none;font-size:var(--ui-text-sm)}
   .sources{gap:var(--ui-space-sm);padding-top:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
   .source-list{margin:0;padding-inline-start:1.5em;color:var(--ui-color-ink-soft);font-size:13px;line-height:1.65}
   .source-list li{padding-block:2px 6px;scroll-margin-block-start:calc(var(--topbar-h) + var(--ui-space-lg))}
   .source-list li:target{color:var(--ui-color-ink)}
   .source-list a{color:inherit;text-underline-offset:2px}
   @media (max-width:900px){
+    .plain th,.plain td{padding-inline:var(--ui-space-sm)}
+    .plain thead th{white-space:normal}
+    .posthumous-form{display:flex;margin-inline-start:0}
     .key div{display:block}
     .key dt{display:inline;margin-inline-end:var(--ui-space-xs)}
     .key dd{display:inline}

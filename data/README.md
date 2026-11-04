@@ -57,6 +57,12 @@ title and has no `place`. Eras without a row rest on the calendar alone.
 `scripts/build_tangut_eras.py` joins it to the calendar and stops unless a form with a `place`
 is followed there by a year.
 
+## `tangut-posthumous.tsv`
+
+Posthumous, temple and tomb names, one row per emperor or empress: `kind`, the names, Tangut with its
+`tangut_source` where a source gives it, and the `quote` from 宋史 卷485–486 that names them. Compiled
+by hand. `scripts/build_tangut_posthumous.py` stops if a name is not in its quotation.
+
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a source,
