@@ -3,47 +3,49 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
-import { hanFanqie, sounds } from '../app/lib/fanqie.js'
 
 const json = name => JSON.parse(gunzipSync(readFileSync(new URL(`../app/data/${name}`, import.meta.url))).toString())
 const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
-/** The packed records, expanded just enough for the fanqie parse. */
-const expanded = entries.rows.map(row => {
-  /** @type {Record<string, string>} */
-  const pronunciations = {}
-  entries.systems.forEach((key, i) => { if (row[7]?.[i]) pronunciations[key] = row[7][i] })
-  return { char: row[0], pronunciations }
-})
-
-test('the packed records keep every character and its languages', () => {
-  expect(entries.format).toBe('tangut-input/entries')
+test('the packed records keep every character, the five Wiktionary readings and Gong Xun\'s', () => {
+  expect(entries.format).toBe('tangut-input/entries/3')
   expect(entries.rows.length).toBe(6144)
-  expect(entries.systems.length).toBe(10)
-  const first = expanded[0]
-  expect(first.char).toBe('𗀀')
-  expect(first.pronunciations.li_fanwen).toBe('do1')
+  expect(entries.systems).toEqual(['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida'])
+  const first = entries.rows[0]
+  expect(first[0]).toBe('𗀀')
+  expect(first[7]).toEqual(['do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
+  expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
+  expect(first[5]).toEqual(['毒'])
+  expect(first[6]).toEqual([])
+  expect(first[8]).toBe('Composed of the middle of 𘊓 "scorpion" and the right of "𗀋".')
+  expect(first[9]).toBe('蝎中蛇右。')
 })
 
-test('the Chinese fanqie parse is the one the chart draws', () => {
-  const records = hanFanqie(expanded)
-  expect(records.length).toBe(3816)
-  const bySound = sounds(records)
-  expect(bySound.size).toBe(1433)
-  const several = [...bySound.values()].filter(group => group.spellings.size > 1).length
-  expect(several).toBe(504)
-  expect(bySound.get('勒').spellings.size).toBe(20)
+test('the 文海 text is kept for the entries it carries', () => {
+  expect(entries.rows.filter(row => row[8]).length).toBe(12)
+  expect(entries.rows.filter(row => row[9]).length).toBe(6)
 })
 
-test('a rounding marker is not one of the two characters', () => {
-  const records = hanFanqie(expanded)
-  const rounded = records.find(record => record.char === '𗅶')
-  // 「底合卒切」: 底 with 合 marking the rounding, spelt with 卒.
-  expect(rounded.upper).toBe('底')
-  expect(rounded.lower).toBe('卒')
-  expect(rounded.round).toBe(true)
-  expect(records.filter(record => record.round).length).toBe(21)
+test('the displayable meanings cover only the Wiktionary entries', () => {
+  const count = column => entries.rows.filter(row => row[column]?.length).length
+  expect(count(4)).toBe(457)
+  expect(count(5)).toBe(278)
+  expect(count(6)).toBe(0)
+})
+
+const ccamc = json('tangut-ccamc-index.json.gz')
+
+test('the CCAMC index holds only normalized search terms', () => {
+  expect(ccamc.format).toBe('tangut-input/ccamc-index')
+  expect(Object.keys(ccamc.readings).sort()).toEqual(['arakawa_shintaro', 'gong_huangcheng'])
+  expect(Object.keys(ccamc.meanings).sort()).toEqual(['en', 'zh'])
+  expect(ccamc.wenhai).toBeUndefined()
+  expect(ccamc.meanings.zh['𗀀']).toEqual(['毒', '下毒者', '毒死', '毒 蠱 名詞'])
+  const gongXun = entries.rows.filter(row => row[7][1]).length
+  expect(gongXun).toBe(5869)
+  // The index is not a record: no original diacritics survive, and no 文海 sentence is stored.
+  expect(JSON.stringify(ccamc.readings)).not.toContain('¹')
 })
 
 test('every character with a rhyme is a character the site knows', () => {
@@ -119,54 +121,6 @@ test('the sample passages are exact lines from the attestation', () => {
     expect(sample.licence).toBe(attestation.sources.find(source => source.id === sample.sourceId)?.licence)
     expect(sample.text).toBe(sample.lineIds.map(line => attestation.lines[line].text).join('\n'))
   }
-})
-
-const glossWords = gunzipSync(readFileSync(new URL('../data/tangut-gloss-words.tsv.gz', import.meta.url)))
-  .toString().split('\n').filter(line => line && !line.startsWith('#')).map(line => line.split('\t'))
-
-test('the gloss word table names every character once', () => {
-  expect(glossWords.length).toBe(6144)
-  expect(new Set(glossWords.map(row => row[0]))).toEqual(new Set(entries.rows.map(row => row[0])))
-  const tiers = {}
-  for (const [, , tier] of glossWords) tiers[tier] = (tiers[tier] ?? 0) + 1
-  expect(tiers).toEqual({ word: 3117, phrase: 2053, transliteration: 728, long: 162, empty: 61, redirect: 23 })
-  const glossOf = char => glossWords.find(row => row[0] === char)
-  expect(glossOf('𗢳')).toEqual(['𗢳', '佛', 'word', 'tha̱1'])
-  expect(glossOf('𘋢').slice(0, 3)).toEqual(['𘋢', '菩薩', 'phrase'])
-  expect(glossOf('𗍏')[2]).toBe('transliteration')
-  // A bracket later in the entry does not make the first sense a transliteration.
-  expect(glossOf('𗓭').slice(0, 3)).toEqual(['𗓭', '富', 'word'])
-  // A bracketed note stays as it is and is left for an editor, rather than guessed into a word.
-  expect(glossOf('𗁋').slice(0, 3)).toEqual(['𗁋', '（滴）答', 'long'])
-  expect(glossOf('𗠏').slice(0, 3)).toEqual(['𗠏', '（喉嚨）咽喉', 'long'])
-  // An ASCII note before the word explains the word and is dropped.
-  expect(glossOf('𗈒')).toEqual(['𗈒', '肘', 'word', 'rkiwr2'])
-  expect(glossOf('𗘓')[2]).toBe('long')
-})
-
-const glossReadings = gunzipSync(readFileSync(new URL('../data/tangut-gloss-readings.tsv.gz', import.meta.url)))
-  .toString().split('\n').filter(line => line && !line.startsWith('#')).map(line => line.split('\t'))
-
-test('the gloss readings cover the one-character words', () => {
-  const words = glossWords.filter(row => row[2] === 'word').map(row => row[0])
-  expect(glossReadings.length).toBe(3117)
-  expect(glossReadings.map(row => row[0])).toEqual(words.sort((a, b) => a.codePointAt(0) - b.codePointAt(0)))
-  // Every reading of the gloss is kept, in KANJIDIC2's order and its pinyin tone numbers, except
-  // bound forms, which the source marks with a hyphen at either end.
-  expect(glossReadings.filter(row => row[2]).length).toBe(3068)
-  expect(glossReadings.filter(row => row[3]).length).toBe(3063)
-  expect(glossReadings.filter(row => row[4]).length).toBe(2801)
-  const readingOf = char => glossReadings.find(row => row[0] === char)
-  expect(readingOf('𗢳')).toEqual(['𗢳', '佛', 'fo2 fu2', 'ブツ フツ', 'ほとけ'])
-  expect(readingOf('𘛛')).toEqual(['𘛛', '日', 'ri4', 'ニチ ジツ', 'ひ'])
-  // An okurigana stem keeps its dot; a hyphenated suffix reading is left out.
-  expect(readingOf('𗄖')).toEqual(['𗄖', '行', 'xing2 hang2 hang4 xing4', 'コウ ギョウ アン', 'い.く ゆ.く おこな.う おこ.なう'])
-  // 毒 is read in Sino-Japanese only, so its kun reading is empty rather than guessed.
-  expect(readingOf('𗀀')).toEqual(['𗀀', '毒', 'du2', 'ドク', ''])
-  // 上 keeps its standalone kun readings and drops the うわ- bound form.
-  expect(readingOf('𗥁')[4]).toBe('うえ かみ あ.げる あ.がる あ.がり のぼ.る のぼ.り のぼ.せる のぼ.す たてまつ.る')
-  // A character KANJIDIC2 does not carry keeps empty columns.
-  expect(readingOf('𗐭')).toEqual(['𗐭', '說', '', '', ''])
 })
 
 const frequency = json('tangut-frequency.json.gz')
