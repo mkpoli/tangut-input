@@ -1165,3 +1165,14 @@ validates the tables; `scripts/fetch_zhangzhongzhu.py` pulls a canvas or a crop 
 Licence: the images are **CC BY-NC 4.0**, 清光山西巖寺 / 国文学研究資料館, and are not
 redistributed here or on the site. The keyed text is this workshop's own work over a public-domain
 text; its licence is not settled, and until it is the rows may be cited but not reused at scale.
+
+## `books/`
+
+The editions the site keys when it needs a value CCAMC used to supply, one record per work in
+`source.yaml`, one row per file in `files.tsv` with its checksum, page count and resolution. The
+scans themselves are in `cache/books/`, which git does not carry; `scripts/fetch_books.py` fetches
+them and checks each against its md5. [The README](books/README.md) says which work gives what.
+
+Most of these editions are under copyright and their scans stay out of the build. The 掌中珠 scans
+in `cache/books/zhangzhongzhu/` are PD-scans of a public-domain original and may be reused; the
+貽安堂 photographs described above are CC BY-NC 4.0.

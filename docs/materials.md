@@ -28,9 +28,24 @@ cannot copy it.
 | [Lausanne Corpus of Digital Tangut Texts](https://github.com/bjargal/LCDTT-tangut) | 21 Tangut texts in running transcription, including the Heart Sutra, Sunzi, the Zhenguan government, the Forest of Categories, legal texts and the Tangut Bodhicaryāvatāra; each file cites the edition it was extracted from | repository states no licence; project owner granted permission 2026-11-04; the Bodhicaryāvatāra editions are CC BY 4.0, the other editions keep their own terms | `data/lcdtt/manifest.json`, read by `scripts/build_tangut_attestation.py` |
 | Faces: Noto Serif Tangut, Tangut Yinchuan, BabelStone Wenhai, New Tangut Std, GenZui, Mojikyo, N4694, TWU | glyphs; the drawing pad's shapes are rendered from them | per face, `app/public/fonts/FONT-LICENCES.md` | `scripts/build_tangut_shapes.py` |
 
+## Books, keyed
+
+The editions the values CCAMC carried are keyed from, each row citing the edition and page. The
+scans are large and sit out of the build in `cache/books/`; `data/books/source.yaml` gives each work,
+what it supplies and its terms, and `scripts/fetch_books.py` fetches them again and checks the md5.
+
+| Work | Gives | Terms |
+| --- | --- | --- |
+| 番漢合時掌中珠, 骨勒茂才, 1190 | the Chinese character written for a Tangut character, and the Chinese gloss | public domain; the keying photographs (清光山西巖寺 copy, 貽安堂 printing, [DOI 10.20730/100354804](https://kokusho.nijl.ac.jp/biblio/100354804)) are CC BY-NC 4.0 |
+| 夏漢字典, 李范文, 中國社會科學出版社, 1997 | Li Fanwen's reading with its fanqie and 直音, and the Chinese meanings | none stated |
+| 文海研究, 史金波・白濱・黃振華, 中國社會科學出版社, 1983 | the 文海's entries and its fanqie | none stated |
+| Тангутская филология, Н. А. Невский, Издательство восточной литературы, 1960 | the 音（聂历山）column: Nevsky's readings | none stated by the Institute of Oriental Manuscripts, which scanned it |
+| 西夏語通韻字典, 荒川慎太郎, 1999 | Arakawa's reconstruction, syllable by syllable | none stated |
+| 西夏語文研究論文集, 龔煌城, 中研院語言學研究所籌備處, 2002 | Gong Hwang-cherng's reconstruction | none stated |
+
 ## Linked, not copied
 
-- [CCAMC](http://ccamc.org/) — per-character pages with 音（李范文）and its fanqie and 直音, 音（聂历山）, a 藏文對音 field, 聲韻, 同音, 擬音 for eight systems, and the 文海 commentary. HTTP only: the host serves no TLS. It blocks bursts, and it states no licence. Since 2026-11-04 the site copies none of its readings or glosses: a card links to `http://ccamc.org/tangut.php?n4694=<char>`. The two systems the site does not show (Gong Hwang-cherng and Arakawa Shintarō) and CCAMC's English and Chinese glosses survive only as normalized terms in `app/data/tangut-ccamc-index.json.gz`, which answers a search and is never rendered. The 文海 text is public domain and comes from `data/wenhai/entry-text.json.gz`. The site does not crawl CCAMC.
+- [CCAMC](http://ccamc.org/) — per-character pages with 音（李范文）and its fanqie and 直音, 音（聂历山）, a 藏文對音 field, 聲韻, 同音, 擬音 for eight systems, and the 文海 commentary. HTTP only: the host serves no TLS. It blocks bursts, and it states no licence. Since 2026-11-04 the site copies none of its readings or glosses: a card links to `http://ccamc.org/tangut.php?n4694=<char>`, and the fields it carried are rebuilt from the editions above. Until they are, the two systems the site does not display (Gong Hwang-cherng and Arakawa Shintarō) and CCAMC's English and Chinese glosses survive only as normalized terms in `app/data/tangut-ccamc-index.json.gz`, which answers a search and is never rendered. The 文海 text is public domain and comes from `data/wenhai/entry-text.json.gz`. The site does not crawl CCAMC.
 
 ## Available, not used
 
@@ -44,6 +59,6 @@ cannot copy it.
 
 ## Missing
 
-- **番漢合時掌中珠 as data.** The 1190 glossary's three columns — Tangut character, Chinese transcription, Chinese gloss — exist in printed editions and in a study of its computer processing ([CiNii](https://cir.nii.ac.jp/crid/1040000781685614592)); no dataset is published, and Unicode's sources file does not index it. About a thousand entries would have to be transcribed from an edition, cited to that edition.
-- **藏文對音 beyond five manuscripts.** Tibetan transcriptions of Tangut survive in fragments and are discussed one article at a time. Only the five British Library fragments in BabelStone's index are tabulated; CCAMC has a field for them, empty on almost every page seen.
+- **番漢合時掌中珠 as data.** Keying has started in the site's `zhangzhongzhu` tables: the columns, their order and the section headings have to be settled band by band from the canvas images before a count exists. A reading of a damaged glyph waits for a second witness. Nothing on the page shows the tables yet.
+- **藏文對音 beyond five manuscripts.** Tibetan transcriptions of Tangut survive in fragments and are discussed one article at a time. Only the five British Library fragments in BabelStone's index are tabulated.
 - **Tangut seal and cursive forms.** Seal script is confined to the headings of a few steles and cursive to manuscripts; no face and no per-character table exists, so the site shows the regular script only.
