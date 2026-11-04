@@ -45,8 +45,8 @@ export const PAGE_SEO = {
     description: 'The rhyme books laid out as a chart: rhymes down the side, initial groups across the top, and the characters that stand at each crossing.',
   },
   eras: {
-    title: 'Era names — Tangut Input',
-    description: 'The era names of the Western Xia with their Tangut forms, each marked by what it rests on: a coin, a Tangut text, or only a calendar.',
+    title: 'Eras, titles and state names — Tangut Input',
+    description: 'The era names, imperial titles, posthumous names and state names of the Western Xia, with Tangut where recorded and each marked by what it rests on.',
   },
   draw: {
     title: 'Draw — Tangut Input',
