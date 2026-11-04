@@ -351,7 +351,7 @@
   "about.tibetanTitle": "藏文对音",
   "about.tibetan": "Andrew West（BabelStone，2011-12-19）<a href=\"https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html\">《Index of Tangut Characters with Corresponding Tibetan Phonetic Glosses》</a>：据大英图书馆藏五件写本（Or.12380/1842、3495、3909、3910、3911）辑录197字的藏文对音，凡261例。韵图列出其中194字，𗤠、𘂧在韵表中无位置，𗈪缺韵号。原页注明省去了部分不完整的对音，部分对音难以辨读，所录大概有误读；无法辨读的字母标“?”。原页未声明许可协议。",
   "about.gongTitle": "龚煌城的韵类音值",
-  "about.gong": "韵图页各韵旁的音值采用龚煌城《西夏语概要》（2005）的音值，据郭抒远2019年学位论文表1-3-1转录，所据为<a href=\"https://zhuanlan.zhihu.com/p/271919711\">KwingiemChan在知乎发布的扫描图</a>，未与这两种原始文献核对。长元音以双写表示；第105韵印作jwa，但其他来源列有韵尾r。",
+  "about.gong": "韵图页各韵旁的音值采用龚煌城《西夏语概要》（2005）的音值，据郭抒远2019年学位论文表1-3-1转录，所据为<a href=\"https://zhuanlan.zhihu.com/p/271919711\">KwingiemChan在知乎发布的扫描图</a>，未与这两种原始文献核对。长元音以双写表示；第105韵印作jwa，但其他来源列有韵尾r。第16韵及扫描件中少数过于细小而无法辨读的符号，依据第二份扫描表格及同一体系的其他读法。",
   "about.strokes": "整字笔画数取自Unicode的<a href=\"https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt\">TangutSources.txt</a>（Unicode 18.0）；部件笔画数由本项目据字形审定计出。",
   "about.attestation": "语料库合并两类资料：附影印与英译的版本，以及Wikisource的转录。各资料的权利不同，分别标在用例旁和下方。",
   "about.attestCount": "目前已收：{sources}种文献、{lines}行，{characters}字，不重复{distinct}字。",

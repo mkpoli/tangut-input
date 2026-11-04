@@ -351,7 +351,7 @@
   "about.tibetanTitle": "チベット文字対音",
   "about.tibetan": "Andrew West（BabelStone, 2011-12-19）<a href=\"https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html\">「Index of Tangut Characters with Corresponding Tibetan Phonetic Glosses」</a>：大英図書館所蔵の5写本（Or.12380/1842, 3495, 3909, 3910, 3911）から197字・261例のチベット文字対音を収めます。韻図ではそのうち194字の下に示しています。𗤠と𘂧は韻表に位置がなく、𗈪は韻の番号を欠くためです。同ページは不完全な対音の一部を省いたこと、判読の難しい対音があって誤読がおそらく含まれることを断っており、判読できない文字には「?」が付いています。ライセンスの明記はありません。",
   "about.gongTitle": "龔煌城による韻の音価",
-  "about.gong": "韻図の各韻に添えた音価は龔煌城（《西夏语概要》、2005）のもので、郭抒遠の2019年の学位論文の表1-3-1を、<a href=\"https://zhuanlan.zhihu.com/p/271919711\">知乎のKwingiemChanによるスキャン</a>から読み取った。いずれの書籍とも照合していない。長母音は文字を重ねて書く。第105韻は印刷ではjwaだが、他の資料では韻尾rを持つ。",
+  "about.gong": "韻図の各韻に添えた音価は龔煌城（《西夏语概要》、2005）のもので、郭抒遠の2019年の学位論文の表1-3-1を、<a href=\"https://zhuanlan.zhihu.com/p/271919711\">知乎のKwingiemChanによるスキャン</a>から読み取った。いずれの書籍とも照合していない。長母音は文字を重ねて書く。第105韻は印刷ではjwaだが、他の資料では韻尾rを持つ。第16韻およびスキャン画像で細かすぎて判読できないいくつかの記号は、第2のスキャン表と同体系の他の読みに従っている。",
   "about.strokes": "字種の画数はUnicodeの<a href=\"https://www.unicode.org/Public/18.0.0/ucd/TangutSources.txt\">TangutSources.txt</a>（Unicode 18.0）に拠り、部品の画数は本プロジェクトで字形から数えました。",
   "about.attestation": "コーパスは、影印と英訳を伴う版本と、Wikisourceの翻刻を合わせたものです。資料ごとに権利が異なるため、用例のそばとこの一覧に表示します。",
   "about.attestCount": "現在の収録数：{sources}種の文献、{lines}行、延べ{characters}字（異なり{distinct}字）。",
