@@ -24,7 +24,8 @@
 
   /**
    * What an era's form rests on: one tag for each kind of evidence, with its sources, or the
-   * calendar alone. The build keeps every backed form among the calendar's, so those are the forms.
+   * calendar alone. The build keeps every backed form among the calendar's, so those and the forms of
+   * a post, which may differ, are the forms.
    * @param {Era} era
    */
   function basis(era) {
@@ -32,10 +33,13 @@
       const rows = era.evidence.filter(e => e.kind === kind)
       return rows.length ? [{ kind, sources: [...new Set(rows.map(e => e.source))] }] : []
     })
-    if (!tags.length) tags.push(era.calendar.length ? { kind: 'calendar', sources: ['calendar'] } : { kind: 'none', sources: [] })
+    if (!tags.length && era.calendar.length) tags.push({ kind: 'calendar', sources: ['calendar'] })
+    const posted = era.evidence.filter(e => e.kind === 'post')
+    if (posted.length) tags.push({ kind: 'post', sources: [...new Set(posted.map(e => e.source))] })
+    if (!tags.length) tags.push({ kind: 'none', sources: [] })
     return {
       tags,
-      forms: era.calendar,
+      forms: [...new Set([...era.calendar, ...posted.map(e => e.tangut)])],
       doubt: era.evidence.find(e => e.kind === 'unknown'),
       gloss: era.evidence.find(e => e.kind === 'gloss'),
     }
@@ -64,7 +68,7 @@
   </header>
 
   <dl class="key">
-    {#each ['coin', 'text', 'disputed', 'calendar', 'none'] as kind (kind)}
+    {#each ['coin', 'text', 'disputed', 'calendar', 'post', 'none'] as kind (kind)}
       <div><dt><span class="tag" data-kind={kind}>{t(`eras.kind.${kind}`)}</span></dt><dd>{t(`eras.kind.${kind}.hint`)}</dd></div>
     {/each}
   </dl>

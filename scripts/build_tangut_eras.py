@@ -40,7 +40,7 @@ URL = 'https://www.babelstone.co.uk/Calendar/XixiaCalendar_txt.zip'
 SHA256 = 'bd3f44d3bbb1a285ed6a085a8434770e7a97c537e8f4cdd8a4864c0e6cc66c14'
 EVIDENCE = ROOT / 'data/tangut-era-evidence.tsv'
 OUT = ROOT / 'app/data/tangut-eras.json'
-KINDS = {'coin', 'disputed', 'text', 'gloss', 'unknown'}
+KINDS = {'coin', 'disputed', 'text', 'gloss', 'post', 'unknown'}
 # The numerals two to ten, as the dated lines write them.
 NUMERALS = '𗍫𘕕𗥃𗏁𗤁𗒹𘉋𗢭𗰗'
 
@@ -94,7 +94,7 @@ def main() -> None:
             era = next((e for e in eras if e['era'] == row['era'] and e['from'][:4] == row['from']), None)
             if not era:
                 raise SystemExit(f'no such era in the calendar: {row}')
-            if row['tangut'] and row['tangut'] not in era['calendar']:
+            if row['kind'] != 'post' and row['tangut'] and row['tangut'] not in era['calendar']:
                 raise SystemExit(f'the form differs from the calendar\'s, which the page would hide: {row}')
             if row['place'] and not re.search(f'{row["tangut"]}.{{0,2}}[{NUMERALS}]{{1,3}}𗤒', corpus_text(row['place'])):
                 raise SystemExit(f'the form is not followed by a year in the text named: {row}')

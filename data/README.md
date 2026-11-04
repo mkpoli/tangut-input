@@ -47,13 +47,14 @@ texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausa
 ## `tangut-era-evidence.tsv`
 
 What each Tangut era form rests on, one row per form and source: the era and its first year as the
-Western Xia calendar gives them, the Tangut form, the kind (`coin`, `disputed`, `text`, `gloss`, or
+Western Xia calendar gives them, the Tangut form, the kind (`coin`, `disputed`, `text`, `gloss`, `post`, or
 `unknown` when a source says no form is known, with the form left empty), the source's key in
 `app/lib/era-sources.js` and, for a form found in this repository's own texts, the `place`
 (`wikisource:<page>` or `lcdtt:<file>`). Compiled by hand from West's coin article (2007), his post
 on the law code's title (2020), Nie Hongyin (2004) as quoted by 公維章 (2020), and dated lines in
 the Wikisource and Lausanne texts. A `text` row is a date, except 天盛, which rests on the law code's
-title and has no `place`. Eras without a row rest on the calendar alone.
+title and has no `place`. A `post` form comes from a social media post and may differ from the
+calendar's. Eras without a row rest on the calendar alone.
 `scripts/build_tangut_eras.py` joins it to the calendar and stops unless a form with a `place`
 is followed there by a year.
 

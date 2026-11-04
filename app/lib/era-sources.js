@@ -177,6 +177,13 @@ export const ERA_SOURCES = {
     note: 'Heads a section 西夏.',
     url: 'https://zh.wikisource.org/wiki/遼史/卷115',
   },
+  zoenshiueh: {
+    author: 'परवद💙💛 (@zoenshiueh_lieu)',
+    title: 'A list of Western Xia era names in Tangut',
+    where: 'Post on X; its date and link were not recorded',
+    note: 'A social media post that names no source. 19 lines, 14 of them matching the calendar. It adds 天授禮法延祚, 應天 and 皇建, whose 𗺔 and 𘚪 occur in no text on this site, and differs from the calendar on 天賜禮盛國慶 and 元德, whose 𗪘 and 𗪟 look alike. It lists 大慶 twice, the first time without saying it is the era of 1036, so that era is not given a form here, and it puts 皇建 before 應天.',
+    url: '',
+  },
   nie2004: {
     author: '聶鴻音',
     title: '西夏文《過去莊嚴劫千佛名經》發願文中的兩個年號',
@@ -195,5 +202,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'enwp', 'liaoshi',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'enwp', 'liaoshi', 'zoenshiueh',
 ])
