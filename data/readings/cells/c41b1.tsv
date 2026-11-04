@@ -1,0 +1,13 @@
+41	1	1	transcription	日能裴責		side=r; certain; small 知 printed beside 日, small circle ｡ beside 能 裴 責
+41	1	2	tangut		U+1725B U+17DEB U+17182 U+17211	side=r; 日(知)→𗉛 音示（日知）, 能→𗷫 音能, 裴→𗆂 音裴, 責→𗈑 音自（尼則）; each confirmed against the print at 3x; certain
+41	1	3	gloss	煩惱纏縛		side=r; certain
+41	1	4	spelling		U+173C6 U+18567 U+17291 U+17951	side=r; 煩→𗏆 音梵 certain (sole candidate, shape identical), 惱→𘕧 音納、腦 certain, 纏→𗊑 音贊 probable (shape is a clean match, top of 6047 by shape, but the reading does not fit 纏; no 闡/禪/纏-reading candidate matches the printed form), 縛→𗥑 音富 certain
+41	1	5	transcription	斡娘你荅		side=r; certain; 1st char has 斗 on the right, so 斡 not 幹; small circle ｡ beside 你
+41	1	6	tangut		U+17D7A U+17149 U+17936 U+176FB	side=r; 斡→𗵺 音斡 certain, 娘→𗅉 音娘 probable (𗅾 U+1717E, 娘羅切, is the competing shape; 𗅉 scores higher against the print and its 直音 matches), 你→𗤶 音你 certain, 荅→𗛻 音達 certain
+41	1	7	gloss	逐物心動		side=r; certain
+41	1	8	spelling		U+172D0 U+1825D U+17C69 U+17E58	side=r; 逐→𗋐 音逐 certain; 物→𘉝 音那 probable (best shape of all 6047 by a wide margin, but the reading does not fit 物; no 勿/物-reading candidate matches); 心→𗱩 音寧 probable (𘛦 U+186E6 音心 fits the gloss, but its structure is ⿰ while 𗱩 and the print are ⿱, with the top stroke spanning the whole width; the reading does not fit 心); 動→𗹘 音動 certain. The 動 slot holds a second, smaller character to the right of 𗹘, left open — see row 8b
+41	1	8b	spelling			side=r; second, smaller character in the 動 slot (x 3612-3692, y 1668-1780): ⿰[丿 over 又][two horizontals over a hook]. Ranked against all 6047 by shape; nothing matched. open
+41	1	9	transcription	路怛張皮		side=r; certain; 2nd char is 忄+旦
+41	1	10	tangut		U+1852B U+17DFA U+17406 U+177FB	side=r; 路→𘔫 音路 certain (𗘝 U+1761D shares the reading but not the form), 怛→𗷺 名怛切 音馬 probable, 張→𗐆 音章 certain, 皮→𗟻 音皮 certain
+41	1	11	gloss	以貧為醜		side=r; certain
+41	1	12	spelling		U+18625 U+17B21 U+180E1 U+18064	side=r; 以→𘘥 音夷 probable (𘘣 U+18623 is all but identical in both fonts; the two differ only in their first component), 貧→𗬡 比賓切 音頻 certain, 為→𘃡 音為 probable (𘐞 U+1841E and 𘎃 U+18383 score alike; 𘃡 has the matching 直音), 醜→𘁤 音醜 certain

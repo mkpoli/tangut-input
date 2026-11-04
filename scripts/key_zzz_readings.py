@@ -6,7 +6,7 @@ right edge, its role, and either the Chinese text of a transcription column or t
 Tangut column. A transcription column and the Tangut column to its left hold the same number of
 signs, one against one; each pair is the page's own 直音 and becomes a row.
 
-    uv run scripts/key_zzz_readings.py --cells cache/zzz/cells-c41b1r.tsv --write
+    uv run scripts/key_zzz_readings.py --cells data/readings/cells/c41b1.tsv --write
 
 The rows are merged into `data/readings/readings.tsv`: every 掌中珠 row on a canvas the export covers
 is replaced, and every other row is kept as it stands. Without `--write` the rows go to stdout as a

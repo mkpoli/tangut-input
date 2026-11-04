@@ -10,12 +10,12 @@ Chinese and Latin script and are typed, not OCR'd.
 
 ## Where a keyed band comes from
 
-An image model reads one 掌中珠 band off the scan and writes an export beside the page: a row per
-glyph, with the canvas, the band, the column, the role, the glyph and its code point, and a note
-naming the pair it reads and how sure it is. `scripts/key_zzz_readings.py` turns that export into
-rows of the table below, one per transcription character, and pairs each with the Tangut code point
-in the same column; `--write` merges them into the table, replacing the rows of that canvas.
-`cache/zzz/` holds the exports while a page is being keyed.
+An image model reads one 掌中珠 band off the scan and writes an export: a row per glyph, with the
+canvas, the band, the column, the role, the glyph and its code point, and a note naming the pair it
+reads and how sure it is. The exports are kept in `cells/`, named `<canvas>b<band>[r].tsv` (`r` for
+one side of the opening only). `scripts/key_zzz_readings.py` turns an export into rows of the table
+below, one per transcription character, and pairs each with the Tangut code point in the same column;
+`--write` merges them into the table, replacing the rows of that canvas.
 
 ## Table
 
