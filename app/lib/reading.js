@@ -15,6 +15,13 @@ export const SYSTEMS = /** @type {const} */ ([
   { key: 'sofronov', short: 'So', name: 'Sofronov 1968', zh: '索弗羅諾夫', tones: true },
 ])
 
+/** The system readings are shown in until a reader picks another. */
+export const DEFAULT_READING = 'gong_xun_202411'
+
+/** The system to show for a stored choice; a value left by an older version falls back to the default.
+ * @param {string | null} stored */
+export const readingFromStore = stored => (SYSTEMS.some(system => system.key === stored) ? /** @type {string} */ (stored) : DEFAULT_READING)
+
 /**
  * A system's name for a reader of a language: the characters a Chinese, Japanese or Korean reader
  * knows it by, the Latin spelling otherwise.
