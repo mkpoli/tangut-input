@@ -11,7 +11,7 @@ cannot copy it.
 | --- | --- | --- | --- |
 | [English Wiktionary, Module:txg/data](https://en.wiktionary.org/wiki/Module:txg/data) | five reconstructions: Li Fanwen 2008, Miyake, Kychanov 2006, Sofronov 1968, Nishida 1966; English definitions from its Tangut entries | CC BY-SA 4.0 | `scripts/fetch_tangut_wiktionary.py`, `scripts/build_tangut_entries.py` |
 | [Japanese Wiktionary](https://ja.wiktionary.org/) | Japanese definitions | CC BY-SA 4.0 | `scripts/fetch_tangut_wiktionary.py`, `scripts/build_tangut_entries.py` |
-| [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db), Xun Gong, DOI 10.25365/phaidra.654 | GX202411, 5,878 characters in the 2025-05-07 table; GHC and GX2021 in the same file are not used | Limited Public Use: individual data points with attribution; bulk redistribution needs permission | `scripts/fetch_tangut_gong_xun.py`, `scripts/build_tangut_entries.py` |
+| [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db), Xun Gong, DOI 10.25365/phaidra.654 | GHC and GX202411, 5,878 characters each in the 2025-05-07 table; GX2021 in the same file is not used | Limited Public Use: individual data points with attribution; bulk redistribution needs permission | `scripts/fetch_tangut_gong_xun.py`, `scripts/build_tangut_entries.py` |
 | 文海 (Sea of Writing), 12th century | the entry it carries for a character: its construction analysis, with an English rendering | public domain | `data/wenhai/entry-text.json.gz` |
 | [Wikipedia: Tangut people](https://en.wikipedia.org/wiki/Tangut_people), [Tangut script](https://en.wikipedia.org/wiki/Tangut_script), [Tangut language](https://en.wikipedia.org/wiki/Tangut_language) | the introduction's narrative, paraphrased and cited to each article | CC BY-SA 4.0 | `app/lib/intro-sources.js` |
 | [BabelStone Tangut IDS](https://www.babelstone.co.uk/Tangut/TangutIDS.txt) | each character's description, built from components | public domain | `data/tangut-ids.tsv.gz` |
@@ -37,7 +37,7 @@ cannot copy it.
 
 ## Linked, not copied
 
-- [CCAMC](http://ccamc.org/) — per-character pages with 音（李范文）and its fanqie and 直音, 音（聂历山）, a 藏文對音 field, 聲韻, 同音, 擬音 for eight systems, and the 文海 commentary. HTTP only: the host serves no TLS. It blocks bursts, and it states no licence. Since 2026-11-04 the site copies none of its readings or glosses: a card links to `http://ccamc.org/tangut.php?n4694=<char>`. The two systems the site does not show (Gong Hwang-cherng and Arakawa Shintarō) and CCAMC's English and Chinese glosses survive only as normalized terms in `app/data/tangut-ccamc-index.json.gz`, which answers a search and is never rendered. The 文海 text is public domain and comes from `data/wenhai/entry-text.json.gz`. The site does not crawl CCAMC.
+- [CCAMC](http://ccamc.org/) — per-character pages with 音（李范文）and its fanqie and 直音, 音（聂历山）, a 藏文對音 field, 聲韻, 同音, 擬音 for eight systems, and the 文海 commentary. HTTP only: the host serves no TLS. It blocks bursts, and it states no licence. Since 2026-11-04 the site copies none of its readings or glosses: a card links to `http://ccamc.org/tangut.php?n4694=<char>`. The one system the site does not show (Arakawa Shintarō) and CCAMC's English and Chinese glosses survive only as normalized terms in `app/data/tangut-ccamc-index.json.gz`, which answers a search and is never rendered. The 文海 text is public domain and comes from `data/wenhai/entry-text.json.gz`. The site does not crawl CCAMC.
 
 ## Available, not used
 

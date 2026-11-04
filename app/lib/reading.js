@@ -1,4 +1,4 @@
-// Reconstructions. Six systems spell the same syllables differently, so every reading is folded to
+// Reconstructions. Seven systems spell the same syllables differently, so every reading is folded to
 // plain letters before comparison: diacritics and IPA letters become their nearest ASCII letter,
 // separators drop out, and a final digit is kept apart as the tone.
 
@@ -8,6 +8,7 @@
 // spelling is the name's own title, so both are a hover away.
 export const SYSTEMS = /** @type {const} */ ([
   { key: 'li_fanwen', short: 'Li', name: 'Li Fanwen 2008', zh: '李範文', tones: true },
+  { key: 'gong_huangcheng', short: 'Gong', name: 'Gong Hwang-cherng 2005', zh: '龔煌城', tones: true },
   { key: 'gong_xun_202411', short: 'GX', name: 'Gong Xun 2024-11', zh: '龔勛', tones: true },
   { key: 'miyake', short: 'My', name: 'Marc Miyake', zh: '三宅', tones: true },
   { key: 'nishida', short: 'Ni', name: 'Nishida 1966', zh: '西田龍雄', tones: true },
@@ -34,8 +35,8 @@ export const systemName = (system, locale) => (/^(ja|zh|ko)/.test(locale) ? syst
 export const systemTitle = system => `${system.name} · ${system.zh}`
 
 /** @typedef {typeof SYSTEMS[number]['key']} SystemKey */
-/** A reading from the records, or one of CCAMC's three extra systems, which is searchable but not
- * shown. @typedef {{ char: string, system: SystemKey | 'ccamc', raw: string, folded: string, loose: string, tone: string }} Reading */
+/** A reading from the records, or CCAMC's extra system, which is searchable but not shown.
+ * @typedef {{ char: string, system: SystemKey | 'ccamc', raw: string, folded: string, loose: string, tone: string }} Reading */
 /** @typedef {{ char: string, system: string, token: string }} HiddenReading */
 
 const LETTERS = /** @type {Record<string, string>} */ ({
@@ -132,7 +133,7 @@ export function searchReadings(readings, query, options = {}) {
     if (!hit || tier < hit.tier) hits.set(reading.char, { char: reading.char, tier, readings: [reading] })
     else if (tier === hit.tier) hit.readings.push(reading)
   }
-  // CCAMC's three extra systems answer the search, but the result says only that CCAMC records the
+  // CCAMC's extra system answers the search, but the result says only that CCAMC records the
   // character and links there; the matched reading itself stays out of the page.
   const hidden = options.hidden ?? []
   if (hidden.length && (!options.systems?.size || options.systems.has('ccamc'))) {
