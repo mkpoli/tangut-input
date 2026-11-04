@@ -15,8 +15,11 @@
 
   /** @typedef {{ char: string, note: string, title?: string }} MiniHit */
 
-  /** @type {{ selected?: string, onpick: (char: string, place: number) => boolean }} */
-  let { selected = '', onpick } = $props()
+  // `always` is the panel with no field to serve: mounted on a page of its own, it has no trigger, no
+  // heading that speaks of the fanqie, and nothing that closes it. `open` stays false, so the listeners
+  // that close a popover never run.
+  /** @type {{ selected?: string, always?: boolean, onpick: (char: string, place: number) => boolean }} */
+  let { selected = '', always = false, onpick } = $props()
 
   const MODES = /** @type {const} */ ([
     { key: 'find', label: 'nav.find', icon: 'find' },
@@ -235,9 +238,24 @@
     field?.focus()
   }
 
+  /** Show a character in the site's card. On a page of its own there is no card, and opening one
+   * would rewrite this page's address to the site's root, which a reload would then load instead.
+   * @param {string} char */
+  function peek(char) {
+    if (!always) preview(char)
+  }
+
   /** @param {MiniHit} hit @param {number} place */
   function pick(hit, place) {
-    if (onpick(hit.char, place)) close()
+    if (onpick(hit.char, place)) always ? reset() : close()
+  }
+
+  /** The next character starts clean: strokes left on the pad would be ranked with the new ones, and
+   * an old list invites a pick meant for the last one. */
+  function reset() {
+    for (const key of Object.keys(queries)) queries[key] = ''
+    resetParts()
+    clearDraw()
   }
 
   /** @param {KeyboardEvent} event */
@@ -258,7 +276,7 @@
   function addPart(part) {
     parts = [...parts, part]
     partFilter = ''
-    preview(part)
+    peek(part)
   }
 
   function resetParts() {
@@ -384,29 +402,34 @@
 </script>
 
 <div class="mini-finder" onfocusout={focusOut}>
-  <button bind:this={trigger} type="button" class="picker-trigger ui-button" data-variant="quiet" data-size="icon"
-    aria-label={t('fanqie.picker.open')} title={t('fanqie.picker.open')} aria-haspopup="dialog" aria-expanded={open}
-    aria-controls="fanqie-picker" onclick={() => open ? close() : openPanel()}>
-    <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true">
-      <circle cx="8.4" cy="8.4" r="5" fill="none" stroke="currentColor" stroke-width="1.7" />
-      <path d="m12.2 12.2 4.1 4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-      <path d="M16.2 2.5v4.2M14.1 4.6h4.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-    </svg>
-  </button>
+  {#if !always}
+    <button bind:this={trigger} type="button" class="picker-trigger ui-button" data-variant="quiet" data-size="icon"
+      aria-label={t('fanqie.picker.open')} title={t('fanqie.picker.open')} aria-haspopup="dialog" aria-expanded={open}
+      aria-controls="fanqie-picker" onclick={() => open ? close() : openPanel()}>
+      <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true">
+        <circle cx="8.4" cy="8.4" r="5" fill="none" stroke="currentColor" stroke-width="1.7" />
+        <path d="m12.2 12.2 4.1 4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+        <path d="M16.2 2.5v4.2M14.1 4.6h4.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+    </button>
+  {/if}
 
-  {#if open}
-    <div id="fanqie-picker" class="picker-panel ui-popover" bind:this={panel} role="dialog"
-      aria-labelledby="fanqie-picker-title" tabindex="-1" onkeydown={panelKeys}>
-      <header class="picker-head">
-        <div class="picker-heading">
-          <h2 id="fanqie-picker-title" class="picker-title">{t('fanqie.picker.title')}</h2>
-          <p class="picker-state ui-hint" aria-live="polite">{stateText}</p>
-        </div>
-        <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm"
-          aria-label={t('fanqie.picker.close')} title={t('fanqie.picker.close')} onclick={() => close()}>
-          <Icon name="close" size={16}/>
-        </button>
-      </header>
+  {#if always || open}
+    <div id="fanqie-picker" class={['picker-panel', always ? 'always' : 'ui-popover']} bind:this={panel} role={always ? 'group' : 'dialog'}
+      aria-label={always ? t('pick.hint') : undefined} aria-labelledby={always ? undefined : 'fanqie-picker-title'}
+      tabindex="-1" onkeydown={panelKeys}>
+      {#if !always}
+        <header class="picker-head">
+          <div class="picker-heading">
+            <h2 id="fanqie-picker-title" class="picker-title">{t('fanqie.picker.title')}</h2>
+            <p class="picker-state ui-hint" aria-live="polite">{stateText}</p>
+          </div>
+          <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm"
+            aria-label={t('fanqie.picker.close')} title={t('fanqie.picker.close')} onclick={() => close()}>
+            <Icon name="close" size={16}/>
+          </button>
+        </header>
+      {/if}
 
       <div class="picker-modes ui-chip-row" role="group" aria-label={t('nav.label')}>
         {#each MODES as item (item.key)}
@@ -492,8 +515,8 @@
             <p class="ui-count" role="status">{t('common.characters', { count: hits.length })}</p>
             <div class="ui-tiles mini-tiles" style:--ui-tile-size="52px">
               {#each hits as hit, i (hit.char)}
-                <button type="button" class="ui-tile" aria-label={`${t('fanqie.picker.add', { char: hit.char })}${hit.note ? `, ${hit.note}` : ''}`}
-                  title={hit.title || hit.note} onmouseenter={() => preview(hit.char)} onfocus={() => preview(hit.char)}
+                <button type="button" class="ui-tile" aria-label={`${always ? hit.char : t('fanqie.picker.add', { char: hit.char })}${hit.note ? `, ${hit.note}` : ''}`}
+                  title={hit.title || hit.note} onmouseenter={() => peek(hit.char)} onfocus={() => peek(hit.char)}
                   onclick={() => pick(hit, i)}>
                   <span class="ui-tile-glyph"><G char={hit.char} /></span>
                   {#if hit.note}<span class="ui-tile-note">{hit.note}</span>{/if}
@@ -526,6 +549,7 @@
   .picker-trigger{position:absolute;inset-inline-end:var(--ui-space-sm);top:50%;z-index:1;transform:translateY(-50%);color:var(--ui-color-ink-muted)}
   .picker-trigger:hover{color:var(--ui-color-ink)}
   .picker-panel{position:absolute;inset-inline-start:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);display:flex;flex-direction:column;inline-size:min(640px, calc(100vw - 2 * var(--ui-space-lg)));max-block-size:min(560px, calc(100dvh - 400px), 72dvh);overflow:hidden}
+  .picker-panel.always{position:static;inline-size:100%;block-size:100dvh;max-block-size:none;padding-block-start:var(--ui-space-md)}
   .picker-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ui-space-md);padding:var(--ui-space-lg) var(--ui-space-xl) var(--ui-space-xs)}
   .picker-heading{display:grid;gap:1px;min-inline-size:0}
   .picker-title{font-family:var(--ui-font-serif);font-size:var(--ui-text-lg);font-weight:var(--ui-weight-semibold);line-height:var(--ui-leading-tight)}
