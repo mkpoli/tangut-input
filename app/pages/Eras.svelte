@@ -31,7 +31,7 @@
       tags,
       forms: era.calendar,
       doubt: era.evidence.find(e => e.kind === 'unknown'),
-      gloss: era.evidence.find(e => e.kind === 'gloss'),
+      gloss: [...new Set(era.evidence.filter(e => e.kind === 'gloss').map(e => e.source))],
     }
   }
 
@@ -82,7 +82,7 @@
               {#each row.tags as tag (tag.kind)}
                 <span class="tagged"><span class="tag" data-kind={tag.kind}>{t(`eras.kind.${tag.kind}`)}</span>{@render cites(tag.sources)}</span>
               {/each}
-              {#if row.gloss}<p class="note">{t('eras.gloss')}{@render cites([row.gloss.source])}</p>{/if}
+              {#if row.gloss.length}<p class="note">{t('eras.gloss')}{@render cites(row.gloss)}</p>{/if}
               {#if row.doubt}<p class="note">{t('eras.doubt')}{@render cites([row.doubt.source])}</p>{/if}
             </td>
           </tr>
