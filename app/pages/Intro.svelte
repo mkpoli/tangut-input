@@ -62,7 +62,7 @@
     <ol class="source-list">
       {#each SOURCES as source (source.n)}
         <li id={`source-${source.n}`}>
-          {source.author}. <a href={source.url}><i>{source.title}</i></a>. {source.publisher}{source.year ? `, ${source.year}` : ''}{source.accessed ? `, accessed ${source.accessed}` : ''}.
+          {source.author}. <a href={source.url}><i>{source.title}</i></a>. {source.publisher}{source.year ? `, ${source.year}` : ''}{source.accessed ? `, accessed ${source.accessed}` : ''}{#if source.licence}{#if source.licenceUrl} · <a href={source.licenceUrl}>{source.licence}</a>{:else} · {source.licence}{/if}{/if}
         </li>
       {/each}
     </ol>

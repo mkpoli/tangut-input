@@ -1,6 +1,6 @@
 <script>
   // Transcribe a line of Tangut: every character with the reading the reader's system gives it, the
-  // line copied as those readings, and a table of all eight systems for pasting elsewhere. The box
+  // line copied as those readings, and a table of all six systems for pasting elsewhere. The box
   // holds the same text as the writing strip, which flies into it on the way in.
   import { onMount } from 'svelte'
   import { db, ix, isTangut, gloss } from '../lib/db.svelte.js'
@@ -52,7 +52,7 @@
   const readingOf = char => (ix.byChar.get(char)?.pronunciations ?? {})[ui.reading]?.trim() ?? ''
   /** The line as readings, a dash where the data records none. */
   const transcription = $derived(chars.map(char => readingOf(char) || '—').join(' '))
-  /** All eight systems, one row per character, tab-separated. */
+  /** All six systems, one row per character, tab-separated. */
   const table = $derived.by(() => {
     const rows = [['char', ...SYSTEMS.map(system => system.key), 'rhyme', 'meaning'].join('\t')]
     for (const char of chars) {
