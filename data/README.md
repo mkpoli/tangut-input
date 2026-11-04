@@ -65,10 +65,11 @@ by hand. `scripts/build_tangut_posthumous.py` stops if a name is not in its quot
 
 ## `tangut-titles.tsv`
 
-Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a source,
-`dated`, inferred from the date of the passage, or `disputed`; the Tangut, if known; the Chinese
-exactly as `chinese_source` prints it, if any; the source's key in `app/lib/era-sources.js`; and a
-`place` when a text in this repository writes the Tangut. Compiled by hand.
+Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or
+history, `caption`, stated only by a Commons caption, `dated`, inferred from the date of the passage,
+or `disputed`; the Tangut, if known; the Chinese exactly as `chinese_source` prints it, if any; the
+source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the Tangut;
+and `backs`, whether the work supports the Tangut or the Chinese. Compiled by hand.
 `scripts/build_tangut_titles.py` stops if a title does not occur in its place, and marks each title
 `text`, `reported` or `chinese` by what its Tangut rests on.
 

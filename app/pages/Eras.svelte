@@ -109,17 +109,17 @@
         <tbody>
           {#each TITLES as title (`${title.holder} ${title.tangut || title.chinese}`)}
             <tr>
-              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{:else if title.identified === 'disputed'}<span class="inferred" title={t('eras.titles.disputed')} aria-label={t('eras.titles.disputed')}>?</span>{/if}</th>
+              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{:else if title.identified === 'disputed'}<span class="inferred" title={t('eras.titles.disputed')} aria-label={t('eras.titles.disputed')}>?</span>{:else if title.identified === 'caption'}<span class="inferred" title={t('eras.titles.caption')} aria-label={t('eras.titles.caption')}>†</span>{/if}</th>
               <td class="forms title-form" data-empty={!title.tangut || undefined}>{#if title.tangut}<span class="form" role="group" aria-label={title.tangut}>{#each [...title.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{:else}<span class="ui-hint">—</span>{/if}</td>
-              <td class="chinese">{#if title.chinese}<span lang="zh">{title.chinese}</span>{#if !title.sources.includes(title.chineseSource)}{@render cites([title.chineseSource])}{/if}{:else}<span class="ui-hint">—</span>{/if}</td>
-              <td class="basis"><span class="tagged"><span class="tag" data-kind={title.basis}>{t(`eras.titles.basis.${title.basis}`)}</span>{@render cites(title.sources)}</span></td>
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(title.tangutSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
+              <td class="chinese">{#if title.chinese}<span lang="zh">{title.chinese}</span>{@render cites(title.chineseSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
+              <td class="basis"><span class="tag" data-kind={title.basis}>{t(`eras.titles.basis.${title.basis}`)}</span></td>
             </tr>
           {/each}
         </tbody>
       </table>
     </div>
-    <p class="ui-hint">* {t('eras.titles.dated')} ? {t('eras.titles.disputed')}</p>
+    <p class="ui-hint">* {t('eras.titles.dated')} † {t('eras.titles.caption')} ? {t('eras.titles.disputed')}</p>
   </section>
 
   <section class="ui-section titles" id="posthumous">
