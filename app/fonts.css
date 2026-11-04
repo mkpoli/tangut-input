@@ -28,6 +28,14 @@
   unicode-range: U+18AF3-18AFF, U+18D00-18D08;
   font-display: swap;
 }
+/* Tangut N4694 draws the ideographs and components the other faces stop short of; this subset
+   holds those glyphs alone. Its terms are recorded in FONT-LICENCES.md. */
+@font-face {
+  font-family: 'Tangut N4694 Supplement';
+  src: url('/fonts/TangutN4694-supplement.woff2') format('woff2');
+  unicode-range: U+18D09-18DFF;
+  font-display: swap;
+}
 
 /* Three further faces a reader may set Tangut in: Yinchuan (景永時's design, completed by Andrew
    West), Wenhai (a subset of BabelStone Tangut Wenhai holding only the characters Noto lacks) and

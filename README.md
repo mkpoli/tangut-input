@@ -56,6 +56,10 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   states no licence.
 - `app/data/tangut-strokes.json.gz`: stroke counts, ideographs from Unicode's TangutSources.txt,
   components counted from their glyphs (copied from `data2/`).
+- `app/data/tangut-supplement.json.gz`: the 33 ideographs and 115 components Unicode 18.0.0 assigns in
+  Tangut Supplement and Tangut Components Supplement, with their Unicode names, strokes,
+  descriptions (BabelStone for U+18D00–U+18D08, the WG2 proposals for U+18D09–U+18D20), Cangjie codes and
+  the face that draws each; built by `scripts/build_tangut_supplement.py`.
 - `app/data/tangut-attestation.json.gz` and `app/public/facsimile/`: where each character stands in
   fourteen sources, built by `scripts/build_tangut_attestation.py`. One is the Glyph Atlas record of
   Solonin and Arakawa's *Bodhicaryāvatāra in Tangut Translation*, chapter 2 (CC BY 4.0), with its
@@ -80,8 +84,8 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 The Tangut script can be set in four faces in Settings: Noto Serif
 Tangut (the default, from Google Fonts), Tangut Yinchuan (景永時's design, completed by Andrew West),
 BabelStone Tangut Wenhai, and New Tangut Std (新西夏字體, the 楷書-structured face). Yinchuan and the Wenhai complement are served from the site; their
-terms are in `app/public/fonts/FONT-LICENCES.md`. `bun run build:tangut-fonts` rebuilds the two
-small subsets.
+terms are in `app/public/fonts/FONT-LICENCES.md`. The ideographs and components of both supplement
+blocks, which none of the four draws, come from a subset of Tangut N4694 in the same stack. `bun run build:tangut-fonts` rebuilds the small subsets.
 
 ## Handwriting data
 
