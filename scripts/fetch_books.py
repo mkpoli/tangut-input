@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -30,11 +31,15 @@ GATEWAYS = (
     "https://gateway.pinata.cloud/ipfs/",
 )
 CHUNK = 1 << 20
+STATUSES = {"acquired", "pending"}
 
 
 def rows() -> list[dict[str, str]]:
     lines = files_tsv().read_text(encoding="utf-8").splitlines()
     head = lines[0].split("\t")
+    missing = {"path", "work_id", "md5", "route", "status"} - set(head)
+    if missing:
+        sys.exit(f"files.tsv has no {', '.join(sorted(missing))} column")
     return [dict(zip(head, line.split("\t"))) for line in lines[1:] if line.strip()]
 
 
@@ -82,6 +87,8 @@ def libgen_urls(md5sum: str) -> list[str]:
 
 
 def download(url: str, target: Path) -> bool:
+    if not shutil.which("curl"):
+        sys.exit("curl is not installed")
     partial = target.with_suffix(target.suffix + ".part")
     done = subprocess.run(
         ["curl", "-sSL", "--fail", "-m", "1800", "-A", UA, "-o", str(partial), url],
@@ -152,6 +159,13 @@ def check() -> int:
             bad += 1
         else:
             print(f"{row['path']}: ok")
+    for work in sorted(known - {row["work_id"] for row in rows()}):
+        print(f"source.yaml has {work}, files.tsv has no file for it")
+        bad += 1
+    for row in rows():
+        if row["status"] not in STATUSES:
+            print(f"{row['path']}: status {row['status']!r} is not one of {sorted(STATUSES)}")
+            bad += 1
     return 1 if bad else 0
 
 
