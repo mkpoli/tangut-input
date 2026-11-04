@@ -61,4 +61,6 @@ uv run scripts/fetch_books.py --check                 # verify what is on disk
 
 A `libgen:` route holds the md5; the script mints a download key from libgen's ads page, tries the
 CDN and then libgen itself. An `ipfs:` route lists content addresses, tried over the gateways in the
-script. Both are checked against the recorded md5 before a file is kept.
+script. Both are hashed before a file is kept: a route that answers something else leaves it as
+`.bad` and the next route is tried. Paths in `files.tsv` are relative to `cache/books/`, and the check
+holds each row's status to the one in `source.yaml`.

@@ -2,8 +2,8 @@
 """Fetch the books in data/books/files.tsv, or check what is already on disk.
 
 The scans are large and stay in cache/books/, which git does not carry. Each file records the route
-it came by — a library's own PDF, a Commons upload, or an IPFS content address — and its md5, so a
-re-fetch can be checked against the copy that was keyed from.
+it came by — a library's own PDF, a Commons upload, or a content address — and its md5, so a
+re-fetch is verified against the copy that was keyed from and a bad answer is thrown away.
 
     uv run scripts/fetch_books.py --work nevsky-1960
     uv run scripts/fetch_books.py --check
@@ -31,23 +31,13 @@ GATEWAYS = (
     "https://gateway.pinata.cloud/ipfs/",
 )
 CHUNK = 1 << 20
+COLUMNS = ("path", "work_id", "md5", "bytes", "pages", "px", "route", "alt", "status")
 STATUSES = {"acquired", "pending"}
+PROBLEMS: list[str] = []
 
 
-def rows() -> list[dict[str, str]]:
-    lines = files_tsv().read_text(encoding="utf-8").splitlines()
-    head = lines[0].split("\t")
-    missing = {"path", "work_id", "md5", "route", "status"} - set(head)
-    if missing:
-        sys.exit(f"files.tsv has no {', '.join(sorted(missing))} column")
-    return [dict(zip(head, line.split("\t"))) for line in lines[1:] if line.strip()]
-
-
-def files_tsv() -> Path:
-    path = BOOKS / "files.tsv"
-    if not path.exists():
-        sys.exit(f"missing {path}")
-    return path
+class Bad(Exception):
+    """A row or a file that cannot be used as recorded."""
 
 
 def md5(path: Path) -> str:
@@ -58,16 +48,67 @@ def md5(path: Path) -> str:
     return digest.hexdigest()
 
 
-def routes(row: dict[str, str]) -> list[str]:
-    out: list[str] = []
-    for route in (row["route"], row.get("alt", "")):
-        if route.startswith("ipfs:"):
-            out.extend(f"{base}{route.removeprefix('ipfs:')}" for base in GATEWAYS)
-        elif route.startswith("libgen:") or route.startswith("https://"):
-            out.append(route)
-        elif route:
-            sys.exit(f"unreadable route {route!r}")
+def works() -> dict[str, dict[str, str]]:
+    """source.yaml as work id → its fields, read far enough for the checks below."""
+    path = BOOKS / "source.yaml"
+    if not path.exists():
+        sys.exit(f"missing {path}")
+    out: dict[str, dict[str, str]] = {}
+    current: dict[str, str] | None = None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("  - id: "):
+            current = {"id": line.split(":", 1)[1].strip()}
+            out[current["id"]] = current
+        elif current is not None and line.startswith("    ") and ":" in line:
+            key, value = line.strip().split(":", 1)
+            if key in {"status", "title"}:
+                current[key] = value.strip()
     return out
+
+
+def rows() -> list[dict[str, str]]:
+    path = BOOKS / "files.tsv"
+    if not path.exists():
+        sys.exit(f"missing {path}")
+    lines = path.read_text(encoding="utf-8").splitlines()
+    head = lines[0].split("\t")
+    absent = set(COLUMNS) - set(head)
+    if absent:
+        sys.exit(f"files.tsv has no {', '.join(sorted(absent))} column")
+    out = []
+    for number, line in enumerate(lines[1:], start=2):
+        if not line.strip():
+            continue
+        fields = line.split("\t")
+        if len(fields) != len(head):
+            PROBLEMS.append(f"files.tsv:{number}: {len(fields)} fields where the header has {len(head)}")
+            continue
+        out.append(dict(zip(head, fields)))
+    return out
+
+
+def target_of(row: dict[str, str]) -> Path:
+    """The cache path a row names, refused when it leaves cache/books/."""
+    if not row["path"]:
+        raise Bad(f"{row['work_id']}: empty path")
+    if Path(row["path"]).is_absolute():
+        raise Bad(f"{row['path']}: absolute path, files.tsv paths are relative to cache/books")
+    target = (CACHE / row["path"]).resolve()
+    if CACHE.resolve() not in target.parents:
+        raise Bad(f"{row['path']}: escapes cache/books")
+    return target
+
+
+def route_urls(route: str) -> list[str]:
+    if not route:
+        return []
+    if route.startswith("ipfs:"):
+        return [f"{base}{route.removeprefix('ipfs:')}" for base in GATEWAYS]
+    if route.startswith("libgen:"):
+        return [route]
+    if route.startswith(("https://", "http://")):
+        return [route]
+    raise Bad(f"unreadable route {route!r}")
 
 
 def libgen_urls(md5sum: str) -> list[str]:
@@ -77,18 +118,19 @@ def libgen_urls(md5sum: str) -> list[str]:
     libgen.li itself, so both are tried.
     """
     page = f"https://libgen.li/ads.php?md5={md5sum}"
-    html = subprocess.run(
+    done = subprocess.run(
         ["curl", "-sS", "-m", "60", "-A", UA, page], capture_output=True, text=True
-    ).stdout
-    found = re.search(r"get\.php\?md5=[a-f0-9]{32}&key=[A-Z0-9]+", html)
+    )
+    if done.returncode != 0:
+        raise Bad(f"libgen did not answer: {done.stderr.strip()}")
+    found = re.search(r"get\.php\?md5=[a-f0-9]{32}&key=[A-Z0-9]+", done.stdout)
     if not found:
-        raise LookupError(f"no download key on {page}")
+        raise Bad(f"no download key on {page}")
     return [f"https://cdn2.booksdl.lc/{found.group(0)}", f"https://libgen.li/{found.group(0)}"]
 
 
-def download(url: str, target: Path) -> bool:
-    if not shutil.which("curl"):
-        sys.exit("curl is not installed")
+def download(url: str, target: Path, expected: str) -> str | None:
+    """Fetch url to target, keeping it only when it hashes to expected. Returns why it did not."""
     partial = target.with_suffix(target.suffix + ".part")
     done = subprocess.run(
         ["curl", "-sSL", "--fail", "-m", "1800", "-A", UA, "-o", str(partial), url],
@@ -96,90 +138,120 @@ def download(url: str, target: Path) -> bool:
         text=True,
     )
     if done.returncode != 0 or not partial.exists():
-        print(f"  {url.split('/')[2]}: {done.stderr.strip() or done.returncode}")
         partial.unlink(missing_ok=True)
-        return False
+        return done.stderr.strip() or f"curl exited {done.returncode}"
+    got = md5(partial)
+    if got != expected:
+        kept = target.with_suffix(target.suffix + ".bad")
+        partial.replace(kept)
+        return f"md5 {got}, expected {expected}; kept as {kept.name}"
     partial.replace(target)
-    return True
+    return None
 
 
 def fetch(row: dict[str, str]) -> int:
-    target = CACHE / row["path"]
-    target.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        target = target_of(row)
+    except Bad as error:
+        print(error)
+        return 1
     if target.exists() and md5(target) == row["md5"]:
         print(f"{row['path']}: already on disk, md5 matches")
         return 0
     urls: list[str] = []
-    for route in routes(row):
-        if route.startswith("libgen:"):
-            print(f"{row['path']}: asking libgen for a key")
-            try:
-                urls.extend(libgen_urls(route.removeprefix("libgen:")))
-            except Exception as error:  # noqa: BLE001
-                print(f"  {error}")
-        else:
-            urls.append(route)
+    for route in (row["route"], row.get("alt", "")):
+        try:
+            urls.extend(libgen_urls(route.removeprefix("libgen:")) if route.startswith("libgen:") else route_urls(route))
+        except Bad as error:
+            print(f"{row['path']}: {error}")
+    if not urls:
+        print(f"{row['path']}: no usable route")
+        return 1
+    target.parent.mkdir(parents=True, exist_ok=True)
     for url in urls:
         print(f"{row['path']}: trying {'/'.join(url.split('/')[:3])}")
-        if not download(url, target):
-            continue
-        got = md5(target)
-        if got != row["md5"]:
-            print(f"  md5 {got} does not match the recorded {row['md5']}; kept for a look")
-            return 1
-        print(f"  ok {target.stat().st_size} bytes")
-        return 0
-    print(f"{row['path']}: no route answered")
+        why = download(url, target, row["md5"])
+        if why is None:
+            print(f"  ok {target.stat().st_size} bytes")
+            return 0
+        print(f"  {why}")
+    print(f"{row['path']}: no route gave the recorded file")
     return 1
 
 
-def works() -> list[str]:
-    return [
-        line.split(":", 1)[1].strip()
-        for line in (BOOKS / "source.yaml").read_text(encoding="utf-8").splitlines()
-        if line.startswith("  - id: ")
-    ]
-
-
-def check() -> int:
+def check(only: str | None) -> int:
     bad = 0
-    known = set(works())
+    known = works()
+    seen: set[str] = set()
     for row in rows():
-        target = CACHE / row["path"]
-        if row["work_id"] not in known:
+        if only is not None and row["work_id"] != only:
+            continue
+        try:
+            target = target_of(row)
+        except Bad as error:
+            print(error)
+            bad += 1
+            continue
+        if row["path"] in seen:
+            print(f"{row['path']}: listed twice")
+            bad += 1
+        seen.add(row["path"])
+        work = known.get(row["work_id"])
+        if work is None:
             print(f"{row['path']}: work {row['work_id']} is not in source.yaml")
             bad += 1
-        elif row["status"] == "pending" and not target.exists():
+        elif row["status"] != work.get("status"):
+            print(f"{row['path']}: status {row['status']} here, {work.get('status')} in source.yaml")
+            bad += 1
+        if row["status"] not in STATUSES:
+            print(f"{row['path']}: status {row['status']!r} is not one of {sorted(STATUSES)}")
+            bad += 1
+        if row["status"] == "pending" and not target.exists():
             print(f"{row['path']}: still pending")
         elif not target.exists():
             print(f"{row['path']}: absent, status says acquired")
+            bad += 1
+        elif not target.is_file():
+            print(f"{row['path']}: not a file")
             bad += 1
         elif md5(target) != row["md5"]:
             print(f"{row['path']}: md5 differs from the recorded {row['md5']}")
             bad += 1
         else:
             print(f"{row['path']}: ok")
-    for work in sorted(known - {row["work_id"] for row in rows()}):
+        left = target.with_suffix(target.suffix + ".part")
+        if left.exists():
+            print(f"{row['path']}: a .part file is left behind")
+            bad += 1
+        for route in (row["route"], row.get("alt", "")):
+            try:
+                route_urls(route)
+            except Bad as error:
+                print(f"{row['path']}: {error}")
+                bad += 1
+    keyed = {row["work_id"] for row in rows()}
+    for work in sorted(set(known) - keyed):
         print(f"source.yaml has {work}, files.tsv has no file for it")
         bad += 1
-    for row in rows():
-        if row["status"] not in STATUSES:
-            print(f"{row['path']}: status {row['status']!r} is not one of {sorted(STATUSES)}")
-            bad += 1
     return 1 if bad else 0
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--work", help="fetch only this work's files")
+    parser.add_argument("--work", help="only this work")
     parser.add_argument("--check", action="store_true", help="verify what is on disk")
     args = parser.parse_args()
-    if args.check:
-        return check()
-    selected = [row for row in rows() if not args.work or row["work_id"] == args.work]
-    if not selected:
-        print(f"no row for {args.work}" if args.work else "nothing to fetch")
+    if not shutil.which("curl"):
+        sys.exit("curl is not installed")
+    selected = [row for row in rows() if args.work is None or row["work_id"] == args.work]
+    if PROBLEMS:
+        print("\n".join(PROBLEMS))
         return 1
+    if args.work is not None and not selected:
+        print(f"no row for {args.work}")
+        return 1
+    if args.check:
+        return check(args.work)
     return max(fetch(row) for row in selected)
 
 
