@@ -1,7 +1,7 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadFanqieAliases, loadTibetan, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
-import { indexReadings } from './reading.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
+import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
@@ -34,6 +34,9 @@ export const ix = {
   /** Every [code, character] pair, ordered by code. @type {[string, string][]} */ codeList: [],
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
   /** @type {import('./reading.js').Reading[]} */ readings: [],
+  /** CCAMC readings Wiktionary does not carry, used by the search and never shown. @type {import('./reading.js').HiddenReading[]} */ hiddenReadings: [],
+  /** CCAMC glosses and 文海 text as normalized terms, used by the meaning search and never shown.
+   *  @type {{ meanings: Record<string, Record<string, string[]>>, wenhai: Record<string, Record<string, string[]>> }} */ ccamcMeanings: { meanings: {}, wenhai: {} },
   /** @type {Map<string, number>} */ strokes: new Map(),
   /** The parts of each description at every layer, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
   /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
@@ -45,7 +48,6 @@ export const ix = {
   /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
   /** Tibetan phonetic glosses by character: [Wylie, Tibetan script, [[shelfmark, count]…]]. @type {Map<string, [string, string, [string, number][]][]>} */ tibetan: new Map(),
-  /** The several characters that stand for one Chinese fanqie initial: each maps to its group. @type {Map<string, string[]>} */ fanqieAliases: new Map(),
   /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
   /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
   /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
@@ -56,9 +58,9 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, aliases, tibetan, names, partNames, frequency] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, names, partNames, frequency] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
-      loadFanqieAliases().catch(() => null), loadTibetan().catch(() => null), loadTangutNames().catch(() => []),
+      loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTangutNames().catch(() => []),
       loadPartNames().catch(() => null), loadFrequency().catch(() => null),
     ])
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
@@ -75,13 +77,14 @@ export async function load() {
     ix.codeList = pairs.map(([char, code]) => /** @type {[string, string]} */ ([code, char])).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)
     ix.palette = ix.codeList.filter(([code]) => code.startsWith('p'))
     ix.readings = indexReadings(entries)
+    ix.hiddenReadings = indexHiddenReadings(hidden)
+    if (hidden) ix.ccamcMeanings = { meanings: hidden.meanings ?? {}, wenhai: hidden.wenhai ?? {} }
     ix.strokes = new Map(Object.entries(strokes))
     const index = buildPartIndex(entries)
     ix.partsOf = index.partsOf
     ix.usedBy = index.usedBy
     ix.directPartsOf = index.directPartsOf
     if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
-    if (aliases) for (const group of aliases.groups) for (const char of group) ix.fanqieAliases.set(char, group)
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))
       ix.rhymeSource = rhymes.source

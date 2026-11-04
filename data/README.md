@@ -543,13 +543,36 @@ constants in `src/composer/constants.json` come from han-compose at bd0829b (MIT
 previously used by the composer's test fixture. Tangut Components Supplement glyphs
 are absent from this font version and report a missing glyph.
 
+## Tangut entries
+
+`app/data/tangut-entries.json.gz` holds the values a page may show: five readings from the Lua
+modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyake, Kychanov 2006,
+Sofronov 1968, Nishida 1966), English meanings from Kaikki's extract of English Wiktionary,
+Japanese meanings from ja.wiktionary, BabelStone's IDS description, and the Unicode radical and
+stroke count. The readings and meanings are CC BY-SA 4.0; the description is public domain; the
+radical and stroke data are Unicode License v3. 6,144 characters. Rebuild with
+`uv run scripts/build_tangut_entries.py` from `data/wiktionary/txg-readings.json.gz`,
+`data/wiktionary/definitions-ja.json.gz` and the files above. The builder records no CCAMC value.
+
+`app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
+three systems Wiktionary does not carry (Gong Hwang-cherng, Gong Xun 2024-11, Arakawa Shintarō) and
+normalized English and Chinese glosses and 文海 text from CCAMC. The card links to
+`http://ccamc.org/tangut.php?n4694=<char>`; no page renders the index. It is built from a copy of
+the former Open Tangut records, which is not committed.
+
+`data/wiktionary/txg-readings.json.gz` records the five modules' values with their revision ids;
+`data/wiktionary/definitions-ja.json.gz` records the ja.wiktionary pages with theirs. Both are
+refreshed by `uv run scripts/fetch_tangut_wiktionary.py`, which makes five module requests and six
+batches of fifty page titles.
+
 ## `tangut-gloss-words.tsv.gz`
 
 One Chinese word for each Tangut character, for a table that reads a character by its meaning: 毒,
 佛, 日 and 世界 can be read as they stand, 【宿】 writes a sound and has no meaning to read. 6,144
 rows, 56 KB gzipped. Format: `char`, `gloss`, `tier`, `reading`; comments start with `#`.
 
-`gloss` is the first sense of the entry's first Chinese gloss in `app/data/tangut-entries.json.gz`.
+`gloss` is the first sense of the first Chinese gloss in the former Open Tangut record, which drew
+it from CCAMC. The table is an internal aid and no page displays it.
 Senses are separated by 、；， or a space outside brackets; numbering, part-of-speech tags and
 placeholder senses (暫無解釋, 不識) are dropped. A note in brackets stays with the gloss and is
 tiered `long`, so （滴）答 is not guessed into 滴答. `tier` counts the characters of the gloss:
@@ -564,10 +587,10 @@ attested texts that the entries cover, 17,836 (73.5%) are `word`, 3,685 `phrase`
 `transliteration`, 1,128 `long`, 151 `empty` and 3 `redirect`.
 
 Rebuild with `uv run scripts/build_tangut_gloss_words.py`, which also prints that coverage and would
-leave the file unchanged. The source is Open Tangut, whose export is MIT licensed and merges CCAMC
-and Wiktionary; `app/data/tangut-entries.json.gz` is its re-pack.
+leave the file unchanged. The source is CCAMC, which states no licence; the table stays in the
+repository as a derived aid and is not served.
 
-Licence: **MIT**, following the entries file.
+Licence: none stated at the source. Do not publish the table.
 
 ## `tangut-gloss-readings.tsv.gz`
 

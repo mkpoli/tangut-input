@@ -17,7 +17,7 @@
     <h2 class="about-heading">{t('about.records')}</h2>
     <dl>
       <dt>{t('about.recordsTitle')}</dt>
-      <dd>{@html t('about.openTangut')}</dd>
+      <dd>{@html t('about.wiktionary')}</dd>
       <dt>{t('about.cangjieTitle')}</dt>
       <dd>{@html t('about.cangjieSource')}</dd>
       <dt>{t('about.rhymeBooksTitle')}</dt>
@@ -26,8 +26,8 @@
       <dd>{@html t('about.classNames')}</dd>
       <dt>{t('about.tibetanTitle')}</dt>
       <dd>{@html t('about.tibetan')}</dd>
-      <dt>{t('about.pronunciationTitle')}</dt>
-      <dd>{@html t('about.pronunciationCheck')}</dd>
+      <dt>{t('about.readingsTitle')}</dt>
+      <dd>{@html t('about.readingsSource')}</dd>
       <dt>{t('about.strokesTitle')}</dt>
       <dd>{@html t('about.strokes')}</dd>
       <dt>{t('about.attestTitle')}</dt>
