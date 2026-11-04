@@ -63,6 +63,13 @@ Posthumous, temple and tomb names, one row per emperor or empress: `kind`, the n
 `tangut_source` where a source gives it, and the `quote` from 宋史 卷485–486 that names them. Compiled
 by hand. `scripts/build_tangut_posthumous.py` stops if a name is not in its quotation.
 
+## `tangut-state-names.tsv`
+
+Names of the state, one row per name and citing work: the Chinese; the Tangut, if known; an English
+gloss a source gives; the source's key in `app/lib/era-sources.js`; and a `place` when a text in this
+repository writes the Tangut. Compiled by hand. `scripts/build_tangut_state_names.py` stops if a name
+does not occur in its place.
+
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a source,

@@ -3,10 +3,12 @@
   // what the form rests on: a coin, a Tangut text, or only the calendar the list is built from.
   // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
   // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on, and
-  // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`.
+  // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`, and the
+  // names of the state, from `app/data/tangut-state-names.json`.
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
   import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
+  import STATE_NAMES from '../data/tangut-state-names.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
   import { choose } from '../lib/ui.svelte.js'
   import { hex } from '../lib/db.svelte.js'
@@ -150,6 +152,26 @@
     </ul>
   </section>
 
+  <section class="ui-section titles" id="states">
+    <h2 class="heading">{t('eras.states')}</h2>
+    <p class="ui-hint">{t('eras.states.intro')}</p>
+    <div class="ui-table-wrap">
+      <table class="ui-table list">
+        <thead><tr><th scope="col">{t('eras.titles.chinese')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
+        <tbody>
+          {#each STATE_NAMES as name (name.chinese)}
+            <tr>
+              <th scope="row" lang="zh-Hant">{name.chinese}{#if name.gloss}<span class="state-gloss" lang="en">{name.gloss}</span>{/if}</th>
+              <td class="forms title-form" data-empty={!name.tangut || undefined}>{#if name.tangut}<span class="form" role="group" aria-label={name.tangut}>{#each [...name.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{:else}<span class="ui-hint">—</span>{/if}</td>
+              <td class="basis"><span class="tagged"><span class="tag" data-kind={name.basis}>{t(`eras.titles.basis.${name.basis}`)}</span>{@render cites(name.sources)}</span></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="ui-section sources">
     <h2 class="heading">{t('eras.sources')}</h2>
     <ol class="source-list">
@@ -191,6 +213,7 @@
   .heading{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold)}
   .plain td,.plain th{font-size:var(--ui-text-sm)}
   .plain th[scope='row']{font-weight:var(--ui-weight-medium);white-space:nowrap}
+  .state-gloss{display:block;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-regular,400);white-space:normal}
   .posthumous-form{margin-inline-start:var(--ui-space-sm);vertical-align:middle}
   .subheading{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold)}
   .empresses{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;padding:0;list-style:none;font-size:var(--ui-text-sm)}
