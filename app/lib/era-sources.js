@@ -167,7 +167,7 @@ export const ERA_SOURCES = {
     author: 'English Wikipedia',
     title: 'Western Xia',
     where: 'Wikipedia, read 2026-11-04',
-    note: 'Cites Kepping, The name of the Tangut Empire, T\'oung Pao 80 (1994), p. 373, not seen, for 𗴂𗹭𘜶𗴲𗂧 and for 萬祕國, which it reconstructs /khjɨ-dwuu-lhjij/ without characters. The same article says the only Tangut name used in the Western Xia period was the Great State of White and High, with Xia taken up after 1227.',
+    note: 'Cites Kepping, The name of the Tangut Empire, T\'oung Pao 80 (1994), p. 373, not seen, for 𗴂𗹭𘜶𗴲𗂧 and for 萬祕國, which it reconstructs /khjɨ-dwuu-lhjij/. The Chinese 萬祕國 is read here from this article alone. The same article says the only Tangut name used in the Western Xia period was the Great State of White and High, with Xia taken up after 1227.',
     url: 'https://en.wikipedia.org/wiki/Western_Xia',
   },
   liaoshi: {
@@ -198,6 +198,27 @@ export const ERA_SOURCES = {
     note: 'Reports a Tangut colophon dated 大朝國大德四年 in translation only, without the characters.',
     url: 'https://www.cssn.cn/skgz/bwyc/202404/t20240425_5747940.shtml',
   },
+  kepping1995: {
+    author: 'K. B. Kepping',
+    title: 'The Official Name of the Tangut Empire as Reflected in the Native Tangut Texts',
+    where: 'Manuscripta Orientalia 1.3 (1995), pp. 22–32',
+    note: 'Prints the forms in a character list (pp. 30–31): nos. 1, 2, 11 and 61 are 𗴂𗹭𗂧𘜶, 𗴂𗹭𘜶𗴲𗂧, 𗼇𗂧 and 𗕑𗓦𗂧, read from the page by eye. Before 1227 she finds only the first in Tangut, on the imperial stelae, in the canon\'s preface and on the Liangzhou stele; the form with 𗴲 occurs in Chinese texts of the state as 白高大夏國 and in Tangut only after its fall. She calls 𗼇𗂧 the unofficial name, used in the Tangut Code, says 𗕑𗓦𗂧 is used in ritual songs, and rejects the reading Bai Shang, "upper reaches of the White River".',
+    url: 'https://www.orientalstudies.ru/rus/images/pdf/journals/p_mo_1_3_1995_03_kepping.pdf',
+  },
+  legal: {
+    author: 'Tangut legal texts',
+    title: 'tangut_legal_texts',
+    where: 'Read in the Lausanne Corpus of Digital Tangut Texts, p. 514, col. 7',
+    note: 'The column has gaps around 𗼇𗂧.',
+    url: 'https://github.com/bjargal/LCDTT-tangut',
+  },
+  cngsda: {
+    author: '甘肅檔案信息網',
+    title: 'A web article on the Western Xia (蘭台文苑)',
+    where: 'cngsda.net',
+    note: 'A weak source, cited only for the form 白上国.',
+    url: 'https://www.cngsda.net/ltwy/17169.jhtml',
+  },
   nie2004: {
     author: '聶鴻音',
     title: '西夏文《過去莊嚴劫千佛名經》發願文中的兩個年號',
@@ -216,5 +237,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
 ])
