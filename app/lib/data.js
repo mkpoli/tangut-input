@@ -113,6 +113,8 @@ export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/t
  * @returns {Promise<{ format: string, source: string, author: string, modified: string | null, retrieved: string, note: string, glosses: Record<string, [string, string, [string, number][]][]> }>} */
 /** The Tibetan spellings 李範文 lists at each crossing of rhyme and initial class. @returns {Promise<{ cells: Record<string, Record<string, string[]>> } | null>} */
 export const loadTibetanRhymes = () => once('tibetanRhymes', () => readJson(new URL('../data/tangut-tibetan-rhymes.json', import.meta.url)))
+/** 龔煌城's value for each of the 105 rhymes. @returns {Promise<{ values: Record<string, string> } | null>} */
+export const loadGongRhymes = () => once('gongRhymes', () => readJson(new URL('../data/tangut-gong-rhymes.json', import.meta.url)))
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */

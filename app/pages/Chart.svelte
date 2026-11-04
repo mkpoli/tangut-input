@@ -145,6 +145,22 @@
     return found
   })
 
+  // 龔煌城's system is known here rhyme by rhyme, with no reading for any character, so only this page
+  // can offer it. The choice lasts until the reader's own system changes, here or in the top bar.
+  const GONG_HC = { key: 'gong_hwang_cherng', name: 'Gong Hwang-cherng 2005', zh: '龔煌城' }
+  const gongChosen = $state({ on: false })
+  $effect.pre(() => { void ui.reading; gongChosen.on = false })
+  const byGong = $derived(String(view.mode) === 'rhyme' && gongChosen.on)
+  /** @param {string} key */
+  function chooseSystem(key) {
+    gongChosen.on = key === GONG_HC.key
+    if (!gongChosen.on) setReading(key)
+  }
+  /** @param {{ key: string, rhyme: number }} row */
+  const shownFinals = row => (byGong ? (ix.gongRhymes[row.rhyme] ? [ix.gongRhymes[row.rhyme]] : []) : finals.get(row.key))
+  /** @param {string} roman */
+  const shownOnsets = roman => (byGong ? [] : onsets.get(roman))
+
   const pages = $derived(Math.max(1, Math.ceil(uppers.length / PER_PAGE)))
   const shownUppers = $derived(uppers.slice(page * PER_PAGE, (page + 1) * PER_PAGE))
   /** The lowers that have a character under one of the uppers on this page. */
@@ -186,8 +202,9 @@
       <label class="choose">
         <span class="ui-label">{t('chart.system')}</span>
         <span class="ui-select-wrap">
-          <select class="ui-select" data-size="sm" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('chart.system')}>
+          <select class="ui-select" data-size="sm" value={byGong ? GONG_HC.key : ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => chooseSystem(event.currentTarget.value)} aria-label={t('chart.system')}>
             {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+            {#if String(view.mode) === 'rhyme'}<option value={GONG_HC.key} title={systemTitle(GONG_HC)}>{systemName(GONG_HC, i18n.locale)}</option>{/if}
           </select>
         </span>
       </label>
@@ -233,11 +250,11 @@
           <tr>
             <th class="corner" scope="col"><span>{t('chart.rhyme')}</span> / {t('chart.group')}</th>
             {#each CLASSES as group (group.roman)}
-              <th scope="col" class="group" title={`${group.roman} · ${group.tangut} · ${group.zh}${onsets.get(group.roman)?.length ? ` · ${onsets.get(group.roman)?.join(' ')}` : ''}`}>
+              <th scope="col" class="group" title={`${group.roman} · ${group.tangut} · ${group.zh}${shownOnsets(group.roman)?.length ? ` · ${shownOnsets(group.roman)?.join(' ')}` : ''}`}>
                 <span class="roman">{group.roman}</span>
                 <span class="tangut ui-script" lang="txg">{group.tangut}</span>
                 <span class="name" lang="zh-Hant">{group.zh}</span>
-                {#if onsets.get(group.roman)?.length}<small>{onsets.get(group.roman)?.join(' ')}</small>{/if}
+                {#if shownOnsets(group.roman)?.length}<small>{shownOnsets(group.roman)?.join(' ')}</small>{/if}
               </th>
             {/each}
           </tr>
@@ -251,7 +268,7 @@
               <th scope="row" class="head-cell rhyme">
                 <span class="rhyme-number">{row.rhyme}</span>
                 {#if view2.adjacent}<span class="tone-label">{t(TONE_KEY[row.tone])}</span>{/if}
-                {#if finals.get(row.key)?.length}<span class="final">{finals.get(row.key)?.join(' ')}</span>{/if}
+                {#if shownFinals(row)?.length}<span class="final">{shownFinals(row)?.join(' ')}</span>{/if}
                 <small class="ui-count">{row.count}</small>
               </th>
               {#each GROUPS as group (group)}
@@ -272,6 +289,7 @@
       </table>
     </div>
     <p class="ui-hint">{t('chart.legend')}</p>
+    {#if byGong}<p class="ui-hint">{t('chart.gongLegend')}</p>{/if}
   {/if}
 </div>
 
