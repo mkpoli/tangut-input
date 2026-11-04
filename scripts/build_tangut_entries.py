@@ -11,6 +11,7 @@ Displayable fields come from sources the site can republish:
 - the English definitions in Wiktionary's Tangut entries, through Kaikki's extract;
 - the Japanese definitions on ja.wiktionary (CC BY-SA 4.0);
 - BabelStone's Tangut IDS (public domain);
+- the 文海's own entry text (12th century, public domain);
 - Unicode's TangutSources radical and stroke data.
 
 CCAMC's readings, glosses and 文海 text are not copied into the records. What the site keeps is a
@@ -35,7 +36,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENTRIES = ROOT / 'app/data/tangut-entries.json.gz'
 INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
-FORMAT = 'tangut-input/entries/2'
+FORMAT = 'tangut-input/entries/3'
 SYSTEMS = ['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida']
 CCAMC_SYSTEMS = ['gong_huangcheng', 'arakawa_shintaro']
 
@@ -102,7 +103,6 @@ def hidden(entries, systems, index):
     """The terms CCAMC records, folded or lower-cased for search, never for display."""
     readings = {}
     meanings = {'en': {}, 'zh': {}}
-    wenhai = {'en': {}, 'zh': {}}
     for row in entries['rows']:
         char = row[0]
         values = row[7]
@@ -117,16 +117,11 @@ def hidden(entries, systems, index):
             terms = [plain(value) for value in (row[column] or []) if plain(value)]
             if terms:
                 meanings[language][char] = terms
-        for language, column in (('en', 8), ('zh', 9)):
-            value = row[column]
-            if value and plain(value):
-                wenhai[language][char] = [plain(value)]
     index.update({
         'format': 'tangut-input/ccamc-index',
         'note': 'Normalized search terms derived from CCAMC records. Not for display or redistribution.',
         'readings': readings,
         'meanings': meanings,
-        'wenhai': wenhai,
     })
 
 
@@ -143,6 +138,7 @@ def main():
     ja = gz(ROOT / 'data/wiktionary/definitions-ja.json.gz')['pages']
     readings = gz(ROOT / 'data/wiktionary/txg-readings.json.gz')['systems']
     gong_xun = gz(ROOT / 'data/gong-xun/gx202411.json.gz')['readings']
+    wenhai = gz(ROOT / 'data/wenhai/entry-text.json.gz')['entries']
 
     out = []
     for row in rows:
@@ -158,6 +154,7 @@ def main():
             readings['sofronov'].get(char, ''),
             readings['nishida'].get(char, ''),
         ]
+        text = wenhai.get(char, {})
         out.append([
             char,
             ids.get(char) or composition,
@@ -167,6 +164,8 @@ def main():
             definitions_ja,
             definitions_zh,
             pron,
+            text.get('en', ''),
+            text.get('zh', ''),
         ])
 
     data = {'format': FORMAT, 'systems': SYSTEMS, 'rows': out}

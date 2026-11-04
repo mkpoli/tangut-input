@@ -117,6 +117,13 @@ export function byMeaning(query, options = {}) {
       const t = rank(text)
       if (t < tier) { tier = t; sense = text; lang = key }
     }
+    // The 文海's own entry text can answer even when the gloss does not use the word.
+    if (tier > 2) for (const key of languages) {
+      const value = key === 'en' ? entry.wenhai_text_en : key === 'zh' ? entry.wenhai_text_zh : ''
+      if (typeof value !== 'string') continue
+      const t = rank(value)
+      if (t + 3 < tier) { tier = t + 3; sense = value; lang = key }
+    }
     if (tier < 9) { hits.push({ char: entry.char, tier, sense, lang }); seen.add(entry.char) }
   }
   const hidden = ix.ccamcMeanings
@@ -127,15 +134,6 @@ export function byMeaning(query, options = {}) {
       for (const text of terms) tier = Math.min(tier, rank(text))
       if (tier < 9) {
         hits.push({ char, tier: tier + 3, sense: '', lang: key, via: 'ccamc' })
-        seen.add(char)
-      }
-    }
-    for (const [char, terms] of Object.entries(hidden.wenhai?.[key] ?? {})) {
-      if (seen.has(char)) continue
-      let tier = 9
-      for (const text of terms) tier = Math.min(tier, rank(text))
-      if (tier < 9) {
-        hits.push({ char, tier: tier + 6, sense: '', lang: key, via: 'ccamc' })
         seen.add(char)
       }
     }

@@ -441,7 +441,7 @@
   "eras.cite": "出典{n}",
   "pick.loadingPad": "手書きの準備中…",
   "card.ccamc": "CCAMC",
-  "card.ccamcNote": "さらに多くの読み・意味・『文海』の説明は、この字のCCAMCのページにあります。",
+  "card.ccamcNote": "さらに多くの読みと意味は、この字のCCAMCのページにあります。",
   "common.ccamc": "CCAMCで開く",
   "reading.ccamc": "CCAMCの他の方式",
   "reading.ccamcNote": "この読みはCCAMCに記録されています。値はCCAMCのページにあります。",
@@ -449,5 +449,8 @@
   "find.viaCcamc": "CCAMCに記録",
   "about.wiktionary": "六つのうち五つの再構音と英・日の意味は<a href=\"https://en.wiktionary.org/wiki/Module:txg/data\">ウィクショナリー</a>（CC BY-SA 4.0）から取得しています。再構音は西夏語の発音テンプレートが読み込むLuaモジュール、英語の意味はKaikkiによる英語版ウィクショナリーの抽出、日本語の意味は日本語版ウィクショナリーからです。第六の龔勛2024-11は<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">西夏文擬音データベース</a>（DOI 10.25365/phaidra.654）から一字ずつ引用しています。6,144字のうち、英語の意味があるのは457字、日本語の意味があるのは278字です。CCAMCにはさらに二つの再構音と中国語の意味の大半があり、正規化した形だけを検索に使い、カードでは値を出さずにCCAMCへリンクします。",
   "about.readingsTitle": "読みと意味",
-  "about.readingsSource": "ウィクショナリーの再構音は、それを表示するモジュールから版IDとともに取得し、<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>に記録しています。龔勛のGX202411は、同データベースの2025-05-07版から、ダイジェストとDOIを添えて<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>に保存しています。CCAMCの二方式と中国語の釈義は、検索用に正規化した語だけを<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>に置き、どのページにも表示しません。"
+  "about.readingsSource": "ウィクショナリーの再構音は、それを表示するモジュールから版IDとともに取得し、<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>に記録しています。龔勛のGX202411は、同データベースの2025-05-07版から、ダイジェストとDOIを添えて<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>に保存しています。CCAMCの二方式と中国語の釈義は、検索用に正規化した語だけを<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>に置き、どのページにも表示しません。",
+  "card.wenhai": "文海",
+  "about.wenhaiTitle": "『文海』の本文",
+  "about.wenhai": "『文海』（12世紀）は各項目で字形を分析しています。本文はパブリックドメインで、『文海』に項目がある字では英語の訳を添えて表示します。"
 }
