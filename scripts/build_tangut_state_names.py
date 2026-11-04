@@ -30,6 +30,8 @@ def main() -> None:
                 raise SystemExit(f'the name does not occur in the text named: {row}')
             if row['backs'] not in ('tangut', 'chinese', 'note') or (row['backs'] == 'tangut' and not row['tangut']):
                 raise SystemExit(f'unknown backing: {row}')
+            if bool(row['chinese']) != bool(row['chinese_source']):
+                raise SystemExit(f'Chinese without its source, or a source without Chinese: {row}')
             if not row['chinese'] and not row['tangut']:
                 raise SystemExit(f'a name with neither Chinese nor Tangut: {row}')
             name = names.setdefault(row['chinese'] or row['tangut'], {

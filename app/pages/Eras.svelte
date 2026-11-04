@@ -167,7 +167,7 @@
         <tbody>
           {#each STATE_NAMES as name (name.chinese || name.tangut)}
             <tr>
-              <th scope="row">{#if name.chinese}<span lang="zh-Hant">{name.chinese}</span>{@render cites(name.chineseSources)}{:else}<span class="ui-hint">—</span>{/if}{#if name.gloss}<span class="state-gloss" lang="en">“{name.gloss}”</span>{/if}</th>
+              <th scope="row">{#if name.chinese}<span lang="zh-Hant">{name.chinese}</span>{@render cites(name.chineseSources)}{:else}<span class="ui-hint no-chinese">—</span>{/if}{#if name.gloss}<span class="state-gloss" lang="en">“{name.gloss}”</span>{/if}</th>
               <td class="forms title-form" data-empty={!name.tangut || undefined}>{#if name.tangut}<span class="form" role="group" aria-label={name.tangut}>{#each [...name.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
                 aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(name.tangutSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
               <td class="basis"><span class="tag" data-kind={name.basis}>{t(`eras.titles.basis.${name.basis}`)}</span>{#if name.note}<p class="note">{t(`eras.states.note.${name.note}`)}{@render cites(name.noteSources)}</p>{/if}</td>
@@ -253,6 +253,7 @@
     .plain th,.plain td{padding-inline:var(--ui-space-sm)}
     .plain thead th{white-space:normal}
     .posthumous-form{display:flex;margin-inline-start:0}
+    .no-chinese{display:none}
     .key div{display:block}
     .key dt{display:inline;margin-inline-end:var(--ui-space-xs)}
     .key dd{display:inline}
