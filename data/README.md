@@ -547,59 +547,32 @@ constants in `src/composer/constants.json` come from han-compose at bd0829b (MIT
 previously used by the composer's test fixture. Tangut Components Supplement glyphs
 are absent from this font version and report a missing glyph.
 
-## `tangut-gloss-words.tsv.gz`
+## Tangut entries
 
-One Chinese word for each Tangut character, for a table that reads a character by its meaning: 毒,
-佛, 日 and 世界 can be read as they stand, 【宿】 writes a sound and has no meaning to read. 6,144
-rows, 56 KB gzipped. Format: `char`, `gloss`, `tier`, `reading`; comments start with `#`.
+`app/data/tangut-entries.json.gz` holds the values a page may show: five readings from the Lua
+modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyake, Kychanov 2006,
+Sofronov 1968, Nishida 1966), Gong Xun's GX202411 from his Tangut Pronunciation Database, English
+meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
+BabelStone's IDS description, the 文海's entry text for the twelve characters it carries in this
+snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
+meanings are CC BY-SA 4.0; GX202411 is cited from the Tangut Pronunciation Database under its
+Limited Public Use licence; the description is public domain; the radical and stroke data are
+Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
+`data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
+`data/gong-xun/gx202411.json.gz`, `data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
 
-`gloss` is the first sense of the entry's first Chinese gloss in `app/data/tangut-entries.json.gz`.
-Senses are separated by 、；， or a space outside brackets; numbering, part-of-speech tags and
-placeholder senses (暫無解釋, 不識) are dropped. A note in brackets stays with the gloss and is
-tiered `long`, so （滴）答 is not guessed into 滴答. `tier` counts the characters of the gloss:
-`word`, one (3,117); `phrase`, two to four (2,053); `long`, five or more, a note in brackets, or a
-description that begins 用在 or 作為 (162); `transliteration`, a foreign sound (728); `empty`,
-nothing to read (61); `redirect`, the first gloss points at another character (23). `reading` is
-Gong Xun's 202411 reconstruction, which 5,829 characters have.
+`app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
+two systems the site does not show (Gong Hwang-cherng and Arakawa Shintarō) and normalized English
+and Chinese glosses from CCAMC. The card links to
+`http://ccamc.org/tangut.php?n4694=<char>`; no page renders the index. It is built from a copy of
+the former Open Tangut records, which is not committed.
 
-The gloss is the dictionary's first sense, not a chosen reading: a character glossed 世界、京城 keeps
-世界, and its senses differ in how well they read. Weighted by the 24,265 characters of the thirteen
-attested texts that the entries cover, 17,836 (73.5%) are `word`, 3,685 `phrase`, 1,462
-`transliteration`, 1,128 `long`, 151 `empty` and 3 `redirect`.
-
-Rebuild with `uv run scripts/build_tangut_gloss_words.py`, which also prints that coverage and would
-leave the file unchanged. The source is Open Tangut, whose export is MIT licensed and merges CCAMC
-and Wiktionary; `app/data/tangut-entries.json.gz` is its re-pack.
-
-Licence: **MIT**, following the entries file.
-
-## `tangut-gloss-readings.tsv.gz`
-
-How to read the word the table above gives: the 3,117 characters whose gloss is a single Chinese
-character, each with whatever readings KANJIDIC2 has for that character — pinyin, Japanese on and
-Japanese kun. 45 KB gzipped. Format: `char`, `gloss`, `pinyin`, `on`, `kun`; comments start with `#`.
-
-The readings are KANJIDIC2's — database version 2026-307, created 2026-11-03, its SHA-256 in the file
-header — in the order that file gives them: 佛 is `fo2 fu2`, ブツ フツ, ほとけ; 日 is `ri4`,
-ニチ ジツ, ひ. Pinyin keeps KANJIDIC2's tone numbers. A kun reading keeps the dot of its okurigana
-stem (行 い.く); a bound form marked with a hyphen at either end is left out, because it belongs to the
-word the character ends or begins (日 -び, 上 うわ-). 3,068 rows have pinyin, 3,063 on and 2,801 kun.
-The 35 gloss characters KANJIDIC2 does not carry (說, 悅, 內, 腳, 歲), 49 rows, keep empty readings
-rather than borrow a Japanese variant's, which is a different character, or a Chinese reading from
-another system; the remaining rows without kun are Sino-Japanese words with no Japanese word of their
-own, 毒 being ドク.
-
-Only the `word` tier is read. A gloss of two or more characters is a phrase whose Japanese reading is
-not its parts joined — 世界 is セカイ, not よかい — so the phrase, long, transliteration and empty
-rows wait for an editor.
-
-Rebuild with `uv run scripts/build_tangut_gloss_readings.py`, which fetches KANJIDIC2 into `cache/`
-against the pinned SHA-256 and prints the counts above. The gloss words come from the MIT file beside
-this one.
-
-Licence: **CC BY-SA 4.0** for the readings, KANJIDIC2's
-(<https://creativecommons.org/licenses/by-sa/4.0/>), Electronic Dictionary Research and Development
-Group, Copyright EDRDG.
+`data/wiktionary/txg-readings.json.gz` records the five modules' values with their revision ids;
+`data/wiktionary/definitions-ja.json.gz` records the ja.wiktionary pages with theirs. Both are
+refreshed by `uv run scripts/fetch_tangut_wiktionary.py`, which makes five module requests and six
+batches of fifty page titles. `data/gong-xun/gx202411.json.gz` holds GX202411 from the 2025-05-07
+table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh it with
+`uv run scripts/fetch_tangut_gong_xun.py`.
 
 ## Bopomofo outlines
 

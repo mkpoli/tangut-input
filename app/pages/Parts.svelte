@@ -1,13 +1,14 @@
 <script>
-  // Parts: build a character from the components it is drawn from, as the script itself is built.
-  // Each chosen part narrows the characters to those whose description holds it, and the palette
-  // narrows with them to the parts that still occur, so the next choice always leads somewhere.
+  // Parts: build a character from the parts it is drawn from, as the script itself is built. A part
+  // can be a component or a character the description spells whole, at any layer. Each choice
+  // narrows the characters to those that hold it, and the palette to the parts that still occur, so
+  // the next choice always leads somewhere.
   import { db, ix, gloss, isTangut, codePoint } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import PartInfo from '../ui/PartInfo.svelte'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview } from '../lib/ui.svelte.js'
-  import { byParts, partsAmong, partsIn } from '../lib/search.js'
+  import { byParts, partsAmong, directPartsIn } from '../lib/search.js'
   import { foldShapeName } from '../lib/names.js'
   import { partInfoPlacement } from '../lib/part-info.js'
   import { LAYOUTS } from '../ui/Ids.svelte'
@@ -16,7 +17,7 @@
   import Icon from '../ui/Icon.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
-  let chosen = $state(/** @type {string[]} */ ([...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : partsIn(char))))
+  let chosen = $state(/** @type {string[]} */ ([...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : directPartsIn(char))))
   let layout = $state('')
   let filter = $state('')
   let everything = $state(false)
@@ -31,7 +32,7 @@
   const ready = $derived(db.status === 'ready')
   // A part from the address waits for the records before it can be checked.
   $effect(() => {
-    if (ready && !chosen.length && route.q) chosen = [...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : partsIn(char))
+    if (ready && !chosen.length && route.q) chosen = [...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : directPartsIn(char))
   })
 
   const hits = $derived(ready ? byParts(chosen, layout) : [])
@@ -43,7 +44,7 @@
   })
   const LAYOUT_KEYS = ['⿰', '⿱', '⿲', '⿳', '⿺', '⿸', '⿵', '⿻']
 
-  // Every part, by strokes then by how often descriptions use it; narrowed by the choice so far.
+  // Every part at every layer, by strokes then by how often characters use it; narrowed by the choice so far.
   const palette = $derived.by(() => {
     if (!ready) return []
     const query = filter.trim()
@@ -74,7 +75,7 @@
   /** Replace a part that is itself a character by the parts its own description is made of, so a
    *  reader who picks a large component can search its inside instead. @param {number} index */
   function split(index) {
-    const inner = partsIn(chosen[index])
+    const inner = directPartsIn(chosen[index])
     if (!inner.length) return
     chosen = [...chosen.slice(0, index), ...inner, ...chosen.slice(index + 1)]
     setQuery(chosen.join(''))
@@ -141,7 +142,7 @@
       {#each chosen as part, i (i)}
         <div class="partwrap">
           <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')}><G char={part} /><span class="x" aria-hidden="true">×</span><span class="ui-visually-hidden">{t('parts.remove')}</span></button>
-          {#if partsIn(part).length}
+          {#if directPartsIn(part).length}
             <button type="button" class="split" onclick={() => split(i)} title={t('parts.splitTitle', { part })} aria-label={t('parts.splitTitle', { part })}>⿱</button>
           {/if}
         </div>
