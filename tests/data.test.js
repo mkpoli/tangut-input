@@ -75,6 +75,8 @@ test('the Tibetan spellings by hand class belong to known characters', () => {
   }
   expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1, 'ངུ']])
   expect(chars['𘘣'].tibetan[0]).toEqual(['B', 'g-yi', 13, 'གཡི'])
+  // A doubled vowel is the long-vowel mark.
+  expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང'])
 })
 
 const ccamc = json('tangut-ccamc-index.json.gz')
