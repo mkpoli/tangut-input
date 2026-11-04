@@ -103,13 +103,15 @@ works:
     year: 2002
     pages: 468
     isbn: 957-671-863-2
-    gives: Gong Hwang-cherng's reconstruction, in his papers and Tangut–Chinese word lists
-    script: Tangut, Chinese, IPA
+    gives: >-
+      Gong Hwang-cherng's reconstruction, and his study of the Chinese transcriptions in 掌中珠
+      ("A study of transcriptions in the Chang-chung-chu"), which is the direct warrant for a 直音
+    script: Tangut, Chinese, English, IPA
     status: acquired
     rights: no licence stated; keyed and cited
     notes: >-
-      393 ppi with a text layer, the best copy here. The IPFS copy answers no provider; the file
-      came from libgen's CDN instead.
+      393 ppi. The OCR layer is good on the English and poor on the Chinese. The IPFS copy answers
+      no provider; the file came from libgen's own get.php.
 
   - id: ghc-2005
     title: 西夏語言文字研究論集
@@ -119,8 +121,10 @@ works:
     year: 2005
     pages: 644
     isbn: 7-105-07198-2
-    gives: the same papers in Chinese
+    gives: his Chinese papers, among them the 類林 Tangut–Chinese transcription study
     script: Tangut, Chinese
     status: acquired
     rights: no licence stated; keyed and cited
-    notes: 143 ppi without a text layer; weaker than the 2002 collection, which carries the same papers.
+    notes: >-
+      143 ppi, bookmarked and with a contents list, so the Chinese article text is followed here
+      and a glyph checked in the 2002 copy.

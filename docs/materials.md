@@ -41,7 +41,11 @@ what it supplies and its terms, and `scripts/fetch_books.py` fetches them again 
 | 文海研究, 史金波・白濱・黃振華, 中國社會科學出版社, 1983 | the 文海's entries and its fanqie | none stated |
 | Тангутская филология, Н. А. Невский, Издательство восточной литературы, 1960 | the 音（聂历山）column: Nevsky's readings | none stated by the Institute of Oriental Manuscripts, which scanned it |
 | 西夏語通韻字典, 荒川慎太郎, 1999 | Arakawa's reconstruction, syllable by syllable | none stated |
-| 西夏語文研究論文集, 龔煌城, 中研院語言學研究所籌備處, 2002 | Gong Hwang-cherng's reconstruction | none stated |
+| 西夏語文研究論文集, 龔煌城, 中研院語言學研究所籌備處, 2002 | Gong Hwang-cherng's reconstruction, and his study of the transcriptions in 掌中珠 | none stated |
+
+The Chinese 直音 follows 掌中珠 first, since it prints a character for a character; the fanqie the
+rhyme books spell the same character with are the second warrant, and 夏漢字典 and the other
+dictionaries print both beside their readings.
 
 ## Linked, not copied
 
