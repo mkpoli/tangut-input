@@ -19,6 +19,7 @@
   import Peek from './Peek.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
+  import { bookTitle } from '../lib/books.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -35,6 +36,10 @@
   const meanings = $derived(entry?.definitions ?? {})
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
+  const READING_FIELDS = /** @type {const} */ ([
+    { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文' },
+    { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山' },
+  ])
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
   // is read from. 文海 where it has one, 合編 where it does not.
@@ -56,6 +61,11 @@
     if (!entry?.composition) return []
     return ix.entries.filter(other => other.char !== char && other.composition === entry.composition).map(other => other.char)
   })
+  // The readings 音（李范文） and 音（聂历山）, keyed from the editions with the page they stand on.
+  const fanqie = $derived(READING_FIELDS
+    .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cite: ix.citations[char]?.[field.key] }))
+    .filter(field => field.value))
+
   const homophones = $derived.by(() => {
     const li = entry?.pronunciations?.li_fanwen?.trim()
     if (!li) return []
@@ -216,6 +226,27 @@
       </section>
     {/if}
 
+    {#if fanqie.length}
+      <section>
+        <h3 class="ui-label"><Icon name="fanqie" size={15}/>{t('card.keyedReadings')}</h3>
+        <table class="readings keyed">
+          <tbody>
+            {#each fanqie as field (field.key)}
+              <tr>
+                <th scope="row" title={field.name}>{i18n.locale.startsWith('ja') || i18n.locale.startsWith('zh') || i18n.locale.startsWith('ko') ? field.zh : field.name}</th>
+                <td class="cjk">
+                  <span class="ui-script">{field.value}</span>
+                  {#if field.cite}
+                    <span class="cite">{bookTitle(field.cite.work)}<span class="ui-hint"> {field.cite.locator}</span></span>
+                  {/if}
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </section>
+    {/if}
+
     {#if !isComponent(char)}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.ccamc')}</h3>
@@ -371,6 +402,7 @@
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
+  .readings .cite{display:block;margin-block-start:2px;font-family:var(--ui-font-sans);font-size:var(--ui-text-xs);color:var(--ui-color-ink-muted)}
   .spelling{font-size:18px}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}

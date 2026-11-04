@@ -36,8 +36,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENTRIES = ROOT / 'app/data/tangut-entries.json.gz'
 INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
+SOURCES = ROOT / 'app/data/tangut-reading-sources.json.gz'
 FORMAT = 'tangut-input/entries/3'
-SYSTEMS = ['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida']
+SYSTEMS = ['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida',
+           'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'gong_huangcheng']
 CCAMC_SYSTEMS = ['gong_huangcheng', 'arakawa_shintaro']
 
 LETTERS = {
@@ -63,6 +65,24 @@ def plain(value):
     text = re.sub(r'[\u3000\s]+', ' ', text)
     text = re.sub(r'[^\w]+', ' ', text)
     return re.sub(r'\s+', ' ', text).strip()
+
+
+def keyed(path):
+    """The readings keyed from the books, per character: {char: {field: [value, work, locator]}}."""
+    out = {}
+    if not path:
+        return out
+    lines = path.read_text(encoding='utf-8').splitlines()
+    head = lines[0].split('\t')
+    for line in lines[1:]:
+        if not line.strip():
+            continue
+        row = dict(zip(head, line.split('\t')))
+        if row['status'] == 'uncertain':
+            continue
+        out.setdefault(row['char'], {}).setdefault(
+            row['field'], [row['value'], row['work'], row['locator']])
+    return out
 
 
 def gz(path):
@@ -128,6 +148,7 @@ def hidden(entries, systems, index):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ccamc', type=Path, help='a copy of the old Open Tangut/CCAMC records')
+    parser.add_argument('--readings', type=Path, help='keyed readings, data/readings/readings.tsv')
     args = parser.parse_args()
 
     old = gz(ENTRIES)
@@ -139,13 +160,16 @@ def main():
     readings = gz(ROOT / 'data/wiktionary/txg-readings.json.gz')['systems']
     gong_xun = gz(ROOT / 'data/gong-xun/gx202411.json.gz')['readings']
     wenhai = gz(ROOT / 'data/wenhai/entry-text.json.gz')['entries']
+    keyed_readings = keyed(args.readings)
+    citations = {}
 
     out = []
     for row in rows:
         char, composition, strokes, radical = row[0], row[1], row[2], row[3]
         definitions_en = en.get(char, [])
         definitions_ja = ja.get(char, {}).get('definitions') or []
-        definitions_zh = []
+        keyed_fields = keyed_readings.get(char, {})
+        definitions_zh = [keyed_fields['gloss_zh'][0]] if 'gloss_zh' in keyed_fields else []
         pron = [
             readings['li_fanwen'].get(char, ''),
             gong_xun.get(char, ''),
@@ -153,8 +177,16 @@ def main():
             readings['kychanov'].get(char, ''),
             readings['sofronov'].get(char, ''),
             readings['nishida'].get(char, ''),
+            *(keyed_fields.get(key, [''])[0] for key in SYSTEMS[6:]),
         ]
+        if keyed_fields:
+            citations[char] = {
+                key: {'work': value[1], 'locator': value[2]}
+                for key, value in keyed_fields.items() if key not in ('gloss_zh', 'wenhai_zh')
+            }
         text = wenhai.get(char, {})
+        text = {'en': text.get('en', ''),
+                'zh': keyed_fields['wenhai_zh'][0] if 'wenhai_zh' in keyed_fields else text.get('zh', '')}
         out.append([
             char,
             ids.get(char) or composition,
@@ -172,6 +204,11 @@ def main():
     with gzip.GzipFile(ENTRIES, 'wb', mtime=0) as f:
         f.write(json.dumps(data, ensure_ascii=False, separators=(',', ':')).encode())
     print(f'{len(out)} characters -> {ENTRIES.relative_to(ROOT)}')
+
+    with gzip.GzipFile(SOURCES, 'wb', mtime=0) as f:
+        f.write(json.dumps({'format': 'tangut-input/reading-sources', 'citations': citations},
+                           ensure_ascii=False, separators=(',', ':')).encode())
+    print(f'{len(citations)} characters with a keyed citation -> {SOURCES.relative_to(ROOT)}')
 
     if args.ccamc:
         index = {}

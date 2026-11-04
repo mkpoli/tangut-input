@@ -226,6 +226,7 @@
   "card.typeIt": "去試打",
   "card.meaning": "釋義",
   "card.readings": "讀音",
+  "card.keyedReadings": "書證讀音",
   "card.wenhaiConstruction": "文海字形構造",
   "card.builtFrom": "字形結構",
   "card.copyDescription": "複製構字描述",

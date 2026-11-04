@@ -11,10 +11,13 @@ const rhymes = json('tangut-rhymes.json.gz')
 test('the packed records keep every character, the five Wiktionary readings and Gong Xun\'s', () => {
   expect(entries.format).toBe('tangut-input/entries/3')
   expect(entries.rows.length).toBe(6144)
-  expect(entries.systems).toEqual(['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida'])
+  expect(entries.systems).toEqual([
+    'li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida',
+    'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'gong_huangcheng',
+  ])
   const first = entries.rows[0]
   expect(first[0]).toBe('𗀀')
-  expect(first[7]).toEqual(['do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
+  expect(first[7].slice(0, 6)).toEqual(['do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
   expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
   expect(first[5]).toEqual(['毒'])
   expect(first[6]).toEqual([])

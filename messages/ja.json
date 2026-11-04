@@ -226,6 +226,7 @@
   "card.typeIt": "入力してみる",
   "card.meaning": "意味",
   "card.readings": "字音",
+  "card.keyedReadings": "典拠のある読み",
   "card.wenhaiConstruction": "文海の字形構成",
   "card.builtFrom": "構成",
   "card.copyDescription": "構成記述をコピー",

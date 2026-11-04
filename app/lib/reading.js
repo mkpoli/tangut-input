@@ -1,4 +1,4 @@
-// Reconstructions. Six systems spell the same syllables differently, so every reading is folded to
+// Reconstructions. Eight systems spell the same syllables differently, so every reading is folded to
 // plain letters before comparison: diacritics and IPA letters become their nearest ASCII letter,
 // separators drop out, and a final digit is kept apart as the tone.
 
@@ -8,6 +8,8 @@
 // spelling is the name's own title, so both are a hover away.
 export const SYSTEMS = /** @type {const} */ ([
   { key: 'li_fanwen', short: 'Li', name: 'Li Fanwen 2008', zh: '李範文', tones: true },
+  { key: 'gong_huangcheng', short: 'Gong', name: 'Gong Hwang-cherng', zh: '龔煌城', tones: false },
+  { key: 'arakawa_shintaro', short: 'Ar', name: 'Arakawa Shintarō', zh: '荒川慎太郎', tones: false },
   { key: 'gong_xun_202411', short: 'GX', name: 'Gong Xun 2024-11', zh: '龔勛', tones: true },
   { key: 'miyake', short: 'My', name: 'Marc Miyake', zh: '三宅', tones: true },
   { key: 'nishida', short: 'Ni', name: 'Nishida 1966', zh: '西田龍雄', tones: true },

@@ -226,6 +226,7 @@
   "card.typeIt": "직접 입력해 보기",
   "card.meaning": "뜻",
   "card.readings": "독음",
+  "card.keyedReadings": "출전 있는 독음",
   "card.wenhaiConstruction": "文海 자형 구성",
   "card.builtFrom": "짜임",
   "card.copyDescription": "자형 기술 복사",

@@ -1176,3 +1176,10 @@ them and checks each against its md5. [The README](books/README.md) says which w
 Most of these editions are under copyright and their scans stay out of the build. The 掌中珠 scans
 in `cache/books/zhangzhongzhu/` are PD-scans of a public-domain original and may be reused; the
 貽安堂 photographs described above are CC BY-NC 4.0.
+
+## `readings/`
+
+The values keyed out of those books, one printed value per row with the page it stands on, and the
+citations the site shows beside a reading. `scripts/check_readings.py` holds the columns, the field
+names, the work each field may come from and the locator shape; a row's content is a reader's
+judgement. [The README](readings/README.md) gives the fields and how a locator is written.
