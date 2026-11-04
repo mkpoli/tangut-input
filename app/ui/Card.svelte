@@ -37,8 +37,9 @@
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
   const READING_FIELDS = /** @type {const} */ ([
-    { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文' },
-    { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山' },
+    { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文', lang: 'zh-Hant' },
+    { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山', lang: 'zh-Hant' },
+    { key: 'tibetan', name: 'Tibetan transcription', zh: '藏文對音', lang: 'bo' },
   ])
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
@@ -265,7 +266,7 @@
               <tr>
                 <th scope="row" title={field.name}>{i18n.locale.startsWith('ja') || i18n.locale.startsWith('zh') || i18n.locale.startsWith('ko') ? field.zh : field.name}</th>
                 <td class="cjk">
-                  <span lang="zh-Hant">{field.value}</span>
+                  <span lang={field.lang}>{field.value}</span>
                   {#each field.cites as cite (cite.locator)}
                     <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
                   {/each}
