@@ -23,6 +23,10 @@ class FormulaPartsTest(unittest.TestCase):
         self.assertEqual(wenhai.formula_parts('AB𘊱'),
                          [('A', 'whole'), ('B', 'left')])
 
+    def test_elide_marks_a_bare_source_as_none(self):
+        self.assertEqual(wenhai.formula_parts('AB', elide=True),
+                         [('A', None), ('B', None)])
+
     def test_a_term_alone_is_rejected(self):
         with self.assertRaises(ValueError):
             wenhai.formula_parts('𘊱A')
@@ -120,6 +124,32 @@ class FormulaTableTest(unittest.TestCase):
     def test_rejects_an_empty_file(self):
         with self.assertRaises(SystemExit):
             wenhai.read_formulas(self.write([]))
+
+
+class ChoosePartTest(unittest.TestCase):
+    def setUp(self):
+        self.ids = {
+            'S': '⿱A⿰BC',
+            'H': '⿰BD',
+            'W': '⿱AB',
+            'Q': '⿱AB',
+        }
+
+    def test_the_top_level_is_tried_first(self):
+        ids = {'S': '⿰AB', 'H': '⿰AB'}
+        self.assertEqual(wenhai.choose_part('S', 'left', 'H', ids), 'A')
+
+    def test_a_descendant_supplies_a_cut_the_top_level_cannot(self):
+        self.assertEqual(wenhai.choose_part('S', 'left', 'H', self.ids), 'B')
+
+    def test_an_elided_term_searches_every_part(self):
+        self.assertEqual(wenhai.choose_part('S', None, 'H', self.ids), 'B')
+
+    def test_an_explicit_whole_does_not_search_descendants(self):
+        self.assertIsNone(wenhai.choose_part('W', 'whole', 'H', self.ids))
+
+    def test_no_descendant_is_none(self):
+        self.assertIsNone(wenhai.choose_part('Q', 'surrounding', 'H', self.ids))
 
 
 class GlyphTest(unittest.TestCase):

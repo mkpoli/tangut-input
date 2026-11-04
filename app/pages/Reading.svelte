@@ -18,7 +18,7 @@
 
   const ready = $derived(db.status === 'ready')
   const typedTone = $derived(fold(query).tone)
-  const hits = $derived(ready && query.trim() ? searchReadings(ix.readings, query, { systems: new Set(systems), tone, frequency: ix.frequency }) : [])
+  const hits = $derived(ready && query.trim() ? searchReadings(ix.readings, query, { systems: new Set(systems), tone, frequency: ix.frequency, hidden: ix.hiddenReadings }) : [])
   const shown = $derived(hits.slice(0, 200))
   const counts = $derived(TIERS.map((_, tier) => hits.filter(hit => hit.tier === tier).length))
   const NAMES = Object.fromEntries(SYSTEMS.map(system => [system.key, system]))
@@ -78,6 +78,7 @@
           {#each SYSTEMS as system (system.key)}
             <button type="button" class="ui-chip" aria-pressed={systems.includes(system.key)} title={system.name} onclick={() => toggle(system.key)}>{system.name.replace(/ \d.*$/, '')}</button>
           {/each}
+          <button type="button" class="ui-chip" aria-pressed={systems.includes('ccamc')} title={t('reading.ccamc')} onclick={() => toggle('ccamc')}>CCAMC</button>
         </div>
       </div>
     </div>
@@ -107,9 +108,13 @@
             onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char, { place: i })}>
             <span class="ui-script ui-row-glyph">{hit.char}</span>
             <span class="said">
-              {#each hit.readings as reading (reading.system)}
-                <span class="r"><span class="ui-tag" title={systemTitle(NAMES[reading.system])}>{NAMES[reading.system].short}</span>{reading.raw}</span>
-              {/each}
+              {#if hit.via === 'ccamc'}
+                <span class="r" title={t('reading.ccamcNote')}><span class="ui-tag">CCAMC</span></span>
+              {:else}
+                {#each hit.readings as reading (reading.system)}
+                  <span class="r"><span class="ui-tag" title={systemTitle(NAMES[/** @type {keyof typeof NAMES} */ (reading.system)])}>{NAMES[/** @type {keyof typeof NAMES} */ (reading.system)].short}</span>{reading.raw}</span>
+                {/each}
+              {/if}
             </span>
             <span class="ui-row-gloss">{gloss(hit.char)}</span>
           </button>

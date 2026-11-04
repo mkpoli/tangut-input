@@ -2,7 +2,7 @@
   // The record of one component on hover: what Japanese scholarship calls its shape, its code point
   // and component number, how many characters use it, its Cangjie codes and what it is built from.
   import { ix, codePoint } from '../lib/db.svelte.js'
-  import { partsIn } from '../lib/search.js'
+  import { directPartsIn } from '../lib/search.js'
   import G from './G.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
@@ -19,7 +19,7 @@
   const codes = $derived(ix.codes.get(part) ?? [])
   const strokes = $derived(ix.strokes.get(part) ?? 0)
   const uses = $derived(ix.usedBy.get(part)?.size ?? 0)
-  const inner = $derived(partsIn(part))
+  const inner = $derived(directPartsIn(part))
   const code = $derived(part.codePointAt(0) ?? 0)
   const number = $derived(code >= 0x18800 && code <= 0x18AFF ? code - 0x18800 + 1 : 0)
   /** @param {number} count */
