@@ -570,61 +570,6 @@ batches of fifty page titles. `data/gong-xun/gx202411.json.gz` holds GX202411 fr
 table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh it with
 `uv run scripts/fetch_tangut_gong_xun.py`.
 
-## `tangut-gloss-words.tsv.gz`
-
-One Chinese word for each Tangut character, for a table that reads a character by its meaning: 毒,
-佛, 日 and 世界 can be read as they stand, 【宿】 writes a sound and has no meaning to read. 6,144
-rows, 56 KB gzipped. Format: `char`, `gloss`, `tier`, `reading`; comments start with `#`.
-
-`gloss` is the first sense of the first Chinese gloss in the former Open Tangut record, which drew
-it from CCAMC. The table is an internal aid and no page displays it.
-Senses are separated by 、；， or a space outside brackets; numbering, part-of-speech tags and
-placeholder senses (暫無解釋, 不識) are dropped. A note in brackets stays with the gloss and is
-tiered `long`, so （滴）答 is not guessed into 滴答. `tier` counts the characters of the gloss:
-`word`, one (3,117); `phrase`, two to four (2,053); `long`, five or more, a note in brackets, or a
-description that begins 用在 or 作為 (162); `transliteration`, a foreign sound (728); `empty`,
-nothing to read (61); `redirect`, the first gloss points at another character (23). `reading` is
-Gong Xun's 202411 reconstruction, which 5,829 characters have.
-
-The gloss is the dictionary's first sense, not a chosen reading: a character glossed 世界、京城 keeps
-世界, and its senses differ in how well they read. Weighted by the 24,265 characters of the thirteen
-attested texts that the entries cover, 17,836 (73.5%) are `word`, 3,685 `phrase`, 1,462
-`transliteration`, 1,128 `long`, 151 `empty` and 3 `redirect`.
-
-Rebuild with `uv run scripts/build_tangut_gloss_words.py`, which also prints that coverage and would
-leave the file unchanged. The source is CCAMC, which states no licence; the table stays in the
-repository as a derived aid and is not served.
-
-Licence: none stated at the source. Do not publish the table.
-
-## `tangut-gloss-readings.tsv.gz`
-
-How to read the word the table above gives: the 3,117 characters whose gloss is a single Chinese
-character, each with whatever readings KANJIDIC2 has for that character — pinyin, Japanese on and
-Japanese kun. 45 KB gzipped. Format: `char`, `gloss`, `pinyin`, `on`, `kun`; comments start with `#`.
-
-The readings are KANJIDIC2's — database version 2026-307, created 2026-11-03, its SHA-256 in the file
-header — in the order that file gives them: 佛 is `fo2 fu2`, ブツ フツ, ほとけ; 日 is `ri4`,
-ニチ ジツ, ひ. Pinyin keeps KANJIDIC2's tone numbers. A kun reading keeps the dot of its okurigana
-stem (行 い.く); a bound form marked with a hyphen at either end is left out, because it belongs to the
-word the character ends or begins (日 -び, 上 うわ-). 3,068 rows have pinyin, 3,063 on and 2,801 kun.
-The 35 gloss characters KANJIDIC2 does not carry (說, 悅, 內, 腳, 歲), 49 rows, keep empty readings
-rather than borrow a Japanese variant's, which is a different character, or a Chinese reading from
-another system; the remaining rows without kun are Sino-Japanese words with no Japanese word of their
-own, 毒 being ドク.
-
-Only the `word` tier is read. A gloss of two or more characters is a phrase whose Japanese reading is
-not its parts joined — 世界 is セカイ, not よかい — so the phrase, long, transliteration and empty
-rows wait for an editor.
-
-Rebuild with `uv run scripts/build_tangut_gloss_readings.py`, which fetches KANJIDIC2 into `cache/`
-against the pinned SHA-256 and prints the counts above. The gloss words come from the MIT file beside
-this one.
-
-Licence: **CC BY-SA 4.0** for the readings, KANJIDIC2's
-(<https://creativecommons.org/licenses/by-sa/4.0/>), Electronic Dictionary Research and Development
-Group, Copyright EDRDG.
-
 ## Bopomofo outlines
 
 `bopomofo-outlines.json.gz` holds U+3105–U+312F and U+31A0–U+31BF (75 letters).
