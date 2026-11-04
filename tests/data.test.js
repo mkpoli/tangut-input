@@ -9,7 +9,7 @@ const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
 test('the packed records keep every character, the five Wiktionary readings and Gong Xun\'s', () => {
-  expect(entries.format).toBe('tangut-input/entries/2')
+  expect(entries.format).toBe('tangut-input/entries/3')
   expect(entries.rows.length).toBe(6144)
   expect(entries.systems).toEqual(['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida'])
   const first = entries.rows[0]
@@ -18,6 +18,13 @@ test('the packed records keep every character, the five Wiktionary readings and 
   expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
   expect(first[5]).toEqual(['毒'])
   expect(first[6]).toEqual([])
+  expect(first[8]).toBe('Composed of the middle of 𘊓 "scorpion" and the right of "𗀋".')
+  expect(first[9]).toBe('蝎中蛇右。')
+})
+
+test('the 文海 text is kept for the entries it carries', () => {
+  expect(entries.rows.filter(row => row[8]).length).toBe(12)
+  expect(entries.rows.filter(row => row[9]).length).toBe(6)
 })
 
 test('the displayable meanings cover only the Wiktionary entries', () => {
@@ -33,6 +40,7 @@ test('the CCAMC index holds only normalized search terms', () => {
   expect(ccamc.format).toBe('tangut-input/ccamc-index')
   expect(Object.keys(ccamc.readings).sort()).toEqual(['arakawa_shintaro', 'gong_huangcheng'])
   expect(Object.keys(ccamc.meanings).sort()).toEqual(['en', 'zh'])
+  expect(ccamc.wenhai).toBeUndefined()
   expect(ccamc.meanings.zh['𗀀']).toEqual(['毒', '下毒者', '毒死', '毒 蠱 名詞'])
   const gongXun = entries.rows.filter(row => row[7][1]).length
   expect(gongXun).toBe(5869)

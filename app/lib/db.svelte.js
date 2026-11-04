@@ -35,8 +35,8 @@ export const ix = {
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
   /** @type {import('./reading.js').Reading[]} */ readings: [],
   /** CCAMC readings Wiktionary does not carry, used by the search and never shown. @type {import('./reading.js').HiddenReading[]} */ hiddenReadings: [],
-  /** CCAMC glosses and 文海 text as normalized terms, used by the meaning search and never shown.
-   *  @type {{ meanings: Record<string, Record<string, string[]>>, wenhai: Record<string, Record<string, string[]>> }} */ ccamcMeanings: { meanings: {}, wenhai: {} },
+  /** CCAMC glosses as normalized terms, used by the meaning search and never shown.
+   *  @type {{ meanings: Record<string, Record<string, string[]>> }} */ ccamcMeanings: { meanings: {} },
   /** @type {Map<string, number>} */ strokes: new Map(),
   /** The parts of each description at every layer, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
   /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
@@ -78,7 +78,7 @@ export async function load() {
     ix.palette = ix.codeList.filter(([code]) => code.startsWith('p'))
     ix.readings = indexReadings(entries)
     ix.hiddenReadings = indexHiddenReadings(hidden)
-    if (hidden) ix.ccamcMeanings = { meanings: hidden.meanings ?? {}, wenhai: hidden.wenhai ?? {} }
+    if (hidden) ix.ccamcMeanings = { meanings: hidden.meanings ?? {} }
     ix.strokes = new Map(Object.entries(strokes))
     const index = buildPartIndex(entries)
     ix.partsOf = index.partsOf

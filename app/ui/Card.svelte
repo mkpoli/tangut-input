@@ -224,6 +224,14 @@
       </section>
     {/if}
 
+    {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
+      <section>
+        <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
+        {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
+        {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
+      </section>
+    {/if}
+
     {#if construction}
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhaiConstruction')}<span class="wenhai-position ui-hint">{construction.position}</span></h3>

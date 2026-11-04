@@ -28,8 +28,8 @@ it into your text. <https://tangut.mkpo.li/>
 
 The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
-the facsimile, and related characters. Further readings, meanings and the 文海 commentary are
-linked to CCAMC's page for the character rather than copied. The text being written stays in the
+the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
+further readings and meanings are linked to CCAMC's page for the character rather than copied. The text being written stays in the
 browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).
@@ -39,8 +39,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-entries.json.gz`: five readings and English and Japanese meanings from
   [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Gong Xun's GX202411
   from his [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db),
-  and descriptions from BabelStone's Tangut IDS; built by `scripts/build_tangut_entries.py` from
-  `data/wiktionary/` and `data/gong-xun/`.
+  descriptions from BabelStone's Tangut IDS, and the 文海's own entry text where it carries one;
+  built by `scripts/build_tangut_entries.py` from `data/wiktionary/`, `data/gong-xun/` and
+  `data/wenhai/`.
 - `app/data/tangut-ccamc-index.json.gz`: normalized terms from CCAMC's records, used only to answer
   the reading and meaning searches. No page renders them; the card links to CCAMC.
 - `app/data/tangut-cangjie.json.gz`: Cangjie codes, from

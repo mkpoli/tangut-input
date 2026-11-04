@@ -441,7 +441,7 @@
   "eras.cite": "出處{n}",
   "pick.loadingPad": "正在準備手寫…",
   "card.ccamc": "CCAMC",
-  "card.ccamcNote": "更多讀音、釋義與《文海》說明見該字的CCAMC頁面。",
+  "card.ccamcNote": "更多讀音與釋義見該字的CCAMC頁面。",
   "common.ccamc": "在CCAMC開啟",
   "reading.ccamc": "CCAMC的其他系統",
   "reading.ccamcNote": "此讀音記錄於CCAMC，具體數值見其頁面。",
@@ -449,5 +449,8 @@
   "find.viaCcamc": "CCAMC有記錄",
   "about.wiktionary": "六種擬音中的五種與英、日釋義取自<a href=\"https://en.wiktionary.org/wiki/Module:txg/data\">維基詞典</a>（CC BY-SA 4.0）：擬音來自其西夏語讀音模板所調用的Lua模組，英釋義來自Kaikki對英語維基詞典的提取，日釋義來自日語維基詞典。第六種龔勳2024-11取自<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">西夏文擬音資料庫</a>（DOI 10.25365/phaidra.654），逐字引用。6,144字中，457字有英釋義，278字有日釋義。CCAMC另收兩種擬音與大部分中釋義；本站只將其正規化形式用於搜尋，卡片則連結到CCAMC。",
   "about.readingsTitle": "讀音與釋義",
-  "about.readingsSource": "維基詞典的擬音取自顯示它的模組，連同版本ID記錄在<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>。龔勳的GX202411取自其資料庫2025-05-07版，附摘要與DOI存於<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>。CCAMC的兩種系統與中釋義只以正規化詞條存於<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>供搜尋，任何頁面都不顯示。"
+  "about.readingsSource": "維基詞典的擬音取自顯示它的模組，連同版本ID記錄在<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>。龔勳的GX202411取自其資料庫2025-05-07版，附摘要與DOI存於<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>。CCAMC的兩種系統與中釋義只以正規化詞條存於<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>供搜尋，任何頁面都不顯示。",
+  "card.wenhai": "文海",
+  "about.wenhaiTitle": "《文海》原文",
+  "about.wenhai": "《文海》（12世紀）在條目中分析字形。其原文屬公有領域；《文海》收有該字時，卡片顯示原文並附英譯。"
 }
