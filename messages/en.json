@@ -426,7 +426,7 @@
   "pick.clear": "Clear the pad",
   "nav.eras": "Eras",
   "nav.eras.hint": "Western Xia era names in Tangut",
-  "eras.intro": "The {total} era names of the Western Xia, in order. {forms} have a Tangut form here: {clear} read clearly on coins or in a Tangut text, {disputed} on coins whose reading is disputed, and the rest only in a calendar or a post that name no source for them. Click a character to open it.",
+  "eras.intro": "The {total} era names of the Western Xia, in order. {forms} have a Tangut form here: {clear} read clearly on coins or in a Tangut text, {disputed} on coins whose reading is disputed, and the rest only in a calendar or a post that names no source for them. Click a character to open it.",
   "eras.era": "Era",
   "eras.years": "Years",
   "eras.tangut": "Tangut",

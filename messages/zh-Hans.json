@@ -444,7 +444,7 @@
   "eras.kind.calendar": "仅见历表",
   "eras.kind.calendar.hint": "见于West的历表，该表未注明西夏文写法的出处。",
   "eras.kind.post": "贴文",
-  "eras.kind.post.hint": "见于 X 上一则未注明出处的贴文，可能与历表不同。",
+  "eras.kind.post.hint": "见于X上一则未注明出处的贴文，可能与历表不同。",
   "eras.kind.none": "无记录",
   "eras.kind.none.hint": "本页所用资料均未载西夏文写法。",
   "eras.form": "{era}的西夏文写法{n}",

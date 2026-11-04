@@ -181,7 +181,7 @@ export const ERA_SOURCES = {
     author: 'परवद💙💛 (@zoenshiueh_lieu)',
     title: 'A list of Western Xia era names in Tangut',
     where: 'Post on X; its date and link were not recorded',
-    note: 'A social media post that names no source. 19 lines, 14 of them matching the calendar. It adds 天授禮法延祚, 應天 and 皇建, whose 𗺔 and 𘚪 occur in no text on this site, and differs from the calendar on 天賜禮盛國慶 and 元德, whose 𗪘 and 𗪟 look alike. It lists 大慶 twice, the first time without saying it is the era of 1036, so that era is not given a form here, and it puts 皇建 before 應天.',
+    note: 'A social media post that names no source. 19 lines, 14 of them matching the calendar. It adds 天授禮法延祚, 應天 and 皇建, whose 𗺔 and 𘚪 occur in no running text on this site, and differs from the calendar on 天賜禮盛國慶 (𘓺 for 𘀗) and 元德 (𗪘 for 𗪟, which look alike). It writes 天 as 𘓺 except in 天授, and puts 𘓺 first in 應天 although 天 comes second in the Chinese. It lists 大慶 twice with one spelling, the first time between 天授禮法延祚 and 大安, where no era of that name falls, so the era of 1036 is not given a form here. It puts 皇建 before 應天.',
     url: '',
   },
   table2026: {

@@ -10,12 +10,13 @@ the forms rest on is in `data/tangut-era-evidence.tsv`, one row per form and sou
 
 - `coin`: read on a coin; `disputed`: read on a coin, but the reading or the era it names is
   disputed; `text`: written in a Tangut text, as a date or in a title; `gloss`: the same characters
-  render the era name's Chinese in a Tangut text, of another era bearing the name; `unknown`: a
+  render the era name's Chinese in a Tangut text, of another era bearing the name; `post`: in a social
+  media post naming no source, which may differ from the calendar and is cited on its own form; `unknown`: a
   source says no Tangut form is known.
 
 A row with a `place` names a dated line in this repository's texts, `wikisource:<page>` or
 `lcdtt:<file>`, and the build stops unless the form occurs there followed by a year: an optional
-cyclical pair, a numeral and 𗤒. Tags belong to an era, so an era with two competing forms can only
+cyclical pair, a numeral and 𗤒. Tags belong to an era, so an era with two competing forms, apart from a post's, can only
 carry `disputed` evidence.
 
 An era's dates are its first and last day in the calendar (Julian), and its years are the lunar
@@ -94,6 +95,10 @@ def main() -> None:
             era = next((e for e in eras if e['era'] == row['era'] and e['from'][:4] == row['from']), None)
             if not era:
                 raise SystemExit(f'no such era in the calendar: {row}')
+            if row['kind'] == 'post' and not row['tangut']:
+                raise SystemExit(f'a post row needs a form: {row}')
+            if row['kind'] == 'post' and row['tangut'] not in era['calendar'] and any(e['kind'] in ('coin', 'text') for e in era['evidence']):
+                raise SystemExit(f'a post form would look backed by this era\'s coin or text: {row}')
             if row['kind'] != 'post' and row['tangut'] and row['tangut'] not in era['calendar']:
                 raise SystemExit(f'the form differs from the calendar\'s, which the page would hide: {row}')
             if row['place'] and not re.search(f'{row["tangut"]}.{{0,2}}[{NUMERALS}]{{1,3}}𗤒', corpus_text(row['place'])):
