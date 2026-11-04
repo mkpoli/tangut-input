@@ -167,3 +167,18 @@ test('the frequency table counts every place in the corpus', () => {
   expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(92509)
   expect(frequency.counts['𗋕']).toBe(711)
 })
+
+test('every keyed row of the readings table is in the shipped records', () => {
+  const table = readFileSync(new URL('../data/readings/readings.tsv', import.meta.url), 'utf8')
+  const [head, ...lines] = table.trim().split('\n')
+  const columns = head.split('\t')
+  const citations = json('tangut-reading-sources.json.gz').citations
+  const rows = lines.map(line => Object.fromEntries(line.split('\t').map((cell, i) => [columns[i], cell])))
+  const keyed = rows.filter(row => row.status === 'keyed')
+  expect(keyed.length).toBeGreaterThan(0)
+  for (const row of keyed) {
+    const field = citations[row.char]?.[row.field] ?? []
+    expect({ row, cited: field.some(cite => cite.work === row.work && cite.locator === row.locator) })
+      .toEqual({ row, cited: true })
+  }
+})

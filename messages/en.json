@@ -496,5 +496,6 @@
   "about.readingsSource": "Each Wiktionary reading comes from the module that renders it, fetched with its revision id and recorded in <span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>. Gong Hwang-cherng's GHC and Gong Xun's GX202411 are snapshotted from the 2025-05-07 table of the Tangut Pronunciation Database, with its digest, DOI and attribution, in <span class=\"ui-mono\">data/gong-xun/ghc.json.gz</span> and <span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>. CCAMC's one further system and its Chinese glosses are kept only as normalized search terms in <span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>; no page renders them.",
   "card.wenhai": "Wenhai",
   "about.wenhaiTitle": "Wenhai text",
-  "about.wenhai": "The 文海 (12th century) analyses the glyph in its entry; its text is public domain and shown where the 文海 carries the character, with an English rendering."
+  "about.wenhai": "The 文海 (12th century) analyses the glyph in its entry; its text is public domain and shown where the 文海 carries the character, with an English rendering.",
+  "card.tibetan": "Tibetan transcription"
 }

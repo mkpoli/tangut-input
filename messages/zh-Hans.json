@@ -496,5 +496,6 @@
   "about.readingsSource": "维基词典的拟音取自显示它的模块，连同版本ID记录在<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>。龚煌城的GHC与龚勋的GX202411取自西夏文拟音数据库2025-05-07版，附摘要、DOI与归属说明存于<span class=\"ui-mono\">data/gong-xun/ghc.json.gz</span>与<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>。CCAMC的一种系统与中释义只以规范化词条存于<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>供搜索，任何页面都不显示。",
   "card.wenhai": "文海",
   "about.wenhaiTitle": "《文海》原文",
-  "about.wenhai": "《文海》（12世纪）在条目中分析字形。其原文属公有领域；《文海》收有该字时，卡片显示原文并附英译。"
+  "about.wenhai": "《文海》（12世纪）在条目中分析字形。其原文属公有领域；《文海》收有该字时，卡片显示原文并附英译。",
+  "card.tibetan": "藏文對音"
 }

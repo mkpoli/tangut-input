@@ -80,8 +80,8 @@ def main() -> int:
         # The keyer names each pair as 字→character 音reading; that piece carries the certainty.
         pieces = clauses(head["note"])
         # An unmarked pair is not evidence of anything; only an explicit `certain` counts.
-        loose = "keyed" if "certain" in head["note"] and not any(
-            word in head["note"] for word in ("probable", "open")) else "uncertain"
+        words = {word for word in re.split(r"[^a-z]+", head["note"].lower()) if word}
+        loose = "keyed" if "certain" in words and not words & {"probable", "open", "uncertain"} else "uncertain"
         for place, (source, target) in enumerate(zip(chinese, tangut)):
             piece = next((words for pair, words in pieces if pair.startswith(target)), "")
             status = verdict(piece, loose)

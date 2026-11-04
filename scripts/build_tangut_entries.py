@@ -186,7 +186,8 @@ def main():
         definitions_zh = [value[0] for value in keyed_fields.get('gloss_zh', [])]
         pron = [
             readings['li_fanwen'].get(char, ''),
-            gong_hwang.get(char, ''),
+            '；'.join(value[0] for value in keyed_fields.get('gong_huangcheng', []))
+            or gong_hwang.get(char, ''),
             gong_xun.get(char, ''),
             readings['miyake'].get(char, ''),
             readings['kychanov'].get(char, ''),

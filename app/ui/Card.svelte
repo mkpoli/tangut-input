@@ -36,11 +36,17 @@
   const meanings = $derived(entry?.definitions ?? {})
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
-  const READING_FIELDS = /** @type {const} */ ([
+  const READING_FIELDS = /** @type {readonly { key: string, name?: string, zh?: string, label?: string, lang: string }[]} */ ([
     { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文', lang: 'zh-Hant' },
     { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山', lang: 'zh-Hant' },
-    { key: 'tibetan', name: 'Tibetan transcription', zh: '藏文對音', lang: 'bo' },
+    { key: 'tibetan', label: 'card.tibetan', lang: 'bo' },
   ])
+  /** A keyed field's label: a scholar's name in the reader's script, or a localized script name.
+   * @param {{ name?: string, zh?: string, label?: string }} field */
+  const fieldLabel = field => field.name
+    ? (/^(ja|zh|ko)/.test(i18n.locale) ? field.zh : field.name)
+    : t(/** @type {string} */ (field.label))
+
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
   // is read from. 文海 where it has one, 合編 where it does not.
@@ -76,7 +82,8 @@
     .replace(/^canvas (\d+) band (\d+) c(\d+)$/, (_, canvas, band, column) => `${canvas}·${band}·${column}`)
     .replace(/^canvas (\d+) c(\d+)$/, (_, canvas, column) => `${canvas}·${column}`)
 
-  // The readings 音（李范文） and 音（聂历山）, keyed from the editions with the page they stand on.
+  // The readings keyed from the editions — 音（李范文）, 音（聂历山）, the 藏文對音 — each with the
+  // page it stands on.
   const fanqie = $derived(READING_FIELDS
     .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cites: cites(field.key) }))
     .filter(field => field.value))
@@ -264,8 +271,8 @@
           <tbody>
             {#each fanqie as field (field.key)}
               <tr>
-                <th scope="row" title={field.name}>{i18n.locale.startsWith('ja') || i18n.locale.startsWith('zh') || i18n.locale.startsWith('ko') ? field.zh : field.name}</th>
-                <td class="cjk">
+                <th scope="row" title={field.name ? `${field.name} · ${field.zh}` : fieldLabel(field)} lang={field.lang}>{fieldLabel(field)}</th>
+                <td class:cjk={field.lang !== 'bo'}>
                   <span lang={field.lang}>{field.value}</span>
                   {#each field.cites as cite (cite.locator)}
                     <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
@@ -449,6 +456,7 @@
   .ids-link{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}
   .wenhai-construction{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);margin:0;font-size:var(--ui-text-lg)}
   .wenhai-part{display:inline-flex;align-items:center;gap:5px}
+  .readings.keyed [lang='bo']{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:var(--ui-text-base);line-height:1.7}
   .wenhai-part :global(.ui-script){font-size:22px;line-height:1}
   .wenhai-term{color:var(--ui-color-ink-muted);font-family:var(--ui-font-serif);font-size:var(--ui-text-sm)}
   .wenhai-sep{color:var(--ui-color-ink-muted)}
