@@ -30,11 +30,11 @@ export const PAGE_SEO = {
   },
   reading: {
     title: 'Reading — Tangut Input',
-    description: 'Type a Tangut reconstruction in any of the five systems Wiktionary records — Li Fanwen, Miyake, Nishida, Kychanov, Sofronov — and see the characters read so.',
+    description: 'Type a Tangut reconstruction in any of the six systems the site shows — Li Fanwen, Gong Xun 2024-11, Miyake, Nishida, Kychanov, Sofronov — and see the characters read so.',
   },
   transcribe: {
     title: 'Transcribe Tangut text — every character’s reading',
-    description: 'Paste a line of Tangut and read every character: its reconstruction in any of five systems, its rhyme and tone, and a table of all five for copying.',
+    description: 'Paste a line of Tangut and read every character: its reconstruction in any of six systems, its rhyme and tone, and a table of all six for copying.',
   },
   fanqie: {
     title: 'Fanqie — Tangut Input',

@@ -8,13 +8,13 @@ const json = name => JSON.parse(gunzipSync(readFileSync(new URL(`../app/data/${n
 const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
-test('the packed records keep every character and the five Wiktionary readings', () => {
+test('the packed records keep every character, the five Wiktionary readings and Gong Xun\'s', () => {
   expect(entries.format).toBe('tangut-input/entries/2')
   expect(entries.rows.length).toBe(6144)
-  expect(entries.systems).toEqual(['li_fanwen', 'miyake', 'kychanov', 'sofronov', 'nishida'])
+  expect(entries.systems).toEqual(['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida'])
   const first = entries.rows[0]
   expect(first[0]).toBe('𗀀')
-  expect(first[7]).toEqual(['do1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
+  expect(first[7]).toEqual(['do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
   expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
   expect(first[5]).toEqual(['毒'])
   expect(first[6]).toEqual([])
@@ -31,10 +31,11 @@ const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {
   expect(ccamc.format).toBe('tangut-input/ccamc-index')
-  expect(Object.keys(ccamc.readings).sort()).toEqual(['arakawa_shintaro', 'gong_huangcheng', 'gong_xun_202411'])
+  expect(Object.keys(ccamc.readings).sort()).toEqual(['arakawa_shintaro', 'gong_huangcheng'])
   expect(Object.keys(ccamc.meanings).sort()).toEqual(['en', 'zh'])
   expect(ccamc.meanings.zh['𗀀']).toEqual(['毒', '下毒者', '毒死', '毒 蠱 名詞'])
-  expect(ccamc.readings.gong_xun_202411['𗀀']).toBe('do1')
+  const gongXun = entries.rows.filter(row => row[7][1]).length
+  expect(gongXun).toBe(5869)
   // The index is not a record: no original diacritics survive, and no 文海 sentence is stored.
   expect(JSON.stringify(ccamc.readings)).not.toContain('¹')
 })
