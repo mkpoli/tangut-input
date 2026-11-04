@@ -7,6 +7,7 @@
   import { t, i18n } from '../lib/i18n.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import Icon from '../ui/Icon.svelte'
+  import { tibetanShown, tibetanTitle } from '../lib/tibetan.js'
 
   // The chart can be read two ways: by the rhyme books' own classes, or by the characters the
   // spellings are read from — the upper down one axis, the lower down the other.
@@ -157,14 +158,7 @@
     return list.sort((a, b) => (a.lower.codePointAt(0) ?? 0) - (b.lower.codePointAt(0) ?? 0))
   })
 
-  /** A Tibetan gloss as the cell shows it: a lone vowel sign on a dotted circle, and a ? where the
-   * Wylie has a letter that could not be read. @param {string} wylie @param {string} script */
-  const tibetanShown = (wylie, script) => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}${wylie.includes('[?]') ? '?' : ''}`
-  /** A Tibetan gloss's own hover text: its Wylie, and each manuscript it is written in with how often.
-   * @param {string} wylie @param {[string, number][]} where */
-  const tibetanTitle = (wylie, where) => `${wylie} · ${where.map(([shelf, count]) => `${shelf} ×${count}`).join(', ')}`
-
-  /** What a cell says about one character when opened: its fanqie, class and gloss. @param {string} char */
+  /** What a cell says about one character when opened: its fanqie, Tibetan gloss and meaning. @param {string} char */
   function detail(char) {
     const value = ix.rhymes.get(char)
     const spelling = value ? [value[3] ?? value[5], value[4] ?? value[6]].filter(Boolean).join('') : ''
