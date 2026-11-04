@@ -1,75 +1,96 @@
 #!/usr/bin/env python3
-"""Turn keyed 掌中珠 cells into reading rows.
+"""Turn a keyed 掌中珠 band into reading rows.
 
-`data/zhangzhongzhu/cells.tsv` holds each entry's columns by role and position; `entries.tsv` says
-which canvas and band the entry stands on. This pairs every Tangut character with the Chinese
-character printed for it — that character is the 直音 — and writes one row per pair, with the canvas,
-the band and the Tangut character's own position as the locator.
+The keying export has one line per printed column: canvas, band, the column's number from the band's
+right edge, its role, and either the Chinese text of a transcription column or the code points of a
+Tangut column. A transcription column and the Tangut column to its left hold the same number of
+signs, one against one; each pair is the page's own 直音 and becomes a row.
 
-    uv run scripts/key_zzz_readings.py >> data/readings/readings.tsv
+    uv run scripts/key_zzz_readings.py --cells cache/zzz/cells-c40b1r.tsv
+
+A pair counts as `keyed` when the keyer marked it certain and `uncertain` otherwise, with the keyer's
+words for that pair in the note.
 """
 
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from datetime import date
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-DIR = ROOT / "data" / "zhangzhongzhu"
+COLUMNS = ("canvas", "band", "index", "role", "glyph", "codepoints", "note")
 WORK = "zhangzhongzhu"
-DOUBTFUL = {"uncertain", "illegible"}
 
 
-def table(path: Path, columns: tuple[str, ...]) -> list[dict[str, str]]:
-    lines = path.read_text(encoding="utf-8").splitlines()
-    head = lines[0].split("\t")
-    absent = set(columns) - set(head)
-    if absent:
-        sys.exit(f"{path} has no {', '.join(sorted(absent))} column")
-    return [dict(zip(head, line.split("\t"))) for line in lines[1:] if line.strip()]
+def read(path: Path) -> list[dict[str, str]]:
+    rows = []
+    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        if not line.strip():
+            continue
+        fields = line.split("\t")
+        if len(fields) < len(COLUMNS):
+            fields += [""] * (len(COLUMNS) - len(fields))
+        rows.append(dict(zip(COLUMNS, fields), line=str(number)))
+    return rows
+
+
+def clauses(note: str) -> list[tuple[str, str]]:
+    """The note split into one piece per pair: (the character the piece names, its words).
+
+    Words are everything the keyer wrote about that pair, so a parenthetical remark stays with it.
+    """
+    out = []
+    for piece in re.split(r"[,;]\s*(?=[^,;]{1,6}→)", note):
+        piece = piece.strip()
+        if "→" not in piece:
+            continue
+        piece = piece.removeprefix("side=r; ").strip()
+        target = re.search(r"→(\S+)", piece)
+        if target:
+            out.append((target.group(1), piece))
+    return out
+
+
+def verdict(words: str, fallback: str) -> str:
+    if any(word in words for word in ("probable", "open", "uncertain")):
+        return "uncertain"
+    if "certain" in words:
+        return "keyed"
+    return fallback
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cells", type=Path, default=DIR / "cells.tsv")
-    parser.add_argument("--entries", type=Path, default=DIR / "entries.tsv")
-    parser.add_argument("--sketched", action="store_true", help="date the rows today instead of asking")
+    parser.add_argument("--cells", type=Path, required=True)
     args = parser.parse_args()
 
-    entries = {row["entry_id"]: row for row in table(args.entries, ("entry_id", "canvas", "band"))}
-    cells = table(args.cells, ("entry_id", "position", "role", "glyph", "status", "glyph_note"))
+    rows = read(args.cells)
+    today = date.today().isoformat()
     written = 0
-    for entry_id, entry in entries.items():
-        own = [row for row in cells if row["entry_id"] == entry_id]
-        tangut = {int(row["position"]): row for row in own if row["role"] == "tangut"}
-        written_for = 0
-        for row in own:
-            if row["role"] != "transcription":
-                continue
-            position = int(row["position"])
-            # The transcription stands one column left of its Tangut character and holds one
-            # character for it, so the two are matched by their position within their own role.
-            head = tangut.get(position)
-            if head is None or len(head["glyph"].strip()) != 1 or len(row["glyph"].strip()) != 1:
-                continue
-            doubts = [name for name in (head["glyph_note"], row["glyph_note"]) if name]
-            doubtful = head["status"] in DOUBTFUL or row["status"] in DOUBTFUL
-            if doubtful and not doubts:
-                doubts = ["cell marked " + (head["status"] if head["status"] in DOUBTFUL else row["status"])]
-            place = f"canvas {entry['canvas']}"
-            if entry.get("band"):
-                place += f" band {entry['band']}"
+    for index, row in enumerate(rows):
+        if row["role"] != "transcription" or index + 1 >= len(rows):
+            continue
+        head = rows[index + 1]
+        if head["role"] != "tangut" or head["canvas"] != row["canvas"] or head["band"] != row["band"]:
+            continue
+        chinese = row["glyph"].strip()
+        tangut = [chr(int(code[2:], 16)) for code in head["codepoints"].split()]
+        # The keyer names each pair as 字→character 音reading; that piece carries the certainty.
+        pieces = clauses(head["note"])
+        loose = "uncertain" if "probable" in head["note"] or "open" in head["note"] else "keyed"
+        for place, (source, target) in enumerate(zip(chinese, tangut)):
+            piece = next((words for pair, words in pieces if pair.startswith(target)), "")
+            status = verdict(piece, loose)
+            if len(source) != 1 or len(tangut) != len(chinese):
+                status = "uncertain"
             print("\t".join((
-                head["glyph"].strip(), "sound_li_fanwen", row["glyph"].strip(), WORK,
-                f"{place} t{position}", " ".join(doubts),
-                "uncertain" if doubtful else "keyed", date.today().isoformat(),
+                target, "sound_li_fanwen", source, WORK,
+                f"canvas {row['canvas']} band {row['band']} c{head['index']}",
+                piece or head["note"], status, today,
             )))
             written += 1
-            written_for += 1
-        if own and not written_for:
-            print(f"{entry_id}: nothing paired", file=sys.stderr)
     print(f"{written} rows", file=sys.stderr)
     return 0 if written else 1
 

@@ -67,6 +67,14 @@
    */
   const cites = field => ix.citations[char]?.[field] ?? []
 
+  /**
+   * A locator as the reader sees it: a 掌中珠 column is canvas, band and column, the rest is the
+   * page as written. @param {string} locator
+   */
+  const place = locator => locator
+    .replace(/^canvas (\d+) band (\d+) c(\d+)$/, (_, canvas, band, column) => `${canvas}·${band}·${column}`)
+    .replace(/^canvas (\d+) c(\d+)$/, (_, canvas, column) => `${canvas}·${column}`)
+
   // The readings 音（李范文） and 音（聂历山）, keyed from the editions with the page they stand on.
   const fanqie = $derived(READING_FIELDS
     .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cites: cites(field.key) }))
@@ -213,7 +221,7 @@
             <dd lang="zh-Hant">
               {meanings.zh.join('；')}
               {#each cites('gloss_zh') as cite (cite.locator)}
-                <span class="cite">{bookTitle(cite.work) || cite.note}<span class="ui-hint"> {cite.locator}</span></span>
+                <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
               {/each}
             </dd>
           {/if}
@@ -232,7 +240,7 @@
                 <td>
                   {reading.value}
                   {#each cites(reading.key) as cite (cite.locator)}
-                    <span class="cite">{bookTitle(cite.work) || cite.note}<span class="ui-hint"> {cite.locator}</span></span>
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
                   {/each}
                 </td>
               </tr>
@@ -257,9 +265,9 @@
               <tr>
                 <th scope="row" title={field.name}>{i18n.locale.startsWith('ja') || i18n.locale.startsWith('zh') || i18n.locale.startsWith('ko') ? field.zh : field.name}</th>
                 <td class="cjk">
-                  <span class="ui-script">{field.value}</span>
+                  <span lang="zh-Hant">{field.value}</span>
                   {#each field.cites as cite (cite.locator)}
-                    <span class="cite">{bookTitle(cite.work) || cite.note}<span class="ui-hint"> {cite.locator}</span></span>
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
                   {/each}
                 </td>
               </tr>
@@ -284,7 +292,7 @@
           <p lang="zh-Hant">
             {entry.wenhai_text_zh}
             {#each cites('wenhai_zh') as cite (cite.locator)}
-              <span class="cite">{bookTitle(cite.work) || cite.note}<span class="ui-hint"> {cite.locator}</span></span>
+              <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
             {/each}
           </p>
         {/if}
@@ -431,7 +439,7 @@
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
-  .readings .cite{display:block;margin-block-start:2px;font-family:var(--ui-font-sans);font-size:var(--ui-text-xs);color:var(--ui-color-ink-muted)}
+  .cite{display:block;margin-block-start:2px;font-family:var(--ui-font-sans);font-size:var(--ui-text-xs);color:var(--ui-color-ink-muted)}
   .spelling{font-size:18px}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}

@@ -118,8 +118,8 @@ def main() -> int:
         if not row["locator"].strip():
             report(number, "no locator")
         elif work in PLAIN:
-            if not re.fullmatch(r"canvas \d+( band \d+)?( t\d+)?", row["locator"]):
-                report(number, f"locator {row['locator']!r} is not 'canvas <n> [band <n>] [t<n>]'")
+            if not re.fullmatch(r"canvas \d+( band \d+)?( c\d+)?", row["locator"]):
+                report(number, f"locator {row['locator']!r} is not 'canvas <n> [band <n>] [c<n>]'")
         elif work != "-" and not re.fullmatch(r"(vol \d+ )?p\.\d+( line \d+)?( col \d+)?", row["locator"]):
             report(number, f"locator {row['locator']!r} is not 'p.<n>' or 'vol <n> p.<n>'")
         elif work not in volumed and row["locator"].startswith("vol "):

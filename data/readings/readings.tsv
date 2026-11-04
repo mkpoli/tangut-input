@@ -1,2 +1,14 @@
 char	field	value	work	locator	note	status	checked
 𗀀	sound_li_fanwen	舌頭音，地羅切，音毒	xiahan-zidian	p.1	probe row; the page is not checked yet	keyed	2026-11-04
+𗉛	sound_li_fanwen	日	zhangzhongzhu	canvas 40 band 1 c2	日(知)→𗉛 音示（日知）	keyed	2026-11-04
+𗷫	sound_li_fanwen	能	zhangzhongzhu	canvas 40 band 1 c2	能→𗷫 音能	keyed	2026-11-04
+𗆂	sound_li_fanwen	裴	zhangzhongzhu	canvas 40 band 1 c2	裴→𗆂 音裴	keyed	2026-11-04
+𗈑	sound_li_fanwen	責	zhangzhongzhu	canvas 40 band 1 c2	責→𗈑 音自（尼則）; each confirmed against the print at 3x; certain	keyed	2026-11-04
+𗵺	sound_li_fanwen	斡	zhangzhongzhu	canvas 40 band 1 c6	斡→𗵺 音斡 certain	keyed	2026-11-04
+𗅉	sound_li_fanwen	娘	zhangzhongzhu	canvas 40 band 1 c6	娘→𗅉 音娘 probable (𗅾 U+1717E, 娘羅切, is the competing shape; 𗅉 scores higher against the print and its 直音 matches)	uncertain	2026-11-04
+𗤶	sound_li_fanwen	你	zhangzhongzhu	canvas 40 band 1 c6	你→𗤶 音你 certain	keyed	2026-11-04
+𗛻	sound_li_fanwen	荅	zhangzhongzhu	canvas 40 band 1 c6	荅→𗛻 音達 certain	keyed	2026-11-04
+𘔫	sound_li_fanwen	路	zhangzhongzhu	canvas 40 band 1 c10	路→𘔫 音路 certain (𗘝 U+1761D shares the reading but not the form)	keyed	2026-11-04
+𗷺	sound_li_fanwen	怛	zhangzhongzhu	canvas 40 band 1 c10	怛→𗷺 名怛切 音馬 probable	uncertain	2026-11-04
+𗐆	sound_li_fanwen	張	zhangzhongzhu	canvas 40 band 1 c10	張→𗐆 音章 certain	keyed	2026-11-04
+𗟻	sound_li_fanwen	皮	zhangzhongzhu	canvas 40 band 1 c10	皮→𗟻 音皮 certain	keyed	2026-11-04

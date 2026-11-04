@@ -41,8 +41,8 @@ second reading. `uv run scripts/check_readings.py` holds the shape; it does not 
 
 ## Locators
 
-- `zhangzhongzhu`: `canvas <n>`, `band <n>` and `t<n>`, the position of the Tangut column within its
-  role — the transcription stands one column to its left.
+- `zhangzhongzhu`: `canvas <n>`, `band <n>` and `c<n>`, the column's number counting from the band's
+  right edge. The Tangut column stands one column to the right of the Chinese one that reads it.
 - a book with `pages` in `source.yaml`: `p.<n>`, with a line and a column where the entry is not
   alone on the page, e.g. `p.742 col 2`.
 - `nevsky-1960`: `vol <n> p.<n>`; the two volumes are separate files. A work printed in one volume
