@@ -160,6 +160,8 @@ def main():
     parser.add_argument('--readings', type=Path, default=READINGS,
                         help='keyed readings (default data/readings/readings.tsv)')
     args = parser.parse_args()
+    if args.readings and not args.readings.exists():
+        raise SystemExit(f"{args.readings}: no such readings file, so no keyed value would be built")
 
     old = gz(ENTRIES)
     systems = old['systems']

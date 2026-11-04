@@ -79,7 +79,9 @@ def main() -> int:
         tangut = [chr(int(code[2:], 16)) for code in head["codepoints"].split()]
         # The keyer names each pair as 字→character 音reading; that piece carries the certainty.
         pieces = clauses(head["note"])
-        loose = "uncertain" if "probable" in head["note"] or "open" in head["note"] else "keyed"
+        # An unmarked pair is not evidence of anything; only an explicit `certain` counts.
+        loose = "keyed" if "certain" in head["note"] and not any(
+            word in head["note"] for word in ("probable", "open")) else "uncertain"
         for place, (source, target) in enumerate(zip(chinese, tangut)):
             piece = next((words for pair, words in pieces if pair.startswith(target)), "")
             status = verdict(piece, loose)

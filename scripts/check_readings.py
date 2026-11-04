@@ -124,6 +124,8 @@ def main() -> int:
             report(number, f"locator {row['locator']!r} is not 'p.<n>' or 'vol <n> p.<n>'")
         elif work not in volumed and row["locator"].startswith("vol "):
             report(number, f"{work} is one volume, so the locator needs no volume")
+        elif work in volumed and not row["locator"].startswith("vol "):
+            report(number, f"{work} is printed in volumes, so the locator needs 'vol <n>'")
         if row["status"] not in STATUSES:
             report(number, f"status {row['status']!r} is not one of {sorted(STATUSES)}")
         elif row["status"] == "uncertain" and not row["note"].strip():
