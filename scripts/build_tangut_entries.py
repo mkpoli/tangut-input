@@ -6,7 +6,8 @@
 
 Displayable fields come from sources the site can republish:
 
-- the five reconstruction tables on English Wiktionary (CC BY-SA 4.0);
+- the five reconstruction tables on English Wiktionary (CC BY-SA 4.0) and Xun Gong's GX202411
+  reconstruction from his Tangut Pronunciation Database (Limited Public Use, cited per character);
 - the English definitions in Wiktionary's Tangut entries, through Kaikki's extract;
 - the Japanese definitions on ja.wiktionary (CC BY-SA 4.0);
 - BabelStone's Tangut IDS (public domain);
@@ -35,8 +36,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ENTRIES = ROOT / 'app/data/tangut-entries.json.gz'
 INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
 FORMAT = 'tangut-input/entries/2'
-SYSTEMS = ['li_fanwen', 'miyake', 'kychanov', 'sofronov', 'nishida']
-CCAMC_SYSTEMS = ['gong_huangcheng', 'gong_xun_202411', 'arakawa_shintaro']
+SYSTEMS = ['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida']
+CCAMC_SYSTEMS = ['gong_huangcheng', 'arakawa_shintaro']
 
 LETTERS = {
     'ɨ': 'i', 'ɪ': 'i', 'ʉ': 'u', 'ɯ': 'u', 'ə': 'e', 'ɛ': 'e', 'ɔ': 'o', 'ɑ': 'a', 'æ': 'ae',
@@ -141,6 +142,7 @@ def main():
     en = kaikki()
     ja = gz(ROOT / 'data/wiktionary/definitions-ja.json.gz')['pages']
     readings = gz(ROOT / 'data/wiktionary/txg-readings.json.gz')['systems']
+    gong_xun = gz(ROOT / 'data/gong-xun/gx202411.json.gz')['readings']
 
     out = []
     for row in rows:
@@ -148,7 +150,14 @@ def main():
         definitions_en = en.get(char, [])
         definitions_ja = ja.get(char, {}).get('definitions') or []
         definitions_zh = []
-        pron = [readings[key].get(char, '') for key in SYSTEMS]
+        pron = [
+            readings['li_fanwen'].get(char, ''),
+            gong_xun.get(char, ''),
+            readings['miyake'].get(char, ''),
+            readings['kychanov'].get(char, ''),
+            readings['sofronov'].get(char, ''),
+            readings['nishida'].get(char, ''),
+        ]
         out.append([
             char,
             ids.get(char) or composition,

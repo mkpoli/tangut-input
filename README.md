@@ -13,9 +13,9 @@ it into your text. <https://tangut.mkpo.li/>
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
-- **Reading**: a reconstruction in any of the five systems Wiktionary records (Li Fanwen, Miyake,
-  Nishida, Kychanov, Sofronov), with or without diacritics, with an optional tone. Three further
-  systems that CCAMC records also answer the search; those results link to CCAMC.
+- **Reading**: a reconstruction in any of the six systems the site shows (Li Fanwen, Gong Xun
+  2024-11, Miyake, Nishida, Kychanov, Sofronov), with or without diacritics, with an optional tone.
+  Two further systems that CCAMC records also answer the search; those results link to CCAMC.
 - **Fanqie**: type the two characters a rhyme book spells a character with, or pick each from a
   compact panel beside the field that offers Find, Meaning, Cangjie, Four-corner, Reading, Draw and
   Parts in miniature.
@@ -37,9 +37,10 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 ## Data
 
 - `app/data/tangut-entries.json.gz`: five readings and English and Japanese meanings from
-  [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), with descriptions
-  from BabelStone's Tangut IDS; built by `scripts/build_tangut_entries.py` from the snapshots in
-  `data/wiktionary/`.
+  [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Gong Xun's GX202411
+  from his [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db),
+  and descriptions from BabelStone's Tangut IDS; built by `scripts/build_tangut_entries.py` from
+  `data/wiktionary/` and `data/gong-xun/`.
 - `app/data/tangut-ccamc-index.json.gz`: normalized terms from CCAMC's records, used only to answer
   the reading and meaning searches. No page renders them; the card links to CCAMC.
 - `app/data/tangut-cangjie.json.gz`: Cangjie codes, from
