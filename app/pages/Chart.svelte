@@ -161,6 +161,8 @@
   /** @param {string} roman */
   const shownOnsets = roman => (byGong ? [] : onsets.get(roman))
 
+  /** The row whose Chinese transcription characters are open. */
+  const opened = $state(/** @type {{ row: string | null }} */ ({ row: null }))
   const pages = $derived(Math.max(1, Math.ceil(uppers.length / PER_PAGE)))
   const shownUppers = $derived(uppers.slice(page * PER_PAGE, (page + 1) * PER_PAGE))
   /** The lowers that have a character under one of the uppers on this page. */
@@ -266,7 +268,11 @@
             {/if}
             <tr>
               <th scope="row" class="head-cell rhyme">
-                <span class="rhyme-number">{row.rhyme}</span>
+                {#if ix.chineseRhymes[row.rhyme]}
+                  <button type="button" class="rhyme-number open" aria-expanded={opened.row === row.key} title={t('chart.chineseOpen')} onclick={() => { opened.row = opened.row === row.key ? null : row.key }}>{row.rhyme}</button>
+                {:else}
+                  <span class="rhyme-number">{row.rhyme}</span>
+                {/if}
                 {#if view2.adjacent}<span class="tone-label">{t(TONE_KEY[row.tone])}</span>{/if}
                 {#if shownFinals(row)?.length}<span class="final">{shownFinals(row)?.join(' ')}</span>{/if}
                 <small class="ui-count">{row.count}</small>
@@ -284,12 +290,22 @@
                 </td>
               {/each}
             </tr>
+            {#if opened.row === row.key}
+              <tr class="chinese">
+                <td colspan={GROUPS.length + 1}>
+                  <ul lang="zh-Hant">
+                    {#each ix.chineseRhymes[row.rhyme] as [han, final] (han + (final ?? ''))}<li>{han}{#if final}<small lang="und-Latn">{final}</small>{/if}</li>{/each}
+                  </ul>
+                </td>
+              </tr>
+            {/if}
           {/each}
         </tbody>
       </table>
     </div>
     <p class="ui-hint">{t('chart.legend')}</p>
     {#if byGong}<p class="ui-hint">{t('chart.gongLegend')}</p>{/if}
+    <p class="ui-hint">{t('chart.chineseLegend')}</p>
   {/if}
 </div>
 
@@ -312,6 +328,12 @@
   tbody th.head-cell{position:sticky;left:0;z-index:1;padding:var(--ui-space-2xs) var(--ui-space-sm);border-inline-end:1px solid var(--ui-color-border);background:var(--ui-color-surface);text-align:end;white-space:nowrap;min-inline-size:52px;font-family:var(--ui-font-mono);font-size:var(--ui-text-xs)}
   tbody th.head-cell .ui-script{display:block;font-size:20px;color:var(--ui-color-ink)}
   tbody th.head-cell small{display:block;font-weight:var(--ui-weight-normal);font-size:10px;color:var(--ui-color-ink-muted)}
+  .rhyme-number.open{padding:0 4px;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font:inherit;font-weight:var(--ui-weight-semibold);cursor:pointer}
+  .rhyme-number.open:hover{background:var(--ui-color-surface-hover)}
+  .rhyme-number.open[aria-expanded='true']{background:var(--ui-color-surface-sunken)}
+  tr.chinese td{padding:var(--ui-space-xs) var(--ui-space-sm);background:var(--ui-color-surface-sunken)}
+  tr.chinese ul{position:sticky;left:var(--ui-space-sm);max-inline-size:min(100%,calc(100vw - 88px));display:flex;flex-wrap:wrap;gap:2px var(--ui-space-sm);margin:0;padding:0;list-style:none;font-size:var(--ui-text-sm);color:var(--ui-color-ink)}
+  tr.chinese small{margin-inline-start:2px;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   tbody th.head-cell .rhyme-number{font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);color:var(--ui-color-ink)}
   tbody th.head-cell .final{display:block;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
   tbody th.head-cell .tone-label{display:block;font-family:var(--ui-font-sans);font-size:10px;color:var(--ui-color-ink-muted)}

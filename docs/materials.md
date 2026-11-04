@@ -33,6 +33,7 @@ cannot copy it.
 | Faces: Noto Serif Tangut, Tangut Yinchuan, BabelStone Wenhai, New Tangut Std, GenZui, Mojikyo, N4694, TWU | glyphs; the drawing pad's shapes are rendered from them | per face, `app/public/fonts/FONT-LICENCES.md` | `scripts/build_tangut_shapes.py` |
 | 李範文《宋代西北方音》(1994) pp. 270–281, via [KwingiemChan on Zhihu](https://zhuanlan.zhihu.com/p/272058247); rhyme numbers from 郭抒遠 2019 table 1-3-1, via [the same author](https://zhuanlan.zhihu.com/p/271919711) | Tibetan spellings by rhyme and initial class | a repost with no stated licence, and unchecked against the book; only the spellings are kept | `data/tangut-tibetan-rhymes.tsv`, `scripts/build_tangut_tibetan_rhymes.py` |
 | 龔煌城《西夏语概要》(2005), via table 1-3-1 of 郭抒遠 2019, [scanned by KwingiemChan on Zhihu](https://zhuanlan.zhihu.com/p/271919711) | a value for each of the 105 rhymes | a repost with no stated licence, unchecked against either book | `app/data/tangut-gong-rhymes.json` |
+| 郭抒遠 2019 table 1-3-1, with finals after 李範文 1994, via [KwingiemChan on Zhihu](https://zhuanlan.zhihu.com/p/271919711) | Chinese characters transcribing Tangut in 黑水城 medical texts, by rhyme | a repost with no stated licence, unchecked against either book; only the characters and finals are kept | `app/data/tangut-chinese-rhymes.json` |
 
 ## Linked, not copied
 

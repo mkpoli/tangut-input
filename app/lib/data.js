@@ -115,6 +115,8 @@ export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/t
 export const loadTibetanRhymes = () => once('tibetanRhymes', () => readJson(new URL('../data/tangut-tibetan-rhymes.json', import.meta.url)))
 /** 龔煌城's value for each of the 105 rhymes. @returns {Promise<{ values: Record<string, string> } | null>} */
 export const loadGongRhymes = () => once('gongRhymes', () => readJson(new URL('../data/tangut-gong-rhymes.json', import.meta.url)))
+/** The Chinese characters transcribing Tangut, by rhyme: each is [character, final?]. @returns {Promise<{ rhymes: Record<string, [string, string?][]> } | null>} */
+export const loadChineseRhymes = () => once('chineseRhymes', () => readJson(new URL('../data/tangut-chinese-rhymes.json', import.meta.url)))
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */

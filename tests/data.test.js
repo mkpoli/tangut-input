@@ -52,6 +52,16 @@ test('every rhyme the chart draws has 龔煌城\'s value', () => {
   expect([values[1], values[33], values[65], values[105]]).toEqual(['u', 'iəə/jɨɨ', 'jɨ̣j', 'jwa'])
 })
 
+test('the Chinese transcription characters stand under rhymes the chart draws', () => {
+  const { rhymes: list } = JSON.parse(readFileSync(new URL('../app/data/tangut-chinese-rhymes.json', import.meta.url), 'utf8'))
+  const drawn = new Set(Object.values(rhymes.chars).map(row => String(row[0])))
+  expect(Object.keys(list).filter(rhyme => !drawn.has(rhyme))).toEqual([])
+  expect(Object.keys(list).length).toBe(58)
+  expect(list['1'][0]).toEqual(['菩', 'u'])
+  // In the thesis table, left out of the repost: no final is known for them.
+  expect(list['100']).toEqual([['棱']])
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {
