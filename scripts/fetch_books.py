@@ -231,8 +231,12 @@ def check(only: str | None) -> int:
                 bad += 1
     keyed = {row["work_id"] for row in rows()}
     for work in sorted(set(known) - keyed):
-        print(f"source.yaml has {work}, files.tsv has no file for it")
-        bad += 1
+        # A work with no file is only a record of the edition; one called acquired needs its file.
+        if known[work].get("status") == "acquired":
+            print(f"source.yaml has {work} as acquired, files.tsv has no file for it")
+            bad += 1
+        else:
+            print(f"{work}: recorded, no file yet")
     return 1 if bad else 0
 
 

@@ -1,6 +1,6 @@
 # Works the CCAMC-supplied fields are rebuilt from.
 #
-# status: acquired — on disk and checked; pending — recorded, file not obtained.
+# status: acquired — on disk and checked; pending — the edition is recorded, no file obtained.
 # rights: what the edition's own terms allow; a work with none stated is keyed and cited, not
 # redistributed, unless the note says otherwise.
 # The file routes live in files.tsv: `libgen:<md5>` or `ipfs:<cid>`, resolved by
@@ -81,6 +81,23 @@ works:
     notes: >-
       book 2 holds the dictionary. The Japanese translation 西夏語辞書 (1971–1973) would be the
       reader-facing edition of the same entries; not fetched.
+
+  - id: nevsky-1971
+    title: 西夏語辞書
+    author: Н. А. Невский, translated by 西田龍雄
+    publisher: 座右宝刊行会
+    place: 東京
+    year: 1971
+    volumes: 3
+    gives: >-
+      Nevsky's dictionary in Japanese, with the Tangut index the Russian printing lacks
+    script: Tangut, Japanese
+    status: pending
+    rights: no licence stated; keyed and cited
+    notes: >-
+      the third volume is the index; 1973 is the year it completed. No copy on libgen and none in
+      the National Diet Library's open search; the Russian original carries the same entries, so
+      this is a convenience for a Japanese reader, not a new source of values.
 
   - id: arakawa-tsuin
     title: 西夏語通韻字典
