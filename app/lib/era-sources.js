@@ -142,6 +142,20 @@ export const ERA_SOURCES = {
     note: 'Calls a line rendered 德政国主福政民正明大皇帝 崇宗\'s title, against the 惠宗 of the works above.',
     url: 'https://www.sinoss.net/uploadfile/2010/1130/10730.pdf',
   },
+  chen2015: {
+    author: '陳瑋',
+    title: '稱天子，配龍飾：西夏皇室如何打造正統形象？',
+    where: '澎湃新聞 私家歷史, read 2026-11-04',
+    note: 'Quotes 史金波 that 兀卒 is the Tangut for 皇帝, and takes 邦泥定國 as a transcription of the Tangut 白高國.',
+    url: 'https://www.thepaper.cn/newsDetail_forward_1314456',
+  },
+  zhai2010: {
+    author: '翟麗萍',
+    title: '西夏蕃名官號異譯考釋',
+    where: '西夏學 6 (2010)',
+    note: 'Reports that 王靜如, 李範文 (邦泥定國兀卒考釋) and 史金波 read 兀卒 as 皇帝, and quotes the 長編 for a rival gloss, 青天子.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606103541242.pdf',
+  },
   kepping2001: {
     author: 'K. B. Kepping',
     title: 'Mi-nia (Tangut) Self-appellation and Self-portraiture in Khara Khoto Materials',
