@@ -177,6 +177,27 @@ export const ERA_SOURCES = {
     note: 'Heads a section 西夏.',
     url: 'https://zh.wikisource.org/wiki/遼史/卷115',
   },
+  zoenshiueh: {
+    author: 'परवद💙💛 (@zoenshiueh_lieu)',
+    title: 'A list of Western Xia era names in Tangut',
+    where: 'Post on X; its date and link were not recorded',
+    note: 'A social media post that names no source. 19 lines, 14 of them matching the calendar. It adds 天授禮法延祚, 應天 and 皇建, whose 𗺔 and 𘚪 occur in no running text on this site, and differs from the calendar on 天賜禮盛國慶 (𘓺 for 𘀗) and 元德 (𗪘 for 𗪟, which look alike). It writes 天 as 𘓺 except in 天授, and puts 𘓺 first in 應天 although 天 comes second in the Chinese. It lists 大慶 twice with one spelling, the first time between 天授禮法延祚 and 大安, where no era of that name falls, so the era of 1036 is not given a form here. It puts 皇建 before 應天.',
+    url: '',
+  },
+  unattributedTable: {
+    author: 'Unknown compiler',
+    title: 'Table of four era names in Tangut',
+    where: 'Spreadsheet screenshot, compiler and date unknown; seen 2026-11-04',
+    note: 'Names no source and does not say whose eras these are. The characters were read from the image by comparing them with a font. Its 元 is 𗪟, as in the calendar\'s 元德. 皇慶 is spelled as the Xia era 天慶 is, and 大德 as the Xia era 大德 is.',
+    url: 'https://github.com/mkpoli/tangut-input/raw/pr-assets/pr-74/ref-table.png',
+  },
+  duan2024: {
+    author: '段玉泉',
+    title: '元朝建號前蒙古汗國時期的西夏文獻',
+    where: '中國社會科學網, 2024',
+    note: 'Reports a Tangut colophon dated 大朝國大德四年 in translation only, without the characters.',
+    url: 'https://www.cssn.cn/skgz/bwyc/202404/t20240425_5747940.shtml',
+  },
   nie2004: {
     author: '聶鴻音',
     title: '西夏文《過去莊嚴劫千佛名經》發願文中的兩個年號',
@@ -195,5 +216,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'enwp', 'liaoshi',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'enwp', 'liaoshi', 'zoenshiueh', 'unattributedTable', 'duan2024',
 ])

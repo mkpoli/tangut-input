@@ -1,14 +1,16 @@
 <script>
   // The era names of the Western Xia in order, each with its Tangut form where one is recorded and
-  // what the form rests on: a coin, a Tangut text, or only the calendar the list is built from.
+  // what the form rests on: a coin, a Tangut text, only the calendar the list is built from, or a post.
   // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
   // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on, and
   // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`, and the
-  // names of the state, from `app/data/tangut-state-names.json`.
+  // names of the state, from `app/data/tangut-state-names.json`, and later era names, from
+  // `app/data/tangut-later-eras.json`.
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
   import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
   import STATE_NAMES from '../data/tangut-state-names.json' with { type: 'json' }
+  import LATER_ERAS from '../data/tangut-later-eras.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
   import { choose } from '../lib/ui.svelte.js'
   import { hex } from '../lib/db.svelte.js'
@@ -24,7 +26,8 @@
 
   /**
    * What an era's form rests on: one tag for each kind of evidence, with its sources, or the
-   * calendar alone. The build keeps every backed form among the calendar's, so those are the forms.
+   * calendar alone. The build keeps every backed form among the calendar's, so those and the forms of
+   * a post, which may differ, are the forms.
    * @param {Era} era
    */
   function basis(era) {
@@ -32,10 +35,13 @@
       const rows = era.evidence.filter(e => e.kind === kind)
       return rows.length ? [{ kind, sources: [...new Set(rows.map(e => e.source))] }] : []
     })
-    if (!tags.length) tags.push(era.calendar.length ? { kind: 'calendar', sources: ['calendar'] } : { kind: 'none', sources: [] })
+    if (!tags.length && era.calendar.length) tags.push({ kind: 'calendar', sources: ['calendar'] })
+    const posted = era.evidence.filter(e => e.kind === 'post')
+    if (posted.length) tags.push({ kind: 'post', sources: [...new Set(posted.map(e => e.source))] })
+    if (!tags.length) tags.push({ kind: 'none', sources: [] })
     return {
       tags,
-      forms: era.calendar,
+      forms: [...new Set([...era.calendar, ...posted.map(e => e.tangut)])],
       doubt: era.evidence.find(e => e.kind === 'unknown'),
       gloss: [...new Set(era.evidence.filter(e => e.kind === 'gloss').map(e => e.source))],
     }
@@ -48,7 +54,7 @@
   const counts = {
     total: rows.length,
     forms: rows.filter(row => row.forms.length).length,
-    clear: rows.filter(row => row.tags.every(tag => tag.kind === 'coin' || tag.kind === 'text')).length,
+    clear: rows.filter(row => row.tags.some(tag => tag.kind === 'coin' || tag.kind === 'text') && !row.tags.some(tag => tag.kind === 'disputed')).length,
     disputed: rows.filter(row => row.tags.some(tag => tag.kind === 'disputed')).length,
   }
 </script>
@@ -64,7 +70,7 @@
   </header>
 
   <dl class="key">
-    {#each ['coin', 'text', 'disputed', 'calendar', 'none'] as kind (kind)}
+    {#each ['coin', 'text', 'disputed', 'calendar', 'post', 'none'] as kind (kind)}
       <div><dt><span class="tag" data-kind={kind}>{t(`eras.kind.${kind}`)}</span></dt><dd>{t(`eras.kind.${kind}.hint`)}</dd></div>
     {/each}
   </dl>
@@ -81,7 +87,7 @@
               {#each row.forms as form, i (form)}
                 {#if i}<span class="or">{t('eras.or')}</span>{/if}
                 <span class="form" role="group" aria-label={t('eras.form', { era: row.era.era, n: i + 1 })}>{#each [...form] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                  aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>
+                  aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{#if row.era.evidence.some(e => e.kind === 'post' && e.tangut === form)}{@render cites(['zoenshiueh'])}{/if}
               {:else}<span class="ui-hint">—</span>{/each}
             </td>
             <td class="basis">
@@ -172,6 +178,25 @@
     </div>
   </section>
 
+  <section class="ui-section titles" id="later-eras">
+    <h2 class="heading">{t('eras.later')}</h2>
+    <p class="ui-hint">{t('eras.later.intro')}{@render cites(['unattributedTable'])} {t('eras.later.colophon')}{@render cites(['duan2024'])}</p>
+    <div class="ui-table-wrap">
+      <table class="ui-table list">
+        <thead><tr><th scope="col">{t('eras.era')}</th><th scope="col">{t('eras.tangut')}</th></tr></thead>
+        <tbody>
+          {#each LATER_ERAS as era (era.era)}
+            <tr>
+              <th scope="row" lang="zh-Hant">{era.era}</th>
+              <td class="forms title-form"><span class="form" role="group" aria-label={era.tangut}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="ui-section sources">
     <h2 class="heading">{t('eras.sources')}</h2>
     <ol class="source-list">
@@ -199,7 +224,7 @@
   .tagged{display:inline-block;margin-inline-end:var(--ui-space-xs)}
   .tag{display:inline-block;padding:1px 7px;border:1px solid var(--ui-color-border);border-radius:999px;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs);white-space:nowrap}
   .tag[data-kind='coin'],.tag[data-kind='text']{border-color:var(--ui-color-accent);color:var(--ui-color-accent)}
-  .tag[data-kind='none'],.tag[data-kind='chinese']{border-style:dashed;color:var(--ui-color-ink-muted)}
+  .tag[data-kind='none'],.tag[data-kind='chinese'],.tag[data-kind='post']{border-style:dashed;color:var(--ui-color-ink-muted)}
   tr[data-kind='none'] th{color:var(--ui-color-ink-soft)}
   .note{margin:4px 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .cite{margin-inline-start:2px;font-size:.72em;line-height:0;vertical-align:super}
