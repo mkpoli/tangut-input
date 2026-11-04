@@ -13,8 +13,9 @@ it into your text. <https://tangut.mkpo.li/>
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
-- **Reading**: a reconstruction in any of eight systems (Li Fanwen, Gong Hwang-cherng, Gong Xun,
-  Arakawa, Miyake, Nishida, Kychanov, Sofronov), with or without diacritics, with an optional tone.
+- **Reading**: a reconstruction in any of the five systems Wiktionary records (Li Fanwen, Miyake,
+  Nishida, Kychanov, Sofronov), with or without diacritics, with an optional tone. Three further
+  systems that CCAMC records also answer the search; those results link to CCAMC.
 - **Fanqie**: type the two characters a rhyme book spells a character with, or pick each from a
   compact panel beside the field that offers Find, Meaning, Cangjie, Four-corner, Reading, Draw and
   Parts in miniature.
@@ -25,17 +26,22 @@ it into your text. <https://tangut.mkpo.li/>
   part shows its code point, component number, strokes, uses, Cangjie codes and name. A collapsible
   table compares the names across the languages that record one.
 
-The card of a character shows its code point, Cangjie codes, meanings in English, Japanese and
-Chinese, readings, structure, the lines of the recorded corpus where it stands with the scribe's
-form from the facsimile, and related characters. The text being written stays in the browser and
-copies as text, code points or Cangjie codes.
+The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
+readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
+the facsimile, and related characters. Further readings, meanings and the 文海 commentary are
+linked to CCAMC's page for the character rather than copied. The text being written stays in the
+browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).
 
 ## Data
 
-- `app/data/tangut-entries.json.gz`: meanings and readings, from [Open
-  Tangut](https://github.com/imlooh/open-tangut) (MIT), which merges CCAMC and Wiktionary entries.
+- `app/data/tangut-entries.json.gz`: five readings and English and Japanese meanings from
+  [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), with descriptions
+  from BabelStone's Tangut IDS; built by `scripts/build_tangut_entries.py` from the snapshots in
+  `data/wiktionary/`.
+- `app/data/tangut-ccamc-index.json.gz`: normalized terms from CCAMC's records, used only to answer
+  the reading and meaning searches. No page renders them; the card links to CCAMC.
 - `app/data/tangut-cangjie.json.gz`: Cangjie codes, from
   [rime_tangutcjkk](https://github.com/Hulenkius/rime_tangutcjkk) by Hulenkius, after the scheme of
   Kawasaki Keigo (2016). The table warns that some characters are wrongly encoded; the repository

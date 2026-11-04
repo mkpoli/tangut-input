@@ -3,47 +3,40 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
-import { hanFanqie, sounds } from '../app/lib/fanqie.js'
 
 const json = name => JSON.parse(gunzipSync(readFileSync(new URL(`../app/data/${name}`, import.meta.url))).toString())
 const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
-/** The packed records, expanded just enough for the fanqie parse. */
-const expanded = entries.rows.map(row => {
-  /** @type {Record<string, string>} */
-  const pronunciations = {}
-  entries.systems.forEach((key, i) => { if (row[7]?.[i]) pronunciations[key] = row[7][i] })
-  return { char: row[0], pronunciations }
-})
-
-test('the packed records keep every character and its languages', () => {
-  expect(entries.format).toBe('tangut-input/entries')
+test('the packed records keep every character and the five Wiktionary readings', () => {
+  expect(entries.format).toBe('tangut-input/entries/2')
   expect(entries.rows.length).toBe(6144)
-  expect(entries.systems.length).toBe(10)
-  const first = expanded[0]
-  expect(first.char).toBe('𗀀')
-  expect(first.pronunciations.li_fanwen).toBe('do1')
+  expect(entries.systems).toEqual(['li_fanwen', 'miyake', 'kychanov', 'sofronov', 'nishida'])
+  const first = entries.rows[0]
+  expect(first[0]).toBe('𗀀')
+  expect(first[7]).toEqual(['do1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
+  expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
+  expect(first[5]).toEqual(['毒'])
+  expect(first[6]).toEqual([])
 })
 
-test('the Chinese fanqie parse is the one the chart draws', () => {
-  const records = hanFanqie(expanded)
-  expect(records.length).toBe(3816)
-  const bySound = sounds(records)
-  expect(bySound.size).toBe(1433)
-  const several = [...bySound.values()].filter(group => group.spellings.size > 1).length
-  expect(several).toBe(504)
-  expect(bySound.get('勒').spellings.size).toBe(20)
+test('the displayable meanings cover only the Wiktionary entries', () => {
+  const count = column => entries.rows.filter(row => row[column]?.length).length
+  expect(count(4)).toBe(457)
+  expect(count(5)).toBe(278)
+  expect(count(6)).toBe(0)
 })
 
-test('a rounding marker is not one of the two characters', () => {
-  const records = hanFanqie(expanded)
-  const rounded = records.find(record => record.char === '𗅶')
-  // 「底合卒切」: 底 with 合 marking the rounding, spelt with 卒.
-  expect(rounded.upper).toBe('底')
-  expect(rounded.lower).toBe('卒')
-  expect(rounded.round).toBe(true)
-  expect(records.filter(record => record.round).length).toBe(21)
+const ccamc = json('tangut-ccamc-index.json.gz')
+
+test('the CCAMC index holds only normalized search terms', () => {
+  expect(ccamc.format).toBe('tangut-input/ccamc-index')
+  expect(Object.keys(ccamc.readings).sort()).toEqual(['arakawa_shintaro', 'gong_huangcheng', 'gong_xun_202411'])
+  expect(Object.keys(ccamc.meanings).sort()).toEqual(['en', 'zh'])
+  expect(ccamc.meanings.zh['𗀀']).toEqual(['毒', '下毒者', '毒死', '毒 蠱 名詞'])
+  expect(ccamc.readings.gong_xun_202411['𗀀']).toBe('do1')
+  // The index is not a record: no original diacritics survive, and no 文海 sentence is stored.
+  expect(JSON.stringify(ccamc.readings)).not.toContain('¹')
 })
 
 test('every character with a rhyme is a character the site knows', () => {
