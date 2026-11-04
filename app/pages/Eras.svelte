@@ -177,5 +177,6 @@
     .list .forms[data-empty]{display:none}
     .titles .list .forms{grid-row:auto}
     .titles .list .chinese{grid-column:1 / -1}
+    .titles .list .basis{grid-column:1 / -1;text-align:start}
   }
 </style>
