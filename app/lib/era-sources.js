@@ -27,7 +27,7 @@ export const ERA_SOURCES = {
     author: 'Liangzhou stele (1094), transcribed on Wikisource after Nishida Tatsuo',
     title: '𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞',
     where: 'Wikisource, revision 909760; Nishida, 西夏語の研究 I (1964), pp. 156–176',
-    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here. 崇宗 and his mother are inferred from the pair 𗣼𗯿𘓺𗨺𘜹, 𗸯𗑗𘓺𘋨 before 天祐民安 4 (1093); the same pair also stands between 大安 8 and 天安禮定 2, in 惠宗\'s years, which is not explained here.',
+    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here. The pair 𗣼𗯿𘓺𗨺𘜹, 𗸯𗑗𘓺𘋨 stands before 天祐民安 4 (1093). 𗸯𗑗𘓺𘋨 closes the title 孫穎新 gives 崇宗, and his mother is inferred from the pairing. The same pair also stands between 大安 8 and 天安禮定 2, in 惠宗\'s years, which is not explained here.',
     url: 'https://wikisource.org/w/index.php?oldid=909760',
   },
   months1185: {
@@ -111,7 +111,7 @@ export const ERA_SOURCES = {
     author: '孫穎新',
     title: '西夏文《大寶積經·無量壽如來會》對勘研究',
     where: 'Chapter 二, 西夏佛經的初譯和校譯活動, read on QQ閱讀 without page numbers',
-    note: 'Author from the book\'s page on QQ閱讀. Prints the colophon formats with Tangut in a custom font, which was not decoded here, so only the Chinese is listed. Renders the 天力 title 天力大治智孝广净宣德去邪纳忠永平, from Инв. № 561, and names no holder for it.',
+    note: 'Author from the book\'s page on QQ閱讀. Prints the colophon formats with Tangut in a custom font, which was not decoded here in full, so only the Chinese is listed for most. The last four codes of 崇宗\'s title were matched by eye to glyphs in PDFs that use the same font codes (段玉泉, 西夏文《聖勝慧到彼岸功德寶集偈》考論, and 西田龍雄, both in 西夏學 4), giving 𗸯𗑗𘓺𘋨 for 仁净皇帝. His mother\'s title ends 德盛皇太后 with the codes of 𗣼, an unread character, and 𘓺𗨺𘜹; the unread code renders 熾 in 楊志高 2010, and 𗯿 is 盛 in the calendar\'s 天賜禮盛國慶, so it may close as the stele\'s 𗣼𗯿𘓺𗨺𘜹, but this is unconfirmed. Renders the 天力 title 天力大治智孝广净宣德去邪纳忠永平, from Инв. № 561, and names no holder for it.',
     url: 'https://m.chuangshi.qq.com/read/26322215/8',
   },
   yaoshi: {
