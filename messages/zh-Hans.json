@@ -464,6 +464,8 @@
   "eras.states.note.xia": "Kepping 认为 1312 年以前西夏文不以“夏”称国；杜建录把一则未注年代的题款译作此名。",
   "eras.states.note.bangni": "陈玮认为这是西夏文“白高国”的音译。",
   "eras.states.note.wiki": "仅据维基百科，其所引 Kepping 论文未见。",
+  "eras.later": "元代年号",
+  "eras.later.intro": "西夏亡后元代年号的西夏文写法，出自一份未注明来源的表格，只能视为转述。",
   "eras.title": "年号、称号与国号",
   "eras.titles": "帝后称号",
   "eras.titles.intro": "皇帝、皇太后及追尊先人的称号，取自西夏文文献、研究论著和汉文史书。汉文照录各来源原文。",

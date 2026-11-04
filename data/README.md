@@ -72,6 +72,12 @@ the source's key in `app/lib/era-sources.js`; a `place` when a text in this repo
 Tangut; and `backs`, whether the work bears on the Tangut, the Chinese or the note. Compiled by hand.
 `scripts/build_tangut_state_names.py` stops if a name does not occur in its place.
 
+## `tangut-later-eras.tsv`
+
+Yuan-period era names in Tangut, one row per form: the era, the Tangut and the source's key in
+`app/lib/era-sources.js`. Read by hand from an unattributed table; an era with two rows has two
+possible readings of it. `scripts/build_tangut_later_eras.py` builds the page's data.
+
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or

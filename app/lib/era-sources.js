@@ -184,6 +184,20 @@ export const ERA_SOURCES = {
     note: 'A social media post that names no source. 19 lines, 14 of them matching the calendar. It adds 天授禮法延祚, 應天 and 皇建, whose 𗺔 and 𘚪 occur in no text on this site, and differs from the calendar on 天賜禮盛國慶 and 元德, whose 𗪘 and 𗪟 look alike. It lists 大慶 twice, the first time without saying it is the era of 1036, so that era is not given a form here, and it puts 皇建 before 應天.',
     url: '',
   },
+  table2026: {
+    author: 'Unknown compiler',
+    title: 'Table of four era names in Tangut',
+    where: 'Spreadsheet image, received 2026-11-04',
+    note: 'Names no source, and does not say whose eras these are. The characters were read from the image by matching them to a font. The second character of 至元 is 𗪘 or 𗪟; the image is too coarse to tell. 皇慶 is spelled as the Xia era 天慶 is, and 大德 as the Xia era 大德 is.',
+    url: '',
+  },
+  duan2024: {
+    author: '段玉泉',
+    title: '元朝建號前蒙古汗國時期的西夏文獻',
+    where: '中國社會科學網, 2024',
+    note: 'Reports a Tangut colophon dated 大朝國大德四年 in translation only, without the characters.',
+    url: 'https://www.cssn.cn/skgz/bwyc/202404/t20240425_5747940.shtml',
+  },
   nie2004: {
     author: '聶鴻音',
     title: '西夏文《過去莊嚴劫千佛名經》發願文中的兩個年號',
@@ -202,5 +216,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'enwp', 'liaoshi', 'zoenshiueh',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'enwp', 'liaoshi', 'zoenshiueh', 'table2026', 'duan2024',
 ])

@@ -464,6 +464,8 @@
   "eras.states.note.xia": "Kepping は1312年より前の西夏文に国名としての「夏」はないとします。杜建録は年代未記の題記をこの名で訳しています。",
   "eras.states.note.bangni": "陳瑋は西夏文「白高国」の音訳と見ます。",
   "eras.states.note.wiki": "Wikipedia のみによります。同記事が引く Kepping の論文は未見です。",
+  "eras.later": "元代の元号",
+  "eras.later.intro": "西夏滅亡後の元代の元号の西夏文表記です。典拠を示さない表によるため、伝聞として扱ってください。",
   "eras.title": "元号・称号・国号",
   "eras.titles": "皇帝・皇太后の称号",
   "eras.titles.intro": "皇帝、皇太后、追尊された祖先の称号を、西夏文の文献、研究、漢文の史書から集めました。漢文は各資料の表記のまま載せます。",
