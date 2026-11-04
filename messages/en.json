@@ -439,6 +439,7 @@
   "eras.kind.none.hint": "None of the sources used here gives a Tangut form.",
   "eras.form": "Tangut form {n} of {era}",
   "eras.cite": "Source {n}",
+  "eras.gloss": "The Tangut 貞觀政要 writes the Tang era 貞觀 with these two characters.",
   "pick.loadingPad": "Loading the pad…",
   "card.ccamc": "CCAMC",
   "card.ccamcNote": "Further readings and meanings are on CCAMC's page for this character.",

@@ -9,7 +9,14 @@ the Western Xia (XixiaCalendar.txt, 2023-07-10), which names no source for its T
 the forms rest on is in `data/tangut-era-evidence.tsv`, one row per form and source:
 
 - `coin`: read on a coin; `disputed`: read on a coin, but the reading or the era it names is
-  disputed; `text`: written in a Tangut text; `unknown`: a source says no Tangut form is known.
+  disputed; `text`: written in a Tangut text, as a date or in a title; `gloss`: the same characters
+  render the era name's Chinese in a Tangut text, of another era bearing the name; `unknown`: a
+  source says no Tangut form is known.
+
+A row with a `place` names a dated line in this repository's texts, `wikisource:<page>` or
+`lcdtt:<file>`, and the build stops unless the form occurs there followed by a year: a cyclical pair the calendar uses, if any,
+a numeral and 𗤒. Tags belong to an era, so an era with two competing forms can only
+carry `disputed` evidence.
 
 An era's dates are its first and last day in the calendar (Julian), and its years are the lunar
 years those days fall in, counted by the Julian year in which each lunar year begins, so an era
@@ -23,6 +30,7 @@ import csv
 import hashlib
 import io
 import json
+import re
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -32,11 +40,24 @@ URL = 'https://www.babelstone.co.uk/Calendar/XixiaCalendar_txt.zip'
 SHA256 = 'bd3f44d3bbb1a285ed6a085a8434770e7a97c537e8f4cdd8a4864c0e6cc66c14'
 EVIDENCE = ROOT / 'data/tangut-era-evidence.tsv'
 OUT = ROOT / 'app/data/tangut-eras.json'
-KINDS = {'coin', 'disputed', 'text', 'unknown'}
+KINDS = {'coin', 'disputed', 'text', 'gloss', 'unknown'}
+# The numerals two to ten, as the dated lines write them.
+NUMERALS = '𗍫𘕕𗥃𗏁𗤁𗒹𘉋𗢭𗰗'
 
 
 def tangut(text: str) -> bool:
     return bool(text) and all(0x17000 <= ord(c) <= 0x18AFF or 0x18D00 <= ord(c) <= 0x18D7F for c in text)
+
+
+def corpus_text(place: str) -> str:
+    """The running text of a work in the repository's own corpus."""
+    corpus, name = place.split(':', 1)
+    if corpus == 'lcdtt':
+        return (ROOT / f'data/lcdtt/{name}.txt').read_text(encoding='utf-8')
+    if corpus == 'wikisource':
+        pages = json.loads((ROOT / 'data/wikisource/pages.json').read_text(encoding='utf-8'))['pages']
+        return re.sub(r'(?s)\{\{header.*?\n\}\}|<ref[^>]*/>|<ref.*?</ref>|<!--.*?-->', '', pages[name]['content'])
+    raise SystemExit(f'unknown corpus: {place}')
 
 
 def main() -> None:
@@ -51,9 +72,10 @@ def main() -> None:
 
     # One row per day; an era runs until the Chinese era name changes. 大慶 is used twice. A lunar
     # year begins on the day the cyclical year changes.
-    eras, cycle, lunar = [], None, None
+    eras, cycle, lunar, pairs = [], None, None, set()
     for row in csv.DictReader(io.StringIO(text), delimiter='\t'):
         name, form, day = row['Xia Era (Chinese)'], row['Xia Era (Tangut)'], row['Year-Month-Day']
+        pairs.add(row['Cyclical Year (Tangut)'])
         if row['Cyclical Year'] != cycle:
             cycle, lunar = row['Cyclical Year'], int(day[:4])
         if not eras or eras[-1]['era'] != name:
@@ -64,6 +86,7 @@ def main() -> None:
         eras[-1]['to'], eras[-1]['years'][1] = day, lunar
     eras[-1]['to'], eras[-1]['years'][1] = None, None
 
+    pair = '|'.join(sorted(filter(None, pairs)))
     with EVIDENCE.open(encoding='utf-8') as file:
         for row in csv.DictReader(file, delimiter='\t'):
             if row['kind'] not in KINDS:
@@ -75,6 +98,10 @@ def main() -> None:
                 raise SystemExit(f'no such era in the calendar: {row}')
             if row['tangut'] and row['tangut'] not in era['calendar']:
                 raise SystemExit(f'the form differs from the calendar\'s, which the page would hide: {row}')
+            if row['place'] and not re.search(f'{row["tangut"]}(?:{pair})?[{NUMERALS}]{{1,3}}𗤒', corpus_text(row['place'])):
+                raise SystemExit(f'the form is not followed by a year in the text named: {row}')
+            if len(era['calendar']) > 1 and row['kind'] in ('coin', 'text'):
+                raise SystemExit(f'an era with two competing forms cannot carry this tag: {row}')
             era['evidence'].append({'tangut': row['tangut'], 'kind': row['kind'], 'source': row['source']})
 
     OUT.write_text(json.dumps(eras, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')

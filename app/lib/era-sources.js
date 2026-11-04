@@ -23,6 +23,48 @@ export const ERA_SOURCES = {
     note: '',
     url: 'https://babelstone.co.uk/TangutSea/1256183861173784576.html',
   },
+  stele1094: {
+    author: 'Liangzhou stele (1094), transcribed on Wikisource after Nishida Tatsuo',
+    title: '𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞',
+    where: 'Wikisource, revision 909760; Nishida, 西夏語の研究 I (1964), pp. 156–176',
+    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here.',
+    url: 'https://wikisource.org/w/index.php?oldid=909760',
+  },
+  months1185: {
+    author: 'Ode on Monthly Pleasures, transcribed on Wikisource after Nishida Tatsuo',
+    title: '𗼑𗼑𗫉𗊱',
+    where: 'Wikisource, revision 1186555; Nishida, 京都大学文学部紀要 25 (1986), pp. 1–116',
+    note: 'The colophon is dated 乾祐 16 (1185).',
+    url: 'https://wikisource.org/w/index.php?oldid=1186555',
+  },
+  maxims1187: {
+    author: 'Newly Assembled Precious Dual Maxims, transcribed on Wikisource',
+    title: '𗆧𗰖𗬻𘜼𘋥𘝿',
+    where: 'Wikisource, revision 1021341; Kychanov 1974; 聶鴻音, 西夏學 2 (2007), pp. 134–166',
+    note: 'The colophon, transcribed after 聶鴻音 2007, pp. 157–158, names 乾祐 7 (1176) and is dated 乾祐 18 (1187).',
+    url: 'https://wikisource.org/w/index.php?oldid=1021341',
+  },
+  nie2009: {
+    author: '聶鴻音',
+    title: '乾祐二十年《彌勒上生經御製發願文》的夏漢對勘研究',
+    where: '西夏學 4 (2009), pp. 42–45; Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
+    note: 'The prayer is dated 乾祐 20 (1189).',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10732.pdf',
+  },
+  leilin: {
+    author: 'Guillaume Jacques',
+    title: 'Leilin database',
+    where: 'Tangut 類林; read in the Lausanne Corpus of Digital Tangut Texts',
+    note: 'The colophons of two fascicles are dated 乾祐 12 (1181).',
+    url: 'https://www.academia.edu/25078937/Leilin_database',
+  },
+  kychanov2010: {
+    author: 'Е. И. Кычанов, tr. 彭向前',
+    title: '唐古特譯本《貞觀政要》殘卷考',
+    where: '西夏學 6 (2010), pp. 14–18; Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
+    note: 'Its Chinese rendering has 貞觀十四年 and 貞觀十七年 at the lines the Tangut opens with 𗣼𘝯, both of the Tang era. The comparison with the coin is made on this page.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606102539528.pdf',
+  },
   nie2004: {
     author: '聶鴻音',
     title: '西夏文《過去莊嚴劫千佛名經》發願文中的兩個年號',
@@ -40,4 +82,6 @@ export const ERA_SOURCES = {
 }
 
 /** The order the list at the foot numbers them in. */
-export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ (['calendar', 'west2007', 'west2020', 'nie2004', 'gong2020'])
+export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020',
+])

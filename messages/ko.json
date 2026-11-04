@@ -439,6 +439,7 @@
   "eras.kind.none.hint": "여기서 쓴 자료에는 서하 문자 표기가 없습니다.",
   "eras.form": "{era}의 서하 문자 표기 {n}",
   "eras.cite": "출처 {n}",
+  "eras.gloss": "서하어 《정관정요》는 당나라 연호 ‘정관’을 이 두 글자로 적습니다.",
   "pick.loadingPad": "손글씨를 준비하는 중…",
   "card.ccamc": "CCAMC",
   "card.ccamcNote": "더 많은 읽기와 뜻은 이 글자의 CCAMC 페이지에 있습니다.",
