@@ -8,7 +8,7 @@ Each row is one title and one work citing it: its holder, its Tangut where recor
 the work in `chinese_source` that prints it, and a `place` when a text in this repository writes the
 Tangut. `backs` says which column the work supports. `identified` says how the holder is known:
 `stated` by a study or history, `caption`, stated only by a Commons caption, `decoded`, matched here to the
-font codes of a title a study prints, `codes`, named by a study whose font codes for the title are read here, `dated`, inferred from
+font codes of a title a study prints, `codes`, named by a study whose font codes for the title are worked out here, `dated`, inferred from
 the date of the passage, or `disputed` among the sources. A title's `basis` follows from these:
 `text` when a place backs its Tangut, `reported` when a source gives Tangut that no text here
 confirms, `chinese` when only Chinese is listed. The build stops unless the title occurs in its place, outside
