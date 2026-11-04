@@ -479,6 +479,7 @@
   "eras.titles.basis.chinese.hint": "ここには漢文だけを載せます。研究が未解読のフォントで西夏文を印字している場合があります。",
   "eras.titles.caption": "人物はCommonsの説明文だけによります。",
   "eras.titles.decoded": "人物は、この字列を研究中のフォント符号と本サイトで照合した結果によるもので、明言した研究はありません。",
+  "eras.titles.codes": "研究はこの西夏文をフォント符号で印字しており、文字は本サイトでその符号から読み取ったものです。",
   "eras.titles.disputed": "誰の称号かについて資料の説が分かれています。",
   "eras.titles.holder": "人物",
   "eras.titles.chinese": "漢文",

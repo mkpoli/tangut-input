@@ -479,6 +479,7 @@
   "eras.titles.basis.chinese.hint": "此处只列汉文。研究论著可能以未解码的字体印有西夏文。",
   "eras.titles.caption": "人物仅据Commons图片说明。",
   "eras.titles.decoded": "人物由本站将此字串与研究论著中的字体编码比对而得，并无论著明言。",
+  "eras.titles.codes": "研究论著以字体编码印出此西夏文，文字由本站据编码判读。",
   "eras.titles.disputed": "各来源对称号属谁说法不一。",
   "eras.titles.holder": "人物",
   "eras.titles.chinese": "汉文",

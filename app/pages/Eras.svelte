@@ -117,7 +117,7 @@
         <tbody>
           {#each TITLES as title (`${title.holder} ${title.tangut || title.chinese}`)}
             <tr>
-              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{:else if title.identified === 'disputed'}<span class="inferred" title={t('eras.titles.disputed')} aria-label={t('eras.titles.disputed')}>?</span>{:else if title.identified === 'caption'}<span class="inferred" title={t('eras.titles.caption')} aria-label={t('eras.titles.caption')}>†</span>{:else if title.identified === 'decoded'}<span class="inferred" title={t('eras.titles.decoded')} aria-label={t('eras.titles.decoded')}>‡</span>{/if}</th>
+              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{:else if title.identified === 'disputed'}<span class="inferred" title={t('eras.titles.disputed')} aria-label={t('eras.titles.disputed')}>?</span>{:else if title.identified === 'caption'}<span class="inferred" title={t('eras.titles.caption')} aria-label={t('eras.titles.caption')}>†</span>{:else if title.identified === 'decoded'}<span class="inferred" title={t('eras.titles.decoded')} aria-label={t('eras.titles.decoded')}>‡</span>{:else if title.identified === 'codes'}<span class="inferred" title={t('eras.titles.codes')} aria-label={t('eras.titles.codes')}>§</span>{/if}</th>
               <td class="forms title-form" data-empty={!title.tangut || undefined}>{#if title.tangut}<span class="form" role="group" aria-label={title.tangut}>{#each [...title.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
                 aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(title.tangutSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
               <td class="chinese">{#if title.chinese}<span lang="zh">{title.chinese}</span>{@render cites(title.chineseSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
@@ -127,7 +127,7 @@
         </tbody>
       </table>
     </div>
-    <p class="ui-hint">* {t('eras.titles.dated')} † {t('eras.titles.caption')} ‡ {t('eras.titles.decoded')} ? {t('eras.titles.disputed')}</p>
+    <p class="ui-hint">* {t('eras.titles.dated')} † {t('eras.titles.caption')} ‡ {t('eras.titles.decoded')} § {t('eras.titles.codes')} ? {t('eras.titles.disputed')}</p>
   </section>
 
   <section class="ui-section titles" id="posthumous">
