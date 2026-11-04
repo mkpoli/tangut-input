@@ -4,9 +4,17 @@ The values keyed out of the books in `../books/`, one printed value per row, eac
 stands on. This is where the columns CCAMC used to carry come back: they are keyed from the editions
 and cited, so a reader can open the page and check the reading rather than take it on trust.
 
-The files are keyed by hand. The scans carry no Tangut text layer, so the Tangut side is matched a
-code point at a time and confirmed by eye against a printed glyph; the readings and glosses are
+The files are keyed by hand. The scans carry no Tangut text layer, so the Tangut side is confirmed by
+eye against the printed glyph and written down as its code point; the readings and glosses are
 Chinese and Latin script and are typed, not OCR'd.
+
+## Where a keyed band comes from
+
+An image model reads one 掌中珠 band off the scan and writes an export beside the page: a row per
+glyph, with the canvas, the band, the column, the role, the glyph and its code point, and a note
+naming the pair it reads and how sure it is. `scripts/key_zzz_readings.py` turns that export into
+rows of the table below, one per transcription character, and pairs each with the Tangut code point
+in the same column. `cache/zzz/` holds the exports while a page is being keyed.
 
 ## Table
 
