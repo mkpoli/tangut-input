@@ -75,8 +75,8 @@ Tangut; and `backs`, whether the work bears on the Tangut, the Chinese or the no
 ## `tangut-later-eras.tsv`
 
 Era names matching Yuan eras, in Tangut, one row per era: the era, the Tangut and the source's key in
-`app/lib/era-sources.js`. Read by hand from an unattributed table that does not say whose eras these
-are. `scripts/build_tangut_later_eras.py` builds the page's data.
+`app/lib/era-sources.js`. Read by hand from an image in a post by @zoenshiueh_lieu, which does not say whose
+eras these are. `scripts/build_tangut_later_eras.py` builds the page's data.
 
 ## `tangut-titles.tsv`
 
