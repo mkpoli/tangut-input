@@ -1,4 +1,4 @@
-// What part of speech a character's Chinese gloss says it is. Open Tangut's glosses mark it inside
+// What part of speech a character's Chinese gloss says it is. Some glosses mark it inside
 // the definition — 「吮、唼 動詞」, 「撮（動詞）」 — so it can be read off. The marks are the source's,
 // not a classification of this project's own, and many entries carry none.
 

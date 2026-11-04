@@ -43,12 +43,12 @@
       if (codes.length) out.push({ key: 'code', title: t('find.group.cangjie'), page: 'cangjie', total: codes.length, items: codes.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.code })) })
     }
     if (/^[\p{Script=Latin}\p{M}0-9ʔɦɨɪʉɯəɛɔɑŋɣʁɲʷⁿ'·.\- ]+$/u.test(text)) {
-      const readings = searchReadings(ix.readings, text, { frequency: ix.frequency }).filter(hit => hit.tier < 2)
+      const readings = searchReadings(ix.readings, text, { frequency: ix.frequency, hidden: ix.hiddenReadings }).filter(hit => hit.tier < 2)
       if (readings.length) out.push({ key: 'reading', title: t('find.group.reading'), page: 'reading', total: readings.length,
-        items: readings.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.readings[0].raw, extra: SYSTEMS.find(s => s.key === hit.readings[0].system)?.short })) })
+        items: readings.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.via === 'ccamc' ? '' : hit.readings[0].raw, extra: hit.via === 'ccamc' ? 'CCAMC' : SYSTEMS.find(s => s.key === hit.readings[0].system)?.short })) })
     }
     const meanings = byMeaning(text)
-    if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: gloss(hit.char) })) })
+    if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: hit.via === 'ccamc' ? t('find.viaCcamc') : gloss(hit.char), extra: hit.via === 'ccamc' ? 'CCAMC' : undefined })) })
     return out
   })
   /** The Li Fanwen reading, or the first system that has one, marked with its system. @param {string} char */

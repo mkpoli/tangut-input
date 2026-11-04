@@ -18,6 +18,7 @@
   import { loadWenhaiComposition } from '../lib/data.js'
   import Peek from './Peek.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
+  import { ccamcUrl } from '../lib/ccamc.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -35,10 +36,6 @@
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
-  const fanqie = $derived([
-    { name: 'Li Fanwen', zh: '李範文', value: entry?.pronunciations?.sound_li_fanwen?.trim() ?? '' },
-    { name: 'Nie Lishan', zh: '聶歷山', value: entry?.pronunciations?.sound_nie_lishan?.trim() ?? '' },
-  ].filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
   // is read from. 文海 where it has one, 合編 where it does not.
   const rhyme = $derived(ready && char ? ix.rhymes.get(char) : undefined)
@@ -106,7 +103,7 @@
     peek = { char: other, x: box.left, y: box.bottom + 6 }
   }
   /** @param {string} other */
-  const readingOf = other => (ix.byChar.get(other)?.pronunciations ?? {})[ui.reading]?.trim() ?? ''
+  const readingOf = other => (ix.byChar.get(other)?.pronunciations ?? {})[/** @type {any} */ (ui.reading)]?.trim() ?? ''
 
   const first = $derived(ready && char ? gloss(char) : '')
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
@@ -208,9 +205,6 @@
             {#each readings as reading (reading.key)}
               <tr><th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th><td>{reading.value}</td></tr>
             {/each}
-            {#each fanqie as row (row.name)}
-              <tr><th scope="row" title={systemTitle(row)}>{t('card.soundGloss', { name: systemName(row, i18n.locale) })}</th><td lang="zh-Hant" class="cjk">{row.value}</td></tr>
-            {/each}
             {#if rhymeClass}
               <tr><th scope="row">{t('card.rhyme')}</th><td>{rhymeClass}{#if toneName}<span class="ui-hint"> · {t(toneName)}</span>{/if}</td></tr>
             {/if}
@@ -219,6 +213,22 @@
             {/if}
           </tbody>
         </table>
+      </section>
+    {/if}
+
+    {#if !isComponent(char)}
+      <section>
+        <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.ccamc')}</h3>
+        <p class="ui-hint">{t('card.ccamcNote')}</p>
+        <p><a class="ccamc-link" href={ccamcUrl(char)} target="_blank" rel="noopener noreferrer">{t('common.ccamc')}<span aria-hidden="true">↗</span></a></p>
+      </section>
+    {/if}
+
+    {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
+      <section>
+        <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
+        {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
+        {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
       </section>
     {/if}
 
@@ -231,14 +241,6 @@
             <span class="wenhai-part">{#if part}<span class="wenhai-term" lang="zh-Hant">{partTerm(part)}</span>{/if}<G char={source} /></span>
           {/each}
         </p>
-      </section>
-    {/if}
-
-    {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
-      <section>
-        <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
-        {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
-        {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
       </section>
     {/if}
 
@@ -359,6 +361,7 @@
   .code small{font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   .code small:empty{display:none}
   .type{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
+  .ccamc-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);text-underline-offset:2px}
   .means{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-sm);margin:0}
   .means dt{color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);font-weight:var(--ui-weight-semibold);line-height:1.9;text-transform:uppercase}
   .means dd{margin:0;font-size:var(--ui-text-md);line-height:var(--ui-leading-normal)}

@@ -1,6 +1,7 @@
 <script>
-  // Meaning: search the glosses alone. Open Tangut records a meaning in English, Japanese and
-  // Chinese, so the same box takes any of the three, and the chips keep a search to one of them.
+  // Meaning: search the glosses alone. Wiktionary's English and Japanese glosses are shown, and
+  // CCAMC's English and Chinese glosses answer the same box; a hit that only CCAMC answers says so
+  // and links there instead of printing the gloss.
   import { db, gloss } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
@@ -92,7 +93,11 @@
           <button type="button" class="ui-row-pick meaning-row" aria-current={i === active || (active < 0 && route.c === hit.char) ? 'true' : undefined}
             onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char, { place: i })}>
             <G char={hit.char} />
-            <span class="sense" lang={hit.lang}><span class="ui-tag" aria-hidden="true">{hit.lang}</span>{hit.sense}</span>
+            {#if hit.via === 'ccamc'}
+              <span class="sense"><span class="ui-tag" aria-hidden="true">{hit.lang}</span><span class="ui-tag">CCAMC</span><span class="ccamc-note">{t('meaning.viaCcamc')}</span></span>
+            {:else}
+              <span class="sense" lang={hit.lang}><span class="ui-tag" aria-hidden="true">{hit.lang}</span>{hit.sense}</span>
+            {/if}
             <span class="ui-row-gloss">{gloss(hit.char)}</span>
           </button>
           <button type="button" class="ui-row-action ui-button" data-variant="quiet" data-size="icon-sm"
@@ -113,7 +118,8 @@
   .start{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
   .meaning-row{grid-template-columns:38px minmax(0,1.2fr) minmax(0,1fr)}
   .meaning-row :global(.ui-script){font-size:28px;text-align:center}
-  .sense{overflow:hidden;color:var(--ui-color-ink);font-size:var(--ui-text-md);text-overflow:ellipsis;white-space:nowrap}
+  .sense{display:flex;align-items:center;gap:var(--ui-space-2xs);overflow:hidden;color:var(--ui-color-ink);font-size:var(--ui-text-md);text-overflow:ellipsis;white-space:nowrap}
+  .ccamc-note{color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs);overflow:hidden;text-overflow:ellipsis}
   .meaning-row .ui-row-gloss{text-align:end}
   @media (max-width:900px){
     .filter-row > .ui-label{inline-size:100%}
