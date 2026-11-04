@@ -202,7 +202,7 @@ export const ERA_SOURCES = {
     author: 'K. B. Kepping',
     title: 'The Official Name of the Tangut Empire as Reflected in the Native Tangut Texts',
     where: 'Manuscripta Orientalia 1.3 (1995), pp. 22–32',
-    note: 'Prints the forms in a character list (pp. 30–31): nos. 1, 2, 11 and 61 are 𗴂𗹭𗂧𘜶, 𗴂𗹭𘜶𗴲𗂧, 𗼇𗂧 and 𗕑𗓦𗂧, read from the page by eye. Before 1227 she finds only the first in Tangut, on the imperial stelae, in the canon\'s preface and on the Liangzhou stele; the form with 𗴲 occurs in Chinese texts of the state as 白高大夏國 and in Tangut only after its fall. She calls 𗼇𗂧 the unofficial name, used in the Tangut Code, says 𗕑𗓦𗂧 is used in ritual songs, and rejects the reading Bai Shang, "upper reaches of the White River".',
+    note: 'Prints the forms in a character list (pp. 30–31): nos. 1, 2, 11 and 61 are 𗴂𗹭𗂧𘜶, 𗴂𗹭𘜶𗴲𗂧, 𗼇𗂧 and 𗕑𗓦𗂧, read from the page by eye. Before 1227 she finds only the first in Tangut, on the imperial stelae, in the canon\'s preface and on the Liangzhou stele; the form with 𗴲 occurs in Chinese texts of the state as 白高大夏國, photographed in her fig. 2 (p. 25) beside 乾祐, 甲辰 and 奉天顯道耀武宣文, and in Tangut only after its fall. She calls 𗼇𗂧 the unofficial name, used in the Tangut Code, says 𗕑𗓦𗂧 is used in ritual songs, and rejects the reading Bai Shang, "upper reaches of the White River".',
     url: 'https://www.orientalstudies.ru/rus/images/pdf/journals/p_mo_1_3_1995_03_kepping.pdf',
   },
   legal: {
