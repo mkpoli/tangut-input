@@ -180,7 +180,7 @@
 
   <section class="ui-section titles" id="later-eras">
     <h2 class="heading">{t('eras.later')}</h2>
-    <p class="ui-hint">{t('eras.later.intro')}{@render cites(['unattributedTable'])} {t('eras.later.colophon')}{@render cites(['duan2024'])}</p>
+    <p class="ui-hint">{t('eras.later.intro')}{@render cites(['zoenshiueh2026'])} {t('eras.later.colophon')}{@render cites(['duan2024'])}</p>
     <div class="ui-table-wrap">
       <table class="ui-table list">
         <thead><tr><th scope="col">{t('eras.era')}</th><th scope="col">{t('eras.tangut')}</th></tr></thead>
