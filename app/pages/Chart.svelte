@@ -261,6 +261,9 @@
                       <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan">{#each ix.tibetan.get(char) ?? [] as [wylie, script, where], index (index)}{index ? ' ' : ''}<span lang="bo" title={tibetanTitle(wylie, where)}>{tibetanShown(wylie, script)}</span>{/each}</small>{/if}</button>
                     {/each}
                   {/if}
+                  {#if ix.tibetanRhymes[row.key]?.[group]?.length}
+                    <p class="spellings" lang="bo">{ix.tibetanRhymes[row.key][group].join(' ')}</p>
+                  {/if}
                 </td>
               {/each}
             </tr>
@@ -299,6 +302,7 @@
   .cell{vertical-align:top;padding:1px 3px;border:1px solid transparent;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font-size:19px;line-height:1.12}
   .cell:hover{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover)}
   .cell small.tibetan{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.3;color:var(--ui-color-ink-soft)}
+  .spellings{margin:2px 0 0;padding:1px 3px 0;border-top:1px dotted var(--ui-color-border-strong);font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.35;color:var(--ui-color-ink-soft)}
   .cell small{display:block;font-family:var(--ui-font-sans);font-size:9.5px;color:var(--ui-color-ink-muted);line-height:1.1}
   @media (max-width:900px){
     .choose{margin-inline-start:0}
