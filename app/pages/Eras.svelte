@@ -4,7 +4,8 @@
   // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
   // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on, and
   // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`, and the
-  // names of the state, from `app/data/tangut-state-names.json`.
+  // names of the state, from `app/data/tangut-state-names.json`, and later era names, from
+  // `app/data/tangut-later-eras.json`.
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
   import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
@@ -179,7 +180,7 @@
 
   <section class="ui-section titles" id="later-eras">
     <h2 class="heading">{t('eras.later')}</h2>
-    <p class="ui-hint">{t('eras.later.intro')}{@render cites(['table2026', 'duan2024'])}</p>
+    <p class="ui-hint">{t('eras.later.intro')}{@render cites(['unattributedTable'])} {t('eras.later.colophon')}{@render cites(['duan2024'])}</p>
     <div class="ui-table-wrap">
       <table class="ui-table list">
         <thead><tr><th scope="col">{t('eras.era')}</th><th scope="col">{t('eras.tangut')}</th></tr></thead>
@@ -187,8 +188,8 @@
           {#each LATER_ERAS as era (era.era)}
             <tr>
               <th scope="row" lang="zh-Hant">{era.era}</th>
-              <td class="forms title-form">{#each era.forms as form, i (form)}{#if i}<span class="or">{t('eras.or')}</span>{/if}<span class="form" role="group" aria-label={form}>{#each [...form] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{/each}</td>
+              <td class="forms title-form"><span class="form" role="group" aria-label={era.tangut}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span></td>
             </tr>
           {/each}
         </tbody>

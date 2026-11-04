@@ -4,8 +4,7 @@
 # ///
 """Build the later era names written in Tangut from `data/tangut-later-eras.tsv`.
 
-Each row is one era and one Tangut form as a source gives it. An era with two rows has two possible
-readings of one source.
+Each row is one era and its Tangut form as a source gives it.
 
     uv run scripts/build_tangut_later_eras.py
 """
@@ -24,8 +23,9 @@ def main() -> None:
         for row in csv.DictReader(file, delimiter='\t'):
             if not row['tangut'] or not all(0x17000 <= ord(c) <= 0x18AFF for c in row['tangut']):
                 raise SystemExit(f'not Tangut: {row}')
-            era = eras.setdefault(row['era'], {'era': row['era'], 'forms': [], 'source': row['source']})
-            era['forms'].append(row['tangut'])
+            if row['era'] in eras:
+                raise SystemExit(f'two rows for one era: {row}')
+            eras[row['era']] = {'era': row['era'], 'tangut': row['tangut']}
     OUT.write_text(json.dumps(list(eras.values()), ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
     print(f'{len(eras)} eras → {OUT.relative_to(ROOT)}')
 
