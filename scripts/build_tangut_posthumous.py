@@ -30,7 +30,7 @@ def main() -> None:
                 if row[field] and row[field] not in row['quote']:
                     raise SystemExit(f'{field} is not in the quotation: {row}')
             rows.append({
-                'kind': row['kind'], 'temple': row['temple'], 'name': row['name'], 'posthumous': row['posthumous'],
+                'kind': row['kind'], 'temple': row['temple'], 'name': row['name'], 'relation': row['relation'], 'posthumous': row['posthumous'],
                 'tomb': row['tomb'], 'tangut': row['tangut'], 'tanguts': row['tangut_source'],
             })
     OUT.write_text(json.dumps(rows, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')

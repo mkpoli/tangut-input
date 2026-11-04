@@ -128,14 +128,14 @@
     <div class="ui-table-wrap">
       <table class="ui-table plain">
         <thead><tr><th scope="col">{t('eras.posthumous.temple')}</th><th scope="col">{t('eras.posthumous.name')}</th><th scope="col">{t('eras.posthumous.posthumous')}</th><th scope="col">{t('eras.posthumous.tomb')}</th></tr></thead>
-        <tbody lang="zh-Hant">
+        <tbody>
           {#each POSTHUMOUS.filter(row => row.kind === 'emperor') as row (row.temple)}
             <tr>
-              <th scope="row">{row.temple}</th>
-              <td>{row.name}</td>
-              <td>{row.posthumous || '—'}{#if row.tangut}<span class="form posthumous-form" role="group" aria-label={row.tangut}>{#each [...row.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites([row.tanguts])}{/if}</td>
-              <td>{row.tomb || '—'}</td>
+              <th scope="row" lang="zh-Hant">{row.temple}</th>
+              <td lang="zh-Hant">{row.name}</td>
+              <td><span lang="zh-Hant">{row.posthumous || '—'}</span>{#if row.tangut}<span class="form posthumous-form" role="group" aria-label={row.tangut}>{#each [...row.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites([row.tanguts])}<span class="tag posthumous-tag" data-kind="reported">{t('eras.titles.basis.reported')}</span><p class="note">{t('eras.posthumous.zhaojian')}</p>{/if}</td>
+              <td lang="zh-Hant">{row.tomb || '—'}</td>
             </tr>
           {/each}
         </tbody>
@@ -145,7 +145,7 @@
     <p class="ui-hint">{t('eras.posthumous.empresses.intro')}</p>
     <ul class="empresses" lang="zh-Hant">
       {#each POSTHUMOUS.filter(row => row.kind === 'empress') as row (row.posthumous)}
-        <li>{row.posthumous}{row.name}</li>
+        <li>{row.posthumous}{row.name}<span class="relation">（{row.relation}）</span></li>
       {/each}
     </ul>
   </section>
@@ -192,6 +192,8 @@
   .plain td,.plain th{font-size:var(--ui-text-sm)}
   .plain th[scope='row']{font-weight:var(--ui-weight-medium);white-space:nowrap}
   .posthumous-form{margin-inline-start:var(--ui-space-sm);vertical-align:middle}
+  .posthumous-tag{margin-inline-start:var(--ui-space-xs)}
+  .relation{color:var(--ui-color-ink-soft)}
   .subheading{font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold)}
   .empresses{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;padding:0;list-style:none;font-size:var(--ui-text-sm)}
   .sources{gap:var(--ui-space-sm);padding-top:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}

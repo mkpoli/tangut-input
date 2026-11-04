@@ -90,7 +90,7 @@ export const ERA_SOURCES = {
     author: '脫脫等',
     title: '宋史, 卷四百八十五至四百八十六, 夏國傳',
     where: 'Wikisource, revisions 2325722 and 2325721',
-    note: 'A history compiled under the Yuan, translating or describing the titles in Chinese. It writes 太祖\'s title once as 孝光 and once as 光孝, and says 兀卒 is the same word as 吾祖, "like the title khan". 仁宗\'s 制義去邪 is given as a title offered under the 紹興 years. It gives 太祖 a second temple name, 武宗, and says its names draw in part on 夏國樞要 and may differ from older histories. It gives no temple or posthumous name for the last ruler, 睍. zh Wikipedia writes 襄宗 as 敬慕 where 宋史 has 敬穆.',
+    note: 'A history compiled under the Yuan. It writes 太祖\'s title once as 孝光 and once as 光孝, and says 兀卒 is the same word as 吾祖, "like the title khan"; 元昊 first calls himself 嵬名吾祖. Its 國母 is what 仁孝 made his mother 曹氏. 仁宗\'s 制義去邪 is given as a title offered under the 紹興 years. It gives 太祖 a second temple name, 武宗, and says its names draw in part on 夏國樞要 and may differ from older histories. It gives no temple or posthumous name for the last ruler, 睍. zh Wikipedia writes 襄宗 as 敬慕 where 宋史 has 敬穆.',
     url: 'https://zh.wikisource.org/wiki/宋史/卷485',
   },
   commons: {
