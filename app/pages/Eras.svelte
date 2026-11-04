@@ -4,11 +4,13 @@
   // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
   // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on, and
   // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`, and the
-  // names of the state, from `app/data/tangut-state-names.json`.
+  // names of the state, from `app/data/tangut-state-names.json`, and later era names, from
+  // `app/data/tangut-later-eras.json`.
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
   import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
   import STATE_NAMES from '../data/tangut-state-names.json' with { type: 'json' }
+  import LATER_ERAS from '../data/tangut-later-eras.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
   import { choose } from '../lib/ui.svelte.js'
   import { hex } from '../lib/db.svelte.js'
@@ -169,6 +171,25 @@
               <td class="forms title-form" data-empty={!name.tangut || undefined}>{#if name.tangut}<span class="form" role="group" aria-label={name.tangut}>{#each [...name.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
                 aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(name.tangutSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
               <td class="basis"><span class="tag" data-kind={name.basis}>{t(`eras.titles.basis.${name.basis}`)}</span>{#if name.note}<p class="note">{t(`eras.states.note.${name.note}`)}{@render cites(name.noteSources)}</p>{/if}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="ui-section titles" id="later-eras">
+    <h2 class="heading">{t('eras.later')}</h2>
+    <p class="ui-hint">{t('eras.later.intro')}{@render cites(['unattributedTable'])} {t('eras.later.colophon')}{@render cites(['duan2024'])}</p>
+    <div class="ui-table-wrap">
+      <table class="ui-table list">
+        <thead><tr><th scope="col">{t('eras.era')}</th><th scope="col">{t('eras.tangut')}</th></tr></thead>
+        <tbody>
+          {#each LATER_ERAS as era (era.era)}
+            <tr>
+              <th scope="row" lang="zh-Hant">{era.era}</th>
+              <td class="forms title-form"><span class="form" role="group" aria-label={era.tangut}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span></td>
             </tr>
           {/each}
         </tbody>
