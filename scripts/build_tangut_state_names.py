@@ -4,9 +4,10 @@
 # ///
 """Build the names of the Western Xia state from `data/tangut-state-names.tsv`.
 
-Each row is one name and one work citing it. `place` names a text in this repository that writes the
-Tangut, and the build stops unless the name occurs there. A name's `basis` follows as in the imperial
-titles: `text`, `reported` or `chinese`.
+Each row is one name and one work citing it, with `backs` saying whether the work bears on the Tangut,
+the Chinese or the row's note. `chinese_source` is the work that prints the Chinese as written, and `note` names a
+message shown on the row. `place` names a text in this repository that writes the Tangut, and the
+build stops unless the name occurs there. A name's `basis` follows as in the imperial titles.
 
     uv run scripts/build_tangut_state_names.py
 """
@@ -27,16 +28,21 @@ def main() -> None:
         for row in csv.DictReader(file, delimiter='\t'):
             if row['place'] and (not row['tangut'] or row['tangut'] not in place_text(row['place'])):
                 raise SystemExit(f'the name does not occur in the text named: {row}')
+            if row['backs'] not in ('tangut', 'chinese', 'note') or (row['backs'] == 'tangut' and not row['tangut']):
+                raise SystemExit(f'unknown backing: {row}')
             name = names.setdefault(row['chinese'], {
-                'chinese': row['chinese'], 'tangut': row['tangut'], 'gloss': row['gloss'], 'basis': 'chinese', 'sources': [],
+                'chinese': row['chinese'], 'tangut': row['tangut'], 'gloss': row['gloss'], 'note': row['note'],
+                'basis': 'chinese', 'tangutSources': [], 'chineseSources': [row['chinese_source']], 'noteSources': [],
             })
-            if (name['tangut'], name['gloss']) != (row['tangut'], row['gloss']):
+            if (name['tangut'], name['gloss'], name['note'], name['chineseSources'][0]) != (row['tangut'], row['gloss'], row['note'], row['chinese_source']):
                 raise SystemExit(f'rows for one name disagree: {row}')
             if row['place']:
                 name['basis'] = 'text'
-            elif row['tangut'] and name['basis'] == 'chinese':
+            elif row['backs'] == 'tangut' and name['basis'] == 'chinese':
                 name['basis'] = 'reported'
-            name['sources'].append(row['source'])
+            sources = name[f"{row['backs']}Sources"]
+            if row['source'] not in sources:
+                sources.append(row['source'])
     OUT.write_text(json.dumps(list(names.values()), ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
     print(f'{len(names)} names → {OUT.relative_to(ROOT)}')
 

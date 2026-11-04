@@ -161,10 +161,10 @@
         <tbody>
           {#each STATE_NAMES as name (name.chinese)}
             <tr>
-              <th scope="row" lang="zh-Hant">{name.chinese}{#if name.gloss}<span class="state-gloss" lang="en">{name.gloss}</span>{/if}</th>
+              <th scope="row"><span lang="zh-Hant">{name.chinese}</span>{@render cites(name.chineseSources)}{#if name.gloss}<span class="state-gloss" lang="en">“{name.gloss}”</span>{/if}</th>
               <td class="forms title-form" data-empty={!name.tangut || undefined}>{#if name.tangut}<span class="form" role="group" aria-label={name.tangut}>{#each [...name.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{:else}<span class="ui-hint">—</span>{/if}</td>
-              <td class="basis"><span class="tagged"><span class="tag" data-kind={name.basis}>{t(`eras.titles.basis.${name.basis}`)}</span>{@render cites(name.sources)}</span></td>
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(name.tangutSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
+              <td class="basis"><span class="tag" data-kind={name.basis}>{t(`eras.titles.basis.${name.basis}`)}</span>{#if name.note}<p class="note">{t(`eras.states.note.${name.note}`)}{@render cites(name.noteSources)}</p>{/if}</td>
             </tr>
           {/each}
         </tbody>

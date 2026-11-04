@@ -65,10 +65,11 @@ by hand. `scripts/build_tangut_posthumous.py` stops if a name is not in its quot
 
 ## `tangut-state-names.tsv`
 
-Names of the state, one row per name and citing work: the Chinese; the Tangut, if known; an English
-gloss a source gives; the source's key in `app/lib/era-sources.js`; and a `place` when a text in this
-repository writes the Tangut. Compiled by hand. `scripts/build_tangut_state_names.py` stops if a name
-does not occur in its place.
+Names of the state, one row per name and citing work: the Chinese with the `chinese_source` printing
+it; the Tangut, if known; an English `gloss` a source gives; a `note` key for a message on the row;
+the source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the
+Tangut; and `backs`, whether the work bears on the Tangut, the Chinese or the note. Compiled by hand.
+`scripts/build_tangut_state_names.py` stops if a name does not occur in its place.
 
 ## `tangut-titles.tsv`
 

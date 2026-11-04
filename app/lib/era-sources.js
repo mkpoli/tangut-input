@@ -90,13 +90,13 @@ export const ERA_SOURCES = {
     author: '脫脫等',
     title: '宋史, 卷四百八十五至四百八十六, 夏國傳',
     where: 'Wikisource, revisions 2325722 and 2325721',
-    note: 'A history compiled under the Yuan, translating or describing the titles in Chinese. It writes 太祖\'s title once as 孝光 and once as 光孝, and says 兀卒 is the same word as 吾祖, "like the title khan". 仁宗\'s 制義去邪 is given as a title offered under the 紹興 years. It gives 太祖 a second temple name, 武宗, and says its names draw in part on 夏國樞要 and may differ from older histories. It gives no temple or posthumous name for the last ruler, 睍. It has 元昊 write 國稱大夏 in his memorial of 1038 and sign 男邦泥定國兀卒 in 1043, and heads its chapters 夏國. zh Wikipedia writes 襄宗 as 敬慕 where 宋史 has 敬穆.',
+    note: 'A history compiled under the Yuan. It writes 太祖\'s title once as 孝光 and once as 光孝, and says 兀卒 is the same word as 吾祖, "like the title khan"; 元昊 first calls himself 嵬名吾祖. Its 國母 is what 仁孝 made his mother 曹氏. 仁宗\'s 制義去邪 is given as a title offered under the 紹興 years. It gives 太祖 a second temple name, 武宗, and says its names draw in part on 夏國樞要 and may differ from older histories. It gives no temple or posthumous name for the last ruler, 睍. It has 元昊 write 國稱大夏 in his memorial of 寶元 2 (1039) and sign 男邦泥定國兀卒 in 1043, heads its chapters 夏國, and says 入西夏 in 卷486. zh Wikipedia writes 襄宗 as 敬慕 where 宋史 has 敬穆.',
     url: 'https://zh.wikisource.org/wiki/宋史/卷485',
   },
   commons: {
     author: '唐吉訶德的侍從 (Wikimedia Commons user)',
     title: 'Captions of the images in the category Deciphered Tangut text',
-    where: 'Wikimedia Commons, 2022',
+    where: 'Wikimedia Commons, 2011–2022',
     note: 'A user\'s own images and captions, a weak source. They give the Tangut in Unicode with the 李範文《夏漢字典》 numbers, and pages only for 風角城 (p. 172), 護城聖德至懿 (p. 90) and 兀卒 (p. 961); the dictionary was not seen. zh Wikipedia, 夏惠宗, also gives 貴梁城 and 珍陵城 for 𘅞𗹼𗍁, and cites 崔紅芬 and 文志勇 for 城號, which it says are unexplained and which some scholars treat as near to posthumous titles. Two more images (Shibo77, Commons), citing the same dictionary, give 𗴂𗹭𗂧𘜶 as 大白高國 and 𗴂𗹭𘜶𗴲𗂧 as 白高大夏國. A caption gives 𗭼𘜶𘓺𘋨 as 桓宗\'s 昭簡 (p. 813); the same four characters close 惠宗\'s title in the 慈悲道場懺法 line, where 楊志高 2010 renders them 大明皇帝.',
     url: 'https://commons.wikimedia.org/wiki/Category:Deciphered_Tangut_text',
   },
@@ -125,7 +125,7 @@ export const ERA_SOURCES = {
     author: '杜建錄',
     title: '中國藏西夏文獻敘錄',
     where: '西夏學 3 (2008), pp. 75 and 129',
-    note: 'p. 75 gives 奉白高大夏国仁尊圣德珠城皇帝敕重校 from a 金光明最勝王經 (B11·024), calling it 仁宗\'s title. An earlier entry (G21·039) gives a shorter 仁宗 form without 制義去邪 and 神謀. p. 129 reads the stele head of tomb 7 as 白高国大/护城圣德/至懿皇帝/寿陵志文 (N42·009).',
+    note: 'p. 75 gives 奉白高大夏国仁尊圣德珠城皇帝敕重校 from a 金光明最勝王經 (B11·024, undated, from 靈武), calling it 仁宗\'s title. An earlier entry (G21·039) gives a shorter 仁宗 form without 制義去邪 and 神謀. Elsewhere it reports 白高大国大安二[年] in the Chinese column inscription from the 拜寺溝 pagoda (N22·004). p. 129 reads the stele head of tomb 7 as 白高国大/护城圣德/至懿皇帝/寿陵志文 (N42·009).',
     url: 'https://www.sinoss.net/uploadfile/2010/1130/10553.pdf',
   },
   wang2010: {
@@ -146,15 +146,22 @@ export const ERA_SOURCES = {
     author: 'K. B. Kepping',
     title: 'Mi-nia (Tangut) Self-appellation and Self-portraiture in Khara Khoto Materials',
     where: 'Manuscripta Orientalia 7.4 (2001), pp. 37 and 44',
-    note: 'Prints the four characters and translates them on p. 37, list on p. 44, and calls "Xia" and "Xi Xia" Chinese names foreign to the Tanguts.',
+    note: 'Prints the four characters and translates them on p. 37, list on p. 44, and calls "Xia" and "Xi Xia" Chinese names foreign to the Tanguts. Her note 5 says Xia was never used for the state or people in Tangut texts of the state\'s own time, the only example she knows dating to 1312.',
     url: 'https://www.orientalstudies.ru/rus/images/pdf/journals/p_mo_7_4_2001_06_kepping.pdf',
   },
   enwp: {
     author: 'English Wikipedia',
     title: 'Western Xia',
     where: 'Wikipedia, read 2026-11-04',
-    note: 'Cites Kepping, The name of the Tangut Empire, T\'oung Pao 80 (1994), p. 373, not seen, for 𗴂𗹭𘜶𗴲𗂧 and for 萬祕國, which it reconstructs /khjɨ-dwuu-lhjij/ without characters.',
+    note: 'Cites Kepping, The name of the Tangut Empire, T\'oung Pao 80 (1994), p. 373, not seen, for 𗴂𗹭𘜶𗴲𗂧 and for 萬祕國, which it reconstructs /khjɨ-dwuu-lhjij/ without characters. The same article says the only Tangut name used in the Western Xia period was the Great State of White and High, with Xia taken up after 1227.',
     url: 'https://en.wikipedia.org/wiki/Western_Xia',
+  },
+  liaoshi: {
+    author: '脫脫等',
+    title: '遼史, 卷一百一十五, 二國外記',
+    where: 'Wikisource',
+    note: 'Heads a section 西夏.',
+    url: 'https://zh.wikisource.org/wiki/遼史/卷115',
   },
   nie2004: {
     author: '聶鴻音',
@@ -174,5 +181,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'commons', 'kepping2001', 'enwp',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'enwp', 'liaoshi',
 ])
