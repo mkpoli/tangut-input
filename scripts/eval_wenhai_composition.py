@@ -95,16 +95,10 @@ def ids_subtrees(node) -> set[str]:
     return found
 
 
-def part_of(source: str, part: str, ids: dict[str, str]):
-    """The named part of a source character's IDS, or None when its top level cannot give it."""
-    text = ids.get(source)
-    if not text:
-        return None
-    node = ids_top(text)
-    if node is None:
-        return None
+def cut_node(node, part: str):
+    """The named part of an IDS node, or None when its top level cannot give it."""
     if part == 'whole':
-        return text
+        return ids_text(node)
     if node[0] == 'leaf':
         return None
     operator, children = node
@@ -131,9 +125,62 @@ def part_of(source: str, part: str, ids: dict[str, str]):
     raise ValueError(f'unknown part {part}')
 
 
-def formula_parts(characters: str) -> list[tuple[str, str]]:
+def part_of(source: str, part: str, ids: dict[str, str]):
+    """The named part of a source character's IDS, or None when its top level cannot give it."""
+    text = ids.get(source)
+    if not text:
+        return None
+    node = ids_top(text)
+    if node is None:
+        return None
+    return cut_node(node, part)
+
+
+def all_nodes(node) -> list:
+    """An IDS node and every node under it."""
+    found = [node]
+    if node[0] != 'leaf':
+        for child in node[1]:
+            found += all_nodes(child)
+    return found
+
+
+def choose_part(source: str, part: str | None, head: str, ids: dict[str, str]):
+    """A part of the source that lands in the head's IDS. The top level is tried first; a part the
+    top level cannot give, or a term the 文海 left out (None), is searched for in every descendant.
+    An explicit whole is only the whole source."""
+    head_node = ids_top(ids.get(head, '') or '')
+    if head_node is None:
+        return None
+    subtrees = ids_subtrees(head_node)
+    source_node = ids_top(ids.get(source, '') or '')
+    if source_node is None:
+        return None
+    if part == 'whole':
+        root = cut_node(source_node, 'whole')
+        return root if root in subtrees else None
+    if part is not None:
+        root = cut_node(source_node, part)
+        if root is not None and root in subtrees:
+            return root
+        terms = [part]
+    else:
+        terms = list(PARTS.values())
+    best = None
+    for node in all_nodes(source_node):
+        for term in terms:
+            found = cut_node(node, term)
+            if found is None or found not in subtrees:
+                continue
+            size = len(ids_leaves(ids_top(found)))
+            if best is None or size > best[0]:
+                best = (size, found)
+    return best[1] if best else None
+
+
+def formula_parts(characters: str, elide: bool = False) -> list[tuple[str, str | None]]:
     """A construction as (source, part) pairs: a part term modifies the source before it, and a
-    source without a term is the whole character."""
+    source without a term is the whole character, or None when elide is set."""
     parts, index = [], 0
     while index < len(characters):
         source = characters[index]
@@ -143,7 +190,7 @@ def formula_parts(characters: str) -> list[tuple[str, str]]:
             parts.append((source, PARTS[characters[index + 1]]))
             index += 2
         else:
-            parts.append((source, 'whole'))
+            parts.append((source, None if elide else 'whole'))
             index += 1
     return parts
 
@@ -206,6 +253,8 @@ def main() -> None:
     parser.add_argument('--csv', type=Path, help="a copy of nkay0's table, instead of fetching it")
     parser.add_argument('--formulas', type=Path,
                         help='a JSONL construction table, instead of the BabelStone pages')
+    parser.add_argument('--choose', action='store_true',
+                        help="also choose each cut with the head's IDS")
     parser.add_argument('--ids', type=Path, default=IDS,
                         help='the IDS table (default: data/tangut-ids.tsv.gz)')
     options = parser.parse_args()
@@ -235,6 +284,7 @@ def main() -> None:
     ids = read_ids(options.ids)
     counts = collections.Counter()
     failures = []
+    parsed = []
     for key, construction, head in cells:
         if options.formulas:
             characters = construction
@@ -255,6 +305,7 @@ def main() -> None:
         if not head or head not in ids:
             counts['no head'] += 1
             continue
+        parsed.append((key, characters, head))
         extracted = [(source, part, part_of(source, part, ids)) for source, part in parts]
         missing = [item for item in extracted if item[2] is None]
         if missing:
@@ -319,6 +370,32 @@ def main() -> None:
         detail = '; '.join(f'{source} {part} (source {ids.get(source, "no IDS")})'
                            for source, part, _ in missing)
         print(f'  {key}  {head}  {construction}  {detail}')
+
+    if options.choose:
+        resolved = exact = 0
+        unresolved = []
+        for key, characters, head in parsed:
+            parts = formula_parts(characters, elide=True)
+            head_node = ids_top(ids[head])
+            children = ([ids_text(child) for child in head_node[1]]
+                        if head_node is not None and head_node[0] != 'leaf' else [])
+            chosen = []
+            for source, part in parts:
+                found = choose_part(source, part, head, ids)
+                if found is None:
+                    chosen = None
+                    break
+                chosen.append(found)
+            if chosen is None:
+                unresolved.append((key, head, parts))
+            else:
+                resolved += 1
+                if chosen == children:
+                    exact += 1
+        print(f'head-assisted: {resolved} of {len(parsed)} resolved, {exact} exact, '
+              f'{len(unresolved)} unresolved')
+        for key, head, parts in unresolved:
+            print(f'  {key}  {head}  {parts}')
 
 
 if __name__ == '__main__':

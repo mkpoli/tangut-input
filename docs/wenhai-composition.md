@@ -98,6 +98,22 @@ uv run python -m unittest discover -s scripts -p test_wenhai_composition.py
 
 `DIR` holds saved copies of the three BabelStone pages under their own names.
 
+## Choosing the cut with the head
+
+`--choose` asks a different question: given the head as well as the formula, find each part in the
+head's IDS. It tries the source's top level first, then every descendant; an elided term may take
+any part. This is a reading aid, not an input code: the reader has the head, the person typing does
+not.
+
+On the 60, 39 entries resolve and 28 rebuild the head's top level exactly; 21 remain. The
+formula-only pass puts every part in the head in 31 entries and rebuilds 26 exactly, so the head
+buys eight more entries and two more exact ones. The 21 are the surrounding and top/bottom cuts
+that no descendant encodes, and the explicit 全 where the head splits the source.
+
+```sh
+uv run python scripts/eval_wenhai_composition.py --choose
+```
+
 ## Other corpora
 
 `--formulas FILE` reads a JSONL table instead of BabelStone's pages, one object per line:

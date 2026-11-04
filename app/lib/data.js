@@ -7,6 +7,10 @@
 /** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
 /** @typedef {{ char: string, codepoint?: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
  *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_en?: string, wenhai_text_zh?: string }} Entry */
+/** Normalized terms derived from CCAMC records, used only to answer a search: the readings of three
+ * systems Wiktionary does not carry, and the English and Chinese glosses. Never rendered.
+ * @typedef {{ format: string, note: string, readings: Record<string, Record<string, string>>,
+ *   meanings: Record<string, Record<string, string[]>> }} CcamcIndex */
 /** @typedef {{ id: string, kind: 'facsimile' | 'transcription', title: string, shortTitle?: string, titleTangut?: string, author: string, year?: number,
  *   publisher: string, url: string, licence: string, licenceUrl?: string, manuscript?: string, facsimile?: string,
  *   facsimileCredit?: string, reading?: string, readingUrl?: string, retrieved?: string, revision?: number, note?: string,
@@ -49,14 +53,14 @@ const once = (key, load) => {
   return /** @type {Promise<T>} */ (pending.get(key))
 }
 
-/** Meanings, readings and descriptions, from Open Tangut. @returns {Promise<Entry[]>} */
+/** Meanings and readings from Wiktionary, with the descriptions from BabelStone. @returns {Promise<Entry[]>} */
 export const loadEntries = () => once('entries', async () => {
   const data = await readJson(new URL('../data/tangut-entries.json.gz', import.meta.url))
-  return Array.isArray(data) ? data : expandEntries(data)
+  return expandEntries(data)
 })
 
 /**
- * A packed record, one row of values per character, as `compact_tangut_entries.py` writes it. The
+ * A packed record, one row of values per character, as `build_tangut_entries.py` writes it. The
  * names of the readings are in the header once instead of in every row.
  * @param {{ systems: string[], rows: any[][] }} packed
  * @returns {Entry[]}
@@ -80,11 +84,14 @@ function expandEntries(packed) {
       radical: radical ?? undefined,
       definitions,
       pronunciations,
-      wenhai_text_en: wenhaiEn ?? undefined,
-      wenhai_text_zh: wenhaiZh ?? undefined,
+      wenhai_text_en: wenhaiEn || undefined,
+      wenhai_text_zh: wenhaiZh || undefined,
     }
   })
 }
+
+/** The derived CCAMC search terms. @returns {Promise<CcamcIndex>} */
+export const loadCcamcIndex = () => once('ccamc', () => readJson(new URL('../data/tangut-ccamc-index.json.gz', import.meta.url)))
 
 /** Cangjie codes as [character, code] pairs, from the RIME Tangut Cangjie table. @returns {Promise<[string, string][]>} */
 export const loadCodes = () => once('codes', () => readJson(new URL('../data/tangut-cangjie.json.gz', import.meta.url)))
@@ -100,9 +107,6 @@ export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/t
 
 /** The rhyme books' class for each character, with its fanqie. @returns {Promise<Rhymes>} */
 export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/tangut-rhymes.json.gz', import.meta.url)))
-
-/** Groups of Chinese fanqie characters that stand for one initial. @returns {Promise<{ note: string, groups: string[][] }>} */
-export const loadFanqieAliases = () => once('fanqie-aliases', () => readJson(new URL('../data/tangut-fanqie-aliases.json', import.meta.url)))
 
 /** Tibetan phonetic glosses by character, from BabelStone's index of five British Library manuscripts:
  * each gloss is [Wylie, Tibetan script, [[shelfmark, count]…]].
