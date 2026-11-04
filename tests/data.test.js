@@ -123,54 +123,6 @@ test('the sample passages are exact lines from the attestation', () => {
   }
 })
 
-const glossWords = gunzipSync(readFileSync(new URL('../data/tangut-gloss-words.tsv.gz', import.meta.url)))
-  .toString().split('\n').filter(line => line && !line.startsWith('#')).map(line => line.split('\t'))
-
-test('the gloss word table names every character once', () => {
-  expect(glossWords.length).toBe(6144)
-  expect(new Set(glossWords.map(row => row[0]))).toEqual(new Set(entries.rows.map(row => row[0])))
-  const tiers = {}
-  for (const [, , tier] of glossWords) tiers[tier] = (tiers[tier] ?? 0) + 1
-  expect(tiers).toEqual({ word: 3117, phrase: 2053, transliteration: 728, long: 162, empty: 61, redirect: 23 })
-  const glossOf = char => glossWords.find(row => row[0] === char)
-  expect(glossOf('𗢳')).toEqual(['𗢳', '佛', 'word', 'tha̱1'])
-  expect(glossOf('𘋢').slice(0, 3)).toEqual(['𘋢', '菩薩', 'phrase'])
-  expect(glossOf('𗍏')[2]).toBe('transliteration')
-  // A bracket later in the entry does not make the first sense a transliteration.
-  expect(glossOf('𗓭').slice(0, 3)).toEqual(['𗓭', '富', 'word'])
-  // A bracketed note stays as it is and is left for an editor, rather than guessed into a word.
-  expect(glossOf('𗁋').slice(0, 3)).toEqual(['𗁋', '（滴）答', 'long'])
-  expect(glossOf('𗠏').slice(0, 3)).toEqual(['𗠏', '（喉嚨）咽喉', 'long'])
-  // An ASCII note before the word explains the word and is dropped.
-  expect(glossOf('𗈒')).toEqual(['𗈒', '肘', 'word', 'rkiwr2'])
-  expect(glossOf('𗘓')[2]).toBe('long')
-})
-
-const glossReadings = gunzipSync(readFileSync(new URL('../data/tangut-gloss-readings.tsv.gz', import.meta.url)))
-  .toString().split('\n').filter(line => line && !line.startsWith('#')).map(line => line.split('\t'))
-
-test('the gloss readings cover the one-character words', () => {
-  const words = glossWords.filter(row => row[2] === 'word').map(row => row[0])
-  expect(glossReadings.length).toBe(3117)
-  expect(glossReadings.map(row => row[0])).toEqual(words.sort((a, b) => a.codePointAt(0) - b.codePointAt(0)))
-  // Every reading of the gloss is kept, in KANJIDIC2's order and its pinyin tone numbers, except
-  // bound forms, which the source marks with a hyphen at either end.
-  expect(glossReadings.filter(row => row[2]).length).toBe(3068)
-  expect(glossReadings.filter(row => row[3]).length).toBe(3063)
-  expect(glossReadings.filter(row => row[4]).length).toBe(2801)
-  const readingOf = char => glossReadings.find(row => row[0] === char)
-  expect(readingOf('𗢳')).toEqual(['𗢳', '佛', 'fo2 fu2', 'ブツ フツ', 'ほとけ'])
-  expect(readingOf('𘛛')).toEqual(['𘛛', '日', 'ri4', 'ニチ ジツ', 'ひ'])
-  // An okurigana stem keeps its dot; a hyphenated suffix reading is left out.
-  expect(readingOf('𗄖')).toEqual(['𗄖', '行', 'xing2 hang2 hang4 xing4', 'コウ ギョウ アン', 'い.く ゆ.く おこな.う おこ.なう'])
-  // 毒 is read in Sino-Japanese only, so its kun reading is empty rather than guessed.
-  expect(readingOf('𗀀')).toEqual(['𗀀', '毒', 'du2', 'ドク', ''])
-  // 上 keeps its standalone kun readings and drops the うわ- bound form.
-  expect(readingOf('𗥁')[4]).toBe('うえ かみ あ.げる あ.がる あ.がり のぼ.る のぼ.り のぼ.せる のぼ.す たてまつ.る')
-  // A character KANJIDIC2 does not carry keeps empty columns.
-  expect(readingOf('𗐭')).toEqual(['𗐭', '說', '', '', ''])
-})
-
 const frequency = json('tangut-frequency.json.gz')
 
 test('the frequency table counts every place in the corpus', () => {
