@@ -1,4 +1,4 @@
-// The works the era list cites, by the key `data/tangut-era-evidence.tsv` uses. `calendar` is the
+// The works the era and title lists cite, by the key `data/tangut-era-evidence.tsv` uses. `calendar` is the
 // source of every era's dates and of the forms no other source backs. A work read only through
 // another's quotation has no link of its own; its note names the work that quotes it.
 export const ERA_SOURCES = {
@@ -23,6 +23,202 @@ export const ERA_SOURCES = {
     note: '',
     url: 'https://babelstone.co.uk/TangutSea/1256183861173784576.html',
   },
+  stele1094: {
+    author: 'Liangzhou stele (1094), transcribed on Wikisource after Nishida Tatsuo',
+    title: '𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞',
+    where: 'Wikisource, revision 909760; Nishida, 西夏語の研究 I (1964), pp. 156–176',
+    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here. The pair 𗣼𗯿𘓺𗨺𘜹, 𗸯𗑗𘓺𘋨 stands before 天祐民安 4 (1093). These match the ends of the titles 孫穎新 gives 崇宗 and his mother. The same pair also stands between 大安 8 (1082) and 天安禮定 2 (1086), the year 惠宗 died according to 宋史; how that passage bears on it is not settled here.',
+    url: 'https://wikisource.org/w/index.php?oldid=909760',
+  },
+  months1185: {
+    author: 'Ode on Monthly Pleasures, transcribed on Wikisource after Nishida Tatsuo',
+    title: '𗼑𗼑𗫉𗊱',
+    where: 'Wikisource, revision 1186555; Nishida, 京都大学文学部紀要 25 (1986), pp. 1–116',
+    note: 'The colophon is dated 乾祐 16 (1185).',
+    url: 'https://wikisource.org/w/index.php?oldid=1186555',
+  },
+  maxims1187: {
+    author: 'Newly Assembled Precious Dual Maxims, transcribed on Wikisource',
+    title: '𗆧𗰖𗬻𘜼𘋥𘝿',
+    where: 'Wikisource, revision 1021341; Kychanov 1974; 聶鴻音, 西夏學 2 (2007), pp. 134–166',
+    note: 'The colophon, transcribed after 聶鴻音 2007, pp. 157–158, names 乾祐 7 (1176) and is dated 乾祐 18 (1187).',
+    url: 'https://wikisource.org/w/index.php?oldid=1021341',
+  },
+  nie2009: {
+    author: '聶鴻音',
+    title: '乾祐二十年《彌勒上生經御製發願文》的夏漢對勘研究',
+    where: '西夏學 4 (2009), pp. 42–45; Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
+    note: 'The prayer is dated 乾祐 20 (1189); the Chinese of its title is on p. 43.',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10732.pdf',
+  },
+  leilin: {
+    author: 'Guillaume Jacques',
+    title: 'Leilin database',
+    where: 'Tangut 類林; read in the Lausanne Corpus of Digital Tangut Texts',
+    note: 'The colophons of two fascicles are dated 乾祐 12 (1181).',
+    url: 'https://www.academia.edu/25078937/Leilin_database',
+  },
+  kychanov2010: {
+    author: 'Е. И. Кычанов, tr. 彭向前',
+    title: '唐古特譯本《貞觀政要》殘卷考',
+    where: '西夏學 6 (2010), pp. 14–18; Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
+    note: 'Its Chinese rendering has 貞觀十四年 and 貞觀十七年 at the lines the Tangut opens with 𗣼𘝯, both of the Tang era. The comparison with the coin is made on this page.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606102539528.pdf',
+  },
+  diamond: {
+    author: 'Diamond Sutra, transcribed on Wikisource',
+    title: '𗵒𘗁𘄒𘎑𘏞𗓽𗕥𗸰𗖰𗚩',
+    where: 'Wikisource, revision 1030376',
+    note: 'The credit line gives the title as the corrector of the text.',
+    url: 'https://wikisource.org/w/index.php?oldid=1030376',
+  },
+  yang2010: {
+    author: '楊志高',
+    title: '國圖藏西夏文《慈悲道場懺法》卷八譯釋（一）',
+    where: '西夏學 5 (2010); Tangut text read in the Lausanne Corpus of Digital Tangut Texts',
+    note: 'The translators\' line, in its word-for-word gloss; its running translation has 国正 and 民正. It names 惠宗 and the empress dowager 梁氏 as the translators; 聶鴻音 2009, p. 42 calls her his mother.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0528/20120528021944100.pdf',
+  },
+  yang2011: {
+    author: '楊志高',
+    title: '圖書館藏西夏文《慈悲道場懺法序》譯考',
+    where: '西夏學 8 (2011), p. 100',
+    note: 'Gives the line of another colophon as 禄蕃 and 主世, and attributes 惠宗 to 史金波 1988.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0620/20120620033537836.pdf',
+  },
+  songshi: {
+    author: '脫脫等',
+    title: '宋史, 卷四百八十五至四百八十六, 夏國傳',
+    where: 'Wikisource, revisions 2325722 and 2325721',
+    note: 'A history compiled under the Yuan. It writes 太祖\'s title once as 孝光 and once as 光孝, and says 兀卒 is the same word as 吾祖, "like the title khan"; 元昊 first calls himself 嵬名吾祖. Its 國母 is what 仁孝 made his mother 曹氏. 仁宗\'s 制義去邪 is given as a title offered under the 紹興 years. It gives 太祖 a second temple name, 武宗, and says its names draw in part on 夏國樞要 and may differ from older histories. It gives no temple or posthumous name for the last ruler, 睍. It has 元昊 write 國稱大夏 in his memorial of 寶元 2 (1039) and sign 男邦泥定國兀卒 in 1043, heads its chapters 夏國, and says 入西夏 in 卷486. zh Wikipedia writes 襄宗 as 敬慕 where 宋史 has 敬穆.',
+    url: 'https://zh.wikisource.org/wiki/宋史/卷485',
+  },
+  commons: {
+    author: '唐吉訶德的侍從 (Wikimedia Commons user)',
+    title: 'Captions of the images in the category Deciphered Tangut text',
+    where: 'Wikimedia Commons, 2011–2022',
+    note: 'A user\'s own images and captions, a weak source. They give the Tangut in Unicode with the 李範文《夏漢字典》 numbers, and pages only for 風角城 (p. 172), 護城聖德至懿 (p. 90) and 兀卒 (p. 961); the dictionary was not seen. zh Wikipedia, 夏惠宗, also gives 貴梁城 and 珍陵城 for 𘅞𗹼𗍁, and cites 崔紅芬 and 文志勇 for 城號, which it says are unexplained and which some scholars treat as near to posthumous titles. Two more images (Shibo77, Commons), citing the same dictionary, give 𗴂𗹭𗂧𘜶 as 大白高國 and 𗴂𗹭𘜶𗴲𗂧 as 白高大夏國. A caption gives 𗭼𘜶𘓺𘋨 as 桓宗\'s 昭簡 (p. 813); the same four characters close 惠宗\'s title in the 慈悲道場懺法 line, where 楊志高 2010 renders them 大明皇帝.',
+    url: 'https://commons.wikimedia.org/wiki/Category:Deciphered_Tangut_text',
+  },
+  shi2003: {
+    author: '史金波',
+    title: '西夏的佛教信仰和風俗',
+    where: '普門學報 14 (2003), pp. 9, 10 and 14 of the PDF',
+    note: 'Quotes 聖文英武崇仁至孝皇帝 from an inscription on burying relics, dated 大慶 3 by 牛達生\'s emendation, two months before the state was proclaimed, 歸天廣祖皇帝 for 崇宗 from a 人慶 2 (1145) prayer, and 護城皇帝 from a 千佛名經 prayer, saying 護城皇帝 is 仁宗. It reads the 天力 title as 天力大治、孝智淨廣、宜德納忠、長平, says its holder is hard to settle, and estimates a ruler after 仁孝.',
+    url: 'https://dlbs.liberal.ntu.edu.tw/FULLTEXT/JR-MAG/mag104049.pdf',
+  },
+  sun2021: {
+    author: '孫穎新',
+    title: '西夏文《大寶積經·無量壽如來會》對勘研究',
+    where: 'Chapter 二, 西夏佛經的初譯和校譯活動, read on QQ閱讀 without page numbers',
+    note: 'Author from the book\'s page on QQ閱讀. Prints the colophon formats with Tangut in a custom font, which was not decoded here in full, so only the Chinese is listed for most. The last four codes of 崇宗\'s title, 稅葾猜索, were matched by eye to glyphs in PDFs that use the same font codes (段玉泉, 西夏文《聖勝慧到彼岸功德寶集偈》考論; 西田龍雄; and 聶鴻音 on the 彌勒 prayer, PDF p. 2, all in 西夏學 4), giving 𗸯𗑗𘓺𘋨 for the end of the title, 仁净皇帝. That match is made on this page; no study links the stele\'s form to 崇宗. His mother\'s title ends 德盛皇太后 with the codes 緳蛙猜厚菐, which draw 𗣼𗯿𘓺𗨺𘜹, the stele\'s form, by the same comparison. 蛙 was seen in 克平, tr. 李楊 and 王培培, 漢武帝《秋風辭》的番語譯文 (西夏學 4, PDF p. 4), in the line rendered 香草茂盛南花芬. 猜厚菐 is in 聶鴻音, 俄藏西夏本《拔濟苦難陀羅尼經》考釋 (西夏學 6, 2010, PDF p. 3), where the Chinese has 皇太后 and 厚 is drawn once. No study links this form to her either.',
+    url: 'https://m.chuangshi.qq.com/read/26322215/8',
+  },
+  yaoshi: {
+    author: '崔紅芬',
+    title: '西夏文《藥師琉璃光七佛本願功德經》及相關問題考略',
+    where: '佛學思想與佛教文化研究, read on QQ閱讀 without page numbers',
+    note: 'Cites 崔紅芬 and 文志勇, 西夏皇帝尊號考略 (寧夏大學學報 2006(5), reprinted 2007(1), which is the year zh Wikipedia gives; only the abstract was seen). Holds that 仁宗 may have taken the 天力 title after 乾祐 1 (1170), if Kychanov\'s inference is right. It does not discuss 史金波 2003, and setting the two side by side is done on this page. Dates 制義去邪 from 大慶 2 (1141). zh Wikipedia, after the same article, gives 崇宗 as 神功胜录教德治庶仁净.',
+    url: 'https://m.inf.qq.com/read/1022468787/5',
+  },
+  du2008: {
+    author: '杜建錄',
+    title: '中國藏西夏文獻敘錄',
+    where: '西夏學 3 (2008), pp. 75 and 129',
+    note: 'p. 75 gives 奉白高大夏国仁尊圣德珠城皇帝敕重校 from a 金光明最勝王經 (B11·024, undated, from 靈武), calling it 仁宗\'s title. An earlier entry (G21·039) gives a shorter 仁宗 form without 制義去邪 and 神謀. Elsewhere it reports 白高大国大安二[年] in the Chinese column inscription from the 拜寺溝 pagoda (N22·004). p. 129 reads the stele head of tomb 7 as 白高国大/护城圣德/至懿皇帝/寿陵志文 (N42·009).',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10553.pdf',
+  },
+  wang2010: {
+    author: '王培培',
+    title: '俄藏西夏文《維摩詰經》殘卷考補',
+    where: '西夏學 5 (2010)',
+    note: 'Renders the same line 天生善院番禄法古正国皇太后 and 就德主国增福正民大明皇帝.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0528/20120528022252806.pdf',
+  },
+  nishida: {
+    author: '西田龍雄, tr. 劉紅軍',
+    title: '西夏語佛典目錄編纂諸問題',
+    where: '西夏學 4 (2009)',
+    note: 'Calls a line rendered 德政国主福政民正明大皇帝 崇宗\'s title, against the 惠宗 of the works above.',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10730.pdf',
+  },
+  chen2015: {
+    author: '陳瑋',
+    title: '稱天子，配龍飾：西夏皇室如何打造正統形象？',
+    where: '澎湃新聞 私家歷史, read 2026-11-04',
+    note: 'Quotes 史金波 that 兀卒 is the Tangut for 皇帝, and takes 邦泥定國 as a transcription of the Tangut 白高國.',
+    url: 'https://www.thepaper.cn/newsDetail_forward_1314456',
+  },
+  zhai2010: {
+    author: '翟麗萍',
+    title: '西夏蕃名官號異譯考釋',
+    where: '西夏學 6 (2010)',
+    note: 'Reports that 王靜如, 李範文 (邦泥定國兀卒考釋) and 史金波 read 兀卒 as 皇帝, and quotes the 長編 for a rival gloss, 青天子.',
+    url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606103541242.pdf',
+  },
+  kepping2001: {
+    author: 'K. B. Kepping',
+    title: 'Mi-nia (Tangut) Self-appellation and Self-portraiture in Khara Khoto Materials',
+    where: 'Manuscripta Orientalia 7.4 (2001), pp. 37 and 44',
+    note: 'Prints the four characters and translates them on p. 37, list on p. 44, and calls "Xia" and "Xi Xia" Chinese names foreign to the Tanguts. Her note 5 says Xia was never used for the state or people in Tangut texts of the state\'s own time, the only example she knows dating to 1312.',
+    url: 'https://www.orientalstudies.ru/rus/images/pdf/journals/p_mo_7_4_2001_06_kepping.pdf',
+  },
+  enwp: {
+    author: 'English Wikipedia',
+    title: 'Western Xia',
+    where: 'Wikipedia, read 2026-11-04',
+    note: 'Cites Kepping, The name of the Tangut Empire, T\'oung Pao 80 (1994), p. 373, not seen, for 𗴂𗹭𘜶𗴲𗂧 and for 萬祕國, which it reconstructs /khjɨ-dwuu-lhjij/. The Chinese 萬祕國 is read here from this article alone. The same article says the only Tangut name used in the Western Xia period was the Great State of White and High, with Xia taken up after 1227.',
+    url: 'https://en.wikipedia.org/wiki/Western_Xia',
+  },
+  liaoshi: {
+    author: '脫脫等',
+    title: '遼史, 卷一百一十五, 二國外記',
+    where: 'Wikisource',
+    note: 'Heads a section 西夏.',
+    url: 'https://zh.wikisource.org/wiki/遼史/卷115',
+  },
+  zoenshiueh: {
+    author: 'परवद💙💛 (@zoenshiueh_lieu)',
+    title: 'A list of Western Xia era names in Tangut',
+    where: 'Post on X; its date and link were not recorded',
+    note: 'A social media post that names no source. 19 lines, 14 of them matching the calendar. It adds 天授禮法延祚, 應天 and 皇建, whose 𗺔 and 𘚪 occur in no running text on this site, and differs from the calendar on 天賜禮盛國慶 (𘓺 for 𘀗) and 元德 (𗪘 for 𗪟, which look alike). It writes 天 as 𘓺 except in 天授, and puts 𘓺 first in 應天 although 天 comes second in the Chinese. It lists 大慶 twice with one spelling, the first time between 天授禮法延祚 and 大安, where no era of that name falls, so the era of 1036 is not given a form here. It puts 皇建 before 應天.',
+    url: '',
+  },
+  zoenshiueh2026: {
+    author: 'परवद💙💛 (@zoenshiueh_lieu)',
+    title: 'Image of a table of four era names in Tangut',
+    where: 'Post on X, 21 June 2026',
+    note: 'The post is the image alone. It names no source and does not say whose eras these are. The characters were read from the image by comparing them with a font. Its 元 is 𗪟, as in the calendar\'s 元德, where the same author\'s list of Western Xia eras has 𗪘. 皇慶 is spelled as the Xia era 天慶 is, and 大德 as the Xia era 大德 is.',
+    url: 'https://x.com/zoenshiueh_lieu/status/2068641365853139002',
+  },
+  duan2024: {
+    author: '段玉泉',
+    title: '元朝建號前蒙古汗國時期的西夏文獻',
+    where: '中國社會科學網, 2024',
+    note: 'Reports a Tangut colophon dated 大朝國大德四年 in translation only, without the characters.',
+    url: 'https://www.cssn.cn/skgz/bwyc/202404/t20240425_5747940.shtml',
+  },
+  kepping1995: {
+    author: 'K. B. Kepping',
+    title: 'The Official Name of the Tangut Empire as Reflected in the Native Tangut Texts',
+    where: 'Manuscripta Orientalia 1.3 (1995), pp. 22–32',
+    note: 'Prints the forms in a character list (pp. 30–31): nos. 1, 2, 11 and 61 are 𗴂𗹭𗂧𘜶, 𗴂𗹭𘜶𗴲𗂧, 𗼇𗂧 and 𗕑𗓦𗂧, read from the page by eye. Of her two names, only the first occurs in Tangut before 1227 in Shi Jinbo\'s 1988 collection of prefaces and colophons; she also cites it on the imperial stelae, at the head of the canon and on the Liangzhou stele. The form with 𗴲 occurs in Chinese texts of the state as 白高大夏國, found by Kychanov (1968) and photographed in her fig. 2 (p. 25), where 乾祐, 甲辰 and 奉天顯道耀武宣文 can be read, and in Tangut only after the fall. She calls 𗼇𗂧 the unofficial name, used in the Tangut Code, says 𗕑𗓦𗂧 is used in ritual songs, and rejects the reading Bai Shang, "upper reaches of the White River".',
+    url: 'https://www.orientalstudies.ru/rus/images/pdf/journals/p_mo_1_3_1995_03_kepping.pdf',
+  },
+  legal: {
+    author: 'Alan Downes',
+    title: 'How Does Tangut Work? (PhD thesis, 2018), legal texts',
+    where: 'Read in the Lausanne Corpus of Digital Tangut Texts; numbered p. 514, col. 7 in the file',
+    note: 'The column has gaps, one directly before 𗼇𗂧.',
+    url: 'https://www.academia.edu/36787770/How_Does_Tangut_Work_PhD_Thesis',
+  },
+  cngsda: {
+    author: '佚名, 來源 景泰省檔案局',
+    title: '西夏歷史的孑遺',
+    where: '甘肅檔案信息網 蘭台文苑, 2013-05-22',
+    note: 'A weak source, cited only for the form 白上国. It does not explain the name; relating it to the reading Kepping rejects is done on this page.',
+    url: 'https://www.cngsda.net/ltwy/17169.jhtml',
+  },
   nie2004: {
     author: '聶鴻音',
     title: '西夏文《過去莊嚴劫千佛名經》發願文中的兩個年號',
@@ -40,4 +236,6 @@ export const ERA_SOURCES = {
 }
 
 /** The order the list at the foot numbers them in. */
-export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ (['calendar', 'west2007', 'west2020', 'nie2004', 'gong2020'])
+export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+])

@@ -7,7 +7,7 @@
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
-  import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
+  import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
   import { byCode, byName, byMeaning, byCodePoint, byDescription, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
@@ -54,9 +54,9 @@
   /** The Li Fanwen reading, or the first system that has one, marked with its system. @param {string} char */
   function firstReading(char) {
     const readings = ix.byChar.get(char)?.pronunciations ?? {}
+    if (readings[ui.reading]?.trim()) return readings[ui.reading].trim()
     const system = SYSTEMS.find(s => readings[s.key]?.trim())
-    if (!system) return ''
-    return system.key === 'li_fanwen' ? readings[system.key].trim() : `${readings[system.key].trim()} (${system.short})`
+    return system ? `${readings[system.key].trim()} (${system.short})` : ''
   }
   const flat = $derived(groups.flatMap(group => group.items))
 

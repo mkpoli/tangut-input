@@ -1,6 +1,6 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadZzz, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadZzz, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
 
@@ -50,6 +50,9 @@ export const ix = {
   /** The 掌中珠's Chinese transcription of each Tangut character, with the entry it stands in.
    *  @type {Map<string, import('./data.js').ZzzPair[]>} */ zzz: new Map(),
   /** Tibetan phonetic glosses by character: [Wylie, Tibetan script, [[shelfmark, count]…]]. @type {Map<string, [string, string, [string, number][]][]>} */ tibetan: new Map(),
+  /** The Tibetan spellings at each crossing: `rhyme·tone`, then initial class. @type {Record<string, Record<string, string[]>>} */ tibetanRhymes: {},
+  /** 龔煌城's value for each rhyme. @type {Record<string, string>} */ gongRhymes: {},
+  /** The Chinese characters transcribing each rhyme: [character, final?]. @type {Record<string, [string, string?][]>} */ chineseRhymes: {},
   /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
   /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
   /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
@@ -60,13 +63,16 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, zzz, names, partNames, frequency] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, zzz, names, partNames, frequency] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
-      loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadZzz().catch(() => null), loadTangutNames().catch(() => []),
+      loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadZzz().catch(() => null), loadTangutNames().catch(() => []),
       loadPartNames().catch(() => null), loadFrequency().catch(() => null),
     ])
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
     ix.zzz = new Map(Object.entries(zzz?.pairs ?? {}))
+    ix.tibetanRhymes = tibetanRhymes?.cells ?? {}
+    ix.gongRhymes = gongRhymes?.values ?? {}
+    ix.chineseRhymes = chineseRhymes?.rhymes ?? {}
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
     ix.names = names

@@ -1,18 +1,31 @@
-era	from	tangut	kind	source
-天授禮法延祚	1038		unknown	nie2004
-延嗣寧國	1049		unknown	nie2004
-天祐垂聖	1050		unknown	nie2004
-福聖承道	1053	𗼃𗼕	disputed	west2007
-福聖承道	1053	𗣼𗧯	disputed	west2007
-奲都	1057		unknown	nie2004
-拱化	1063		unknown	nie2004
-乾道	1068		unknown	nie2004
-天賜禮盛國慶	1070		unknown	nie2004
-大安	1075	𘜶𗵐	coin	west2007
-天安禮定	1085		unknown	nie2004
-天儀治平	1086		unknown	nie2004
-貞觀	1101	𗣼𘝯	disputed	west2007
-正德	1127	𗣼𘇚	disputed	west2007
-天盛	1149	𘓺𘃸	text	west2020
-乾祐	1170	𘀗𘑨	coin	west2007
-天慶	1194	𘓺𘅝	coin	west2007
+era	from	tangut	kind	source	place
+天授禮法延祚	1038		unknown	nie2004	
+延嗣寧國	1049		unknown	nie2004	
+天祐垂聖	1050		unknown	nie2004	
+福聖承道	1053	𗼃𗼕	disputed	west2007	
+福聖承道	1053	𗣼𗧯	disputed	west2007	
+奲都	1057		unknown	nie2004	
+拱化	1063		unknown	nie2004	
+乾道	1068		unknown	nie2004	
+天賜禮盛國慶	1070		unknown	nie2004	
+大安	1075	𘜶𗵐	coin	west2007	
+大安	1075	𘜶𗵐	text	stele1094	wikisource:𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞
+天安禮定	1085		unknown	nie2004	
+天安禮定	1085	𘓺𗪚𗅲𗧯	text	stele1094	wikisource:𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞
+天儀治平	1086		unknown	nie2004	
+天祐民安	1090	𘓺𗼕𘂀𗴴	text	stele1094	wikisource:𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞
+貞觀	1101	𗣼𘝯	disputed	west2007	
+貞觀	1101	𗣼𘝯	gloss	kychanov2010	lcdtt:貞觀政要
+正德	1127	𗣼𘇚	disputed	west2007	
+天盛	1149	𘓺𘃸	text	west2020	
+乾祐	1170	𘀗𘑨	coin	west2007	
+乾祐	1170	𘀗𘑨	text	leilin	lcdtt:類林
+乾祐	1170	𘀗𘑨	text	months1185	wikisource:𗼑𗼑𗫉𗊱
+乾祐	1170	𘀗𘑨	text	maxims1187	wikisource:𗆧𗰖𗬻𘜼𘋥𘝿
+乾祐	1170	𘀗𘑨	text	nie2009	lcdtt:彌勒上生經御製發願文
+天慶	1194	𘓺𘅝	coin	west2007	
+天授禮法延祚	1038	𗺔𗒐𗅲𗹙𘓾𘛃	post	zoenshiueh	
+天賜禮盛國慶	1070	𘓺𗙀𗅲𗯿𗂧𗴴	post	zoenshiueh	
+元德	1119	𗣼𗪘	post	zoenshiueh	
+應天	1206	𘓺𗖵	post	zoenshiueh	
+皇建	1210	𘓺𘚪	post	zoenshiueh	
