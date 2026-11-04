@@ -34,6 +34,14 @@ test('the displayable meanings cover only the Wiktionary entries', () => {
   expect(count(6)).toBe(0)
 })
 
+test('every rhyme the chart draws has 龔煌城\'s value', () => {
+  const { values } = JSON.parse(readFileSync(new URL('../app/data/tangut-gong-rhymes.json', import.meta.url), 'utf8'))
+  expect(Object.keys(values).length).toBe(105)
+  const drawn = new Set(Object.values(rhymes.chars).map(row => row[0]).filter(rhyme => typeof rhyme === 'number'))
+  expect([...drawn].filter(rhyme => !values[rhyme])).toEqual([])
+  expect([values[1], values[33], values[65], values[105]]).toEqual(['u', 'iəə/jɨɨ', 'jɨ̣j', 'jwa'])
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {

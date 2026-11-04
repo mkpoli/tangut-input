@@ -111,6 +111,8 @@ export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/t
 /** Tibetan phonetic glosses by character, from BabelStone's index of five British Library manuscripts:
  * each gloss is [Wylie, Tibetan script, [[shelfmark, count]…]].
  * @returns {Promise<{ format: string, source: string, author: string, modified: string | null, retrieved: string, note: string, glosses: Record<string, [string, string, [string, number][]][]> }>} */
+/** 龔煌城's value for each of the 105 rhymes. @returns {Promise<{ values: Record<string, string> } | null>} */
+export const loadGongRhymes = () => once('gongRhymes', () => readJson(new URL('../data/tangut-gong-rhymes.json', import.meta.url)))
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */

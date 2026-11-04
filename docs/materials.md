@@ -31,6 +31,7 @@ cannot copy it.
 | [Wikisource: Tangut texts](https://wikisource.org/wiki/Category:%F0%97%BC%87%F0%97%9F%B2) | twelve texts in running transcription, with manuscript and edition notes and revision ids | CC BY-SA 4.0 | `scripts/fetch_tangut_wikisource.py`, then `scripts/build_tangut_attestation.py` |
 | [Lausanne Corpus of Digital Tangut Texts](https://github.com/bjargal/LCDTT-tangut) | 21 Tangut texts in running transcription, including the Heart Sutra, Sunzi, the Zhenguan government, the Forest of Categories, legal texts and the Tangut Bodhicaryāvatāra; each file cites the edition it was extracted from | repository states no licence; project owner granted permission 2026-11-04; the Bodhicaryāvatāra editions are CC BY 4.0, the other editions keep their own terms | `data/lcdtt/manifest.json`, read by `scripts/build_tangut_attestation.py` |
 | Faces: Noto Serif Tangut, Tangut Yinchuan, BabelStone Wenhai, New Tangut Std, GenZui, Mojikyo, N4694, TWU | glyphs; the drawing pad's shapes are rendered from them | per face, `app/public/fonts/FONT-LICENCES.md` | `scripts/build_tangut_shapes.py` |
+| 龔煌城《西夏语概要》(2005), via table 1-3-1 of 郭抒遠 2019, [scanned by KwingiemChan on Zhihu](https://zhuanlan.zhihu.com/p/271919711) | a value for each of the 105 rhymes | a repost with no stated licence, unchecked against either book | `app/data/tangut-gong-rhymes.json` |
 
 ## Linked, not copied
 

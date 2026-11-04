@@ -252,6 +252,7 @@
                 <span class="rhyme-number">{row.rhyme}</span>
                 {#if view2.adjacent}<span class="tone-label">{t(TONE_KEY[row.tone])}</span>{/if}
                 {#if finals.get(row.key)?.length}<span class="final">{finals.get(row.key)?.join(' ')}</span>{/if}
+                {#if ix.gongRhymes[row.rhyme]}<span class="gong" title={t('chart.gongTitle')}><span lang="zh-Hant">龔</span> {ix.gongRhymes[row.rhyme]}</span>{/if}
                 <small class="ui-count">{row.count}</small>
               </th>
               {#each GROUPS as group (group)}
@@ -269,6 +270,7 @@
       </table>
     </div>
     <p class="ui-hint">{t('chart.legend')}</p>
+    <p class="ui-hint">{t('chart.gongLegend')}</p>
   {/if}
 </div>
 
@@ -293,6 +295,7 @@
   tbody th.head-cell small{display:block;font-weight:var(--ui-weight-normal);font-size:10px;color:var(--ui-color-ink-muted)}
   tbody th.head-cell .rhyme-number{font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);color:var(--ui-color-ink)}
   tbody th.head-cell .final{display:block;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
+  tbody th.head-cell .gong{display:block;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   tbody th.head-cell .tone-label{display:block;font-family:var(--ui-font-sans);font-size:10px;color:var(--ui-color-ink-muted)}
   tr.tone th{position:sticky;left:0;background:var(--ui-color-surface-sunken);color:var(--ui-color-ink-muted);text-align:start;padding:var(--ui-space-2xs) var(--ui-space-sm);font-size:var(--ui-text-2xs);letter-spacing:var(--ui-tracking-caps);text-transform:uppercase;border-top:1px solid var(--ui-color-border-strong)}
   td{vertical-align:top;border-top:1px solid var(--ui-color-border);border-inline-start:1px solid var(--ui-color-border);padding:3px;min-inline-size:84px}
