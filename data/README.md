@@ -81,7 +81,8 @@ eras these are. `scripts/build_tangut_later_eras.py` builds the page's data.
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or
-history, `caption`, stated only by a Commons caption, `dated`, inferred from the date of the passage,
+history, `caption`, stated only by a Commons caption, `decoded`, matched here to the font codes of a title a
+study prints, `dated`, inferred from the date of the passage,
 or `disputed`; the Tangut, if known; the Chinese exactly as `chinese_source` prints it, if any; the
 source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the Tangut;
 and `backs`, whether the work supports the Tangut or the Chinese. Compiled by hand.

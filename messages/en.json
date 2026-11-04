@@ -471,6 +471,7 @@
   "eras.titles.basis.chinese": "Chinese only",
   "eras.titles.basis.chinese.hint": "Only Chinese is listed here. A study may print the Tangut in a font not decoded here.",
   "eras.titles.caption": "The holder rests only on a Commons caption.",
+  "eras.titles.decoded": "The holder rests on matching this string here with font codes in a study; no study states it.",
   "eras.titles.disputed": "The sources disagree on who held it.",
   "eras.titles.holder": "Holder",
   "eras.titles.chinese": "Chinese",
