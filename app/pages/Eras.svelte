@@ -1,6 +1,6 @@
 <script>
   // The era names of the Western Xia in order, each with its Tangut form where one is recorded and
-  // what the form rests on: a coin, a Tangut text, or only the calendar the list is built from.
+  // what the form rests on: a coin, a Tangut text, only the calendar the list is built from, or a post.
   // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
   // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on, and
   // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`, and the
@@ -52,7 +52,7 @@
   const counts = {
     total: rows.length,
     forms: rows.filter(row => row.forms.length).length,
-    clear: rows.filter(row => row.tags.every(tag => tag.kind === 'coin' || tag.kind === 'text')).length,
+    clear: rows.filter(row => row.tags.some(tag => tag.kind === 'coin' || tag.kind === 'text') && !row.tags.some(tag => tag.kind === 'disputed')).length,
     disputed: rows.filter(row => row.tags.some(tag => tag.kind === 'disputed')).length,
   }
 </script>
@@ -85,7 +85,7 @@
               {#each row.forms as form, i (form)}
                 {#if i}<span class="or">{t('eras.or')}</span>{/if}
                 <span class="form" role="group" aria-label={t('eras.form', { era: row.era.era, n: i + 1 })}>{#each [...form] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                  aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>
+                  aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{#if row.era.evidence.some(e => e.kind === 'post' && e.tangut === form)}{@render cites(['zoenshiueh'])}{/if}
               {:else}<span class="ui-hint">—</span>{/each}
             </td>
             <td class="basis">
@@ -203,7 +203,7 @@
   .tagged{display:inline-block;margin-inline-end:var(--ui-space-xs)}
   .tag{display:inline-block;padding:1px 7px;border:1px solid var(--ui-color-border);border-radius:999px;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs);white-space:nowrap}
   .tag[data-kind='coin'],.tag[data-kind='text']{border-color:var(--ui-color-accent);color:var(--ui-color-accent)}
-  .tag[data-kind='none'],.tag[data-kind='chinese']{border-style:dashed;color:var(--ui-color-ink-muted)}
+  .tag[data-kind='none'],.tag[data-kind='chinese'],.tag[data-kind='post']{border-style:dashed;color:var(--ui-color-ink-muted)}
   tr[data-kind='none'] th{color:var(--ui-color-ink-soft)}
   .note{margin:4px 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .cite{margin-inline-start:2px;font-size:.72em;line-height:0;vertical-align:super}

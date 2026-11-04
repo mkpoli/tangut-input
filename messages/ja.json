@@ -444,7 +444,7 @@
   "eras.kind.calendar": "暦表のみ",
   "eras.kind.calendar.hint": "Westの暦表にあるが、西夏文表記の典拠が示されていないもの。",
   "eras.kind.post": "投稿",
-  "eras.kind.post.hint": "典拠を示さない X の投稿によるものです。暦表と異なることがあります。",
+  "eras.kind.post.hint": "典拠を示さないXの投稿によるものです。暦表と異なることがあります。",
   "eras.kind.none": "記録なし",
   "eras.kind.none.hint": "ここで用いた資料には西夏文の表記がないもの。",
   "eras.form": "{era}の西夏文表記{n}",
