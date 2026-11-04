@@ -27,7 +27,7 @@ export const ERA_SOURCES = {
     author: 'Liangzhou stele (1094), transcribed on Wikisource after Nishida Tatsuo',
     title: '𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞',
     where: 'Wikisource, revision 909760; Nishida, 西夏語の研究 I (1964), pp. 156–176',
-    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here. The pair 𗣼𗯿𘓺𗨺𘜹, 𗸯𗑗𘓺𘋨 stands before 天祐民安 4 (1093). These match the ends of the titles 孫穎新 gives 崇宗 and his mother. The same pair also stands between 大安 8 (1082) and 天安禮定 2 (1086), the year 惠宗 died according to 宋史; how that passage bears on it is not settled here.',
+    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here. The pair 𗣼𗯿𘓺𗨺𘜹, 𗸯𗑗𘓺𘋨 stands before 天祐民安 4 (1093). They match the ends of the titles 孫穎新 gives 崇宗\'s mother and 崇宗. The same pair also stands between 大安 8 (1082) and 天安禮定 2 (1086), the year 惠宗 died according to 宋史; how that passage bears on it is not settled here.',
     url: 'https://wikisource.org/w/index.php?oldid=909760',
   },
   months1185: {
@@ -111,7 +111,7 @@ export const ERA_SOURCES = {
     author: '孫穎新',
     title: '西夏文《大寶積經·無量壽如來會》對勘研究',
     where: 'Chapter 二, 西夏佛經的初譯和校譯活動, read on QQ閱讀 without page numbers',
-    note: 'Author from the book\'s page on QQ閱讀. Prints the colophon formats with Tangut in a custom font, which was not decoded here in full, so only the Chinese is listed for most. The last four codes of 崇宗\'s title, 稅葾猜索, were matched by eye to glyphs in PDFs that use the same font codes (段玉泉, 西夏文《聖勝慧到彼岸功德寶集偈》考論; 西田龍雄; and 聶鴻音 on the 彌勒 prayer, PDF p. 2, all in 西夏學 4), giving 𗸯𗑗𘓺𘋨 for the end of the title, 仁净皇帝. That match is made on this page; no study links the stele\'s form to 崇宗. His mother\'s title ends 德盛皇太后 with the codes 緳蛙猜厚菐, which draw 𗣼𗯿𘓺𗨺𘜹, the stele\'s form, by the same comparison. 蛙 was seen in 克平, tr. 李楊 and 王培培, 漢武帝《秋風辭》的番語譯文 (西夏學 4, PDF p. 4), in the line rendered 香草茂盛南花芬. 猜厚菐 is in 聶鴻音, 俄藏西夏本《拔濟苦難陀羅尼經》考釋 (西夏學 6, 2010, PDF p. 3), where the Chinese has 皇太后 and 厚 is drawn once. No study links this form to her either.',
+    note: 'Author from the book\'s page on QQ閱讀. Prints the colophon formats with Tangut in a custom font, which was not decoded here in full, so only the Chinese is listed for most. The last four codes of 崇宗\'s title, 稅葾猜索, were matched by eye to glyphs in PDFs that use the same font codes (段玉泉, 西夏文《聖勝慧到彼岸功德寶集偈》考論; 西田龍雄; and 聶鴻音 on the 彌勒 prayer, PDF p. 2, all in 西夏學 4), giving 𗸯𗑗𘓺𘋨 for the end of the title, 仁净皇帝. That match is made on this page; no study links the stele\'s form to 崇宗. The book was read as text, so its own glyphs were not seen; the match assumes it uses the same codes, as its 仁宗 line does in 聶鴻音 2009. His mother\'s title ends 德盛皇太后 with the codes 緳蛙猜厚菐. In PDFs with embedded Tangut fonts they draw 𗣼𗯿𘓺𗨺𘜹, the stele\'s form, and CCAMC\'s index glosses those characters 德, 盛, 皇, 太 and 后. 緳 is drawn in 聶鴻音 2009. 蛙 is drawn in 克平, tr. 李楊 and 王培培, 漢武帝《秋風辭》的番語譯文 (西夏學 4, PDF p. 4), in the line rendered 香草茂盛南花芬; in 李曉明, 英藏西夏文《七寶華踏佛陀羅尼經》的誤定與考證 (西夏學 8, PDF p. 2); and in Кычанов tr. 彭向前 (PDF p. 4). 菐 is also drawn in 楊志高 2011 (PDF p. 2). 猜厚菐 is in 聶鴻音, 俄藏西夏本《拔濟苦難陀羅尼經》考釋 (西夏學 6, 2010, PDF p. 3), where the Chinese has 皇太后. Among the 60 or so PDFs searched only that one draws 厚, but 楊志高 2010 (PDF p. 2) prints it at the place in the 惠宗母 line where the Lausanne text has 𗨺. No study links this form to her either.',
     url: 'https://m.chuangshi.qq.com/read/26322215/8',
   },
   yaoshi: {
