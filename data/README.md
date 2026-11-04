@@ -583,28 +583,30 @@ are absent from this font version and report a missing glyph.
 
 `app/data/tangut-entries.json.gz` holds the values a page may show: five readings from the Lua
 modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyake, Kychanov 2006,
-Sofronov 1968, Nishida 1966), Gong Xun's GX202411 from his Tangut Pronunciation Database, English
+Sofronov 1968, Nishida 1966), Gong Hwang-cherng's GHC and Gong Xun's GX202411 from the Tangut
+Pronunciation Database, English
 meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
 BabelStone's IDS description, the 文海's entry text for the twelve characters it carries in this
 snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
-meanings are CC BY-SA 4.0; GX202411 is cited from the Tangut Pronunciation Database under its
-Limited Public Use licence; the description is public domain; the radical and stroke data are
+meanings are CC BY-SA 4.0; GHC and GX202411 are cited from the Tangut Pronunciation Database under
+its Limited Public Use licence; the description is public domain; the radical and stroke data are
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
 `data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
-`data/gong-xun/gx202411.json.gz`, `data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
+`data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
+`data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
 
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
-two systems the site does not show (Gong Hwang-cherng and Arakawa Shintarō) and normalized English
-and Chinese glosses from CCAMC. The card links to
+one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from
+CCAMC. The card links to
 `http://ccamc.org/tangut.php?n4694=<char>`; no page renders the index. It is built from a copy of
 the former Open Tangut records, which is not committed.
 
 `data/wiktionary/txg-readings.json.gz` records the five modules' values with their revision ids;
 `data/wiktionary/definitions-ja.json.gz` records the ja.wiktionary pages with theirs. Both are
 refreshed by `uv run scripts/fetch_tangut_wiktionary.py`, which makes five module requests and six
-batches of fifty page titles. `data/gong-xun/gx202411.json.gz` holds GX202411 from the 2025-05-07
-table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh it with
-`uv run scripts/fetch_tangut_gong_xun.py`.
+batches of fifty page titles. `data/gong-xun/ghc.json.gz` and `data/gong-xun/gx202411.json.gz` hold GHC and GX202411 from the
+2025-05-07 table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh them
+with `uv run scripts/fetch_tangut_gong_xun.py`.
 
 ## Bopomofo outlines
 

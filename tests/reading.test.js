@@ -12,5 +12,5 @@ test('every system a reader can pick survives a reload', () => {
 })
 
 test('a value left by an older version falls back to the default', () => {
-  expect(readingFromStore('gong_huangcheng')).toBe('gong_xun_202411')
+  expect(readingFromStore('gong_hwang_cherng')).toBe('gong_xun_202411')
 })
