@@ -34,6 +34,16 @@ test('the displayable meanings cover only the Wiktionary entries', () => {
   expect(count(6)).toBe(0)
 })
 
+test('every Tibetan spelling stands at a crossing the chart draws', () => {
+  const { cells } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-rhymes.json', import.meta.url), 'utf8'))
+  const drawn = new Set(Object.values(rhymes.chars).map(row => `${row[0]}·${row[1]}`))
+  expect(Object.keys(cells).filter(key => !drawn.has(key))).toEqual([])
+  expect(Object.keys(cells).length).toBe(124)
+  // 2.1 is rhyme 1 in the rising tone, 2.9 rhyme 10: the two tones number their rhymes apart.
+  expect(cells['1·2'].Ⅰ).toEqual(['ཕུ'])
+  expect(Object.keys(cells['10·2'] ?? {}).length).toBeGreaterThan(0)
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {
