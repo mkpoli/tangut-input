@@ -57,7 +57,7 @@ def corpus_text(place: str) -> str:
         return (ROOT / f'data/lcdtt/{name}.txt').read_text(encoding='utf-8')
     if corpus == 'wikisource':
         pages = json.loads((ROOT / 'data/wikisource/pages.json').read_text(encoding='utf-8'))['pages']
-        return pages[name]['content']
+        return re.sub(r'(?s)\{\{header.*?\n\}\}|<ref[^>]*/>|<ref.*?</ref>|<!--.*?-->', '', pages[name]['content'])
     raise SystemExit(f'unknown corpus: {place}')
 
 
