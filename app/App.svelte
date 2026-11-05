@@ -284,6 +284,7 @@
         {/if}
       </main>
       {#if route.page !== 'about' && route.page !== 'intro'}
+        {#if ui.sheet}<button type="button" class="scrim" tabindex="-1" aria-hidden="true" onclick={() => { ui.sheet = false }}></button>{/if}
         <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
           <Card />
         </aside>
@@ -416,6 +417,7 @@
   .body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 400px;align-items:start}
   .body.full{grid-template-columns:minmax(0,1fr)}
   .finder{min-inline-size:0;padding:var(--ui-space-3xl) var(--ui-space-4xl) 72px}
+  .scrim{display:none}
   .card{position:sticky;top:var(--topbar-h);block-size:calc(100dvh - var(--topbar-h));overflow:auto;border-inline-start:1px solid var(--ui-color-border);background:var(--ui-color-surface);overscroll-behavior:contain}
   .fault{margin:64px auto;max-inline-size:36em;color:var(--ui-color-danger)}
   .foot{margin-top:var(--ui-space-4xl);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
@@ -459,7 +461,8 @@
     .reading :global(.ui-select){inline-size:142px;font-size:var(--ui-text-2xs)}
     .body{grid-template-columns:minmax(0,1fr)}
     .finder{padding:var(--ui-space-xl) var(--ui-space-lg) 96px}
-    .card{position:fixed;inset:0;block-size:100dvh;z-index:var(--ui-z-modal);border:0;transform:translateY(100%);transition:transform var(--ui-duration) var(--ui-ease);visibility:hidden}
+    .scrim{display:block;position:fixed;inset:0;z-index:var(--ui-z-modal);padding:0;border:0;background:var(--ui-color-overlay)}
+    .card{position:fixed;inset:auto 0 0;block-size:min(76dvh,calc(100dvh - 96px));z-index:var(--ui-z-modal);border:0;border-start-start-radius:var(--ui-radius-lg);border-start-end-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow-2);transform:translateY(100%);transition:transform var(--ui-duration) var(--ui-ease);visibility:hidden}
     .card.open{transform:none;visibility:visible}
     .name{display:none}
     .tabs{position:fixed;inset-inline:0;bottom:0;z-index:var(--ui-z-chrome);display:flex;gap:2px;padding:var(--ui-space-xs) var(--ui-space-sm) calc(var(--ui-space-xs) + env(safe-area-inset-bottom));background:var(--ui-color-surface);border-top:1px solid var(--ui-color-border)}

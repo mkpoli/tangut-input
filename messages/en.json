@@ -229,7 +229,7 @@
   "attest.lineReadings": "Line readings:",
   "attest.facsimile": "Facsimile and crops by Glyph Atlas.",
   "card.label": "Character",
-  "card.back": "Back",
+  "card.close": "Close",
   "card.blank": "Pick a character to see its record here, with ways to copy it or add it to your text.",
   "card.blankKeys": "Arrow keys move through candidates; <kbd>Enter</kbd> adds the highlighted one.",
   "card.copyCodePoint": "Copy the code point",

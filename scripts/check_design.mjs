@@ -665,7 +665,7 @@ await step('the card opens as a sheet on a phone', async () => {
   const card = phone.locator('aside.card')
   await phone.waitForFunction(() => document.querySelector('aside.card')?.classList.contains('open'))
   assert.equal(await card.isVisible(), true, 'the card sheet is visible')
-  await phone.getByRole('button', { name: 'Back', exact: true }).click()
+  await phone.locator('.sheetbar').getByRole('button', { name: 'Close', exact: true }).click()
   await phone.waitForFunction(() => !document.querySelector('aside.card')?.classList.contains('open'))
 })
 await step('a link to a character opens its card on a phone', async () => {
