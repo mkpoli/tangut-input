@@ -1,28 +1,40 @@
-form	base	revisions
-𗀏	𗍸	en:66551505,zh:7647217
-𗀑	𗀉	en:83219791,zh:9037765
-𗀣	𘈤	en:83300294,zh:9037790
-𗁇	𘚠	en:90072435,zh:8992073
-𗁈	𗸢	en:66531764,zh:8992074
-𗁓	𗸣	en:66531778,zh:8992128
-𗁔	𗁕	en:83300648,zh:9040918
-𗁘	𗁒	en:66531813,zh:8992085
-𗁥	𗶗	en:89524708,zh:9040903
-𗁩	𗸤	en:83300804,zh:9040893
-𗁰	𘊶	en:66531853,zh:8992095
-𗁾	𗁿	en:66531855,zh:8992097
-𗂑	𗂒	en:66531863,zh:8992102
-𗂔	𘈥	en:66531873,zh:8992105
-𗂨	𗶘	en:66531881,zh:8992107
-𗂺	𗂹	en:66532076,zh:8992109
-𗃌	𗃋	en:89603258,zh:8992112
-𗃳	𗴪	en:81887879,zh:8992115
-𗃹	𘚀	en:66532114,zh:8992119
-𗄁	𘈛	en:66532151,zh:8992121
-𗄄	𗇫	en:66525725
-𗄧	𘚡	en:66525707
-𗄱	𗄲	en:83302396,zh:9040938
-𗇐	𗇫	en:66525724
-𗇔	𗈀	en:66525809
-𗪯	𗪰	en:82821087,zh:8992126
-𘈣	𗀛	zh:7655988
+form	base	kind	scope	revisions
+𗀏	𗍸	variant	whole	en:66551505,zh:7647217
+𗀑	𗀉	variant	partial	en:83219791,zh:9037765
+𗀣	𘈤	variant	whole	en:83300294,zh:9037790
+𗁇	𘚠	variant	whole	en:90072435,zh:8992073
+𗁈	𗸢	variant	whole	en:66531764,zh:8992074
+𗁓	𗸣	variant	whole	en:66531778,zh:8992128
+𗁔	𗁕	variant	whole	en:83300648,zh:9040918
+𗁘	𗁒	variant	whole	en:66531813,zh:8992085
+𗁥	𗶗	variant	whole	en:89524708,zh:9040903
+𗁩	𗸤	variant	whole	en:83300804,zh:9040893
+𗁰	𘊶	variant	whole	en:66531853,zh:8992095
+𗁾	𗁿	variant	whole	en:66531855,zh:8992097
+𗂑	𗂒	variant	whole	en:66531863,zh:8992102
+𗂔	𘈥	variant	whole	en:66531873,zh:8992105
+𗂨	𗶘	variant	whole	en:66531881,zh:8992107
+𗂺	𗂹	variant	whole	en:66532076,zh:8992109
+𗃌	𗃋	variant	whole	en:89603258,zh:8992112
+𗃳	𗴪	variant	whole	en:81887879,zh:8992115
+𗃹	𘚀	variant	whole	en:66532114,zh:8992119
+𗄁	𘈛	variant	whole	en:66532151,zh:8992121
+𗄄	𗇫	variant	whole	en:66525725
+𗄧	𘚡	variant	whole	en:66525707
+𗄱	𗄲	variant	whole	en:83302396,zh:9040938
+𗇐	𗇫	variant	whole	en:66525724
+𗇔	𗈀	variant	whole	en:66525809
+𗋽	𗌜	synonym	whole	en:83266375,zh:9268331
+𗌜	𗋽	synonym	whole	en:89531698,zh:9268414
+𗥠	𗦻	synonym	whole	en:92442154
+𗦻	𗥠	synonym	whole	en:92442128
+𗧅	𗧓	synonym	whole	en:83307426,zh:9038262
+𗧅	𘘮	synonym	whole	en:83307426,zh:9038262
+𗧓	𗧅	synonym	whole	en:84456286,zh:9038241
+𗧓	𘘮	synonym	whole	en:84456286,zh:9038241
+𗪯	𗪰	variant	whole	en:82821087,zh:8992126
+𗯗	𗓆	synonym	whole	en:92225925
+𘅾	𘄵	variant	whole	en:93759187
+𘈣	𗀛	variant	whole	zh:7655988
+𘘮	𗧅	synonym	whole	en:83307415,zh:9038222
+𘘮	𗧓	synonym	whole	en:83307415,zh:9038222

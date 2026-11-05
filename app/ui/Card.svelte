@@ -201,18 +201,26 @@
     {#if variants}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
-        {#each [['card.variantOf', variants.of], ['card.variantForms', variants.forms], ['card.variantPossible', variants.possible]] as [label, others] (label)}
-          {#if others.length}
-            <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
-            <div class="ui-tiles rel" style:--ui-tile-size="48px">
-              {#each others as other (other)}
-                {@const sound = readingOf(other, ui.reading)}
-                <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
-              {/each}
-            </div>
+        {#each [
+          { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms]] },
+          { source: 'card.variantReportedSource', rows: [['card.variantReported', variants.reported]] },
+          { source: 'card.variantsPossibleSource', rows: [['card.variantPossible', variants.possible]] },
+        ] as block (block.source)}
+          {#if block.rows.some(([, others]) => others.length)}
+            {#each block.rows as [label, others] (label)}
+              {#if others.length}
+                <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
+                <div class="ui-tiles rel" style:--ui-tile-size="48px">
+                  {#each others as other (other)}
+                    {@const sound = readingOf(other, ui.reading)}
+                    <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+                  {/each}
+                </div>
+              {/if}
+            {/each}
+            <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
-        <p class="ui-hint">{t(variants.of.length || variants.forms.length ? 'card.variantsSource' : 'card.variantsPossibleSource')}</p>
       </section>
     {/if}
 
