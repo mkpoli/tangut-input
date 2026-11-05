@@ -89,6 +89,15 @@ test('the Tibetan spellings by hand class belong to known characters', () => {
   // ལྷ is one letter, a voiceless l; ནྷ is an aspirated n.
   expect(chars['𗇘'].tibetan[0]).toEqual(['A', 'lhi', 1, 'ལྷི', 'lhi', 'l̥i'])
   expect(chars['𘟃'].tibetan[0]).toEqual(['B', 'nho', 1, 'ནྷོ', 'nho', 'nʱo'])
+  // The printed parse holds where the script round-trip loses it.
+  expect(chars['𗈜'].tibetan[0]).toEqual(['A', 'gar', 1, 'གར', 'gar', 'ɡar'])
+  expect(chars['𗖈'].tibetan[0]).toEqual(['A', 'dav', 1, 'དའ', "da'", 'daʔ'])
+  expect(chars['𗨁'].tibetan[4]).toEqual(['B', 'phuo', 1, 'ཕོུ', 'phuo', 'pʰuo'])
+  expect(chars['𗫏'].tibetan[3]).toEqual(['A', 'chui', 1, 'ཆིུ', 'chui', 'tɕʰui'])
+  expect(chars['𘖑'].tibetan[0]).toEqual(['A', 'mar', 1, 'མར', 'mar', 'mar'])
+  expect(chars['𘖑'].tibetan[1]).toEqual(['B', 'mue', 1, 'མེུ', 'mue', 'mue'])
+  // A second h after an aspirated letter is the same aspiration.
+  expect(chars['𗢳'].tibetan[1]).toEqual(['A', 'thha', 2, 'ཐྷ', 'thha', 'tʰa'])
 })
 
 test('the Sanskrit spellings are printed, written in Devanagari and read as IPA', () => {
@@ -98,11 +107,21 @@ test('the Sanskrit spellings are printed, written in Devanagari and read as IPA'
   expect(rows.flatMap(row => row.sanskrit).length).toBe(36)
   expect(chars['𗄈'].sanskrit).toEqual([['śo', 'शो', 'ɕoː']])
   expect(chars['𗫂'].sanskrit).toEqual([['ta', 'त', 't̪ɐ'], ['ṭa', 'ट', 'ʈɐ']])
-  expect(chars['𗐱'].sanskrit).toEqual([['ni', 'नि', 'ni'], ['ɲi', 'ञि', 'ɲi'], ['nai', 'नै', 'nɐi̯']])
+  expect(chars['𗐱'].sanskrit).toEqual([['ni', 'नि', 'ni'], ['ñi', 'ञि', 'ɲi'], ['nai', 'नै', 'nɐi̯']])
   for (const row of rows) for (const [printed, script, ipa] of row.sanskrit) {
     expect(printed.length).toBeGreaterThan(0)
     expect(script).toMatch(/^[\u0900-\u097f]+$/)
-    expect(ipa.length).toBeGreaterThan(0)
+    expect(ipa).toMatch(/^[\p{L}\p{M}]+$/u)
+  }
+})
+
+test('the spellings on one card have distinct render keys', () => {
+  const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
+  for (const row of Object.values(chars)) {
+    const tibetan = (row.tibetan ?? []).map(([hand, , count, script, wylie]) => `${hand}${script}${count}${wylie}`)
+    expect(new Set(tibetan).size).toBe(tibetan.length)
+    const sanskrit = (row.sanskrit ?? []).map(([printed]) => printed)
+    expect(new Set(sanskrit).size).toBe(sanskrit.length)
   }
 })
 
