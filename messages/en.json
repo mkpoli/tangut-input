@@ -449,7 +449,7 @@
   "layers.reset": "Back to the default",
   "layers.current": "{system} (chosen at the top)",
   "layers.tangut": "Tangut",
-  "layers.sinograph": "Chinese characters (類林)",
+  "layers.sinograph": "Chinese gloss (類林)",
   "layers.english": "English",
   "layers.wiktionary": "English (Wiktionary)",
   "layers.downes": "English (Downes)",

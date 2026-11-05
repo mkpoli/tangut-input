@@ -61,7 +61,7 @@
     ? (layer.system === CURRENT ? t('layers.current', { system: systemLabel(ui.reading) }) : systemLabel(layer.system ?? ''))
     : t(`layers.${layer.kind}`))
 
-  const lines = $derived(source.split('\n').map(line => cutLine(line, isTangut)).filter(line => line.length))
+  const lines = $derived(source.replace(/\n+$/, '').split('\n').map(line => cutLine(line, isTangut)))
   const chars = $derived(lines.flat().filter(part => part.kind === 'tangut').map(part => part.char))
   /** @param {import('../lib/layers.js').Layer} layer @param {string} char */
   const valueOf = (layer, char) => layerValue(layer, char, {
@@ -169,6 +169,7 @@
   .tools{display:flex;gap:2px}
   .add{margin-block-start:var(--ui-space-xs)}
   .text{display:grid;gap:var(--ui-space-lg);padding:var(--ui-space-md);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface)}
+  .line:empty{min-block-size:var(--ui-space-sm)}
   .line{display:flex;flex-wrap:wrap;gap:var(--ui-space-sm) var(--ui-space-2xs);margin:0}
   .gap{inline-size:var(--ui-space-md)}
   .column{display:grid;justify-items:center;align-content:start;min-inline-size:28px;padding-inline:3px;border-radius:var(--ui-radius-xs)}
