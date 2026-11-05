@@ -30,7 +30,9 @@ it into your text. <https://tangut.mkpo.li/>
 The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
-further readings and meanings are linked to CCAMC's page for the character rather than copied. The text being written stays in the
+further readings and meanings are linked to CCAMC's page for the character rather than copied.
+Character tiles carry a reconstruction above the glyph — the one chosen at the top bar, or the one
+a reading search matched — with the finder's own note below it. The text being written stays in the
 browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).

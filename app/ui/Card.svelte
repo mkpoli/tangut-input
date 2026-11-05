@@ -2,7 +2,7 @@
   // Everything recorded about the open character, arranged around using it: the actions come
   // first, then what helps a reader confirm it is the one they mean (meaning, readings, structure,
   // where it stands in a text), then the characters near it.
-  import { db, ix, codePoint, gloss, isComponent } from '../lib/db.svelte.js'
+  import { db, ix, codePoint, gloss, isComponent, readingOf } from '../lib/db.svelte.js'
   import { onMount } from 'svelte'
   import G from './G.svelte'
   import Icon from './Icon.svelte'
@@ -104,8 +104,6 @@
     const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
     peek = { char: other, x: box.left, y: box.bottom + 6 }
   }
-  /** @param {string} other */
-  const readingOf = other => (ix.byChar.get(other)?.pronunciations ?? {})[/** @type {any} */ (ui.reading)]?.trim() ?? ''
 
   const first = $derived(ready && char ? gloss(char) : '')
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
@@ -275,7 +273,10 @@
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.usedIn', { count: users.length })}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
-          {#each users.slice(0, 48) as other (other)}<button class="ui-tile" type="button" data-note="none" title={gloss(other)} onclick={() => choose(other)}><G char={other} /></button>{/each}
+          {#each users.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
+            <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+          {/each}
         </div>
         {#if users.length > 48}<p class="more"><a href={link('parts', char, char)}><Icon name="arrow" size={13}/>{t('card.allInParts', { count: users.length })}</a></p>{/if}
       </section>
@@ -286,9 +287,10 @@
         <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.sameDescription')}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each same as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{readingOf(other) || gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>
@@ -300,9 +302,10 @@
         <h3 class="ui-label"><Icon name="fanqie" size={15}/>{t('card.fanqieFor', { count: spells.length })}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each spells.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{readingOf(other) || gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>
@@ -314,9 +317,10 @@
         <h3 class="ui-label"><Icon name="sound" size={15}/>{t('card.sameReading')}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each homophones.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>

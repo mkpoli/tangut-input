@@ -3,10 +3,11 @@
   // shape or by its sound, and it goes in at the caret. It is a board for the characters a keyboard
   // cannot type, so it stays open between picks.
   import { tick } from 'svelte'
-  import { db, ix, isTangut, gloss } from '../lib/db.svelte.js'
+  import { db, ix, isTangut, gloss, readingOf } from '../lib/db.svelte.js'
   import { byMeaning, byParts, byCode, bySijiao, byCodePoint } from '../lib/search.js'
   import { searchReadings } from '../lib/reading.js'
   import { insert, remember } from '../lib/text.svelte.js'
+  import { ui } from '../lib/ui.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from './G.svelte'
 
@@ -167,9 +168,11 @@
         </p>
         <div class="hits" role="listbox" aria-label={t('ime.label')}>
           {#each hits as hit, i (hit.char)}
-            <button type="button" role="option" class="ui-tile" aria-selected={i === active} title={hit.note}
+            {@const sound = readingOf(hit.char, ui.reading)}
+            <button type="button" role="option" class="ui-tile" aria-selected={i === active} title={[sound, hit.note].filter(Boolean).join(' · ')}
               onclick={() => put(hit.char)} onmouseenter={() => { active = i }}>
               <G char={hit.char} />
+              {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
               {#if i < 9}<span class="n">{i + 1}</span>{/if}
             </button>
           {/each}
@@ -187,7 +190,8 @@
   .panel{position:absolute;right:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);display:grid;gap:var(--ui-space-sm);inline-size:300px;padding:var(--ui-space-md)}
   .panel.start{right:auto;left:0}
   .hits{display:grid;grid-template-columns:repeat(8, 1fr);gap:2px;max-block-size:220px;overflow:auto}
-  .hits .ui-tile{min-block-size:34px;font-size:22px;position:relative}
-  .hits .n{position:absolute;top:0;left:2px;font:9px var(--ui-font-mono);color:var(--ui-color-ink-muted)}
+  .hits .ui-tile{min-block-size:42px;padding:2px 1px;font-size:22px;position:relative;gap:0}
+  .hits .ui-tile-sound{font-size:9px;line-height:1.1}
+  .hits .n{position:absolute;bottom:1px;left:2px;font:9px var(--ui-font-mono);color:var(--ui-color-ink-muted)}
   .hits .ui-tile[aria-selected='true']{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
 </style>
