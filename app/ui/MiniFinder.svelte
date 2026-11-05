@@ -560,7 +560,7 @@
         {#if mode === 'parts'}
           <div class="part-palette">
             {#each paletteGroups as [strokes, items] (strokes)}
-              <p class="ui-label part-group">{t('parts.strokeGroup', { count: strokes })}</p>
+              <p class="ui-label part-group">{strokes === 1 ? t('parts.strokeOne') : t('parts.strokeGroup', { count: strokes })}</p>
               <div class="ui-tiles" style:--ui-tile-size="44px">
                 {#each items as item (item.part)}
                   {@const sound = readingOf(item.part, ui.reading)}
