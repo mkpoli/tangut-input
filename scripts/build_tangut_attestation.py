@@ -40,6 +40,7 @@ TEXTS = ATLAS / 'data/tangut'
 STRIPS = ATLAS / 'work/tangut/facsimile'
 WIKISOURCE = ROOT / 'data/wikisource/pages.json'
 LCDTT = ROOT / 'data/lcdtt'
+MICA = ROOT / 'data/mica'
 TANGUT = re.compile(r'^[\U00017000-\U00018AFF\U00018D00-\U00018DFF]$')
 CROP_HEIGHT = 128
 
@@ -481,6 +482,57 @@ def build_wikisource(rows):
     return sources, lines
 
 
+def build_mica(rows):
+    """One source for the texts the Mi Corpus Annotation Group transcribed itself.
+
+    Their other ten texts come from Wikisource, which this corpus reads directly. A file labels its
+    lines, as 華嚴經's 001-1 does, or numbers none, and then each non-empty line is a passage.
+    """
+    manifest = json.loads((MICA / 'manifest.json').read_text(encoding='utf-8'))
+    commit = manifest['commit']
+    source = {
+        'id': 'mica',
+        'kind': 'transcription',
+        'title': 'Mi Corpus Annotation Group corpus',
+        'shortTitle': 'MiCA',
+        'author': 'Mi Corpus Annotation Group',
+        'publisher': 'Mi Corpus Annotation Group',
+        'url': manifest['repository'],
+        'licence': manifest['licence'],
+        'licenceUrl': 'https://creativecommons.org/licenses/by/4.0/',
+        'retrieved': manifest['retrieved'],
+        'commit': commit,
+        'note': ' '.join(f"{text['title']}: {text['edition']}." for text in manifest['texts']),
+    }
+    lines = {}
+    for text in manifest['texts']:
+        slug, title = text['slug'], text['title']
+        label = None
+        number = 0
+        for raw in (MICA / text['file']).read_text(encoding='utf-8').splitlines():
+            raw = raw.strip()
+            if re.fullmatch(r'\d+-\d+[a-z]?', raw):
+                label = raw
+                continue
+            value = clean_tangut(raw)
+            if not value or not any(TANGUT.match(char) for char in value):
+                continue
+            number += 1
+            name = label or f'line {number}'
+            label = None
+            line_id = f'mica:{slug}:{name.replace(" ", "-").lower()}'
+            lines[line_id] = {
+                'text': value,
+                'label': name,
+                'section': title,
+                'url': f"{manifest['repository']}/blob/{commit}/corpus/{urllib.parse.quote(text['file'])}",
+            }
+            for position, char in enumerate(value, 1):
+                if TANGUT.match(char):
+                    rows.setdefault(char, {}).setdefault('mica', []).append([line_id, position])
+    return source, lines
+
+
 def main():
     rows = {}
     sources = []
@@ -497,6 +549,10 @@ def main():
     lcdtt_source, lcdtt_lines = build_lcdtt(rows)
     sources.append(lcdtt_source)
     lines.update(lcdtt_lines)
+
+    mica_source, mica_lines = build_mica(rows)
+    sources.append(mica_source)
+    lines.update(mica_lines)
 
     characters = [char for line in lines.values() for char in line['text'] if TANGUT.match(char)]
     corpus_text = ' '.join(line['text'] for line in lines.values())

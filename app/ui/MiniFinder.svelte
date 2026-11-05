@@ -3,9 +3,9 @@
   // input; this panel keeps only the input and the candidates, so two characters can be chosen
   // without leaving the spelling they belong to. A pick goes into the fanqie, never into the text.
   import { tick } from 'svelte'
-  import { db, ix, gloss, codePoint, isTangut, isComponent } from '../lib/db.svelte.js'
-  import { byCode, byMeaning, byCodePoint, bySijiao, byParts, partsAmong, tangutIn } from '../lib/search.js'
-  import { searchReadings } from '../lib/reading.js'
+  import { db, ix, gloss, codePoint, isTangut, isComponent, readingOf } from '../lib/db.svelte.js'
+  import { byCode, byMeaning, byCodePoint, bySijiao, byParts, byTibetan, partsAmong, tangutIn } from '../lib/search.js'
+  import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { loadShapes } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
   import { preview, ui } from '../lib/ui.svelte.js'
@@ -13,10 +13,13 @@
   import G from './G.svelte'
   import Icon from './Icon.svelte'
 
-  /** @typedef {{ char: string, note: string, title?: string }} MiniHit */
+  /** @typedef {{ char: string, note: string, title?: string, sound?: string }} MiniHit */
 
-  /** @type {{ selected?: string, onpick: (char: string, place: number) => boolean }} */
-  let { selected = '', onpick } = $props()
+  // `always` is the panel with no field to serve: mounted on a page of its own, it has no trigger, no
+  // heading that speaks of the fanqie, and nothing that closes it. `open` stays false, so the listeners
+  // that close a popover never run.
+  /** @type {{ selected?: string, always?: boolean, onpick: (char: string, place: number) => boolean }} */
+  let { selected = '', always = false, onpick } = $props()
 
   const MODES = /** @type {const} */ ([
     { key: 'find', label: 'nav.find', icon: 'find' },
@@ -92,6 +95,7 @@
       .map(hit => ({ char: hit.char, note: gloss(hit.char), title: gloss(hit.char) }))
   })
 
+  /** @type {MiniHit[]} */
   const hits = $derived.by(() => {
     if (db.status !== 'ready') return []
     if (mode === 'find') return findHits(queries.find)
@@ -113,11 +117,11 @@
     /** @type {MiniHit[]} */
     const out = []
     const seen = new Set()
-    /** @param {string} char @param {string} note @param {string} [title] */
-    const add = (char, note, title = '') => {
+    /** @param {string} char @param {string} note @param {string} [title] @param {string} [sound] */
+    const add = (char, note, title = '', sound = '') => {
       if (out.length >= LIMIT || seen.has(char)) return
       seen.add(char)
-      out.push({ char, note, title: title || note })
+      out.push({ char, note, title: title || note, sound: sound || undefined })
     }
     const chars = tangutIn(trimmed)
     if (chars.length) {
@@ -130,10 +134,10 @@
     }
     if (/^[\p{Script=Latin}\p{M}0-9ʔɦɨɪʉɯəɛɔɑŋɣʁɲʷⁿ'·.\- ]+$/u.test(trimmed)) {
       for (const hit of searchReadings(ix.readings, trimmed).filter(hit => hit.tier < 2).slice(0, 12)) {
-        const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
-        add(hit.char, reading.raw, gloss(hit.char))
+        add(hit.char, gloss(hit.char), hit.readings.map(reading => reading.raw).join(' · '), readingLabel(hit))
       }
     }
+    for (const hit of byTibetan(trimmed).filter(hit => hit.tier === 0).slice(0, 12)) add(hit.char, gloss(hit.char), hit.shown)
     for (const hit of byMeaning(trimmed)) add(hit.char, gloss(hit.char), hit.sense)
     return out
   }
@@ -145,14 +149,26 @@
     return byMeaning(trimmed).slice(0, LIMIT).map(hit => ({ char: hit.char, note: gloss(hit.char), title: hit.sense }))
   }
 
+  /**
+   * The reading a hit was found by, tagged with its system when that is not the chosen one.
+   * @param {import('../lib/reading.js').ReadingHit} hit
+   */
+  function readingLabel(hit) {
+    const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
+    const system = SYSTEMS.find(system => system.key === reading.system)
+    return system && system.key !== ui.reading ? `${reading.raw} (${system.short})` : reading.raw
+  }
+
   /** @param {string} text */
   function readingHits(text) {
     const trimmed = text.trim()
     if (!trimmed) return []
-    return searchReadings(ix.readings, trimmed).slice(0, LIMIT).map(hit => {
-      const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
-      return { char: hit.char, note: reading.raw, title: hit.readings.map(reading => reading.raw).join(' · ') }
-    })
+    return searchReadings(ix.readings, trimmed).slice(0, LIMIT).map(hit => ({
+      char: hit.char,
+      note: gloss(hit.char),
+      sound: readingLabel(hit),
+      title: hit.readings.map(reading => reading.raw).join(' · '),
+    }))
   }
 
   function loadDrawShapes() {
@@ -235,9 +251,24 @@
     field?.focus()
   }
 
+  /** Show a character in the site's card. On a page of its own there is no card, and opening one
+   * would rewrite this page's address to the site's root, which a reload would then load instead.
+   * @param {string} char */
+  function peek(char) {
+    if (!always) preview(char)
+  }
+
   /** @param {MiniHit} hit @param {number} place */
   function pick(hit, place) {
-    if (onpick(hit.char, place)) close()
+    if (onpick(hit.char, place)) always ? reset() : close()
+  }
+
+  /** The next character starts clean: strokes left on the pad would be ranked with the new ones, and
+   * an old list invites a pick meant for the last one. */
+  function reset() {
+    for (const key of Object.keys(queries)) queries[key] = ''
+    resetParts()
+    clearDraw()
   }
 
   /** @param {KeyboardEvent} event */
@@ -258,7 +289,7 @@
   function addPart(part) {
     parts = [...parts, part]
     partFilter = ''
-    preview(part)
+    peek(part)
   }
 
   function resetParts() {
@@ -384,29 +415,34 @@
 </script>
 
 <div class="mini-finder" onfocusout={focusOut}>
-  <button bind:this={trigger} type="button" class="picker-trigger ui-button" data-variant="quiet" data-size="icon"
-    aria-label={t('fanqie.picker.open')} title={t('fanqie.picker.open')} aria-haspopup="dialog" aria-expanded={open}
-    aria-controls="fanqie-picker" onclick={() => open ? close() : openPanel()}>
-    <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true">
-      <circle cx="8.4" cy="8.4" r="5" fill="none" stroke="currentColor" stroke-width="1.7" />
-      <path d="m12.2 12.2 4.1 4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-      <path d="M16.2 2.5v4.2M14.1 4.6h4.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-    </svg>
-  </button>
+  {#if !always}
+    <button bind:this={trigger} type="button" class="picker-trigger ui-button" data-variant="quiet" data-size="icon"
+      aria-label={t('fanqie.picker.open')} title={t('fanqie.picker.open')} aria-haspopup="dialog" aria-expanded={open}
+      aria-controls="fanqie-picker" onclick={() => open ? close() : openPanel()}>
+      <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true">
+        <circle cx="8.4" cy="8.4" r="5" fill="none" stroke="currentColor" stroke-width="1.7" />
+        <path d="m12.2 12.2 4.1 4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+        <path d="M16.2 2.5v4.2M14.1 4.6h4.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+    </button>
+  {/if}
 
-  {#if open}
-    <div id="fanqie-picker" class="picker-panel ui-popover" bind:this={panel} role="dialog"
-      aria-labelledby="fanqie-picker-title" tabindex="-1" onkeydown={panelKeys}>
-      <header class="picker-head">
-        <div class="picker-heading">
-          <h2 id="fanqie-picker-title" class="picker-title">{t('fanqie.picker.title')}</h2>
-          <p class="picker-state ui-hint" aria-live="polite">{stateText}</p>
-        </div>
-        <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm"
-          aria-label={t('fanqie.picker.close')} title={t('fanqie.picker.close')} onclick={() => close()}>
-          <Icon name="close" size={16}/>
-        </button>
-      </header>
+  {#if always || open}
+    <div id="fanqie-picker" class={['picker-panel', always ? 'always' : 'ui-popover']} bind:this={panel} role={always ? 'group' : 'dialog'}
+      aria-label={always ? t('pick.hint') : undefined} aria-labelledby={always ? undefined : 'fanqie-picker-title'}
+      tabindex="-1" onkeydown={panelKeys}>
+      {#if !always}
+        <header class="picker-head">
+          <div class="picker-heading">
+            <h2 id="fanqie-picker-title" class="picker-title">{t('fanqie.picker.title')}</h2>
+            <p class="picker-state ui-hint" aria-live="polite">{stateText}</p>
+          </div>
+          <button type="button" class="ui-button" data-variant="quiet" data-size="icon-sm"
+            aria-label={t('fanqie.picker.close')} title={t('fanqie.picker.close')} onclick={() => close()}>
+            <Icon name="close" size={16}/>
+          </button>
+        </header>
+      {/if}
 
       <div class="picker-modes ui-chip-row" role="group" aria-label={t('nav.label')}>
         {#each MODES as item (item.key)}
@@ -492,10 +528,12 @@
             <p class="ui-count" role="status">{t('common.characters', { count: hits.length })}</p>
             <div class="ui-tiles mini-tiles" style:--ui-tile-size="52px">
               {#each hits as hit, i (hit.char)}
-                <button type="button" class="ui-tile" aria-label={`${t('fanqie.picker.add', { char: hit.char })}${hit.note ? `, ${hit.note}` : ''}`}
-                  title={hit.title || hit.note} onmouseenter={() => preview(hit.char)} onfocus={() => preview(hit.char)}
+                {@const sound = hit.sound ?? readingOf(hit.char, ui.reading)}
+                <button type="button" class="ui-tile" aria-label={`${always ? hit.char : t('fanqie.picker.add', { char: hit.char })}${sound ? `, ${sound}` : ''}${hit.note ? `, ${hit.note}` : ''}`}
+                  title={hit.title || hit.note} onmouseenter={() => peek(hit.char)} onfocus={() => peek(hit.char)}
                   onclick={() => pick(hit, i)}>
                   <span class="ui-tile-glyph"><G char={hit.char} /></span>
+                  {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
                   {#if hit.note}<span class="ui-tile-note">{hit.note}</span>{/if}
                 </button>
               {/each}
@@ -508,9 +546,11 @@
         {#if mode === 'parts'}
           <div class="part-palette ui-tiles" style:--ui-tile-size="44px">
             {#each palette as item (item.part)}
+              {@const sound = readingOf(item.part, ui.reading)}
               <button type="button" class="ui-tile" onclick={() => addPart(item.part)}
                 title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
                 <span class="ui-tile-glyph"><G char={item.part} /></span>
+                {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
                 <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}</span>
               </button>
             {/each}
@@ -526,6 +566,7 @@
   .picker-trigger{position:absolute;inset-inline-end:var(--ui-space-sm);top:50%;z-index:1;transform:translateY(-50%);color:var(--ui-color-ink-muted)}
   .picker-trigger:hover{color:var(--ui-color-ink)}
   .picker-panel{position:absolute;inset-inline-start:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);display:flex;flex-direction:column;inline-size:min(640px, calc(100vw - 2 * var(--ui-space-lg)));max-block-size:min(560px, calc(100dvh - 400px), 72dvh);overflow:hidden}
+  .picker-panel.always{position:static;inline-size:100%;block-size:100dvh;max-block-size:none;padding-block-start:var(--ui-space-md)}
   .picker-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--ui-space-md);padding:var(--ui-space-lg) var(--ui-space-xl) var(--ui-space-xs)}
   .picker-heading{display:grid;gap:1px;min-inline-size:0}
   .picker-title{font-family:var(--ui-font-serif);font-size:var(--ui-text-lg);font-weight:var(--ui-weight-semibold);line-height:var(--ui-leading-tight)}
