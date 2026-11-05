@@ -523,6 +523,26 @@ await step('the tablet bar has two rows and settings closes when the layout chan
 })
 await TABLET_SETTINGS.close()
 
+const DESKTOP_BAR = await browser.newContext({ viewport: { width: 1920, height: 900 }, colorScheme: 'light' })
+const desktopBar = await DESKTOP_BAR.newPage()
+await desktopBar.goto(`${APP}/`)
+await desktopBar.locator('main.finder').waitFor()
+await step('the introduction has its own place in the desktop bar', async () => {
+  const intro = desktopBar.getByRole('link', { name: 'Introduction', exact: true })
+  assert.equal(await intro.isVisible(), true, 'the bar carries the introduction')
+  assert.equal(await desktopBar.evaluate(() => Math.round(document.querySelector('.top').getBoundingClientRect().height)), 54, 'the bar keeps one row at 1920')
+  await intro.click()
+  await desktopBar.waitForURL(/\/intro$/)
+  assert.equal(await intro.getAttribute('aria-current'), 'page', 'the introduction is marked as current')
+  assert.equal(await desktopBar.locator('footer.foot a[href="/intro"]').count(), 0, 'the footer holds sources only')
+  await desktopBar.setViewportSize({ width: 1440, height: 900 })
+  await desktopBar.goto(`${APP}/`)
+  await desktopBar.locator('main.finder').waitFor()
+  assert.equal(await intro.isVisible(), true, 'the wrapped bar still carries the introduction')
+  assert.equal(await desktopBar.evaluate(() => Math.round(document.querySelector('.top').getBoundingClientRect().height)), 96, 'the finders keep a row at 1440')
+})
+await DESKTOP_BAR.close()
+
 await step('a choice in the card stays while a code is typed', async () => {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
   const page = await context.newPage()

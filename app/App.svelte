@@ -205,6 +205,10 @@
           {/each}
         </div>
       {/each}
+      <div class="group">
+        <a href="/intro" class:on={route.page === 'intro'} aria-current={route.page === 'intro' ? 'page' : undefined}
+          title={t('nav.intro.hint')} onclick={event => nav(event, 'intro')}><Icon name="book" size={14} stroke={1.6}/><span>{t('nav.intro')}</span></a>
+      </div>
     </nav>
     <div class="aside">
       <label class="reading" title={`${t('reading.system')}: ${systemTitle(readingSystem)}`}>
@@ -269,7 +273,6 @@
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
-            {#if route.page !== 'intro'}· <a href="/intro" onclick={event => nav(event, 'intro')}>{t('nav.intro')}</a>{/if}
           </footer>
         {/if}
       </main>
@@ -381,7 +384,7 @@
   .sponsor-heart{position:absolute;right:-4px;bottom:-3px;inline-size:12px;block-size:12px;fill:var(--sp-heart);stroke:light-dark(#fff,#3d1a2b);stroke-width:2.5;paint-order:stroke;overflow:visible;transform-origin:50% 60%;animation:sponsor-beat 2.8s ease-in-out infinite}
   .sponsor-label{line-height:1}
   @keyframes sponsor-beat{0%,70%,100%{transform:scale(1)}78%{transform:scale(1.22)}86%{transform:scale(.96)}93%{transform:scale(1.12)}}
-  /* From 1440px the finders share one row with the reading system; the face alone leaves them room. */
+  /* The face alone carries the sponsor where the bar is short of room. */
   @media (max-width:900px),(min-width:1440px) and (max-width:1600px){
     .sponsor{justify-content:center;inline-size:32px;padding:0}
     .sponsor-label{display:none}
@@ -419,9 +422,10 @@
     .finders a.on::after{inset-inline:var(--ui-space-xs)}
     .reading :global(.ui-select){inline-size:154px}
   }
-  /* A tablet keeps every finder: the bar takes a second row, and its rule runs the width of the
-     page like the row above. The sticky chrome below it follows the new height. */
-  @media (min-width:901px) and (max-width:1439px){
+  /* The finders keep a row of their own until the bar is wide enough for all of them, the
+     introduction included, beside the reconstruction and the sponsor. The sticky chrome below
+     follows the taller bar. */
+  @media (min-width:901px) and (max-width:1719px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
     .mark,.aside{block-size:55px}
