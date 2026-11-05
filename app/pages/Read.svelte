@@ -1,8 +1,7 @@
 <script>
   // Read a text in layers. The writing strip's text is the text: under each of its characters stands
   // whatever the reader has stacked, top to bottom, in the order and at the size they set. The
-  // arrangement stays in this browser. Hovering a character opens its record, with a way to open it
-  // or copy it.
+  // arrangement stays in this browser. A click shows the character's record in the card.
   import { db, ix, isTangut } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { text, setText } from '../lib/text.svelte.js'
@@ -12,7 +11,6 @@
   import { CURRENT, KINDS, MAX_SIZE, MIN_SIZE, cutLine, defaultLayers, layerValue, readLayers, startSize } from '../lib/layers.js'
   import { t, i18n } from '../lib/i18n.svelte.js'
   import G from '../ui/G.svelte'
-  import Peek from '../ui/Peek.svelte'
   import Icon from '../ui/Icon.svelte'
 
   const STORE = 'tangut-input:read-layers'
@@ -22,20 +20,6 @@
   $effect(() => { if (route.q !== text.value) setQuery(text.value) })
 
   const editText = () => document.getElementById('writing')?.focus()
-
-  /** The character whose record is open on hover, and where it stands. @type {{ char: string, x: number, y: number, top: number } | null} */
-  let peek = $state(null)
-  /** @type {ReturnType<typeof setTimeout> | undefined} */
-  let closing
-  /** @param {Element} column @param {string} char */
-  function peekAt(column, char) {
-    clearTimeout(closing)
-    const box = column.getBoundingClientRect()
-    peek = { char, x: box.left, y: box.bottom + 6, top: box.top }
-  }
-  // The pointer has to cross a gap to reach the panel's buttons, so leaving waits a moment.
-  const closeSoon = () => { clearTimeout(closing); closing = setTimeout(() => { if (!document.querySelector('.peek :focus-visible')) peek = null }, 180) }
-  const keepOpen = () => clearTimeout(closing)
 
   /** @returns {import('../lib/layers.js').Layer[]} */
   function stored() {
@@ -116,8 +100,6 @@
 
 </script>
 
-<svelte:window onscroll={() => { peek = null }} onkeydown={event => { if (event.key === 'Escape') peek = null }} />
-
 <div class="ui-page read" data-width="wide">
   <header class="ui-page-head">
     <h1 class="ui-page-title"><Icon name="read" size={22}/><span>{t('nav.read')}</span></h1>
@@ -182,12 +164,10 @@
                 <span class="gap"></span>
               {:else}
                 <!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events, a11y_no_noninteractive_tabindex -->
-                <span class="column" class:on={peek?.char === part.char} class:opens={part.kind === 'tangut'}
+                <span class="column" class:on={part.kind === 'tangut' && route.c === part.char} class:opens={part.kind === 'tangut'}
                   role={bare && part.kind === 'tangut' ? 'button' : undefined} tabindex={bare && part.kind === 'tangut' ? 0 : undefined}
                   onclick={() => { if (part.kind === 'tangut') choose(part.char) }}
-                  onkeydown={event => { if (bare && part.kind === 'tangut' && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); choose(part.char) } }}
-                  onmouseenter={event => { if (part.kind === 'tangut') peekAt(event.currentTarget, part.char) }} onmouseleave={closeSoon}
-                  onfocusin={event => { if (part.kind === 'tangut') peekAt(event.currentTarget, part.char) }} onfocusout={closeSoon}>
+                  onkeydown={event => { if (bare && part.kind === 'tangut' && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); choose(part.char) } }}>
                   {#each shown as layer, r (r)}
                     {@const value = part.kind === 'tangut' ? valueOf(layer, part.char) : { text: layer.kind === 'tangut' ? part.char : '', title: '' }}
                     <span class="cell" class:script={layer.kind === 'tangut'} class:bo={layer.kind === 'tibetan'} style:font-size="{layer.size}px" style:block-size="{Math.round(layer.size * 1.45)}px" style:max-inline-size="{Math.max(layer.size * 7, 72)}px" title={value.title && value.title !== value.text ? value.title : undefined}
@@ -207,7 +187,6 @@
       <p class="ui-empty">{t('read.empty')}</p>
     {/if}
   </section>
-  {#if peek}<Peek char={peek.char} x={peek.x} y={peek.y} top={peek.top} actions onenter={keepOpen} onleave={closeSoon} />{/if}
 </div>
 
 <style>
