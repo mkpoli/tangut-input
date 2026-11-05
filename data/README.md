@@ -17,6 +17,14 @@ snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
 underlying editions are in `wikisource/README.md` and in the source records of the built file.
 
+## `mica/`
+
+Two texts the Mi Corpus Annotation Group transcribed itself: 華嚴經 juan 77, from the images in 荒川慎太郎
+2011, and the Lotus Sutra's Universal Gateway chapter, from the images in 陈炳应 1985. The group's
+licence is CC BY 4.0, and `manifest.json` pins the commit they were copied from. Its other ten texts
+come from Wikisource, which this corpus reads directly. `scripts/build_tangut_attestation.py` reads them
+as the source `mica`.
+
 ## `lcdtt/`
 
 The 21 text files of the Lausanne Corpus of Digital Tangut Texts
@@ -102,7 +110,7 @@ and `backs`, whether the work supports the Tangut or the Chinese. Compiled by ha
 ## `tangut-frequency.json.gz`
 
 One count per Tangut character: the number of places it occupies in
-`app/data/tangut-attestation.json.gz`, 92,509 places over 3,350 characters. A character repeated in a
+`app/data/tangut-attestation.json.gz`, 105,542 places over 3,379 characters. A character repeated in a
 duplicated text counts each time. The file carries the corpus hash and the counts, sorted by count.
 Built by `scripts/build_tangut_frequency.py`; the finders read it to rank candidates inside their own
 tiers.

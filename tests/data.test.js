@@ -71,17 +71,26 @@ test('the Tibetan spellings by hand class belong to known characters', () => {
   const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
   expect(Object.keys(chars).filter(char => !rhymes.chars[char])).toEqual([])
   for (const { tibetan = [] } of Object.values(chars)) {
-    for (const [hand, spelt, count, script] of tibetan) {
+    for (const [hand, spelt, count, script, wylie] of tibetan) {
+      expect(wylie.length).toBeGreaterThan(0)
       expect('ABCDE').toContain(hand)
       expect(spelt.length).toBeGreaterThan(0)
       expect(count).toBeGreaterThanOrEqual(0)
       expect(script).toMatch(/^[\u0f00-\u0fff?]+$/)
     }
   }
-  expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1, 'ངུ']])
-  expect(chars['𘘣'].tibetan[0]).toEqual(['B', 'g-yi', 13, 'གཡི'])
+  expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1, 'ངུ', 'ngu']])
+  expect(chars['𘘣'].tibetan[0]).toEqual(['B', 'g-yi', 13, 'གཡི', 'g.yi'])
   // A doubled vowel is the long-vowel mark.
-  expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང'])
+  expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང', 'bAng'])
+})
+
+test('Downes\'s glosses belong to known characters and none is empty', () => {
+  const { glosses } = JSON.parse(readFileSync(new URL('../app/data/tangut-downes.json', import.meta.url), 'utf8'))
+  const known = new Set(entries.rows.map(row => row[0]))
+  expect(Object.keys(glosses).filter(char => !known.has(char))).toEqual([])
+  expect(Object.values(glosses).filter(text => !text.trim())).toEqual([])
+  expect(glosses['𘞗']).toBe('seed')
 })
 
 const ccamc = json('tangut-ccamc-index.json.gz')
@@ -117,13 +126,13 @@ test('the rhyme record keeps the fields the card and the chart read', () => {
 
 const attestation = json('tangut-attestation.json.gz')
 
-test('the attestation joins the edition, the twelve Wikisource texts and the Lausanne corpus', () => {
+test('the attestation joins the edition, the twelve Wikisource texts, the Lausanne corpus and MiCA', () => {
   expect(attestation.corpus).toEqual({
-    lines: 5273,
-    characters: 92509,
-    distinct: 3350,
-    sources: 14,
-    sha256: '5312f92bf9751cf88e4ef8c4306a5f4a7be4c94690f58da4eba1d88323623017',
+    lines: 6028,
+    characters: 105542,
+    distinct: 3379,
+    sources: 15,
+    sha256: 'd810d0b821bb72a0c2a29b0cb42ec6de165a7f5b9b6e8ad7e637c3cdaa30af3a',
   })
   expect(attestation.sources.map(source => source.id)).toEqual([
     'solonin-2024',
@@ -140,6 +149,7 @@ test('the attestation joins the edition, the twelve Wikisource texts and the Lau
     'wikisource-dual-maxims',
     'wikisource-tongyin-preface',
     'lcdtt',
+    'mica',
   ])
   expect(attestation.sources.every(source => source.url && source.licence)).toBe(true)
   expect(attestation.sources[0].facsimile).toContain('/facsimile/solonin-2024/')
@@ -177,12 +187,12 @@ const frequency = json('tangut-frequency.json.gz')
 
 test('the frequency table counts every place in the corpus', () => {
   expect(frequency.corpus).toEqual({
-    lines: 5273,
-    characters: 92509,
-    distinct: 3350,
-    sha256: '5312f92bf9751cf88e4ef8c4306a5f4a7be4c94690f58da4eba1d88323623017',
+    lines: 6028,
+    characters: 105542,
+    distinct: 3379,
+    sha256: 'd810d0b821bb72a0c2a29b0cb42ec6de165a7f5b9b6e8ad7e637c3cdaa30af3a',
   })
-  expect(Object.keys(frequency.counts).length).toBe(3350)
-  expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(92509)
-  expect(frequency.counts['𗋕']).toBe(711)
+  expect(Object.keys(frequency.counts).length).toBe(3379)
+  expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(105542)
+  expect(frequency.counts['𗋕']).toBe(757)
 })

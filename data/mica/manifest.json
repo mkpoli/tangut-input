@@ -1,0 +1,21 @@
+{
+ "repository": "https://github.com/wjhuah/LRMT",
+ "commit": "a68105652ebc5dfd08814fce9e0e24fcbc30832c",
+ "retrieved": "2026-11-05",
+ "licence": "CC BY 4.0",
+ "texts": [
+  {
+   "slug": "avatamsaka-77",
+   "file": "華嚴經.txt",
+   "title": "Avataṃsaka Sūtra, juan 77",
+   "edition": "Transcribed by MiCA from the images in 荒川慎太郎 2011, プリンストン大学所蔵西夏文華厳経巻七十七訳注, アジア・アフリカ言語文化研究 81: 147–305",
+   "editionUrl": "https://tufs.repo.nii.ac.jp/records/2077"
+  },
+  {
+   "slug": "lotus-pumen",
+   "file": "妙法蓮華經普門品.txt",
+   "title": "Lotus Sutra, Universal Gateway chapter",
+   "edition": "Transcribed by MiCA from the images in 陈炳应 1985, 图解本西夏文《观音经》译释, 敦煌研究 1985(5)"
+  }
+ ]
+}
