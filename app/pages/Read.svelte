@@ -41,11 +41,15 @@
   function stored() {
     try { return readLayers(JSON.parse(localStorage.getItem(STORE) ?? 'null')) } catch { return defaultLayers() }
   }
-  let layers = $state(stored())
+  // Each row has an identity of its own while the page is open, so a moved row keeps its focus.
+  let serial = 0
+  /** @param {import('../lib/layers.js').Layer[]} list @returns {(import('../lib/layers.js').Layer & { id: number })[]} */
+  const named = list => list.map(layer => ('id' in layer ? /** @type {any} */ (layer) : { ...layer, id: ++serial }))
+  let layers = $state(named(stored()))
   /** @param {import('../lib/layers.js').Layer[]} next */
   function arrange(next) {
-    layers = next
-    try { localStorage.setItem(STORE, JSON.stringify(next)) } catch { /* a blocked store only loses the arrangement */ }
+    layers = named(next)
+    try { localStorage.setItem(STORE, JSON.stringify(next.map(({ kind, system, size }) => ({ kind, system, size })))) } catch { /* a blocked store only loses the arrangement */ }
   }
   /** @param {number} at @param {Partial<import('../lib/layers.js').Layer>} change */
   const change = (at, change) => arrange(layers.map((layer, i) => (i === at ? { ...layer, ...change } : layer)))
@@ -99,6 +103,8 @@
 
   /** The layers with something to show: one with nothing for this text takes no room in it. */
   const shown = $derived(layers.filter(layer => layer.kind === 'tangut' || filled(layer) > 0))
+  // With no Tangut row there is no glyph button, so the column itself takes the keyboard.
+  const bare = $derived(!shown.some(layer => layer.kind === 'tangut'))
 
   /** A layer's row across the whole text, a dash where it has nothing. @param {import('../lib/layers.js').Layer} layer */
   const rowText = layer => lines.map(line => line.filter(part => part.kind !== 'gap').map(part => (part.kind === 'tangut' ? (valueOf(layer, part.char).text || '—') : (layer.kind === 'tangut' ? part.char : ''))).filter(Boolean).join(layer.kind === 'tangut' ? '' : ' ')).join('\n')
@@ -128,7 +134,7 @@
     </div>
     <section id="read-layers" class="editor" hidden={!editing} aria-label={t('read.layers')}>
     <ol class="stack">
-      {#each layers as layer, i (i)}
+      {#each layers as layer, i (layer.id)}
         <li class="row" class:dragging={dragging === i}
           ondragover={event => { event.preventDefault(); if (dragging !== null && dragging !== i) { move(dragging, i); dragging = i } }}>
           <span class="grip" aria-hidden="true" draggable="true" role="presentation" ondragstart={() => { dragging = i }} ondragend={() => { dragging = null }}>⠿</span>
@@ -175,16 +181,19 @@
               {#if part.kind === 'gap'}
                 <span class="gap"></span>
               {:else}
-                <!-- svelte-ignore a11y_no_static_element_interactions -->
-                <span class="column" class:on={peek?.char === part.char}
+                <!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events, a11y_no_noninteractive_tabindex -->
+                <span class="column" class:on={peek?.char === part.char} class:opens={part.kind === 'tangut'}
+                  role={bare && part.kind === 'tangut' ? 'button' : undefined} tabindex={bare && part.kind === 'tangut' ? 0 : undefined}
+                  onclick={() => { if (part.kind === 'tangut') choose(part.char) }}
+                  onkeydown={event => { if (bare && part.kind === 'tangut' && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); choose(part.char) } }}
                   onmouseenter={event => { if (part.kind === 'tangut') peekAt(event.currentTarget, part.char) }} onmouseleave={closeSoon}
                   onfocusin={event => { if (part.kind === 'tangut') peekAt(event.currentTarget, part.char) }} onfocusout={closeSoon}>
                   {#each shown as layer, r (r)}
                     {@const value = part.kind === 'tangut' ? valueOf(layer, part.char) : { text: layer.kind === 'tangut' ? part.char : '', title: '' }}
-                    <span class="cell" class:script={layer.kind === 'tangut'} class:bo={layer.kind === 'tibetan'} style:font-size="{layer.size}px" style:block-size="{Math.round(layer.size * 1.45)}px" style:max-inline-size="{Math.max(layer.size * 7, 72)}px"
+                    <span class="cell" class:script={layer.kind === 'tangut'} class:bo={layer.kind === 'tibetan'} style:font-size="{layer.size}px" style:block-size="{Math.round(layer.size * 1.45)}px" style:max-inline-size="{Math.max(layer.size * 7, 72)}px" title={value.title && value.title !== value.text ? value.title : undefined}
                       lang={layer.kind === 'sinograph' ? 'zh-Hant' : layer.kind === 'japanese' ? 'ja' : layer.kind === 'tibetan' ? 'bo' : undefined}>
                       {#if layer.kind === 'tangut' && part.kind === 'tangut'}
-                        <button type="button" class="glyph" onclick={() => choose(part.char)} aria-label={part.char}><G char={part.char} /></button>
+                        <button type="button" class="glyph" aria-label={part.char}><G char={part.char} /></button>
                       {:else}{value.text}{/if}
                     </span>
                   {/each}
@@ -225,6 +234,7 @@
   .gap{inline-size:var(--ui-space-md)}
   .column{display:grid;justify-items:center;align-content:start;min-inline-size:28px;padding-inline:3px;border-radius:var(--ui-radius-xs)}
   .column.on{background:var(--ui-color-surface-hover)}
+  .column.opens{cursor:pointer}
   .cell{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.45;color:var(--ui-color-ink-soft);font-family:var(--ui-font-serif)}
   .cell.script{overflow:visible;color:var(--ui-color-ink)}
   .cell.bo{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif}
