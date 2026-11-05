@@ -1,0 +1,141 @@
+<script module>
+  // One spelling's card at a time: opening another closes the one before it.
+  let serial = 0
+</script>
+
+<script>
+  // One spelling as a reader needs it: the script with its romanisation beside it, and, on hover or
+  // focus, the IPA and the records it comes from. The source prints transliteration; the script and
+  // the IPA are worked out from it, so the card marks the printed form when it differs.
+  import { t } from '../lib/i18n.svelte.js'
+
+  /** @type {{ script: string, transcription: string, ipa: string, lang: 'bo' | 'sa',
+   *   printed?: string, hand?: string, count?: number, babelstone?: boolean }} */
+  let { script, transcription, ipa, lang, printed = '', hand = '', count, babelstone = false } = $props()
+
+  const id = `spelling-${++serial}`
+  let open = $state(false)
+  let pinned = $state(false)
+  let x = $state(0)
+  let y = $state(0)
+  /** @type {HTMLElement | undefined} */
+  let tip = $state(/** @type {HTMLElement | undefined} */ (undefined))
+  /** @type {HTMLElement | undefined} */
+  let wrap = $state(/** @type {HTMLElement | undefined} */ (undefined))
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let closing
+
+  // A pinned card closes when the reader presses anywhere outside it.
+  $effect(() => {
+    if (!open) return
+    /** @param {PointerEvent} event */
+    const outside = event => {
+      if (wrap?.contains(/** @type {Node | null} */ (event.target))) return
+      pinned = false
+      open = false
+    }
+    document.addEventListener('pointerdown', outside, true)
+    return () => document.removeEventListener('pointerdown', outside, true)
+  })
+
+  /** Put the card beside the spelling, or above it when the page has no room below.
+   *  @param {HTMLElement} element */
+  function place(element) {
+    const box = element.getBoundingClientRect()
+    const width = 280
+    const height = 168
+    x = Math.max(8, Math.min(box.left, (globalThis.innerWidth || 800) - width - 8))
+    y = box.bottom + 6
+    if (y + height > (globalThis.innerHeight || 600) - 8) y = Math.max(8, box.top - height - 6)
+  }
+
+  /** @param {Event & { currentTarget: HTMLElement }} event */
+  function show(event) {
+    clearTimeout(closing)
+    place(event.currentTarget)
+    open = true
+  }
+
+  function stay() {
+    clearTimeout(closing)
+  }
+
+  function later() {
+    if (pinned || (tip && tip.contains(document.activeElement))) return
+    clearTimeout(closing)
+    closing = setTimeout(() => { open = false }, 160)
+  }
+
+  /** @param {Event & { currentTarget: HTMLElement }} event */
+  function toggle(event) {
+    if (pinned) { pinned = false; open = false; return }
+    pinned = true
+    show(event)
+  }
+
+  /** @param {KeyboardEvent} event */
+  function key(event) {
+    if (event.key !== 'Escape') return
+    pinned = false
+    open = false
+  }
+
+  /** @param {FocusEvent & { currentTarget: HTMLElement }} event */
+  function focusOut(event) {
+    if (event.currentTarget.contains(/** @type {Node | null} */ (event.relatedTarget))) return
+    pinned = false
+    open = false
+  }
+</script>
+
+<span class="spelling-wrap" bind:this={wrap} onfocusout={focusOut}>
+  <button class="spelling" type="button" aria-expanded={open} aria-controls={open ? id : undefined}
+    onclick={toggle} onmouseenter={show} onmouseleave={later} onfocus={show} onkeydown={key}>
+    {#if hand}<span class="hand">{hand}</span>{/if}
+    <span class="script" lang={lang}>{script}</span>
+    <span class="transcription">{transcription}</span>
+    {#if count !== undefined && count !== 1}<span class="count">×{count || '?'}</span>{/if}
+  </button>
+  {#if open}
+    <div id={id} class="spelling-tip ui-popover" style:left="{x}px" style:top="{y}px" role="dialog" tabindex="-1"
+      aria-label={`${script} · ${transcription}${ipa ? ` · [${ipa}]` : ''}`} bind:this={tip}
+      onmouseenter={stay} onmouseleave={later} onfocusin={stay} onkeydown={key}>
+      <header>
+        <span class="tip-script" lang={lang}>{script}</span>
+        <span class="tip-transcription">{transcription}</span>
+      </header>
+      <dl>
+        {#if ipa}<dt title={t('card.spellingIpaNote')}>{t('card.spellingIpa')}</dt><dd class="ipa">[{ipa}]</dd>{/if}
+        {#if printed && printed !== transcription}<dt>{t('card.spellingPrinted')}</dt><dd class="ui-mono">{printed}</dd>{/if}
+      </dl>
+      <p class="links">
+        <a href="https://zhuanlan.zhihu.com/p/272058247" target="_blank" rel="noopener noreferrer">{t('card.spellingSource')}<span aria-hidden="true">↗</span></a>
+        {#if babelstone}<a href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.spellingIndex')}<span aria-hidden="true">↗</span></a>{/if}
+      </p>
+    </div>
+  {/if}
+</span>
+
+<style>
+  .spelling-wrap{display:inline}
+  .spelling{display:inline-flex;align-items:baseline;gap:5px;padding:1px 4px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font:inherit;white-space:nowrap;cursor:pointer}
+  .spelling:hover,.spelling[aria-expanded='true']{background:var(--ui-color-surface-hover)}
+  .hand{font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
+  .script{font-size:1.2em;line-height:1.2}
+  .script[lang='bo']{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif}
+  .script[lang='sa']{font-family:'Noto Serif Devanagari','Noto Sans Devanagari',Kohinoor,serif}
+  .transcription{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm);color:var(--ui-color-ink-soft)}
+  .count{font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
+  .spelling-tip{position:fixed;z-index:var(--ui-z-hint);inline-size:280px;padding:var(--ui-space-lg) var(--ui-space-lg) var(--ui-space-md);font-size:var(--ui-text-sm)}
+  header{display:flex;align-items:baseline;gap:var(--ui-space-sm)}
+  .tip-script{font-size:28px;line-height:1.6}
+  .tip-script[lang='bo']{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif}
+  .tip-script[lang='sa']{font-family:'Noto Serif Devanagari','Noto Sans Devanagari',Kohinoor,serif}
+  .tip-transcription{font-family:var(--ui-font-serif);font-size:var(--ui-text-md);color:var(--ui-color-ink-soft)}
+  dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px var(--ui-space-md);margin:var(--ui-space-sm) 0 0;padding-top:var(--ui-space-sm);border-top:1px solid var(--ui-color-border)}
+  dt{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
+  dd{margin:0;font-size:var(--ui-text-xs);overflow-wrap:anywhere}
+  .ipa{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm);letter-spacing:0.01em}
+  .links{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-md);margin:var(--ui-space-sm) 0 0;padding-top:var(--ui-space-sm);border-top:1px solid var(--ui-color-border)}
+  .links a{display:inline-flex;align-items:center;gap:2px;font-size:var(--ui-text-xs);text-underline-offset:2px}
+</style>

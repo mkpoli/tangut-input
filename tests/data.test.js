@@ -71,18 +71,36 @@ test('the Tibetan spellings by hand class belong to known characters', () => {
   const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
   expect(Object.keys(chars).filter(char => !rhymes.chars[char])).toEqual([])
   for (const { tibetan = [] } of Object.values(chars)) {
-    for (const [hand, spelt, count, script, wylie] of tibetan) {
+    for (const [hand, spelt, count, script, wylie, ipa] of tibetan) {
       expect(wylie.length).toBeGreaterThan(0)
       expect('ABCDE').toContain(hand)
       expect(spelt.length).toBeGreaterThan(0)
       expect(count).toBeGreaterThanOrEqual(0)
       expect(script).toMatch(/^[\u0f00-\u0fff?]+$/)
+      expect(ipa).toMatch(/^[\p{L}\p{M}ːʔ? ]+$/u)
     }
   }
-  expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1, 'ངུ', 'ngu']])
-  expect(chars['𘘣'].tibetan[0]).toEqual(['B', 'g-yi', 13, 'གཡི', 'g.yi'])
+  expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1, 'ངུ', 'ngu', 'ŋu']])
+  expect(chars['𘘣'].tibetan[0]).toEqual(['B', 'g-yi', 13, 'གཡི', 'g.yi', 'ɡji'])
   // A doubled vowel is the long-vowel mark.
-  expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང', 'bAng'])
+  expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང', 'bAng', 'baːŋ'])
+  // A prefix is part of the reading, and འ is a glottal stop.
+  expect(chars['𗖵'].tibetan[0]).toEqual(['A', 'v-bu', 3, 'འབུ', "'bu", 'ʔbu'])
+})
+
+test('the Sanskrit spellings are printed, written in Devanagari and read as IPA', () => {
+  const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
+  const rows = Object.values(chars).filter(row => row.sanskrit)
+  expect(rows.length).toBe(23)
+  expect(rows.flatMap(row => row.sanskrit).length).toBe(36)
+  expect(chars['𗄈'].sanskrit).toEqual([['śo', 'शो', 'ɕoː']])
+  expect(chars['𗫂'].sanskrit).toEqual([['ta', 'त', 't̪ɐ'], ['ṭa', 'ट', 'ʈɐ']])
+  expect(chars['𗐱'].sanskrit).toEqual([['ni', 'नि', 'ni'], ['ɲi', 'ञि', 'ɲi'], ['nai', 'नै', 'nɐi̯']])
+  for (const row of rows) for (const [printed, script, ipa] of row.sanskrit) {
+    expect(printed.length).toBeGreaterThan(0)
+    expect(script).toMatch(/^[\u0900-\u097f]+$/)
+    expect(ipa.length).toBeGreaterThan(0)
+  }
 })
 
 test('Downes\'s glosses belong to known characters and none is empty', () => {
