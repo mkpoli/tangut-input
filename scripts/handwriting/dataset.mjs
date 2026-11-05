@@ -36,7 +36,7 @@ function excluded() {
 /** A session folder, oldest first. @returns {string[]} */
 function sessions() {
   return readdirSync(ROOT)
-    .filter(name => !name.startsWith('.') && /^\d{4}-\d{2}-\d{2}T/.test(name))
+    .filter(name => !name.startsWith('.') && /^(\d{4}-\d{2}-\d{2}T|live-)/.test(name))
     .sort()
 }
 
@@ -93,6 +93,8 @@ export function build({ write = true } = {}) {
         char: record.char,
         code: `U+${record.char.codePointAt(0).toString(16).toUpperCase()}`,
         kind: record.kind,
+        // 'picked' where the character is only what the reader chose out of the results.
+        label: record.label ?? 'answer',
         lookalikes: record.lookalikes ?? null,
         strokes: record.strokes,
         strokeCount: record.strokes.length,
@@ -129,6 +131,7 @@ export function build({ write = true } = {}) {
         char: record.char,
         code: `U+${record.char.codePointAt(0).toString(16).toUpperCase()}`,
         kind: 'reviewer',
+        label: 'answer',
         author: 'reviewer',
         for: record.for ?? null,
         strokes: record.strokes,
