@@ -107,7 +107,7 @@ test('the Sanskrit spellings are printed, written in Devanagari and read as IPA'
   expect(rows.flatMap(row => row.sanskrit).length).toBe(36)
   expect(chars['𗄈'].sanskrit).toEqual([['śo', 'शो', 'ɕoː']])
   expect(chars['𗫂'].sanskrit).toEqual([['ta', 'त', 't̪ɐ'], ['ṭa', 'ट', 'ʈɐ']])
-  expect(chars['𗐱'].sanskrit).toEqual([['ni', 'नि', 'ni'], ['ñi', 'ञि', 'ɲi'], ['nai', 'नै', 'nɐi̯']])
+  expect(chars['𗐱'].sanskrit).toEqual([['ni', 'नि', 'n̪i'], ['ñi', 'ञि', 'ɲi'], ['nai', 'नै', 'n̪ɐi̯']])
   for (const row of rows) for (const [printed, script, ipa] of row.sanskrit) {
     expect(printed.length).toBeGreaterThan(0)
     expect(script).toMatch(/^[\u0900-\u097f]+$/)
