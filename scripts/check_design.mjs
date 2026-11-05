@@ -566,6 +566,17 @@ await step('the card opens as a sheet on a phone', async () => {
 })
 await PHONE_APP.close()
 
+await step('the code boxes refuse what a code cannot hold', async () => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
+  const page = await context.newPage()
+  for (const [path, typed, kept] of [['cangjie', 'a;', 'a'], ['sijiao', '1x', '1']]) {
+    await page.goto(`${APP}/${path}`)
+    await page.locator('[data-primary]').pressSequentially(typed)
+    assert.equal(await page.locator('[data-primary]').inputValue(), kept, path)
+  }
+  await context.close()
+})
+
 await browser.close()
 console.log(`\n${passed} passed, ${failed.length} failed`)
 if (failed.length) process.exit(1)

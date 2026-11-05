@@ -165,7 +165,7 @@
     <div class="box">
       <input bind:this={input} data-primary class="ui-input code-input ui-mono" value={code} spellcheck="false" autocomplete="off" autocapitalize="off"
         inputmode={touch ? 'none' : 'text'} aria-label={t('cangjie.label')} placeholder={t('cangjie.placeholder')}
-        oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => setCode(event.currentTarget.value)} onkeydown={keys} use:autofocus />
+        oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { setCode(event.currentTarget.value); event.currentTarget.value = code }} onkeydown={keys} use:autofocus />
       <span class="ui-count count" role="status">{#if code}{hits.length ? t('common.characters', { count: hits.length }) : t('cangjie.none')}{/if}</span>
     </div>
 
