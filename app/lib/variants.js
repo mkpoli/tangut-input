@@ -89,3 +89,30 @@ export function variantIndex(entries, stated = VARIANTS) {
   }
   return index
 }
+
+/**
+ * Keep variant components together in a palette already in its reading order. Each group takes the
+ * place of whichever member comes first, so a member can stand in a section with fewer strokes than
+ * its own; `section` is the stroke count a part is shown under.
+ * @template {{ part: string, strokes: number }} P
+ * @param {P[]} parts
+ * @param {string[]} [groups]
+ * @returns {(P & { section: number })[]}
+ */
+export function keepVariantsTogether(parts, groups = VARIANTS.groups) {
+  /** @type {Map<string, string>} */
+  const groupOf = new Map(groups.flatMap(group => [...group].map(member => [member, group])))
+  const placed = new Set()
+  /** @type {(P & { section: number })[]} */
+  const arranged = []
+  for (const part of parts) {
+    if (placed.has(part.part)) continue
+    const group = groupOf.get(part.part)
+    const members = group ? parts.filter(other => groupOf.get(other.part) === group) : [part]
+    for (const member of members) {
+      placed.add(member.part)
+      arranged.push({ ...member, section: part.strokes })
+    }
+  }
+  return arranged
+}

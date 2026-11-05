@@ -93,7 +93,8 @@ What English and Chinese Wiktionary state about Tangut variant forms (CC BY-SA 4
 etymologies and the statement covers one word) and each page's revision as `wiki:revision`. Rebuild with
 `uv run scripts/extract_tangut_variants.py en=<dump> zh=<dump>`. `tangut-component-variants.tsv` holds
 component pairs used to find possible variants, from NGWU YOH's table, and `tangut-variants-reported.tsv`
-holds pairs from NGWU YOH's messages. `uv run scripts/build_tangut_variants.py` writes
+holds pairs from NGWU YOH's messages. `tangut-component-groups.tsv` holds the groups of their table with more
+than one member, which the parts palette keeps together. Only the order depends on it. `uv run scripts/build_tangut_variants.py` writes
 `app/data/tangut-variants.json`, which `app/lib/variants.js` reads.
 
 ## `tangut-titles.tsv`
