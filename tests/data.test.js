@@ -117,13 +117,13 @@ test('the rhyme record keeps the fields the card and the chart read', () => {
 
 const attestation = json('tangut-attestation.json.gz')
 
-test('the attestation joins the edition, the twelve Wikisource texts and the Lausanne corpus', () => {
+test('the attestation joins the edition, the twelve Wikisource texts, the Lausanne corpus and MiCA', () => {
   expect(attestation.corpus).toEqual({
-    lines: 5273,
-    characters: 92509,
-    distinct: 3350,
-    sources: 14,
-    sha256: '5312f92bf9751cf88e4ef8c4306a5f4a7be4c94690f58da4eba1d88323623017',
+    lines: 6028,
+    characters: 105542,
+    distinct: 3379,
+    sources: 15,
+    sha256: 'd810d0b821bb72a0c2a29b0cb42ec6de165a7f5b9b6e8ad7e637c3cdaa30af3a',
   })
   expect(attestation.sources.map(source => source.id)).toEqual([
     'solonin-2024',
@@ -140,6 +140,7 @@ test('the attestation joins the edition, the twelve Wikisource texts and the Lau
     'wikisource-dual-maxims',
     'wikisource-tongyin-preface',
     'lcdtt',
+    'mica',
   ])
   expect(attestation.sources.every(source => source.url && source.licence)).toBe(true)
   expect(attestation.sources[0].facsimile).toContain('/facsimile/solonin-2024/')
@@ -177,12 +178,12 @@ const frequency = json('tangut-frequency.json.gz')
 
 test('the frequency table counts every place in the corpus', () => {
   expect(frequency.corpus).toEqual({
-    lines: 5273,
-    characters: 92509,
-    distinct: 3350,
-    sha256: '5312f92bf9751cf88e4ef8c4306a5f4a7be4c94690f58da4eba1d88323623017',
+    lines: 6028,
+    characters: 105542,
+    distinct: 3379,
+    sha256: 'd810d0b821bb72a0c2a29b0cb42ec6de165a7f5b9b6e8ad7e637c3cdaa30af3a',
   })
-  expect(Object.keys(frequency.counts).length).toBe(3350)
-  expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(92509)
-  expect(frequency.counts['𗋕']).toBe(711)
+  expect(Object.keys(frequency.counts).length).toBe(3379)
+  expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(105542)
+  expect(frequency.counts['𗋕']).toBe(757)
 })
