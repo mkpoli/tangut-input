@@ -109,7 +109,7 @@
   function later() {
     if (pinned || wrap?.contains(document.activeElement)) return
     clearTimeout(closing)
-    closing = setTimeout(() => { open = false }, 160)
+    closing = setTimeout(close, 160)
   }
 
   /** @param {Event & { currentTarget: HTMLElement }} event */
@@ -122,8 +122,7 @@
   /** @param {FocusEvent & { currentTarget: HTMLElement }} event */
   function focusOut(event) {
     if (event.currentTarget.contains(/** @type {Node | null} */ (event.relatedTarget))) return
-    pinned = false
-    open = false
+    close()
   }
 </script>
 
