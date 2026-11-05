@@ -86,6 +86,9 @@ test('the Tibetan spellings by hand class belong to known characters', () => {
   expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང', 'bAng', 'baːŋ'])
   // A prefix is part of the reading, and འ is a glottal stop.
   expect(chars['𗖵'].tibetan[0]).toEqual(['A', 'v-bu', 3, 'འབུ', "'bu", 'ʔbu'])
+  // ལྷ is one letter, a voiceless l; ནྷ is an aspirated n.
+  expect(chars['𗇘'].tibetan[0]).toEqual(['A', 'lhi', 1, 'ལྷི', 'lhi', 'l̥i'])
+  expect(chars['𘟃'].tibetan[0]).toEqual(['B', 'nho', 1, 'ནྷོ', 'nho', 'nʱo'])
 })
 
 test('the Sanskrit spellings are printed, written in Devanagari and read as IPA', () => {
