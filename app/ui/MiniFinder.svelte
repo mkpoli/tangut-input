@@ -18,7 +18,7 @@
   // `always` is the panel with no field to serve: mounted on a page of its own, it has no trigger, no
   // heading that speaks of the fanqie, and nothing that closes it. `open` stays false, so the listeners
   // that close a popover never run.
-  /** @type {{ selected?: string, always?: boolean, onpick: (char: string, place: number) => boolean }} */
+  /** @type {{ selected?: string, always?: boolean, onpick: (char: string, place: number, strokes?: [number, number][][]) => boolean }} */
   let { selected = '', always = false, onpick } = $props()
 
   const MODES = /** @type {const} */ ([
@@ -260,7 +260,9 @@
 
   /** @param {MiniHit} hit @param {number} place */
   function pick(hit, place) {
-    if (onpick(hit.char, place)) always ? reset() : close()
+    // A pick made from a drawing carries the strokes: whoever asked may keep them as a sample.
+    const drawn = mode === 'draw' ? strokes.map(stroke => stroke.map(([x, y]) => /** @type {[number, number]} */ ([x, y]))) : undefined
+    if (onpick(hit.char, place, drawn)) always ? reset() : close()
   }
 
   /** The next character starts clean: strokes left on the pad would be ranked with the new ones, and
@@ -579,7 +581,7 @@
   .picker-results .ui-count{margin:0}
   .picker-results .ui-empty{margin:0}
   .draw-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--ui-space-lg)}
-  .pad{position:relative;inline-size:160px;aspect-ratio:1;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-md);background:var(--ui-color-surface-sunken);overflow:hidden}
+  .pad{position:relative;inline-size:100%;max-inline-size:320px;aspect-ratio:1;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-md);background:var(--ui-color-surface-sunken);overflow:hidden}
   canvas{display:block;inline-size:100%;block-size:100%;touch-action:none;cursor:crosshair;color:var(--ui-color-ink)}
   .draw-hint{position:absolute;inset-inline:0;bottom:10px;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);letter-spacing:var(--ui-tracking-caps);text-align:center;text-transform:uppercase;pointer-events:none}
   .draw-tools{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
@@ -593,6 +595,6 @@
     .picker-head{padding:var(--ui-space-md) var(--ui-space-lg) var(--ui-space-xs)}
     .picker-modes{padding-inline:var(--ui-space-lg)}
     .picker-body{padding:var(--ui-space-sm) var(--ui-space-lg) var(--ui-space-lg)}
-    .pad{inline-size:132px}
+    .pad{inline-size:100%;max-inline-size:260px}
   }
 </style>
