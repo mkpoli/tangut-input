@@ -156,6 +156,13 @@ export const ERA_SOURCES = {
     note: 'Reports that 王靜如, 李範文 (邦泥定國兀卒考釋) and 史金波 read 兀卒 as 皇帝, and quotes the 長編 for a rival gloss, 青天子.',
     url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606103541242.pdf',
   },
+  survey2007: {
+    author: 'Author not named in the PDF',
+    title: '中國藏西夏文獻綜述',
+    where: '西夏學 2 (2007), p. 72',
+    note: 'Lists 風角城, 明城, 白城, 珠城 and 護城皇帝, with 聖帝, 永平皇帝 and 珍陵帝, among names on the 西夏陵 stele fragments. Reports from 李範文, 西夏陵墓出土殘碑粹編 (1984, not seen) that 城號 may be a kind of posthumous title of the Western Xia\'s own, and that 風角城, 白城, 明城 and 護城 belong to 景宗, 崇宗 and 仁宗. It names three holders for the four titles, so giving both 白城 and 明城 to 崇宗 also follows the Commons captions.',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10372.pdf',
+  },
   kepping2001: {
     author: 'K. B. Kepping',
     title: 'Mi-nia (Tangut) Self-appellation and Self-portraiture in Khara Khoto Materials',
@@ -237,5 +244,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'survey2007', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
 ])

@@ -14,7 +14,7 @@ the date of the passage, or `disputed` among the sources. A title's `basis` foll
 confirms, `chinese` when only Chinese is listed. The build stops unless the title occurs in its place, outside
 wikitext headers, comments and notes. Spaces and line numbers in a running text are ignored, since the
 Lausanne files keep the edition's line breaks. Rows for one title must agree on everything but the
-source and the place.
+source and the place. A title whose Chinese names a city is a `city` title (城號), any other an `honorific`.
 
     uv run scripts/build_tangut_titles.py
 """
@@ -55,7 +55,7 @@ def main() -> None:
             if row['place'] and (not row['tangut'] or row['tangut'] not in place_text(row['place'])):
                 raise SystemExit(f'the title does not occur in the text named: {row}')
             title = titles.setdefault((row['holder'], row['tangut'] or row['chinese']), {
-                'holder': row['holder'], 'identified': row['identified'], 'tangut': row['tangut'],
+                'holder': row['holder'], 'kind': 'city' if '城' in row['chinese'] else 'honorific', 'identified': row['identified'], 'tangut': row['tangut'],
                 'chinese': row['chinese'], 'chineseSource': row['chinese_source'],
                 'basis': 'chinese', 'tangutSources': [], 'chineseSources': [row['chinese_source']] if row['chinese_source'] else [],
             })
