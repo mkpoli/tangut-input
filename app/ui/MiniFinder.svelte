@@ -86,6 +86,18 @@
     return list.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses)
   })
 
+  /** The palette by stroke count, the order a reader looks for a component in. */
+  const paletteGroups = $derived.by(() => {
+    /** @type {Map<number, typeof palette>} */
+    const groups = new Map()
+    for (const item of palette) {
+      const list = groups.get(item.strokes) ?? []
+      list.push(item)
+      groups.set(item.strokes, list)
+    }
+    return [...groups.entries()].sort((a, b) => a[0] - b[0])
+  })
+
   const drawHits = $derived.by(() => {
     void mask
     const index = shapeIndex
@@ -546,15 +558,20 @@
         </div>
 
         {#if mode === 'parts'}
-          <div class="part-palette ui-tiles" style:--ui-tile-size="44px">
-            {#each palette as item (item.part)}
-              {@const sound = readingOf(item.part, ui.reading)}
-              <button type="button" class="ui-tile" onclick={() => addPart(item.part)}
-                title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
-                <span class="ui-tile-glyph"><G char={item.part} /></span>
-                {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
-                <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}</span>
-              </button>
+          <div class="part-palette">
+            {#each paletteGroups as [strokes, items] (strokes)}
+              <p class="ui-label part-group">{t('parts.strokeGroup', { count: strokes })}</p>
+              <div class="ui-tiles" style:--ui-tile-size="44px">
+                {#each items as item (item.part)}
+                  {@const sound = readingOf(item.part, ui.reading)}
+                  <button type="button" class="ui-tile" onclick={() => addPart(item.part)}
+                    title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
+                    <span class="ui-tile-glyph"><G char={item.part} /></span>
+                    {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
+                    <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}</span>
+                  </button>
+                {/each}
+              </div>
             {/each}
           </div>
         {/if}
@@ -590,7 +607,9 @@
   .part-pick{position:relative;display:grid;place-items:center;inline-size:42px;block-size:42px;border:1px solid var(--ui-color-accent);border-radius:var(--ui-radius-sm);background:var(--ui-color-accent-soft);color:var(--ui-color-ink)}
   .part-pick :global(.ui-script){font-size:26px}
   .part-pick .part-x{position:absolute;top:0;right:4px;color:var(--ui-color-accent-ink);font-size:var(--ui-text-xs)}
-  .part-palette{max-block-size:150px;overflow:auto;padding:1px;overscroll-behavior:contain}
+  /* The palette runs its full length; the panel around it is what scrolls. */
+  .part-palette{padding:1px;display:grid;gap:var(--ui-space-2xs)}
+  .part-group{margin:var(--ui-space-2xs) 0 0}
   @media (max-width:700px){
     .picker-head{padding:var(--ui-space-md) var(--ui-space-lg) var(--ui-space-xs)}
     .picker-modes{padding-inline:var(--ui-space-lg)}
