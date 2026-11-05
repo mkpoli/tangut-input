@@ -275,7 +275,7 @@ async function noSideScroll(page) {
   assert.ok(overflow.scroll <= overflow.view + 1, `the page scrolls sideways (${overflow.scroll} > ${overflow.view})`)
 }
 
-const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chart', '/eras', '/transcribe?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6', '/draw', '/parts', '/intro', '/about']
+const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chart', '/eras', '/texts', '/transcribe?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6', '/draw', '/parts', '/intro', '/about']
 
 /** Visits every page at one viewport and checks it renders without script errors or side scroll. */
 async function checkPages(viewport, scheme) {
@@ -523,6 +523,60 @@ await step('the tablet bar has two rows and settings closes when the layout chan
 })
 await TABLET_SETTINGS.close()
 
+const DESKTOP_BAR = await browser.newContext({ viewport: { width: 1920, height: 900 }, colorScheme: 'light' })
+const desktopBar = await DESKTOP_BAR.newPage()
+await desktopBar.goto(`${APP}/`)
+await desktopBar.locator('main.finder').waitFor()
+await step('the introduction has its own place in the desktop bar', async () => {
+  const navIntro = desktopBar.locator('nav.finders a[href="/intro"]')
+  const headerIntro = desktopBar.locator('.intro-extra')
+  const layout = () => desktopBar.evaluate(() => {
+    const nav = document.querySelector('nav.finders')
+    const navLink = nav?.querySelector('a[href="/intro"]')
+    const extra = document.querySelector('.intro-extra')
+    const header = document.querySelector('.top')
+    const navRect = nav?.getBoundingClientRect()
+    const navLinkRect = navLink?.getBoundingClientRect()
+    const extraRect = extra?.getBoundingClientRect()
+    const headerRect = header?.getBoundingClientRect()
+    const shown = el => Boolean(el && el.getClientRects().length && getComputedStyle(el).display !== 'none')
+    return {
+      bar: Math.round(headerRect?.height ?? 0),
+      navShown: shown(navLink),
+      navFits: Boolean(shown(navLink) && navLinkRect && navRect && navLinkRect.right <= navRect.left + nav.clientWidth + 1),
+      extraShown: shown(extra),
+      extraFits: Boolean(shown(extra) && extraRect && headerRect && extraRect.right <= headerRect.right + 1),
+    }
+  })
+  await desktopBar.goto(`${APP}/`)
+  await desktopBar.locator('main.finder').waitFor()
+  assert.deepEqual(await layout(), { bar: 54, navShown: true, navFits: true, extraShown: false, extraFits: false }, 'the bar keeps one row at 1920')
+  await navIntro.click()
+  await desktopBar.waitForURL(/\/intro$/)
+  assert.equal(await navIntro.getAttribute('aria-current'), 'page', 'the introduction is marked as current')
+  assert.equal(await desktopBar.locator('footer.foot a[href="/intro"]').count(), 0, 'the footer holds sources only')
+  for (const [width, bar] of [[1719, 96], [1720, 54], [1440, 96], [1280, 96], [1279, 96], [1141, 96], [1140, 96], [1024, 96]]) {
+    await desktopBar.setViewportSize({ width, height: 900 })
+    await desktopBar.goto(`${APP}/`)
+    await desktopBar.locator('main.finder').waitFor()
+    const state = await layout()
+    assert.equal(state.bar, bar, `the bar height at ${width}`)
+    if (width >= 1280) {
+      assert.equal(state.navShown, true, `the finder row carries the introduction at ${width}`)
+      assert.equal(state.navFits, true, `the introduction fits the finder row at ${width}`)
+      assert.equal(state.extraShown, false, `the first row has no duplicate at ${width}`)
+    } else {
+      assert.equal(state.navShown, false, `the finder row leaves the introduction at ${width}`)
+      assert.equal(state.extraShown, true, `the first row carries the introduction at ${width}`)
+      assert.equal(state.extraFits, true, `the introduction fits the first row at ${width}`)
+    }
+  }
+  await desktopBar.goto(`${APP}/intro`)
+  await desktopBar.locator('main.finder').waitFor()
+  assert.equal(await headerIntro.getAttribute('aria-current'), 'page', 'the first-row introduction is marked as current')
+})
+await DESKTOP_BAR.close()
+
 await step('a choice in the card stays while a code is typed', async () => {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
   const page = await context.newPage()
@@ -611,7 +665,7 @@ await step('the card opens as a sheet on a phone', async () => {
   const card = phone.locator('aside.card')
   await phone.waitForFunction(() => document.querySelector('aside.card')?.classList.contains('open'))
   assert.equal(await card.isVisible(), true, 'the card sheet is visible')
-  await phone.getByRole('button', { name: 'Back', exact: true }).click()
+  await phone.locator('.sheetbar').getByRole('button', { name: 'Close', exact: true }).click()
   await phone.waitForFunction(() => !document.querySelector('aside.card')?.classList.contains('open'))
 })
 await step('a link to a character opens its card on a phone', async () => {

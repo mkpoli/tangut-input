@@ -127,6 +127,10 @@ export const loadGongRhymes = () => once('gongRhymes', () => readJson(new URL('.
 export const loadChineseRhymes = () => once('chineseRhymes', () => readJson(new URL('../data/tangut-chinese-rhymes.json', import.meta.url)))
 /** Tibetan spellings by hand class, with counts, and Sanskrit, by character. @returns {Promise<{ chars: Record<string, { tibetan?: [string, string, number, string, string][], sanskrit?: string[] }> } | null>} */
 export const loadTibetanHands = () => once('tibetanHands', () => readJson(new URL('../data/tangut-tibetan-hands.json', import.meta.url)))
+/** Alan Downes's English gloss for each character he records. @returns {Promise<{ glosses: Record<string, string> } | null>} */
+export const loadDownes = () => once('downes', () => readJson(new URL('../data/tangut-downes.json', import.meta.url)))
+/** The Chinese words the Tangut 類林 uses for a character, the commonest first. @returns {Promise<{ glosses: Record<string, [string, number][]> } | null>} */
+export const loadLeilin = () => once('leilin', () => readJson(new URL('../data/tangut-leilin.json', import.meta.url)))
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */

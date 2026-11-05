@@ -34,6 +34,10 @@
       <dd>{@html t('about.gong')}</dd>
       <dt>{t('about.chineseTitle')}</dt>
       <dd>{@html t('about.chinese')}</dd>
+      <dt>{t('about.downesTitle')}</dt>
+      <dd>{@html t('about.downes')}</dd>
+      <dt>{t('about.leilinTitle')}</dt>
+      <dd>{@html t('about.leilin')}</dd>
       <dt>{t('about.handsTitle')}</dt>
       <dd>{@html t('about.hands')}</dd>
       <dt>{t('about.readingsTitle')}</dt>

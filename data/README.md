@@ -86,6 +86,16 @@ Era names matching Yuan eras, in Tangut, one row per era: the era, the Tangut an
 `app/lib/era-sources.js`. Read by hand from an image in a post by @zoenshiueh_lieu, which does not say whose
 eras these are. `scripts/build_tangut_later_eras.py` builds the page's data.
 
+## `tangut-variants.tsv`
+
+What English and Chinese Wiktionary state about Tangut variant forms (CC BY-SA 4.0), from their dumps of
+2026-11-01: `form`, `base`, `kind` (`variant` or `synonym`), `scope` (`partial` when the page has several
+etymologies and the statement covers one word) and each page's revision as `wiki:revision`. Rebuild with
+`uv run scripts/extract_tangut_variants.py en=<dump> zh=<dump>`. `tangut-component-variants.tsv` holds
+component pairs used to find possible variants, from NGWU YOH's table, and `tangut-variants-reported.tsv`
+holds pairs from NGWU YOH's messages. `uv run scripts/build_tangut_variants.py` writes
+`app/data/tangut-variants.json`, which `app/lib/variants.js` reads.
+
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or

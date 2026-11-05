@@ -18,6 +18,7 @@
   --tg-ids: 'IDS Operators', var(--tg-font);
   --ui-font-script: var(--tg-font);
   --ui-font-ids: var(--tg-ids);
+  --ui-font-phonetic: 'Tangut IPA', var(--ui-font-serif);
   --topbar-h: 54px;
   --writing-h: 62px;
 }

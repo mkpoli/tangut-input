@@ -5,7 +5,7 @@
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES, GROUPS, PRIMARY } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, setReading } from './lib/ui.svelte.js'
-  import { SYSTEMS, systemName, systemTitle } from './lib/reading.js'
+  import { SYSTEMS, systemBaseName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
   import { i18n, t } from './lib/i18n.svelte.js'
   import { applySeo } from './lib/seo.js'
@@ -22,6 +22,7 @@
   import Fanqie from './pages/Fanqie.svelte'
   import Chart from './pages/Chart.svelte'
   import Eras from './pages/Eras.svelte'
+  import Texts from './pages/Texts.svelte'
   import Transcribe from './pages/Transcribe.svelte'
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
@@ -188,12 +189,18 @@
 
 <svelte:window onkeydown={keys} />
 
+{#snippet introLink(/** @type {string} */ className)}
+  <a class={className} href="/intro" class:on={route.page === 'intro'} aria-current={route.page === 'intro' ? 'page' : undefined}
+    title={t('nav.intro.hint')} onclick={event => nav(event, 'intro')}><Icon name="book" size={14} stroke={1.6}/><span>{t('nav.intro')}</span></a>
+{/snippet}
+
 <div class="shell">
   <header class="top">
     <a class="mark" href="/" onclick={event => nav(event, '')} aria-label={t('app.home')}>
       <span class="badge ui-script" aria-hidden="true">𘅤</span>
       <span class="name">{t('app.name')}</span>
     </a>
+    {@render introLink('intro-extra')}
     <nav class="finders" aria-label={t('nav.label')}>
       <a href="/" class="primary" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
         title={t(PRIMARY.hint)} onclick={event => nav(event, '')}><Icon name={PRIMARY.icon} size={14} stroke={1.6}/><span>{t(PRIMARY.label)}</span></a>
@@ -205,6 +212,9 @@
           {/each}
         </div>
       {/each}
+      <div class="group intro">
+        {@render introLink('intro-link')}
+      </div>
     </nav>
     <div class="aside">
       <label class="reading" title={`${t('reading.system')}: ${systemTitle(readingSystem)}`}>
@@ -214,7 +224,7 @@
         <span class="ui-select-wrap">
           <select class="ui-select" data-size="sm" value={ui.reading}
             onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)}>
-            {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+            {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemBaseName(entry, i18n.locale)}</option>{/each}
           </select>
         </span>
       </label>
@@ -260,6 +270,7 @@
         {:else if route.page === 'fanqie'}<Fanqie />
         {:else if route.page === 'chart'}<Chart />
         {:else if route.page === 'eras'}<Eras />
+        {:else if route.page === 'texts'}<Texts />
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
@@ -269,11 +280,11 @@
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
-            {#if route.page !== 'intro'}· <a href="/intro" onclick={event => nav(event, 'intro')}>{t('nav.intro')}</a>{/if}
           </footer>
         {/if}
       </main>
       {#if route.page !== 'about' && route.page !== 'intro'}
+        {#if ui.sheet}<button type="button" class="scrim" tabindex="-1" aria-hidden="true" onclick={() => { ui.sheet = false }}></button>{/if}
         <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
           <Card />
         </aside>
@@ -355,6 +366,9 @@
   .mark{display:flex;align-items:center;gap:var(--ui-space-sm);color:var(--ui-color-ink);text-decoration:none}
   .badge{display:grid;place-items:center;inline-size:30px;block-size:30px;border-radius:var(--ui-radius-sm);background:var(--ui-color-accent);color:var(--ui-color-on-accent);font-size:21px}
   .name{font-family:var(--ui-font-serif);font-size:17px;font-weight:var(--ui-weight-semibold);letter-spacing:.005em;white-space:nowrap}
+  .intro-extra{display:none;align-items:center;gap:4px;block-size:55px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
+  .intro-extra:hover{color:var(--ui-color-ink)}
+  .intro-extra.on{color:var(--ui-color-accent-ink)}
   .finders{align-self:stretch;display:flex;align-items:stretch;gap:2px;min-inline-size:0;overflow-x:auto;scrollbar-width:none}
   .finders::-webkit-scrollbar{display:none}
   .finders a{position:relative;display:flex;align-items:center;gap:4px;padding:0 7px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
@@ -364,12 +378,19 @@
   .finders .group{display:flex;align-items:stretch;gap:2px}
   .finders .primary{font-weight:var(--ui-weight-semibold)}
   .finders .group + .group, .finders .primary + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
+  /* The finder row cannot hold the introduction below 1280px; it moves up beside the mark. */
+  @media (min-width:901px) and (max-width:1279px){
+    .intro-extra{display:flex}
+    .finders .intro{display:none}
+  }
   .aside{margin-inline-start:auto;display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .reading{display:flex;align-items:center;gap:var(--ui-space-xs)}
   .reading-label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
   .reading-icon{display:grid;place-items:center;color:var(--ui-color-ink-muted)}
-  @media (max-width:1600px){.reading-label{display:none}}
-  .reading :global(.ui-select){inline-size:154px}
+  /* The finder row needs the label's space until the bar is wide enough for the intro, the
+     reconstruction and the sponsor together. */
+  @media (max-width:1799px){.reading-label{display:none}}
+  .reading :global(.ui-select){inline-size:172px}
   /* The sponsor button: a soft pink pill led by the author's face, with a small heart on it that beats. */
   .sponsor{--sp-from:light-dark(#ffe6ef,#3d1a2b);--sp-to:light-dark(#fff0e0,#3a2318);--sp-ink:light-dark(#c2185b,#ffb3cd);--sp-heart:light-dark(#ff4f88,#ff7aa6);--sp-line:light-dark(#ffd0de,#5a2a3f);
     display:inline-flex;align-items:center;gap:var(--ui-space-xs);flex:none;block-size:32px;padding:0 12px 0 4px;border:1px solid var(--sp-line);border-radius:var(--ui-radius-pill);background:linear-gradient(120deg,var(--sp-from),var(--sp-to));color:var(--sp-ink);font:inherit;font-size:var(--ui-text-xs);font-weight:var(--ui-weight-bold);white-space:nowrap;cursor:pointer;transition:transform var(--ui-duration) var(--ui-ease),box-shadow var(--ui-duration) var(--ui-ease)}
@@ -381,8 +402,8 @@
   .sponsor-heart{position:absolute;right:-4px;bottom:-3px;inline-size:12px;block-size:12px;fill:var(--sp-heart);stroke:light-dark(#fff,#3d1a2b);stroke-width:2.5;paint-order:stroke;overflow:visible;transform-origin:50% 60%;animation:sponsor-beat 2.8s ease-in-out infinite}
   .sponsor-label{line-height:1}
   @keyframes sponsor-beat{0%,70%,100%{transform:scale(1)}78%{transform:scale(1.22)}86%{transform:scale(.96)}93%{transform:scale(1.12)}}
-  /* From 1440px the finders share one row with the reading system; the face alone leaves them room. */
-  @media (max-width:900px),(min-width:1440px) and (max-width:1600px){
+  /* On a phone the face alone carries the sponsor. */
+  @media (max-width:900px){
     .sponsor{justify-content:center;inline-size:32px;padding:0}
     .sponsor-label{display:none}
   }
@@ -396,6 +417,7 @@
   .body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 400px;align-items:start}
   .body.full{grid-template-columns:minmax(0,1fr)}
   .finder{min-inline-size:0;padding:var(--ui-space-3xl) var(--ui-space-4xl) 72px}
+  .scrim{display:none}
   .card{position:sticky;top:var(--topbar-h);block-size:calc(100dvh - var(--topbar-h));overflow:auto;border-inline-start:1px solid var(--ui-color-border);background:var(--ui-color-surface);overscroll-behavior:contain}
   .fault{margin:64px auto;max-inline-size:36em;color:var(--ui-color-danger)}
   .foot{margin-top:var(--ui-space-4xl);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
@@ -417,11 +439,12 @@
     .top{gap:var(--ui-space-md);padding-inline:var(--ui-space-xl)}
     .finders a{padding-inline:var(--ui-space-xs);font-size:var(--ui-text-xs)}
     .finders a.on::after{inset-inline:var(--ui-space-xs)}
-    .reading :global(.ui-select){inline-size:154px}
+    .reading :global(.ui-select){inline-size:172px}
   }
-  /* A tablet keeps every finder: the bar takes a second row, and its rule runs the width of the
-     page like the row above. The sticky chrome below it follows the new height. */
-  @media (min-width:901px) and (max-width:1439px){
+  /* The finders keep a row of their own until the bar is wide enough for all of them, the
+     introduction included, beside the reconstruction and the sponsor. The threshold holds the
+     longest labels (English); the sticky chrome below follows the taller bar. */
+  @media (min-width:901px) and (max-width:1719px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
     .mark,.aside{block-size:55px}
@@ -438,7 +461,8 @@
     .reading :global(.ui-select){inline-size:142px;font-size:var(--ui-text-2xs)}
     .body{grid-template-columns:minmax(0,1fr)}
     .finder{padding:var(--ui-space-xl) var(--ui-space-lg) 96px}
-    .card{position:fixed;inset:0;block-size:100dvh;z-index:var(--ui-z-modal);border:0;transform:translateY(100%);transition:transform var(--ui-duration) var(--ui-ease);visibility:hidden}
+    .scrim{display:block;position:fixed;inset:0;z-index:var(--ui-z-modal);padding:0;border:0;background:var(--ui-color-overlay)}
+    .card{position:fixed;inset:auto 0 0;block-size:min(76dvh,calc(100dvh - 96px));z-index:var(--ui-z-modal);border:0;border-start-start-radius:var(--ui-radius-lg);border-start-end-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow-2);transform:translateY(100%);transition:transform var(--ui-duration) var(--ui-ease);visibility:hidden}
     .card.open{transform:none;visibility:visible}
     .name{display:none}
     .tabs{position:fixed;inset-inline:0;bottom:0;z-index:var(--ui-z-chrome);display:flex;gap:2px;padding:var(--ui-space-xs) var(--ui-space-sm) calc(var(--ui-space-xs) + env(safe-area-inset-bottom));background:var(--ui-color-surface);border-top:1px solid var(--ui-color-border)}
