@@ -41,7 +41,15 @@ export const GROUPS = /** @type {const} */ ([
   },
 ])
 
-/** @typedef {typeof PRIMARY | typeof GROUPS[number]['pages'][number]} PageEntry */
+// The pages outside the finder groups: the introduction and the sources.
+export const MORE = /** @type {const} */ ([
+  { path: 'intro', label: 'nav.intro', icon: 'book', hint: 'nav.intro.hint' },
+  { path: 'about', label: 'nav.sources', icon: 'sources', hint: 'nav.sources.hint' },
+])
+
+/** @typedef {typeof GROUPS[number]['pages'][number] | typeof MORE[number]} FinderEntry */
+
+/** @typedef {typeof PRIMARY | FinderEntry} PageEntry */
 
 /** @type {PageEntry[]} */
 export const PAGES = [PRIMARY, ...GROUPS.flatMap(group => /** @type {PageEntry[]} */ ([...group.pages]))]
@@ -51,7 +59,7 @@ export const PAGES = [PRIMARY, ...GROUPS.flatMap(group => /** @type {PageEntry[]
 /** @returns {{ page: Page, q: string, c: string }} */
 function read() {
   const path = location.pathname.replace(/^\/+|\/+$/g, '')
-  const page = /** @type {Page} */ ([...PAGES.map(p => p.path), 'about', 'intro'].includes(path) ? path : '')
+  const page = /** @type {Page} */ ([...PAGES, ...MORE].some(entry => entry.path === path) ? path : '')
   const params = new URLSearchParams(location.search)
   const code = params.get('c') ?? ''
   const c = /^[0-9a-f]{4,5}$/i.test(code) ? String.fromCodePoint(parseInt(code, 16)) : ''

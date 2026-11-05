@@ -33,20 +33,26 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 
 ## The frame
 
-**Desktop (1440×900).** One top bar: the mark, the grouped finders, each with its icon before the
-name, the reconstruction with its label and sound icon, and a settings button. The settings popover
-is two groups: Appearance, with the three-way theme (system, light or dark) and the colour scheme;
-and Text, with the interface language and the Tangut face. Each row carries its own icon. The text
-strip sits under the bar; the finder takes the left and the card a fixed 400 px column on the
-right, scrolling on its own. Sources sits at the foot of the finder. The card stays visible while
-candidates change, so meaning and reading are read alongside the list.
+**Desktop (1180 or wider).** One top bar: the mark, Find, one button for each finder group (From a
+shape, From a sound, From a meaning), More, the reconstruction with its label and sound icon, and a
+settings button. A group button opens a menu under the bar listing its finders, each with its hint
+and the open one marked; the button stays marked while a page inside its group is open. More holds
+the introduction and Sources. Escape, a click elsewhere or a change of layout closes the menu, and
+Escape puts focus back on its button. The settings popover is two groups: Appearance, with the
+three-way theme (system, light or dark) and the colour scheme; and Text, with the interface language
+and the Tangut face. Each row carries its own icon. The text strip sits under the bar; the finder
+takes the left and the card a fixed 400 px column on the right, scrolling on its own. The card
+stays visible while candidates change, so meaning and reading are read alongside the list.
+
+**Tablet (901–1179).** The same bar keeps every group, with the group buttons on a second row whose
+rule runs the width of the page. The sticky chrome below follows the taller bar.
 
 **Phone (390 wide).** The top bar keeps the mark, the reconstruction and settings; settings opens
 as a sheet from the same button. The finders move to a bottom tab bar of groups, each tab with its
 icon over the name, each group opening its pages in a sheet with a row for each finder; More holds
-Sources. The sheets are native `<dialog>`s, so Escape closes them and focus returns to the tab that
-opened them. The card becomes a full-height sheet that a tap opens and Back or `Esc` closes;
-previews from the keyboard do not open it. The text strip stays at the top.
+the introduction and Sources. The sheets are native `<dialog>`s, so Escape closes them and focus
+returns to the tab that opened them. The card becomes a full-height sheet that a tap opens and Back
+or `Esc` closes; previews from the keyboard do not open it. The text strip stays at the top.
 
 Every finder, page title and action carries a line icon from `app/ui/Icon.svelte`: a 20-unit square
 drawn at 1.5 with the colour of the text, so both schemes and every palette need no separate set.
