@@ -245,6 +245,7 @@
   "card.variantOf": "此字為下列字的異體",
   "card.variantOfPartial": "其中一個詞為下列字的異體",
   "card.variantForms": "此字的異體",
+  "card.variantFormsPartial": "此字的異體（僅就該字的其中一個詞而言）",
   "card.variantReported": "另有指為異體",
   "card.variantReportedSource": "據NGWU YOH的聊天訊息（2026-11-05），未引出處。",
   "card.variantPossible": "可能為同一字",

@@ -245,6 +245,7 @@
   "card.variantOf": "A variant form of",
   "card.variantOfPartial": "A variant form of, for one of its words",
   "card.variantForms": "Its variant forms",
+  "card.variantFormsPartial": "Its variant forms, for one of their words",
   "card.variantReported": "Also reported as a variant",
   "card.variantReportedSource": "From a chat message by NGWU YOH, 2026-11-05. No published source is cited.",
   "card.variantPossible": "Possibly the same character",

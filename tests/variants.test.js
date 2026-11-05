@@ -8,8 +8,8 @@ const NONE = { variants: [], partial: [], synonyms: [], components: [], reported
 
 test('a stated variant links both characters', () => {
   const index = variantIndex([], { ...NONE, variants: [['𗄧', '𘚡']] })
-  expect(index.get('𗄧')).toEqual({ of: ['𘚡'], partial: [], forms: [], reported: [], possible: [] })
-  expect(index.get('𘚡')).toEqual({ of: [], partial: [], forms: ['𗄧'], reported: [], possible: [] })
+  expect(index.get('𗄧')).toEqual({ of: ['𘚡'], partial: [], forms: [], partialForms: [], reported: [], possible: [] })
+  expect(index.get('𘚡')).toEqual({ of: [], partial: [], forms: ['𗄧'], partialForms: [], reported: [], possible: [] })
 })
 
 test('a shared reading and sense makes a possible variant, and neither alone does', () => {
@@ -58,6 +58,8 @@ test('the recorded data gives the stated variants and the possible ones', () => 
   expect(index.get('𘅾')?.of).toEqual(['𘄵'])
   expect(index.get('𗀑')?.partial).toEqual(['𗀉'])
   expect(index.get('𗀑')?.of).toEqual([])
+  expect(index.get('𗀉')?.partialForms).toEqual(['𗀑'])
+  expect(index.get('𗀉')?.forms).toEqual([])
   expect(index.get('𗢨')?.reported).toEqual(['𘓐'])
   expect(index.get('𗢨')?.possible).toEqual([])
   expect(index.get('𗥠')?.possible ?? []).toEqual([])

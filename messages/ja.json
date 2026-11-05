@@ -245,6 +245,7 @@
   "card.variantOf": "次の字の異体字",
   "card.variantOfPartial": "次の字の異体字（この字の語の一つについて）",
   "card.variantForms": "この字の異体字",
+  "card.variantFormsPartial": "この字の異体字（異体字側の語の一つについて）",
   "card.variantReported": "異体字との指摘",
   "card.variantReportedSource": "NGWU YOHのチャットでの発言（2026-11-05）によります。典拠は示されていません。",
   "card.variantPossible": "同じ字の可能性",

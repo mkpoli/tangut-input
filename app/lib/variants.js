@@ -26,7 +26,7 @@ function senses(entry) {
  * with the same reading in Li Fanwen's system that also share a sense in Wiktionary, or whose
  * descriptions differ only by a pair of variant components. Characters already linked, or that
  * Wiktionary calls synonyms, are left out.
- * @typedef {{ of: string[], partial: string[], forms: string[], reported: string[], possible: string[] }} Variants
+ * @typedef {{ of: string[], partial: string[], forms: string[], partialForms: string[], reported: string[], possible: string[] }} Variants
  * @param {VariantEntry[]} entries
  * @param {{ variants: string[][], partial: string[][], synonyms: string[][], components: string[][], reported: string[][] }} [stated]
  * @returns {Map<string, Variants>}
@@ -37,7 +37,7 @@ export function variantIndex(entries, stated = VARIANTS) {
   /** @param {string} char */
   const at = char => {
     let record = index.get(char)
-    if (!record) index.set(char, record = { of: [], partial: [], forms: [], reported: [], possible: [] })
+    if (!record) index.set(char, record = { of: [], partial: [], forms: [], partialForms: [], reported: [], possible: [] })
     return record
   }
   for (const [form, base] of stated.variants) {
@@ -46,7 +46,7 @@ export function variantIndex(entries, stated = VARIANTS) {
   }
   for (const [form, base] of stated.partial) {
     at(form).partial.push(base)
-    at(base).forms.push(form)
+    at(base).partialForms.push(form)
   }
   for (const [one, other] of stated.reported) {
     at(one).reported.push(other)
@@ -57,7 +57,7 @@ export function variantIndex(entries, stated = VARIANTS) {
   const family = char => {
     const record = index.get(char)
     const bases = [...(record?.of ?? []), ...(record?.partial ?? [])]
-    return new Set([char, ...bases, ...(record?.forms ?? []), ...(record?.reported ?? []), ...bases.flatMap(base => index.get(base)?.forms ?? [])])
+    return new Set([char, ...bases, ...(record?.forms ?? []), ...(record?.partialForms ?? []), ...(record?.reported ?? []), ...bases.flatMap(base => [...(index.get(base)?.forms ?? []), ...(index.get(base)?.partialForms ?? [])])])
   }
   /** @param {string} one @param {string} other */
   const link = (one, other) => {
