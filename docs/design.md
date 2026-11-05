@@ -36,14 +36,13 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 **Desktop (1440×900).** The bar takes two rows: the mark, the reconstruction with its label and
 sound icon, the sponsor and a settings button on the first; the grouped finders, each with its
 icon before the name, and the introduction at their end on the second. From 1720 px the finders
-join the first row; between 901 and 1140 px the introduction moves up beside the mark, because the
-finder row has no room for it. The settings popover is two groups: Appearance, with the three-way
-theme
-(system, light or dark) and the colour scheme; and Text, with the interface language and the
-Tangut face. Each row carries its own icon. The text strip sits under the bar; the finder takes
-the left and the card a fixed 400 px column on the right, scrolling on its own. Sources sits at
-the foot of the finder. The card stays visible while candidates change, so meaning and reading are
-read alongside the list.
+join the first row; between 901 and 1140 px the introduction moves up beside the mark, because
+the finder row has no room for it. The settings popover is two groups: Appearance, with the
+three-way theme (system, light or dark) and the colour scheme; and Text, with the interface
+language and the Tangut face. Each row carries its own icon. The text strip sits under the bar;
+the finder takes the left and the card a fixed 400 px column on the right, scrolling on its own.
+Sources sits at the foot of the finder. The card stays visible while candidates change, so meaning
+and reading are read alongside the list.
 
 **Phone (390 wide).** The top bar keeps the mark, the reconstruction and settings; settings opens
 as a sheet from the same button. The finders move to a bottom tab bar of groups, each tab with its
