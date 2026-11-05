@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
-import { variantIndex } from '../app/lib/variants.js'
+import { keepVariantsTogether, variantIndex } from '../app/lib/variants.js'
 import VARIANTS from '../app/data/tangut-variants.json' with { type: 'json' }
 
 const NONE = { variants: [], partial: [], synonyms: [], components: [], reported: [] }
@@ -64,4 +64,16 @@ test('the recorded data gives the stated variants and the possible ones', () => 
   expect(index.get('𗢨')?.possible).toEqual([])
   expect(index.get('𗥠')?.possible ?? []).toEqual([])
   expect([...index.values()].flatMap(record => record.possible).length).toBe(38)
+})
+
+test('variant components stand together, under the first member\'s strokes', () => {
+  const part = (name, strokes) => ({ part: name, strokes })
+  const arranged = keepVariantsTogether([part('𘠣', 2), part('𘠀', 2), part('𘡍', 3), part('𘠅', 3), part('𘠁', 3)], ['𘠣𘡍𘠅'])
+  expect(arranged.map(item => item.part)).toEqual(['𘠣', '𘡍', '𘠅', '𘠀', '𘠁'])
+  expect(arranged.map(item => item.section)).toEqual([2, 2, 2, 2, 3])
+})
+
+test('a member filtered out of the palette leaves the rest in place', () => {
+  const part = (name, strokes) => ({ part: name, strokes })
+  expect(keepVariantsTogether([part('𘠟', 4)], ['𘠠𘠟'])).toEqual([{ part: '𘠟', strokes: 4, section: 4 }])
 })
