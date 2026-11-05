@@ -34,6 +34,7 @@ cannot copy it.
 | 李範文《宋代西北方音》(1994) pp. 270–281, via [KwingiemChan on Zhihu](https://zhuanlan.zhihu.com/p/272058247); rhyme numbers from 郭抒遠 2019 table 1-3-1, via [the same author](https://zhuanlan.zhihu.com/p/271919711) | Tibetan spellings by rhyme and initial class | a repost with no stated licence, and unchecked against the book; only the spellings are kept | `data/tangut-tibetan-rhymes.tsv`, `scripts/build_tangut_tibetan_rhymes.py` |
 | 龔煌城《西夏语概要》(2005), via table 1-3-1 of 郭抒遠 2019, [scanned by KwingiemChan on Zhihu](https://zhuanlan.zhihu.com/p/271919711) | a value for each of the 105 rhymes | a repost with no stated licence, unchecked against either book | `app/data/tangut-gong-rhymes.json` |
 | 郭抒遠 2019 table 1-3-1, with finals after 李範文 1994, via [KwingiemChan on Zhihu](https://zhuanlan.zhihu.com/p/271919711) | Chinese characters transcribing Tangut in 黑水城 medical texts, by rhyme | a repost with no stated licence, unchecked against either book; only the characters and finals are kept | `app/data/tangut-chinese-rhymes.json` |
+| Tables of an unidentified study, scanned in [KwingiemChan's article on Zhihu](https://zhuanlan.zhihu.com/p/272058247) | Tibetan spellings by hand class A–E with counts, and Sanskrit, for 406 characters | a repost with no stated licence; the article does not name the study, so its author and terms are unknown | `app/data/tangut-tibetan-hands.json` |
 
 ## Linked, not copied
 
