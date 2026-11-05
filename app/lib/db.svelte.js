@@ -1,5 +1,6 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
+import { indexTibetan } from './tibetan.js'
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
@@ -52,6 +53,7 @@ export const ix = {
   /** 龔煌城's value for each rhyme. @type {Record<string, string>} */ gongRhymes: {},
   /** The Chinese characters transcribing each rhyme: [character, final?]. @type {Record<string, [string, string?][]>} */ chineseRhymes: {},
   /** Tibetan spellings by hand class and Sanskrit, by character. @type {Record<string, { tibetan?: [string, string, number, string][], sanskrit?: string[] }>} */ tibetanHands: {},
+  /** Every Tibetan spelling, keyed for search. @type {import('./tibetan.js').TibetanSpelling[]} */ tibetanIndex: [],
   /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
   /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
   /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
@@ -72,6 +74,7 @@ export async function load() {
     ix.gongRhymes = gongRhymes?.values ?? {}
     ix.chineseRhymes = chineseRhymes?.rhymes ?? {}
     ix.tibetanHands = tibetanHands?.chars ?? {}
+    ix.tibetanIndex = indexTibetan(ix.tibetan, ix.tibetanHands)
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
     ix.names = names
