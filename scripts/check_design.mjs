@@ -605,6 +605,32 @@ await step('a link to a character opens its card on a phone', async () => {
 })
 await PHONE_APP.close()
 
+await step('the code boxes refuse what a code cannot hold', async () => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
+  const page = await context.newPage()
+  for (const [path, typed, kept] of [['cangjie', 'a;', 'a'], ['sijiao', '1x', '1']]) {
+    await page.goto(`${APP}/${path}`)
+    await page.locator('[data-primary]').pressSequentially(typed)
+    assert.equal(await page.locator('[data-primary]').inputValue(), kept, path)
+  }
+  // A refused key leaves the caret where it was.
+  const box = page.locator('[data-primary]')
+  await page.goto(`${APP}/cangjie`)
+  await box.fill('abcd')
+  await box.evaluate(field => field.setSelectionRange(2, 2))
+  await page.keyboard.type(';x')
+  assert.equal(await box.inputValue(), 'abxcd')
+  // A composition is read once, when it ends.
+  await page.goto(`${APP}/sijiao`)
+  await box.focus()
+  const cdp = await context.newCDPSession(page)
+  for (const text of ['1', '12', '12x']) await cdp.send('Input.imeSetComposition', { text, selectionStart: text.length, selectionEnd: text.length })
+  await cdp.send('Input.insertText', { text: '12x' })
+  await page.waitForFunction(() => new URLSearchParams(location.search).get('q') === '12')
+  assert.equal(await box.inputValue(), '12')
+  await context.close()
+})
+
 await browser.close()
 console.log(`\n${passed} passed, ${failed.length} failed`)
 if (failed.length) process.exit(1)
