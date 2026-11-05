@@ -27,7 +27,7 @@ export const ERA_SOURCES = {
     author: 'Liangzhou stele (1094), transcribed on Wikisource after Nishida Tatsuo',
     title: '𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞',
     where: 'Wikisource, revision 909760; Nishida, 西夏語の研究 I (1964), pp. 156–176',
-    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here. The pair 𗣼𗯿𘓺𗨺𘜹, 𗸯𗑗𘓺𘋨 stands before 天祐民安 4 (1093). These match the ends of the titles 孫穎新 gives 崇宗 and his mother. The same pair also stands between 大安 8 (1082) and 天安禮定 2 (1086), the year 惠宗 died according to 宋史; how that passage bears on it is not settled here.',
+    note: 'Dates by 大安 2 and 8, 天安禮定 2 and 天祐民安 4 and 5. Its 天安禮定 is at odds with Nie 2004 as quoted, and the two are left side by side here. The pair 𗣼𗯿𘓺𗨺𘜹, 𗸯𗑗𘓺𘋨 stands before 天祐民安 4 (1093). They match the ends of the titles 孫穎新 gives 崇宗\'s mother and 崇宗. The same pair also stands between 大安 8 (1082) and 天安禮定 2 (1086), the year 惠宗 died according to 宋史; how that passage bears on it is not settled here.',
     url: 'https://wikisource.org/w/index.php?oldid=909760',
   },
   months1185: {
@@ -111,7 +111,7 @@ export const ERA_SOURCES = {
     author: '孫穎新',
     title: '西夏文《大寶積經·無量壽如來會》對勘研究',
     where: 'Chapter 二, 西夏佛經的初譯和校譯活動, read on QQ閱讀 without page numbers',
-    note: 'Author from the book\'s page on QQ閱讀. Prints the colophon formats with Tangut in a custom font, which was not decoded here in full, so only the Chinese is listed for most. The last four codes of 崇宗\'s title, 稅葾猜索, were matched by eye to glyphs in PDFs that use the same font codes (段玉泉, 西夏文《聖勝慧到彼岸功德寶集偈》考論; 西田龍雄; and 聶鴻音 on the 彌勒 prayer, PDF p. 2, all in 西夏學 4), giving 𗸯𗑗𘓺𘋨 for the end of the title, 仁净皇帝. That match is made on this page; no study links the stele\'s form to 崇宗. His mother\'s title ends 德盛皇太后 with the codes 緳蛙猜厚菐, which draw 𗣼𗯿𘓺𗨺𘜹, the stele\'s form, by the same comparison. 蛙 was seen in 克平, tr. 李楊 and 王培培, 漢武帝《秋風辭》的番語譯文 (西夏學 4, PDF p. 4), in the line rendered 香草茂盛南花芬. 猜厚菐 is in 聶鴻音, 俄藏西夏本《拔濟苦難陀羅尼經》考釋 (西夏學 6, 2010, PDF p. 3), where the Chinese has 皇太后 and 厚 is drawn once. No study links this form to her either.',
+    note: 'Author from the book\'s page on QQ閱讀. Prints the colophon formats with Tangut in a custom font, which was not decoded here in full, so only the Chinese is listed for most. The last four codes of 崇宗\'s title, 稅葾猜索, were matched by eye to glyphs in PDFs that use the same font codes (段玉泉, 西夏文《聖勝慧到彼岸功德寶集偈》考論; 西田龍雄; and 聶鴻音 on the 彌勒 prayer, PDF p. 2, all in 西夏學 4), giving 𗸯𗑗𘓺𘋨 for the end of the title, 仁净皇帝. That match is made on this page; no study links the stele\'s form to 崇宗. The book was read as text, so its own glyphs were not seen; the match assumes it uses the same codes, as its 仁宗 line does in 聶鴻音 2009. His mother\'s title ends 德盛皇太后 with the codes 緳蛙猜厚菐. In PDFs with embedded Tangut fonts they draw 𗣼𗯿𘓺𗨺𘜹, the stele\'s form, and CCAMC\'s pages for those characters, linked from each card, fit the Chinese. 緳 is drawn in 聶鴻音 2009. 蛙 is drawn in 克平, tr. 李楊 and 王培培, 漢武帝《秋風辭》的番語譯文 (西夏學 4, PDF p. 4), in the line rendered 香草茂盛南花芬; in 李曉明, 英藏西夏文《七寶華踏佛陀羅尼經》的誤定與考證 (西夏學 8, PDF p. 2); and in Кычанов tr. 彭向前 (PDF p. 4). 菐 is also drawn in 楊志高 2011 (PDF p. 2). 猜厚菐 is in 聶鴻音, 俄藏西夏本《拔濟苦難陀羅尼經》考釋 (西夏學 6, 2010, PDF p. 3), where the Chinese has 皇太后. Among the 100 or more PDFs searched only that one draws 厚, but 楊志高 2010 (PDF p. 2) prints it at the place in the 惠宗母 line where the Lausanne text has 𗨺. No study links this form to her either. 惠宗母\'s whole title is worked out the same way from 淖句饲阶糂播綃硧矖粴稌否繕箍猜厚菐, giving 𘀗𗄷𘍞𗩱𗼇𗟶𗼃𘑨𗹙𗨤𗈁𗖠𗂧𗹑𘓺𗨺𘜹. Fifteen of its codes are drawn in those PDFs, in 孫伯君, 黑水城出土《聖六字增壽大明陀羅尼經》譯釋 (西夏學 4, PDF p. 2) for 阶, and in 段玉泉, 中國藏西夏文文獻未定名殘卷考補 (西夏學 3, PDF p. 6) for 句. 播 was not seen drawn; it takes 𗟶 from 楊志高 2010, whose code line for the shorter title matches the Lausanne text position by position. 糂 is uncertain. It was not seen drawn either, and 𗼇 is inferred: 楊志高 prints 紒, which draws 𗼇, at that place, and 王培培 2010, printing 糂, renders the word 番. The two studies differ by a real character elsewhere in these lines, so 糂 may not be 𗼇. CCAMC\'s pages for these characters also fit the Chinese, some of whose pairs run in reverse order, such as 祿番 and 正國; 𗹙𗨤 is rendered 依法 here and 式法 by 楊志高. 稌 has further support: 楊志高 2010 prints 焚稌 for 慈悲, and 段玉泉 renders 繕腲稌絧 as 国王慈心.',
     url: 'https://m.chuangshi.qq.com/read/26322215/8',
   },
   yaoshi: {
@@ -155,6 +155,41 @@ export const ERA_SOURCES = {
     where: '西夏學 6 (2010)',
     note: 'Reports that 王靜如, 李範文 (邦泥定國兀卒考釋) and 史金波 read 兀卒 as 皇帝, and quotes the 長編 for a rival gloss, 青天子.',
     url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606103541242.pdf',
+  },
+  survey2007: {
+    author: '馬升林',
+    title: '西夏陵殘碑卷綜述',
+    where: 'Section 十四 of 中國藏西夏文獻綜述, 西夏學 2 (2007), pp. 70–74',
+    note: 'Lists 風角城, 明城, 白城, 珠城 and 護城皇帝, with 聖帝, 永平皇帝 and 珍陵帝, among names on the 西夏陵 stele fragments (p. 72). Reports from 李範文, 西夏陵墓出土殘碑粹編 (1984, not seen) that 城號 may be a posthumous title of the Western Xia\'s own, and that 風角城, 白城, 明城 and 護城 belong to 景宗, 崇宗 and 仁宗. It names three holders for the four titles, so which of 白城 and 明城 is 崇宗\'s is not settled by it; the Commons captions give both to him. The head of the stele of tomb 7, which it identifies as 仁宗\'s, reads 大白上國護城聖德至懿皇帝壽陵志文 (pp. 71–72).',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10372.pdf',
+  },
+  zhwphui: {
+    author: 'zh Wikipedia',
+    title: '夏惠宗',
+    where: 'revision 94732402, note a, read 2026-11-05',
+    note: 'After 崔紅芬 and 文志勇, 西夏皇帝尊號考略: 城號 are a kind of 尊號 found only in the Western Xia, still without a clear explanation, and some scholars take them as about equal to posthumous titles.',
+    url: 'https://zh.wikipedia.org/zh-hant/%E5%A4%8F%E6%83%A0%E5%AE%97',
+  },
+  wu1983: {
+    author: '吳天墀',
+    title: '西夏稱「邦泥定」即「白上國」新解',
+    where: '寧夏大學學報（社會科學版）1983(3), read on 愛思想 without page numbers',
+    note: 'Treats 邦泥定 as the name in Tangut and 白上國 as its translation. Gives 邦泥鼎 from the 長編, warning that the Qing editors altered its transcriptions; 邦兒定 from the 東都事略; 邦面令 from the 石林燕語; and, from 聶歷山, a form 痝□領, whose middle character the web text drops and which he links to 面. His copy of the 涑水記聞 has 面邦國令, which he calls garbled.',
+    url: 'https://www.aisixiang.com/data/141396.html',
+  },
+  hu2006: {
+    author: '胡玉冰',
+    title: '漢文西夏文獻之特點及其研究意義和研究方法',
+    where: '西夏學 1 (2006), p. 141',
+    note: 'Quotes the 長編 with 邦尼定, where 吳天墀 quotes it with 邦泥鼎, and writes 邦泥定 on p. 142 from another text. The editions were not compared here.',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10617.pdf',
+  },
+  sushui: {
+    author: '司馬光',
+    title: '涑水記聞 卷11',
+    where: 'Wikisource, revision 2631990, which names no base text',
+    note: 'Has 稱男邦面令國兀卒曩霄上書父大宋皇帝, where the copy 吳天墀 used has 面邦國令.',
+    url: 'https://zh.wikisource.org/wiki/涑水記聞/卷11',
   },
   kepping2001: {
     author: 'K. B. Kepping',
@@ -237,5 +272,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
 ])

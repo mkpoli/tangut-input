@@ -188,7 +188,7 @@ browser keeps form submission, autofill, keyboard, screen readers and forced-col
 | `.ui-page`, `.ui-page-head`, `.ui-page-title`, `.ui-page-intro` | A finder page and its opening text |
 | `.ui-section`, `.ui-section-head`, `.ui-count`, `.ui-more-link` | A block of results and its count |
 | `.ui-index`, `.ui-index-link` | The ways into the site, as a list of rows |
-| `.ui-tiles`, `.ui-tile`, `.ui-tile-glyph`, `.ui-tile-note` | A grid of characters |
+| `.ui-tiles`, `.ui-tile`, `.ui-tile-glyph`, `.ui-tile-sound`, `.ui-tile-note` | A grid of characters, with the reader's reconstruction above the glyph and the finder's note below |
 | `.ui-rows`, `.ui-row`, `.ui-row-pick`, `.ui-row-glyph`, `.ui-row-body` | A list of results |
 | `.ui-candidates`, `.ui-candidate` | The numbered bar of an input method |
 | `.ui-keys`, `.ui-key` | A key chart |

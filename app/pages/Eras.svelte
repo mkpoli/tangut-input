@@ -59,6 +59,25 @@
   }
 </script>
 
+{#snippet titleTable(/** @type {typeof TITLES} */ rows)}
+    <div class="ui-table-wrap">
+      <table class="ui-table list">
+        <thead><tr><th scope="col">{t('eras.titles.holder')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.titles.chinese')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
+        <tbody>
+          {#each rows as title (`${title.holder} ${title.tangut || title.chinese}`)}
+            <tr>
+              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{:else if title.identified === 'disputed'}<span class="inferred" title={t('eras.titles.disputed')} aria-label={t('eras.titles.disputed')}>?</span>{:else if title.identified === 'caption'}<span class="inferred" title={t('eras.titles.caption')} aria-label={t('eras.titles.caption')}>†</span>{:else if title.identified === 'decoded'}<span class="inferred" title={t('eras.titles.decoded')} aria-label={t('eras.titles.decoded')}>‡</span>{:else if title.identified === 'codes'}<span class="inferred" title={t('eras.titles.codes')} aria-label={t('eras.titles.codes')}>§</span>{/if}</th>
+              <td class="forms title-form" data-empty={!title.tangut || undefined}>{#if title.tangut}<span class="form" role="group" aria-label={title.tangut}>{#each [...title.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(title.tangutSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
+              <td class="chinese">{#if title.chinese}<span lang="zh">{title.chinese}</span>{@render cites(title.chineseSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
+              <td class="basis"><span class="tag" data-kind={title.basis}>{t(`eras.titles.basis.${title.basis}`)}</span></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+{/snippet}
+
 {#snippet cites(/** @type {string[]} */ sources)}
   {#if sources.length}<sup class="cite">{#each sources as key, i (key)}{#if i},{/if}<a href={`#era-source-${number(key)}`} aria-label={t('eras.cite', { n: number(key) })}>{number(key)}</a>{/each}</sup>{/if}
 {/snippet}
@@ -111,23 +130,12 @@
         <div><dt><span class="tag" data-kind={basis}>{t(`eras.titles.basis.${basis}`)}</span></dt><dd>{t(`eras.titles.basis.${basis}.hint`)}</dd></div>
       {/each}
     </dl>
-    <div class="ui-table-wrap">
-      <table class="ui-table list">
-        <thead><tr><th scope="col">{t('eras.titles.holder')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.titles.chinese')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
-        <tbody>
-          {#each TITLES as title (`${title.holder} ${title.tangut || title.chinese}`)}
-            <tr>
-              <th scope="row" lang="zh-Hant">{title.holder}{#if title.identified === 'dated'}<span class="inferred" title={t('eras.titles.dated')} aria-label={t('eras.titles.dated')}>*</span>{:else if title.identified === 'disputed'}<span class="inferred" title={t('eras.titles.disputed')} aria-label={t('eras.titles.disputed')}>?</span>{:else if title.identified === 'caption'}<span class="inferred" title={t('eras.titles.caption')} aria-label={t('eras.titles.caption')}>†</span>{:else if title.identified === 'decoded'}<span class="inferred" title={t('eras.titles.decoded')} aria-label={t('eras.titles.decoded')}>‡</span>{/if}</th>
-              <td class="forms title-form" data-empty={!title.tangut || undefined}>{#if title.tangut}<span class="form" role="group" aria-label={title.tangut}>{#each [...title.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(title.tangutSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
-              <td class="chinese">{#if title.chinese}<span lang="zh">{title.chinese}</span>{@render cites(title.chineseSources)}{:else}<span class="ui-hint">—</span>{/if}</td>
-              <td class="basis"><span class="tag" data-kind={title.basis}>{t(`eras.titles.basis.${title.basis}`)}</span></td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
-    <p class="ui-hint">* {t('eras.titles.dated')} † {t('eras.titles.caption')} ‡ {t('eras.titles.decoded')} ? {t('eras.titles.disputed')}</p>
+    <h3 class="subheading">{t('eras.titles.honorific')}</h3>
+    {@render titleTable(TITLES.filter(title => title.kind === 'honorific'))}
+    <h3 class="subheading">{t('eras.titles.city')}</h3>
+    <p class="ui-hint">{t('eras.titles.city.intro')}{@render cites(['zhwphui', 'survey2007'])}</p>
+    {@render titleTable(TITLES.filter(title => title.kind === 'city'))}
+    <p class="ui-hint">* {t('eras.titles.dated')} † {t('eras.titles.caption')} ‡ {t('eras.titles.decoded')} § {t('eras.titles.codes')} ? {t('eras.titles.disputed')}</p>
   </section>
 
   <section class="ui-section titles" id="posthumous">

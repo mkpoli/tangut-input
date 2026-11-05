@@ -121,6 +121,13 @@ class FormulaTableTest(unittest.TestCase):
                 {'character': '𘀏', 'formula': '𘀑𘊱𗩝𗡼𘀑'},
             ]))
 
+    def test_the_repository_table_keeps_the_60_rows(self):
+        path = Path(__file__).resolve().parents[1] / 'data/wenhai/constructions.jsonl'
+        rows = wenhai.read_formulas(path)
+        self.assertEqual(len(rows), 60)
+        self.assertEqual(rows[0], {'position': '1.05.131', 'character': '𘀏',
+                                   'formula': '𘀑𘊱𗩝𗡼'})
+
     def test_rejects_an_empty_file(self):
         with self.assertRaises(SystemExit):
             wenhai.read_formulas(self.write([]))

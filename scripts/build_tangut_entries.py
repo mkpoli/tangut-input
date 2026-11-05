@@ -6,8 +6,9 @@
 
 Displayable fields come from sources the site can republish:
 
-- the five reconstruction tables on English Wiktionary (CC BY-SA 4.0) and Xun Gong's GX202411
-  reconstruction from his Tangut Pronunciation Database (Limited Public Use, cited per character);
+- the five reconstruction tables on English Wiktionary (CC BY-SA 4.0), and Gong Hwang-cherng's and
+  Xun Gong's reconstructions from the Tangut Pronunciation Database (Limited Public Use, cited per
+  character);
 - the English definitions in Wiktionary's Tangut entries, through Kaikki's extract;
 - the Japanese definitions on ja.wiktionary (CC BY-SA 4.0);
 - BabelStone's Tangut IDS (public domain);
@@ -37,8 +38,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ENTRIES = ROOT / 'app/data/tangut-entries.json.gz'
 INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
 FORMAT = 'tangut-input/entries/3'
-SYSTEMS = ['li_fanwen', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida']
-CCAMC_SYSTEMS = ['gong_huangcheng', 'arakawa_shintaro']
+SYSTEMS = ['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida']
+CCAMC_SYSTEMS = ['arakawa_shintaro']
 
 LETTERS = {
     'ɨ': 'i', 'ɪ': 'i', 'ʉ': 'u', 'ɯ': 'u', 'ə': 'e', 'ɛ': 'e', 'ɔ': 'o', 'ɑ': 'a', 'æ': 'ae',
@@ -137,6 +138,7 @@ def main():
     en = kaikki()
     ja = gz(ROOT / 'data/wiktionary/definitions-ja.json.gz')['pages']
     readings = gz(ROOT / 'data/wiktionary/txg-readings.json.gz')['systems']
+    gong_hwang = gz(ROOT / 'data/gong-xun/ghc.json.gz')['readings']
     gong_xun = gz(ROOT / 'data/gong-xun/gx202411.json.gz')['readings']
     wenhai = gz(ROOT / 'data/wenhai/entry-text.json.gz')['entries']
 
@@ -148,6 +150,7 @@ def main():
         definitions_zh = []
         pron = [
             readings['li_fanwen'].get(char, ''),
+            gong_hwang.get(char, ''),
             gong_xun.get(char, ''),
             readings['miyake'].get(char, ''),
             readings['kychanov'].get(char, ''),
