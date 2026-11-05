@@ -263,7 +263,7 @@
         <p class="wenhai-construction">
           {#each construction.parts as [source, part], i}
             {#if i > 0}<span class="wenhai-sep" aria-hidden="true">·</span>{/if}
-            <span class="wenhai-part">{#if part}<span class="wenhai-term" lang="zh-Hant">{partTerm(part)}</span>{/if}<G char={source} /></span>
+            <span class="wenhai-part">{#if part}<span class="wenhai-term" lang="zh-Hant">{partTerm(part)}</span>{/if}<button class="inline wenhai-source" type="button" title={gloss(source) || undefined} aria-label={gloss(source) || source} onclick={() => choose(source)}><G char={source} /></button></span>
           {/each}
         </p>
       </section>
