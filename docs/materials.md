@@ -51,6 +51,12 @@ cannot copy it.
 - [番漢合時掌中珠, 1924 lithograph](https://www.shuge.org/view/fan_han_he_shi_zhang_zhong_zhu/) — page images on 書格. Answered HTTP 525 on 2026-11-03, so the scan itself is unchecked.
 - [Digital Silk Road, 東洋文庫](https://dsr.nii.ac.jp/toyobunko/) — manuscript images, for attestation rather than data.
 - [Tibetan three dialects G2P](https://khepa-nyima.github.io/tibetan-three-dialects-g2p/) — not Tangut, but the nearest thing to a system for reading a Tibetan transcription aloud if one is ever collected.
+- [C27Ezx/TangutTranslator](https://github.com/C27Ezx/TangutTranslator) — 6,000 entries with an English meaning, part of speech and Li Fanwen number, against 457 characters with an English meaning on this site. The repository is MIT, but its README credits the data to Alan Downes's [tangut.info](https://tangut.info/), whose own terms have not been read, so the licence may not be the repository's to give.
+- [tinbreaker/tangut-text](https://github.com/tinbreaker/tangut-text) — Guillaume Jacques's Leilin database as a table, each character with its Chinese gloss, reconstructions and page position. No licence stated. The Tangut text is already here through the Lausanne corpus; the glosses are not. It also holds three witnesses of 妙法蓮華心經, from 孫伯君's study.
+- [UD_Tangut-MiCA](https://github.com/UniversalDependencies/UD_Tangut-MiCA) and [MiCA's treebank](https://github.com/wjhuah/LRMT/tree/main/treebank) — a Universal Dependencies treebank of the Lotus Sutra chapter and 華嚴經, so word boundaries and grammar for those two texts. The UD repository states CC BY-SA 4.0 and is due in release 2.19. Its default branch carried no data file when read on 2026-11-05.
+- [TangutLines](https://github.com/chiaweilinunil/tangutlines) — an OCR dataset of synthetic lines and 1,132 real manuscript line crops, 607 of them transcribed, for reading facsimiles. No licence stated.
+- [番漢合時掌中珠, 甲乙本](https://commons.wikimedia.org/wiki/File:%E7%95%AA%E6%BC%A2%E5%90%88%E6%99%82%E6%8E%8C%E4%B8%AD%E7%8F%A0_%E7%94%B2%E4%B9%99%E6%9C%AC.pdf) — a scan on Wikimedia Commons, images only.
+- [西夏文華嚴經, 京都大学](https://rmda.kulib.kyoto-u.ac.jp/en/news/2022-02-04) — juan 1–5 and 41 in the Rare Materials Digital Archive, images for attestation; the same news item points to juan 6–10 and 36 in another Kyoto archive.
 
 ## Missing
 
