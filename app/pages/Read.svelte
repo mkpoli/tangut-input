@@ -34,7 +34,7 @@
     peek = { char, x: box.left, y: box.bottom + 6, top: box.top }
   }
   // The pointer has to cross a gap to reach the panel's buttons, so leaving waits a moment.
-  const closeSoon = () => { clearTimeout(closing); closing = setTimeout(() => { if (!document.activeElement?.closest('.peek')) peek = null }, 180) }
+  const closeSoon = () => { clearTimeout(closing); closing = setTimeout(() => { if (!document.querySelector('.peek :focus-visible')) peek = null }, 180) }
   const keepOpen = () => clearTimeout(closing)
 
   /** @returns {import('../lib/layers.js').Layer[]} */
