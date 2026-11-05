@@ -1,4 +1,4 @@
-# Tangut faces
+# Tangut fonts
 
 - **Noto Serif Tangut** (default, from Google Fonts). SIL Open Font License 1.1.
   `OFL-NotoSerifTangut.txt`. `NotoSerifTangut-supplement.woff2` is a subset of Noto Serif Tangut
@@ -9,7 +9,7 @@
   of Jing Yongshi's copyright when it appears in a publication. It is served unmodified from this
   site.
 - **BabelStone Tangut Wenhai**, Andrew West, SIL Open Font License 1.1. Noto Serif Tangut draws
-  every character this face does and more, so the site serves only a complement subset of the
+  every character this font does and more, so the site serves only a complement subset of the
   characters Noto lacks (`BabelStoneTangut-complement.woff2`): the components and the newest
   ideographs. The full font is in this directory for rebuilding that subset.
 
@@ -24,4 +24,4 @@ Rebuild the Noto supplement and the BabelStone complement with `bun run build:ta
   where it is offered for download alongside Noto Serif Tangut; it is described there as built
   from 文海, 同音 and 同義 with the script's structures corrected. No licence text ships with the
   archive; the font is served for this personal tool. `NewTangutStd-complement.woff2` draws the
-  Tangut components with Noto Serif Tangut, which this face leaves out.
+  Tangut components with Noto Serif Tangut, which this font leaves out.
