@@ -37,8 +37,9 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 shape, From a sound, From a meaning), More, the reconstruction with its label and sound icon, and a
 settings button. A group button opens a menu under the bar listing its finders, each with its hint
 and the open one marked; the button stays marked while a page inside its group is open. More holds
-the introduction and Sources. Escape, a click elsewhere or a change of layout closes the menu, and
-Escape puts focus back on its button. The settings popover is two groups: Appearance, with the
+the introduction and Sources. The foot of the finder keeps both links. Escape, a click elsewhere or
+a change of layout closes the menu, and Escape puts focus back on its button. The settings popover
+is two groups: Appearance, with the
 three-way theme (system, light or dark) and the colour scheme; and Text, with the interface language
 and the Tangut face. Each row carries its own icon. The text strip sits under the bar; the finder
 takes the left and the card a fixed 400 px column on the right, scrolling on its own. The card
