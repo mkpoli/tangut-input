@@ -64,6 +64,9 @@
   })
 
   const hits = $derived(found.list)
+  /** Whether the number keys pick a candidate: not before anything is typed, and not while the
+   *  query is one that takes digits, a four-corner code or a code point. */
+  const digitsPick = $derived(!!text && !/^(u\+[0-9a-f]*|u[0-9a-f]*[0-9][0-9a-f]*|[0-9]+)$/i.test(text))
   const kinds = $derived(found.kinds)
 
   $effect(() => { void text; active = -1 })
@@ -116,7 +119,7 @@
       return
     }
     // The number keys take the candidate at that place, as an input method does.
-    if (/^[1-9]$/.test(event.key) && hits.length >= Number(event.key)) {
+    if (digitsPick && /^[1-9]$/.test(event.key) && hits.length >= Number(event.key)) {
       event.preventDefault()
       put(hits[Number(event.key) - 1].char)
       return
@@ -170,7 +173,7 @@
             <button type="button" role="option" class="ui-tile" aria-selected={i === active} title={hit.note}
               onclick={() => put(hit.char)} onmouseenter={() => { active = i }}>
               <G char={hit.char} />
-              {#if i < 9}<span class="n">{i + 1}</span>{/if}
+              {#if digitsPick && i < 9}<span class="n">{i + 1}</span>{/if}
             </button>
           {/each}
         </div>
