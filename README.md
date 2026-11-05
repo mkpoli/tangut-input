@@ -147,3 +147,9 @@ The glyphs are set in Noto Serif Tangut from Google Fonts, with a small subset o
 version for the components Google's build lacks (`app/public/fonts/`, SIL OFL 1.1).
 
 The added code is MIT; see `LICENSE`.
+
+## Sponsor
+
+I build tangut-input on my own, with no funding behind it, and it's free for everyone. If it's useful to you, a tip on [Ko-fi](https://ko-fi.com/mkpoli) or [OFUSE](https://ofuse.me/mkpoli) gives me time to keep improving it. Companies interested in sponsoring can write to mkpoli@mkpo.li.
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mkpoli)
