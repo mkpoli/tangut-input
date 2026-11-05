@@ -76,7 +76,7 @@
   /** How many characters of the text a layer has something for. @param {import('../lib/layers.js').Layer} layer */
   const filled = layer => chars.filter(char => valueOf(layer, char).text).length
   /** A layer's row across the whole text, a dash where it has nothing. @param {import('../lib/layers.js').Layer} layer */
-  const rowText = layer => lines.map(line => line.filter(part => part.kind === 'tangut').map(part => valueOf(layer, part.char).text || '—').join(layer.kind === 'tangut' ? '' : ' ')).join('\n')
+  const rowText = layer => lines.map(line => (layer.kind === 'tangut' ? line.map(part => part.char).join('') : line.filter(part => part.kind === 'tangut').map(part => valueOf(layer, part.char).text || '—').join(' '))).join('\n')
   // With no Tangut row there is no glyph button, so the column itself takes the keyboard.
   const bare = $derived(!layers.some(layer => layer.kind === 'tangut'))
 </script>
