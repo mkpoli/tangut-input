@@ -280,7 +280,7 @@
                     {/each}
                   {/if}
                   {#if ix.tibetanRhymes[row.key]?.[group]?.length}
-                    <p class="spellings" lang="bo">{ix.tibetanRhymes[row.key][group].join(' ')}</p>
+                    <p class="spellings">{#each ix.tibetanRhymes[row.key][group] as [script, wylie], index (index)}{index ? ' ' : ''}<span lang="bo" title={wylie}>{script}</span>{/each}</p>
                   {/if}
                 </td>
               {/each}
