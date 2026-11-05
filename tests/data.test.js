@@ -85,6 +85,14 @@ test('the Tibetan spellings by hand class belong to known characters', () => {
   expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང', 'bAng'])
 })
 
+test('Downes\'s glosses belong to known characters and none is empty', () => {
+  const { glosses } = JSON.parse(readFileSync(new URL('../app/data/tangut-downes.json', import.meta.url), 'utf8'))
+  const known = new Set(entries.rows.map(row => row[0]))
+  expect(Object.keys(glosses).filter(char => !known.has(char))).toEqual([])
+  expect(Object.values(glosses).filter(text => !text.trim())).toEqual([])
+  expect(glosses['𘞗']).toBe('seed')
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {

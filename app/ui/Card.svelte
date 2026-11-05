@@ -33,6 +33,7 @@
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
+  const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
@@ -182,7 +183,7 @@
       </section>
     {/if}
 
-    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length}
+    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes}
       <section>
         <h3 class="ui-label"><Icon name="meaning" size={15}/>{t('card.meaning')}</h3>
         {#if wordClass.length}
@@ -194,6 +195,7 @@
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
           {#if meanings.zh?.length}<dt>zh</dt><dd lang="zh-Hant">{meanings.zh.join('；')}</dd>{/if}
+          {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
         </dl>
       </section>
     {/if}

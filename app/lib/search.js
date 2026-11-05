@@ -127,6 +127,17 @@ export function byMeaning(query, options = {}) {
     }
     if (tier < 9) { hits.push({ char: entry.char, tier, sense, lang }); seen.add(entry.char) }
   }
+  // Downes's glosses answer below Wiktionary's, for the characters it did not find.
+  if (languages.includes('en')) {
+    for (const [char, text] of ix.downes) {
+      if (seen.has(char)) continue
+      const tier = rank(text)
+      if (tier < 9) {
+        hits.push({ char, tier: tier + 2, sense: text, lang: 'en' })
+        seen.add(char)
+      }
+    }
+  }
   const hidden = ix.ccamcMeanings
   for (const key of languages) {
     for (const [char, terms] of Object.entries(hidden.meanings?.[key] ?? {})) {
