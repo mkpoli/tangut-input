@@ -574,6 +574,21 @@ await step('the code boxes refuse what a code cannot hold', async () => {
     await page.locator('[data-primary]').pressSequentially(typed)
     assert.equal(await page.locator('[data-primary]').inputValue(), kept, path)
   }
+  // A refused key leaves the caret where it was.
+  const box = page.locator('[data-primary]')
+  await page.goto(`${APP}/cangjie`)
+  await box.fill('abcd')
+  await box.evaluate(field => field.setSelectionRange(2, 2))
+  await page.keyboard.type(';x')
+  assert.equal(await box.inputValue(), 'abxcd')
+  // A composition is read once, when it ends.
+  await page.goto(`${APP}/sijiao`)
+  await box.focus()
+  const cdp = await context.newCDPSession(page)
+  for (const text of ['1', '12', '12x']) await cdp.send('Input.imeSetComposition', { text, selectionStart: text.length, selectionEnd: text.length })
+  await cdp.send('Input.insertText', { text: '12x' })
+  await page.waitForFunction(() => new URLSearchParams(location.search).get('q') === '12')
+  assert.equal(await box.inputValue(), '12')
   await context.close()
 })
 
