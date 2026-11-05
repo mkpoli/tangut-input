@@ -395,7 +395,7 @@
   .code small:empty{display:none}
   .type{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
   .ccamc-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);text-underline-offset:2px}
-  .means{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-sm);margin:0}
+  .means{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-sm);margin:0}
   .means dt{color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);font-weight:var(--ui-weight-semibold);line-height:1.9;text-transform:uppercase}
   .means dd{margin:0;font-size:var(--ui-text-md);line-height:var(--ui-leading-normal)}
   .means ol{margin:0;padding-inline-start:1.2em}
