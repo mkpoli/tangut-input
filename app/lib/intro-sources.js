@@ -15,6 +15,8 @@ export const SOURCES = [
     publisher: 'Wikipedia',
     accessed: '4 November 2026',
     url: 'https://en.wikipedia.org/wiki/Tangut_people',
+    licence: 'CC BY-SA 4.0',
+    licenceUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
   },
   {
     n: 3,
@@ -23,6 +25,8 @@ export const SOURCES = [
     publisher: 'Wikipedia',
     accessed: '4 November 2026',
     url: 'https://en.wikipedia.org/wiki/Tangut_script',
+    licence: 'CC BY-SA 4.0',
+    licenceUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
   },
   {
     n: 4,
@@ -31,6 +35,8 @@ export const SOURCES = [
     publisher: 'Wikipedia',
     accessed: '4 November 2026',
     url: 'https://en.wikipedia.org/wiki/Tangut_language',
+    licence: 'CC BY-SA 4.0',
+    licenceUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
   },
   {
     n: 5,

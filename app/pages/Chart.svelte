@@ -6,12 +6,10 @@
   import { choose, put, ui, setReading } from '../lib/ui.svelte.js'
   import { t, i18n } from '../lib/i18n.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
-  import { hanFanqie, sounds } from '../lib/fanqie.js'
   import Icon from '../ui/Icon.svelte'
 
   // The chart can be read two ways: by the rhyme books' own classes, or by the characters the
-  // spellings are read from — the upper down one axis, the lower down the other — and each of those
-  // either in Tangut or in the Chinese of Li Fanwen's sound gloss.
+  // spellings are read from — the upper down one axis, the lower down the other.
   // An object so the mode widens to a string: a literal state would be compared against values the
   // compiler does not think it can hold.
   const view = $state(/** @type {{ mode: string }} */ ({ mode: 'rhyme' }))
@@ -29,7 +27,7 @@
     { roman: 'Ⅸ', zh: '來日音', tangut: '𘚶𘞨𗙏𗢭𘄿' },
   ]
   const GROUPS = CLASSES.map(entry => entry.roman)
-  // The axes are read in the reader's reconstruction, 龔勛's unless they picked another.
+  // The axes are read in the reader's reconstruction.
   /** @param {string} reading */
   const toneOff = reading => reading.replace(/[¹²³⁴⁵⁰?\d]+$/g, '')
   /** The initial a reading begins with: everything before its first vowel. @param {string} reading */
@@ -96,63 +94,20 @@
       : (a, b) => TONES.indexOf(a.tone) - TONES.indexOf(b.tone) || a.rhyme - b.rhyme)
   })
 
-  /**
-   * The Chinese fanqie records, each naming the character it spells, its two characters and the
-   * 直音 it is glossed with, and whether a 合 marks its rounding.
-   */
-  const hanRecords = $derived(ready ? hanFanqie(ix.entries) : [])
-
-  /** The sounds the glosses record, each with the characters that sound so and every spelling
-   *  written for it — 音勒 has twenty. The characters are not merged across sounds: one 直音 is one
-   *  syllable, and a character that spells two sounds belongs to both. */
-  const soundGroups = $derived.by(() => {
-    if (String(view.mode) !== 'sound') return []
-    const by = sounds(hanRecords)
-    return [...by.entries()]
-      .map(([sound, group]) => ({
-        sound,
-        characters: group.chars.sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)),
-        spellings: [...group.spellings].sort(),
-      }))
-      .sort((a, b) => b.characters.length - a.characters.length || (a.sound.codePointAt(0) ?? 0) - (b.sound.codePointAt(0) ?? 0))
-  })
-
-  /**
-   * Two spellings that give one 直音 are one syllable, whatever their two characters, so the
-   * characters that spell it are joined. Returns each symbol's group, labelled with its members.
-   * @param {'upper' | 'lower'} side
-   */
-
-
   /** A spelling grid: columns are the upper characters, rows the lower ones. */
   const spelling = $derived.by(() => {
-    /** @type {Map<string, Map<string, { char: string, zhiyin: string }[]>>} */
+    /** @type {Map<string, Map<string, { char: string }[]>>} */
     const grid = new Map()
     if (!ready) return grid
-    if (String(view.mode) === 'han') {
-      // The Chinese fanqie of Li Fanwen's sound gloss, e.g. 正齒音，奢餘切，音叔.
-      for (const record of hanRecords) {
-        // Characters known to spell one syllable share a column or a row; the list is curated,
-        // because the glosses reuse a 直音 across syllables and cannot be trusted to derive it.
-        const upper = (ix.fanqieAliases.get(record.upper) ?? [record.upper]).join('')
-        const lower = (ix.fanqieAliases.get(record.lower) ?? [record.lower]).join('')
-        const row = grid.get(lower) ?? new Map()
-        grid.set(lower, row)
-        const column = row.get(upper) ?? []
-        column.push({ char: record.char, zhiyin: record.zhiyin })
-        row.set(upper, column)
-      }
-    } else {
-      for (const [char, value] of ix.rhymes) {
-        const upper = value[3] || value[5]
-        const lower = value[4] || value[6]
-        if (!upper || !lower || upper === '?' || lower === '?') continue
-        const row = grid.get(lower) ?? new Map()
-        grid.set(lower, row)
-        const column = row.get(upper) ?? []
-        column.push({ char, zhiyin: '' })
-        row.set(upper, column)
-      }
+    for (const [char, value] of ix.rhymes) {
+      const upper = value[3] || value[5]
+      const lower = value[4] || value[6]
+      if (!upper || !lower || upper === '?' || lower === '?') continue
+      const row = grid.get(lower) ?? new Map()
+      grid.set(lower, row)
+      const column = row.get(upper) ?? []
+      column.push({ char })
+      row.set(upper, column)
     }
     for (const row of grid.values()) for (const column of row.values()) column.sort((a, b) => (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
     return grid
@@ -162,39 +117,10 @@
   const uppers = $derived.by(() => {
     const uses = new Map()
     for (const row of spelling.values()) for (const [upper, column] of row) uses.set(upper, (uses.get(upper) ?? 0) + column.length)
-    // In the Chinese grid the columns keep their class together — 喉音 beside 喉音, 齒音 beside 齒音 —
-    // so a reader can run down one sound at a time.
-    const order = /** @type {Map<string, number>} */ (new Map(CLASSES.map((entry, index) => [entry.roman, index])))
-    const classOf = (/** @type {string} */ upper) => order.get(upperClasses.get(upper)?.roman ?? '') ?? CLASSES.length
     return [...uses.entries()]
-      .sort((a, b) => (String(view.mode) === 'han' ? classOf(a[0]) - classOf(b[0]) : 0)
-        || b[1] - a[1] || (a[0].codePointAt(0) ?? 0) - (b[0].codePointAt(0) ?? 0))
+      .sort((a, b) => b[1] - a[1] || (a[0].codePointAt(0) ?? 0) - (b[0].codePointAt(0) ?? 0))
       .map(([char]) => char)
   })
-  /** For a Chinese upper character, the Tangut initial class it most often spells — its own label,
-   *  read from the data rather than from a Chinese rhyme dictionary. */
-  const upperClasses = $derived.by(() => {
-    /** @type {Map<string, { roman: string, zh: string }>} */
-    const found = new Map()
-    if (String(view.mode) !== 'han') return found
-    /** @type {Map<string, Map<string, number>>} */
-    const counts = new Map()
-    for (const row of spelling.values()) for (const [upper, column] of row) {
-      const tally = counts.get(upper) ?? new Map()
-      counts.set(upper, tally)
-      for (const item of column) {
-        const group = ix.rhymes.get(item.char)?.[2]
-        if (group) tally.set(group, (tally.get(group) ?? 0) + 1)
-      }
-    }
-    for (const [upper, tally] of counts) {
-      const best = [...tally.entries()].sort((a, b) => b[1] - a[1])[0]
-      const named = CLASSES.find(entry => entry.roman === best?.[0])
-      if (named) found.set(upper, named)
-    }
-    return found
-  })
-
   /** The final each rhyme is read with in the chosen system, most common first. */
   const finals = $derived.by(() => {
     /** @type {Map<string, string[]>} */
@@ -219,24 +145,20 @@
     return found
   })
 
-  /** The rhyme a Chinese lower character most often spells, the counterpart of the upper's class. */
-  const lowerRhymes = $derived.by(() => {
-    /** @type {Map<string, string>} */
-    const found = new Map()
-    if (String(view.mode) !== 'han') return found
-    for (const [lower, row] of spelling) {
-      /** @type {Map<string, number>} */
-      const tally = new Map()
-      for (const column of row.values()) for (const item of column) {
-        const rhyme = ix.rhymes.get(item.char)?.[0]
-        if (typeof rhyme === 'number') tally.set(String(rhyme), (tally.get(String(rhyme)) ?? 0) + 1)
-      }
-      const best = [...tally.entries()].sort((a, b) => b[1] - a[1])[0]
-      if (best) found.set(lower, best[0])
-    }
-    return found
-  })
+  // 龔煌城's per-character values come from the Tangut Pronunciation Database. His separate rhyme
+  // table fills a rhyme that the characters in the records leave without a final.
+  /** @param {{ key: string, rhyme: number }} row */
+  const shownFinals = row => {
+    const found = finals.get(row.key)
+    if (found?.length || ui.reading !== 'gong_huangcheng') return found
+    const value = ix.gongRhymes[row.rhyme]
+    return value ? [value] : found
+  }
+  /** @param {string} roman */
+  const shownOnsets = roman => onsets.get(roman)
 
+  /** The row whose Chinese transcription characters are open. */
+  const opened = $state(/** @type {{ row: string | null }} */ ({ row: null }))
   const pages = $derived(Math.max(1, Math.ceil(uppers.length / PER_PAGE)))
   const shownUppers = $derived(uppers.slice(page * PER_PAGE, (page + 1) * PER_PAGE))
   /** The lowers that have a character under one of the uppers on this page. */
@@ -260,9 +182,8 @@
   function detail(char) {
     const value = ix.rhymes.get(char)
     const spelling = value ? [value[3] ?? value[5], value[4] ?? value[6]].filter(Boolean).join('') : ''
-    const sound = ix.byChar.get(char)?.pronunciations?.sound_li_fanwen?.trim() ?? ''
     const tibetan = (ix.tibetan.get(char) ?? []).map(([wylie, script, where]) => `${script} ${wylie} (${where.map(([shelf]) => shelf).join(', ')})`).join('; ')
-    return [char, spelling ? `反切 ${spelling}` : '', sound, tibetan ? `藏 ${tibetan}` : '', gloss(char)].filter(Boolean).join(' · ')
+    return [char, spelling ? `反切 ${spelling}` : '', tibetan ? `藏 ${tibetan}` : '', gloss(char)].filter(Boolean).join(' · ')
   }
 </script>
 
@@ -273,8 +194,6 @@
     <div class="ui-toolbar modes" role="group" aria-label={t('chart.axis')}>
       <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'rhyme'} onclick={() => { view.mode = 'rhyme'; page = 0 }}>{t('chart.mode.rhyme')}</button>
       <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'tangut'} onclick={() => { view.mode = 'tangut'; page = 0 }}>{t('chart.mode.tangut')}</button>
-      <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'han'} onclick={() => { view.mode = 'han'; page = 0 }}>{t('chart.mode.han')}</button>
-      <button type="button" class="ui-chip" aria-pressed={String(view.mode) === 'sound'} onclick={() => { view.mode = 'sound'; page = 0 }}>{t('chart.mode.sound')}</button>
       {#if String(view.mode) === 'rhyme'}
         <button type="button" class="ui-chip" aria-pressed={view2.adjacent} onclick={() => { view2.adjacent = !view2.adjacent }}>{t('chart.order')}</button>
       {/if}
@@ -291,30 +210,6 @@
 
   {#if !ready}
     <p class="ui-empty">{t('common.loading')}</p>
-  {:else if String(view.mode) === 'sound'}
-    <p class="ui-hint">{t('chart.soundIntro', { sounds: soundGroups.length })}</p>
-    <div class="sounds">
-      {#each soundGroups as group (group.sound)}
-        <section class="sound">
-          <h3 class="sound-head">
-            <span class="sound-glyph">{group.sound}</span>
-            <span class="ui-count">{t('common.characters', { count: group.characters.length })}</span>
-          </h3>
-          <div class="ui-tiles" style:--ui-tile-size="52px">
-            {#each group.characters as char (char)}
-              {#if ix.rhymes.get(char)}
-                <button class="ui-tile" type="button" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>
-                  <span class="ui-script ui-tile-glyph">{char}</span>
-                  <span class="ui-tile-note ui-script">{(ix.rhymes.get(char)?.[3] ?? '') + (ix.rhymes.get(char)?.[4] ?? '')}</span>
-                </button>
-              {:else}
-                <button class="ui-tile" type="button" data-note="none" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}><span class="ui-script ui-tile-glyph">{char}</span></button>
-              {/if}
-            {/each}
-          </div>
-        </section>
-      {/each}
-    </div>
   {:else if String(view.mode) !== 'rhyme'}
     <div class="ui-toolbar">
       <span class="ui-count">{t('chart.page', { page: page + 1, pages })}</span>
@@ -327,17 +222,17 @@
           <tr>
             <th class="corner" scope="col"><span>{t('chart.lower')}</span> / {t('chart.upper')}</th>
             {#each shownUppers as upper (upper)}
-              <th scope="col" class="group" title={upperClasses.get(upper)?.zh ?? ''}><span class="ui-script">{upper}</span>{#if upperClasses.get(upper)}<small lang="zh-Hant">{upperClasses.get(upper)?.zh}</small>{/if}</th>
+              <th scope="col" class="group"><span class="ui-script">{upper}</span></th>
             {/each}
           </tr>
         </thead>
         <tbody>
           {#each spellRows as row (row.lower)}
             <tr>
-              <th scope="row" class="head-cell"><span class="ui-script">{row.lower}</span>{#if lowerRhymes.get(row.lower)}<small>{t('card.rhyme')} {lowerRhymes.get(row.lower)}</small>{/if}</th>
+              <th scope="row" class="head-cell"><span class="ui-script">{row.lower}</span></th>
               {#each row.cells as cell, i (i)}
                 <td>
-                  {#each cell as item (item.char)}<button type="button" class="cell ui-script" title={detail(item.char)} onclick={() => choose(item.char)} ondblclick={() => put(item.char)}>{item.char}{#if item.zhiyin}<small>{item.zhiyin}</small>{/if}</button>{/each}
+                  {#each cell as item (item.char)}<button type="button" class="cell ui-script" title={detail(item.char)} onclick={() => choose(item.char)} ondblclick={() => put(item.char)}>{item.char}</button>{/each}
                 </td>
               {/each}
             </tr>
@@ -352,11 +247,11 @@
           <tr>
             <th class="corner" scope="col"><span>{t('chart.rhyme')}</span> / {t('chart.group')}</th>
             {#each CLASSES as group (group.roman)}
-              <th scope="col" class="group" title={`${group.roman} · ${group.tangut} · ${group.zh}${onsets.get(group.roman)?.length ? ` · ${onsets.get(group.roman)?.join(' ')}` : ''}`}>
+              <th scope="col" class="group" title={`${group.roman} · ${group.tangut} · ${group.zh}${shownOnsets(group.roman)?.length ? ` · ${shownOnsets(group.roman)?.join(' ')}` : ''}`}>
                 <span class="roman">{group.roman}</span>
                 <span class="tangut ui-script" lang="txg">{group.tangut}</span>
                 <span class="name" lang="zh-Hant">{group.zh}</span>
-                {#if onsets.get(group.roman)?.length}<small>{onsets.get(group.roman)?.join(' ')}</small>{/if}
+                {#if shownOnsets(group.roman)?.length}<small>{shownOnsets(group.roman)?.join(' ')}</small>{/if}
               </th>
             {/each}
           </tr>
@@ -368,9 +263,13 @@
             {/if}
             <tr>
               <th scope="row" class="head-cell rhyme">
-                <span class="rhyme-number">{row.rhyme}</span>
+                {#if ix.chineseRhymes[row.rhyme]}
+                  <button type="button" class="rhyme-number open" aria-expanded={opened.row === row.key} title={t('chart.chineseOpen')} onclick={() => { opened.row = opened.row === row.key ? null : row.key }}>{row.rhyme}</button>
+                {:else}
+                  <span class="rhyme-number">{row.rhyme}</span>
+                {/if}
                 {#if view2.adjacent}<span class="tone-label">{t(TONE_KEY[row.tone])}</span>{/if}
-                {#if finals.get(row.key)?.length}<span class="final">{finals.get(row.key)?.join(' ')}</span>{/if}
+                {#if shownFinals(row)?.length}<span class="final">{shownFinals(row)?.join(' ')}</span>{/if}
                 <small class="ui-count">{row.count}</small>
               </th>
               {#each GROUPS as group (group)}
@@ -380,14 +279,27 @@
                       <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan">{#each ix.tibetan.get(char) ?? [] as [wylie, script, where], index (index)}{index ? ' ' : ''}<span lang="bo" title={tibetanTitle(wylie, where)}>{tibetanShown(wylie, script)}</span>{/each}</small>{/if}</button>
                     {/each}
                   {/if}
+                  {#if ix.tibetanRhymes[row.key]?.[group]?.length}
+                    <p class="spellings">{#each ix.tibetanRhymes[row.key][group] as [script, wylie], index (index)}{index ? ' ' : ''}<span lang="bo" title={wylie}>{script}</span>{/each}</p>
+                  {/if}
                 </td>
               {/each}
             </tr>
+            {#if opened.row === row.key}
+              <tr class="chinese">
+                <td colspan={GROUPS.length + 1}>
+                  <ul lang="zh-Hant">
+                    {#each ix.chineseRhymes[row.rhyme] as [han, final] (han + (final ?? ''))}<li>{han}{#if final}<small lang="und-Latn">{final}</small>{/if}</li>{/each}
+                  </ul>
+                </td>
+              </tr>
+            {/if}
           {/each}
         </tbody>
       </table>
     </div>
     <p class="ui-hint">{t('chart.legend')}</p>
+    <p class="ui-hint">{t('chart.chineseLegend')}</p>
   {/if}
 </div>
 
@@ -410,6 +322,12 @@
   tbody th.head-cell{position:sticky;left:0;z-index:1;padding:var(--ui-space-2xs) var(--ui-space-sm);border-inline-end:1px solid var(--ui-color-border);background:var(--ui-color-surface);text-align:end;white-space:nowrap;min-inline-size:52px;font-family:var(--ui-font-mono);font-size:var(--ui-text-xs)}
   tbody th.head-cell .ui-script{display:block;font-size:20px;color:var(--ui-color-ink)}
   tbody th.head-cell small{display:block;font-weight:var(--ui-weight-normal);font-size:10px;color:var(--ui-color-ink-muted)}
+  .rhyme-number.open{padding:0 4px;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font:inherit;font-weight:var(--ui-weight-semibold);cursor:pointer}
+  .rhyme-number.open:hover{background:var(--ui-color-surface-hover)}
+  .rhyme-number.open[aria-expanded='true']{background:var(--ui-color-surface-sunken)}
+  tr.chinese td{padding:var(--ui-space-xs) var(--ui-space-sm);background:var(--ui-color-surface-sunken)}
+  tr.chinese ul{position:sticky;left:var(--ui-space-sm);max-inline-size:min(100%,calc(100vw - 88px));display:flex;flex-wrap:wrap;gap:2px var(--ui-space-sm);margin:0;padding:0;list-style:none;font-size:var(--ui-text-sm);color:var(--ui-color-ink)}
+  tr.chinese small{margin-inline-start:2px;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   tbody th.head-cell .rhyme-number{font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);color:var(--ui-color-ink)}
   tbody th.head-cell .final{display:block;font-family:var(--ui-font-serif);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
   tbody th.head-cell .tone-label{display:block;font-family:var(--ui-font-sans);font-size:10px;color:var(--ui-color-ink-muted)}
@@ -418,12 +336,8 @@
   .cell{vertical-align:top;padding:1px 3px;border:1px solid transparent;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font-size:19px;line-height:1.12}
   .cell:hover{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover)}
   .cell small.tibetan{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.3;color:var(--ui-color-ink-soft)}
+  .spellings{margin:2px 0 0;padding:1px 3px 0;border-top:1px dotted var(--ui-color-border-strong);font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.35;color:var(--ui-color-ink-soft)}
   .cell small{display:block;font-family:var(--ui-font-sans);font-size:9.5px;color:var(--ui-color-ink-muted);line-height:1.1}
-  .sounds{display:grid;gap:var(--ui-space-xl);max-block-size:calc(100dvh - 290px);overflow:auto;padding-inline-end:var(--ui-space-2xs)}
-  .sound{display:grid;gap:var(--ui-space-sm);padding-bottom:var(--ui-space-md);border-bottom:1px solid var(--ui-color-border)}
-  .sound-head{display:flex;align-items:baseline;gap:var(--ui-space-sm);margin:0}
-  .sound-glyph{font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold)}
-  .sound .ui-tile-note{font-size:var(--ui-text-xs)}
   @media (max-width:900px){
     .choose{margin-inline-start:0}
     .wrap{max-block-size:calc(100dvh - 300px)}

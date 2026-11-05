@@ -164,10 +164,10 @@
 
 .ui-tile {
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto 1fr auto;
   place-items: center;
   gap: 2px;
-  aspect-ratio: 1 / 1.06;
+  min-block-size: calc(var(--ui-tile-size, 64px) * 1.06);
   min-inline-size: 0;
   padding: var(--ui-space-xs) 2px;
   border: 1px solid var(--ui-color-border);
@@ -177,6 +177,11 @@
   transition:
     background-color var(--ui-duration-fast) var(--ui-ease),
     border-color var(--ui-duration-fast) var(--ui-ease);
+}
+
+/* The glyph holds the middle row: the reconstruction sits above it, the finder's note below. */
+.ui-tile > :first-child {
+  grid-row: 2;
 }
 
 .ui-tile:hover {
@@ -196,7 +201,21 @@
   line-height: 1;
 }
 
+/* The reconstruction the reader chose, above the glyph; the finder's note stays below it. */
+.ui-tile-sound {
+  grid-row: 1;
+  max-inline-size: 100%;
+  overflow: hidden;
+  color: var(--ui-color-ink-soft);
+  font-family: var(--ui-font-serif);
+  font-size: var(--ui-text-2xs);
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ui-tile-note {
+  grid-row: 3;
   max-inline-size: 100%;
   overflow: hidden;
   color: var(--ui-color-ink-muted);
@@ -204,11 +223,6 @@
   line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-/* A tile with no note keeps the glyph centred. */
-.ui-tile[data-note='none'] {
-  grid-template-rows: 1fr;
 }
 
 /* ---------- Rows: one result each ---------- */

@@ -125,7 +125,9 @@ uv run python scripts/eval_wenhai_composition.py --choose
 `formula` is the entry's construction characters in order, using the seven terms above; `position`
 is optional. A construction that uses another term needs the vocabulary extended first. The 2008
 夏漢字典's fuller construction text can be converted to this form; the caller cites the edition. The
-same table was run on BabelStone's 60 rows: the two paths print identical counts and failures.
+same table was run on BabelStone's 60 rows: the two paths print identical counts and failures. The
+repository's 60 rows are [`data/wenhai/constructions.jsonl`](../data/wenhai/constructions.jsonl);
+`--formulas` on that file runs without the BabelStone pages.
 
 ## The card's table
 

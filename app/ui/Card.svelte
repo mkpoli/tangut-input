@@ -2,7 +2,7 @@
   // Everything recorded about the open character, arranged around using it: the actions come
   // first, then what helps a reader confirm it is the one they mean (meaning, readings, structure,
   // where it stands in a text), then the characters near it.
-  import { db, ix, codePoint, gloss, isComponent } from '../lib/db.svelte.js'
+  import { db, ix, codePoint, gloss, isComponent, readingOf } from '../lib/db.svelte.js'
   import { onMount } from 'svelte'
   import G from './G.svelte'
   import Icon from './Icon.svelte'
@@ -18,6 +18,7 @@
   import { loadWenhaiComposition } from '../lib/data.js'
   import Peek from './Peek.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
+  import { ccamcUrl } from '../lib/ccamc.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -32,17 +33,16 @@
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
+  const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
-  const fanqie = $derived([
-    { name: 'Li Fanwen', zh: '李範文', value: entry?.pronunciations?.sound_li_fanwen?.trim() ?? '' },
-    { name: 'Nie Lishan', zh: '聶歷山', value: entry?.pronunciations?.sound_nie_lishan?.trim() ?? '' },
-  ].filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
   // is read from. 文海 where it has one, 合編 where it does not.
   const rhyme = $derived(ready && char ? ix.rhymes.get(char) : undefined)
   const rhymeClass = $derived(rhyme?.[0] ? String(rhyme[0]) : '')
+  // Tibetan and Sanskrit spellings from a study known only through a repost: see the sources page.
+  const hands = $derived(ready && char ? ix.tibetanHands[char] : undefined)
   const toneName = $derived(
     rhyme?.[1] === 1 ? 'card.tone.level'
       : rhyme?.[1] === 2 ? 'card.tone.rising'
@@ -105,8 +105,6 @@
     const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
     peek = { char: other, x: box.left, y: box.bottom + 6 }
   }
-  /** @param {string} other */
-  const readingOf = other => (ix.byChar.get(other)?.pronunciations ?? {})[ui.reading]?.trim() ?? ''
 
   const first = $derived(ready && char ? gloss(char) : '')
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
@@ -200,6 +198,24 @@
       </section>
     {/if}
 
+    {#if variants}
+      <section>
+        <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
+        {#each [['card.variantOf', variants.of], ['card.variantForms', variants.forms], ['card.variantPossible', variants.possible]] as [label, others] (label)}
+          {#if others.length}
+            <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
+            <div class="ui-tiles rel" style:--ui-tile-size="48px">
+              {#each others as other (other)}
+                {@const sound = readingOf(other, ui.reading)}
+                <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+              {/each}
+            </div>
+          {/if}
+        {/each}
+        <p class="ui-hint">{t(variants.of.length || variants.forms.length ? 'card.variantsSource' : 'card.variantsPossibleSource')}</p>
+      </section>
+    {/if}
+
     {#if readings.length}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
@@ -208,17 +224,36 @@
             {#each readings as reading (reading.key)}
               <tr><th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th><td>{reading.value}</td></tr>
             {/each}
-            {#each fanqie as row (row.name)}
-              <tr><th scope="row" title={systemTitle(row)}>{t('card.soundGloss', { name: systemName(row, i18n.locale) })}</th><td lang="zh-Hant" class="cjk">{row.value}</td></tr>
-            {/each}
             {#if rhymeClass}
               <tr><th scope="row">{t('card.rhyme')}</th><td>{rhymeClass}{#if toneName}<span class="ui-hint"> · {t(toneName)}</span>{/if}</td></tr>
             {/if}
             {#if spelling}
               <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="ui-script spelling">{spelling}</span></td></tr>
             {/if}
+            {#if hands?.tibetan?.length}
+              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">{#each hands.tibetan as [hand, , count, script, wylie], index (index)}{index ? ' · ' : ''}<span class="ui-hint">{hand}</span> <span class="bo" lang="bo" title={wylie}>{script}</span>{count === 1 ? '' : ` ×${count || '?'}`}{/each}</td></tr>
+            {/if}
+            {#if hands?.sanskrit?.length}
+              <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
+            {/if}
           </tbody>
         </table>
+      </section>
+    {/if}
+
+    {#if !isComponent(char)}
+      <section>
+        <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.ccamc')}</h3>
+        <p class="ui-hint">{t('card.ccamcNote')}</p>
+        <p><a class="ccamc-link" href={ccamcUrl(char)} target="_blank" rel="noopener noreferrer">{t('common.ccamc')}<span aria-hidden="true">↗</span></a></p>
+      </section>
+    {/if}
+
+    {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
+      <section>
+        <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
+        {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
+        {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
       </section>
     {/if}
 
@@ -228,17 +263,9 @@
         <p class="wenhai-construction">
           {#each construction.parts as [source, part], i}
             {#if i > 0}<span class="wenhai-sep" aria-hidden="true">·</span>{/if}
-            <span class="wenhai-part">{#if part}<span class="wenhai-term" lang="zh-Hant">{partTerm(part)}</span>{/if}<G char={source} /></span>
+            <span class="wenhai-part">{#if part}<span class="wenhai-term" lang="zh-Hant">{partTerm(part)}</span>{/if}<button class="inline wenhai-source" type="button" title={gloss(source) || undefined} aria-label={gloss(source) || source} onclick={() => choose(source)}><G char={source} /></button></span>
           {/each}
         </p>
-      </section>
-    {/if}
-
-    {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
-      <section>
-        <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
-        {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
-        {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
       </section>
     {/if}
 
@@ -265,7 +292,10 @@
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.usedIn', { count: users.length })}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
-          {#each users.slice(0, 48) as other (other)}<button class="ui-tile" type="button" data-note="none" title={gloss(other)} onclick={() => choose(other)}><G char={other} /></button>{/each}
+          {#each users.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
+            <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+          {/each}
         </div>
         {#if users.length > 48}<p class="more"><a href={link('parts', char, char)}><Icon name="arrow" size={13}/>{t('card.allInParts', { count: users.length })}</a></p>{/if}
       </section>
@@ -276,9 +306,10 @@
         <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.sameDescription')}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each same as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{readingOf(other) || gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>
@@ -290,9 +321,10 @@
         <h3 class="ui-label"><Icon name="fanqie" size={15}/>{t('card.fanqieFor', { count: spells.length })}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each spells.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{readingOf(other) || gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>
@@ -304,9 +336,10 @@
         <h3 class="ui-label"><Icon name="sound" size={15}/>{t('card.sameReading')}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each homophones.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>
@@ -359,6 +392,7 @@
   .code small{font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   .code small:empty{display:none}
   .type{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
+  .ccamc-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);text-underline-offset:2px}
   .means{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-sm);margin:0}
   .means dt{color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);font-weight:var(--ui-weight-semibold);line-height:1.9;text-transform:uppercase}
   .means dd{margin:0;font-size:var(--ui-text-md);line-height:var(--ui-leading-normal)}
@@ -392,4 +426,5 @@
     .glyph-frame :global(.ui-script){font-size:72px}
     .gloss{font-size:var(--ui-text-lg)}
   }
+  .bo{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:1.1em}
 </style>

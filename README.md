@@ -13,8 +13,10 @@ it into your text. <https://tangut.mkpo.li/>
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
-- **Reading**: a reconstruction in any of eight systems (Li Fanwen, Gong Hwang-cherng, Gong Xun,
-  Arakawa, Miyake, Nishida, Kychanov, Sofronov), with or without diacritics, with an optional tone.
+- **Reading**: a reconstruction in any of the seven systems the site shows (Li Fanwen, Gong
+  Hwang-cherng, Gong Xun 2024-11, Miyake, Nishida, Kychanov, Sofronov), with or without diacritics,
+  with an optional tone. One further system that CCAMC records also answers the search; those
+  results link to CCAMC.
 - **Fanqie**: type the two characters a rhyme book spells a character with, or pick each from a
   compact panel beside the field that offers Find, Meaning, Cangjie, Four-corner, Reading, Draw and
   Parts in miniature.
@@ -28,17 +30,27 @@ it into your text. <https://tangut.mkpo.li/>
   part shows its code point, component number, strokes, uses, Cangjie codes and name. A collapsible
   table compares the names across the languages that record one.
 
-The card of a character shows its code point, Cangjie codes, meanings in English, Japanese and
-Chinese, readings, structure, the lines of the recorded corpus where it stands with the scribe's
-form from the facsimile, and related characters. The text being written stays in the browser and
-copies as text, code points or Cangjie codes.
+The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
+readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
+the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
+further readings and meanings are linked to CCAMC's page for the character rather than copied.
+Character tiles carry a reconstruction above the glyph — the one chosen at the top bar, or the one
+a reading search matched — with the finder's own note below it. The text being written stays in the
+browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).
 
 ## Data
 
-- `app/data/tangut-entries.json.gz`: meanings and readings, from [Open
-  Tangut](https://github.com/imlooh/open-tangut) (MIT), which merges CCAMC and Wiktionary entries.
+- `app/data/tangut-entries.json.gz`: five readings and English and Japanese meanings from
+  [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Gong Hwang-cherng's
+  and Gong Xun's readings from the
+  [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db),
+  descriptions from BabelStone's Tangut IDS, and the 文海's own entry text where it carries one;
+  built by `scripts/build_tangut_entries.py` from `data/wiktionary/`, `data/gong-xun/` and
+  `data/wenhai/`.
+- `app/data/tangut-ccamc-index.json.gz`: normalized terms from CCAMC's records, used only to answer
+  the reading and meaning searches. No page renders them; the card links to CCAMC.
 - `app/data/tangut-cangjie.json.gz`: Cangjie codes, from
   [rime_tangutcjkk](https://github.com/Hulenkius/rime_tangutcjkk) by Hulenkius, after the scheme of
   Kawasaki Keigo (2016). The table warns that some characters are wrongly encoded; the repository
@@ -142,3 +154,9 @@ The glyphs are set in Noto Serif Tangut from Google Fonts, with a small subset o
 version for the components Google's build lacks (`app/public/fonts/`, SIL OFL 1.1).
 
 The added code is MIT; see `LICENSE`.
+
+## Sponsor
+
+I build tangut-input on my own, with no funding behind it, and it's free for everyone. If it's useful to you, a tip on [Ko-fi](https://ko-fi.com/mkpoli) or [OFUSE](https://ofuse.me/mkpoli) gives me time to keep improving it. Companies interested in sponsoring can write to mkpoli@mkpo.li.
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mkpoli)

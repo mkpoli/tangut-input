@@ -3,47 +3,100 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
-import { hanFanqie, sounds } from '../app/lib/fanqie.js'
 
 const json = name => JSON.parse(gunzipSync(readFileSync(new URL(`../app/data/${name}`, import.meta.url))).toString())
 const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
-/** The packed records, expanded just enough for the fanqie parse. */
-const expanded = entries.rows.map(row => {
-  /** @type {Record<string, string>} */
-  const pronunciations = {}
-  entries.systems.forEach((key, i) => { if (row[7]?.[i]) pronunciations[key] = row[7][i] })
-  return { char: row[0], pronunciations }
-})
-
-test('the packed records keep every character and its languages', () => {
-  expect(entries.format).toBe('tangut-input/entries')
+test('the packed records keep every character, the five Wiktionary readings and the two Database readings', () => {
+  expect(entries.format).toBe('tangut-input/entries/3')
   expect(entries.rows.length).toBe(6144)
-  expect(entries.systems.length).toBe(10)
-  const first = expanded[0]
-  expect(first.char).toBe('𗀀')
-  expect(first.pronunciations.li_fanwen).toBe('do1')
+  expect(entries.systems).toEqual(['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida'])
+  const first = entries.rows[0]
+  expect(first[0]).toBe('𗀀')
+  expect(first[7]).toEqual(['do1', 'do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
+  expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
+  expect(first[5]).toEqual(['毒'])
+  expect(first[6]).toEqual([])
+  expect(first[8]).toBe('Composed of the middle of 𘊓 "scorpion" and the right of "𗀋".')
+  expect(first[9]).toBe('蝎中蛇右。')
 })
 
-test('the Chinese fanqie parse is the one the chart draws', () => {
-  const records = hanFanqie(expanded)
-  expect(records.length).toBe(3816)
-  const bySound = sounds(records)
-  expect(bySound.size).toBe(1433)
-  const several = [...bySound.values()].filter(group => group.spellings.size > 1).length
-  expect(several).toBe(504)
-  expect(bySound.get('勒').spellings.size).toBe(20)
+test('the 文海 text is kept for the entries it carries', () => {
+  expect(entries.rows.filter(row => row[8]).length).toBe(12)
+  expect(entries.rows.filter(row => row[9]).length).toBe(6)
 })
 
-test('a rounding marker is not one of the two characters', () => {
-  const records = hanFanqie(expanded)
-  const rounded = records.find(record => record.char === '𗅶')
-  // 「底合卒切」: 底 with 合 marking the rounding, spelt with 卒.
-  expect(rounded.upper).toBe('底')
-  expect(rounded.lower).toBe('卒')
-  expect(rounded.round).toBe(true)
-  expect(records.filter(record => record.round).length).toBe(21)
+test('the displayable meanings cover only the Wiktionary entries', () => {
+  const count = column => entries.rows.filter(row => row[column]?.length).length
+  expect(count(4)).toBe(457)
+  expect(count(5)).toBe(278)
+  expect(count(6)).toBe(0)
+})
+
+test('every Tibetan spelling stands at a crossing the chart draws', () => {
+  const { cells } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-rhymes.json', import.meta.url), 'utf8'))
+  const drawn = new Set(Object.values(rhymes.chars).map(row => `${row[0]}·${row[1]}`))
+  expect(Object.keys(cells).filter(key => !drawn.has(key))).toEqual([])
+  expect(Object.keys(cells).length).toBe(124)
+  // 2.1 is rhyme 1 in the rising tone, 2.9 rhyme 10: the two tones number their rhymes apart.
+  expect(cells['1·2'].Ⅰ).toEqual([['ཕུ', 'phu']])
+  // Every spelling has its Wylie, and no cell keeps two spellings as one.
+  for (const row of Object.values(cells)) for (const list of Object.values(row)) for (const [script, wylie] of list) {
+    expect(script).not.toContain(' ')
+    expect(wylie.length).toBeGreaterThan(0)
+  }
+  expect(Object.keys(cells['10·2'] ?? {}).length).toBeGreaterThan(0)
+})
+
+test('every rhyme the chart draws has 龔煌城\'s value', () => {
+  const { values } = JSON.parse(readFileSync(new URL('../app/data/tangut-gong-rhymes.json', import.meta.url), 'utf8'))
+  expect(Object.keys(values).length).toBe(105)
+  const drawn = new Set(Object.values(rhymes.chars).map(row => row[0]).filter(rhyme => typeof rhyme === 'number'))
+  expect([...drawn].filter(rhyme => !values[rhyme])).toEqual([])
+  expect([values[1], values[33], values[65], values[105]]).toEqual(['u', 'iəə/jɨɨ', 'jɨ̣j', 'jwa'])
+})
+
+test('the Chinese transcription characters stand under rhymes the chart draws', () => {
+  const { rhymes: list } = JSON.parse(readFileSync(new URL('../app/data/tangut-chinese-rhymes.json', import.meta.url), 'utf8'))
+  const drawn = new Set(Object.values(rhymes.chars).map(row => String(row[0])))
+  expect(Object.keys(list).filter(rhyme => !drawn.has(rhyme))).toEqual([])
+  expect(Object.keys(list).length).toBe(58)
+  expect(list['1'][0]).toEqual(['菩', 'u'])
+  // In the thesis table, left out of the repost: no final is known for them.
+  expect(list['100']).toEqual([['棱']])
+})
+
+test('the Tibetan spellings by hand class belong to known characters', () => {
+  const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
+  expect(Object.keys(chars).filter(char => !rhymes.chars[char])).toEqual([])
+  for (const { tibetan = [] } of Object.values(chars)) {
+    for (const [hand, spelt, count, script, wylie] of tibetan) {
+      expect(wylie.length).toBeGreaterThan(0)
+      expect('ABCDE').toContain(hand)
+      expect(spelt.length).toBeGreaterThan(0)
+      expect(count).toBeGreaterThanOrEqual(0)
+      expect(script).toMatch(/^[\u0f00-\u0fff?]+$/)
+    }
+  }
+  expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1, 'ངུ', 'ngu']])
+  expect(chars['𘘣'].tibetan[0]).toEqual(['B', 'g-yi', 13, 'གཡི', 'g.yi'])
+  // A doubled vowel is the long-vowel mark.
+  expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང', 'bAng'])
+})
+
+const ccamc = json('tangut-ccamc-index.json.gz')
+
+test('the CCAMC index holds only normalized search terms', () => {
+  expect(ccamc.format).toBe('tangut-input/ccamc-index')
+  expect(Object.keys(ccamc.readings).sort()).toEqual(['arakawa_shintaro'])
+  expect(Object.keys(ccamc.meanings).sort()).toEqual(['en', 'zh'])
+  expect(ccamc.wenhai).toBeUndefined()
+  expect(ccamc.meanings.zh['𗀀']).toEqual(['毒', '下毒者', '毒死', '毒 蠱 名詞'])
+  expect(entries.rows.filter(row => row[7][1]).length).toBe(5869)
+  expect(entries.rows.filter(row => row[7][2]).length).toBe(5869)
+  // The index is not a record: no original diacritics survive, and no 文海 sentence is stored.
+  expect(JSON.stringify(ccamc.readings)).not.toContain('¹')
 })
 
 test('every character with a rhyme is a character the site knows', () => {
@@ -65,13 +118,13 @@ test('the rhyme record keeps the fields the card and the chart read', () => {
 
 const attestation = json('tangut-attestation.json.gz')
 
-test('the attestation joins the edition, the twelve Wikisource texts and the Lausanne corpus', () => {
+test('the attestation joins the edition, the twelve Wikisource texts, the Lausanne corpus and MiCA', () => {
   expect(attestation.corpus).toEqual({
-    lines: 5273,
-    characters: 92509,
-    distinct: 3350,
-    sources: 14,
-    sha256: '5312f92bf9751cf88e4ef8c4306a5f4a7be4c94690f58da4eba1d88323623017',
+    lines: 6028,
+    characters: 105542,
+    distinct: 3379,
+    sources: 15,
+    sha256: 'd810d0b821bb72a0c2a29b0cb42ec6de165a7f5b9b6e8ad7e637c3cdaa30af3a',
   })
   expect(attestation.sources.map(source => source.id)).toEqual([
     'solonin-2024',
@@ -88,6 +141,7 @@ test('the attestation joins the edition, the twelve Wikisource texts and the Lau
     'wikisource-dual-maxims',
     'wikisource-tongyin-preface',
     'lcdtt',
+    'mica',
   ])
   expect(attestation.sources.every(source => source.url && source.licence)).toBe(true)
   expect(attestation.sources[0].facsimile).toContain('/facsimile/solonin-2024/')
@@ -121,66 +175,18 @@ test('the sample passages are exact lines from the attestation', () => {
   }
 })
 
-const glossWords = gunzipSync(readFileSync(new URL('../data/tangut-gloss-words.tsv.gz', import.meta.url)))
-  .toString().split('\n').filter(line => line && !line.startsWith('#')).map(line => line.split('\t'))
-
-test('the gloss word table names every character once', () => {
-  expect(glossWords.length).toBe(6144)
-  expect(new Set(glossWords.map(row => row[0]))).toEqual(new Set(entries.rows.map(row => row[0])))
-  const tiers = {}
-  for (const [, , tier] of glossWords) tiers[tier] = (tiers[tier] ?? 0) + 1
-  expect(tiers).toEqual({ word: 3117, phrase: 2053, transliteration: 728, long: 162, empty: 61, redirect: 23 })
-  const glossOf = char => glossWords.find(row => row[0] === char)
-  expect(glossOf('𗢳')).toEqual(['𗢳', '佛', 'word', 'tha̱1'])
-  expect(glossOf('𘋢').slice(0, 3)).toEqual(['𘋢', '菩薩', 'phrase'])
-  expect(glossOf('𗍏')[2]).toBe('transliteration')
-  // A bracket later in the entry does not make the first sense a transliteration.
-  expect(glossOf('𗓭').slice(0, 3)).toEqual(['𗓭', '富', 'word'])
-  // A bracketed note stays as it is and is left for an editor, rather than guessed into a word.
-  expect(glossOf('𗁋').slice(0, 3)).toEqual(['𗁋', '（滴）答', 'long'])
-  expect(glossOf('𗠏').slice(0, 3)).toEqual(['𗠏', '（喉嚨）咽喉', 'long'])
-  // An ASCII note before the word explains the word and is dropped.
-  expect(glossOf('𗈒')).toEqual(['𗈒', '肘', 'word', 'rkiwr2'])
-  expect(glossOf('𗘓')[2]).toBe('long')
-})
-
-const glossReadings = gunzipSync(readFileSync(new URL('../data/tangut-gloss-readings.tsv.gz', import.meta.url)))
-  .toString().split('\n').filter(line => line && !line.startsWith('#')).map(line => line.split('\t'))
-
-test('the gloss readings cover the one-character words', () => {
-  const words = glossWords.filter(row => row[2] === 'word').map(row => row[0])
-  expect(glossReadings.length).toBe(3117)
-  expect(glossReadings.map(row => row[0])).toEqual(words.sort((a, b) => a.codePointAt(0) - b.codePointAt(0)))
-  // Every reading of the gloss is kept, in KANJIDIC2's order and its pinyin tone numbers, except
-  // bound forms, which the source marks with a hyphen at either end.
-  expect(glossReadings.filter(row => row[2]).length).toBe(3068)
-  expect(glossReadings.filter(row => row[3]).length).toBe(3063)
-  expect(glossReadings.filter(row => row[4]).length).toBe(2801)
-  const readingOf = char => glossReadings.find(row => row[0] === char)
-  expect(readingOf('𗢳')).toEqual(['𗢳', '佛', 'fo2 fu2', 'ブツ フツ', 'ほとけ'])
-  expect(readingOf('𘛛')).toEqual(['𘛛', '日', 'ri4', 'ニチ ジツ', 'ひ'])
-  // An okurigana stem keeps its dot; a hyphenated suffix reading is left out.
-  expect(readingOf('𗄖')).toEqual(['𗄖', '行', 'xing2 hang2 hang4 xing4', 'コウ ギョウ アン', 'い.く ゆ.く おこな.う おこ.なう'])
-  // 毒 is read in Sino-Japanese only, so its kun reading is empty rather than guessed.
-  expect(readingOf('𗀀')).toEqual(['𗀀', '毒', 'du2', 'ドク', ''])
-  // 上 keeps its standalone kun readings and drops the うわ- bound form.
-  expect(readingOf('𗥁')[4]).toBe('うえ かみ あ.げる あ.がる あ.がり のぼ.る のぼ.り のぼ.せる のぼ.す たてまつ.る')
-  // A character KANJIDIC2 does not carry keeps empty columns.
-  expect(readingOf('𗐭')).toEqual(['𗐭', '說', '', '', ''])
-})
-
 const frequency = json('tangut-frequency.json.gz')
 
 test('the frequency table counts every place in the corpus', () => {
   expect(frequency.corpus).toEqual({
-    lines: 5273,
-    characters: 92509,
-    distinct: 3350,
-    sha256: '5312f92bf9751cf88e4ef8c4306a5f4a7be4c94690f58da4eba1d88323623017',
+    lines: 6028,
+    characters: 105542,
+    distinct: 3379,
+    sha256: 'd810d0b821bb72a0c2a29b0cb42ec6de165a7f5b9b6e8ad7e637c3cdaa30af3a',
   })
-  expect(Object.keys(frequency.counts).length).toBe(3350)
-  expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(92509)
-  expect(frequency.counts['𗋕']).toBe(711)
+  expect(Object.keys(frequency.counts).length).toBe(3379)
+  expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(105542)
+  expect(frequency.counts['𗋕']).toBe(757)
 })
 
 const readPage = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-gloss-readings.json.gz', import.meta.url))).toString())
