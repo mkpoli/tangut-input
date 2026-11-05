@@ -116,12 +116,14 @@ export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/t
 /** Tibetan phonetic glosses by character, from BabelStone's index of five British Library manuscripts:
  * each gloss is [Wylie, Tibetan script, [[shelfmark, count]…]].
  * @returns {Promise<{ format: string, source: string, author: string, modified: string | null, retrieved: string, note: string, glosses: Record<string, [string, string, [string, number][]][]> }>} */
-/** The Tibetan spellings 李範文 lists at each crossing of rhyme and initial class. @returns {Promise<{ cells: Record<string, Record<string, string[]>> } | null>} */
+/** The Tibetan spellings 李範文 lists at each crossing of rhyme and initial class. @returns {Promise<{ cells: Record<string, Record<string, [string, string][]>> } | null>} */
 export const loadTibetanRhymes = () => once('tibetanRhymes', () => readJson(new URL('../data/tangut-tibetan-rhymes.json', import.meta.url)))
 /** 龔煌城's value for each of the 105 rhymes. @returns {Promise<{ values: Record<string, string> } | null>} */
 export const loadGongRhymes = () => once('gongRhymes', () => readJson(new URL('../data/tangut-gong-rhymes.json', import.meta.url)))
 /** The Chinese characters transcribing Tangut, by rhyme: each is [character, final?]. @returns {Promise<{ rhymes: Record<string, [string, string?][]> } | null>} */
 export const loadChineseRhymes = () => once('chineseRhymes', () => readJson(new URL('../data/tangut-chinese-rhymes.json', import.meta.url)))
+/** Tibetan spellings by hand class, with counts, and Sanskrit, by character. @returns {Promise<{ chars: Record<string, { tibetan?: [string, string, number, string, string][], sanskrit?: string[] }> } | null>} */
+export const loadTibetanHands = () => once('tibetanHands', () => readJson(new URL('../data/tangut-tibetan-hands.json', import.meta.url)))
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */

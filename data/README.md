@@ -17,6 +17,14 @@ snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
 underlying editions are in `wikisource/README.md` and in the source records of the built file.
 
+## `mica/`
+
+Two texts the Mi Corpus Annotation Group transcribed itself: 華嚴經 juan 77, from the images in 荒川慎太郎
+2011, and the Lotus Sutra's Universal Gateway chapter, from the images in 陈炳应 1985. The group's
+licence is CC BY 4.0, and `manifest.json` pins the commit they were copied from. Its other ten texts
+come from Wikisource, which this corpus reads directly. `scripts/build_tangut_attestation.py` reads them
+as the source `mica`.
+
 ## `lcdtt/`
 
 The 21 text files of the Lausanne Corpus of Digital Tangut Texts
@@ -81,18 +89,18 @@ eras these are. `scripts/build_tangut_later_eras.py` builds the page's data.
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or
-history, `caption`, stated only by a Commons caption, `decoded`, matched here to the font codes of a title a
+history, `caption`, stated only by a Commons caption, `codes`, named by a study whose font codes for the title are worked out here, `decoded`, matched here to the font codes of a title a
 study prints, `dated`, inferred from the date of the passage,
 or `disputed`; the Tangut, if known; the Chinese exactly as `chinese_source` prints it, if any; the
 source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the Tangut;
 and `backs`, whether the work supports the Tangut or the Chinese. Compiled by hand.
 `scripts/build_tangut_titles.py` stops if a title does not occur in its place, and marks each title
-`text`, `reported` or `chinese` by what its Tangut rests on.
+`text`, `reported` or `chinese` by what its Tangut rests on. The build sets `kind`: `city` (城號) when the title has 城 or 𗍁, otherwise `honorific`.
 
 ## `tangut-frequency.json.gz`
 
 One count per Tangut character: the number of places it occupies in
-`app/data/tangut-attestation.json.gz`, 92,509 places over 3,350 characters. A character repeated in a
+`app/data/tangut-attestation.json.gz`, 105,542 places over 3,379 characters. A character repeated in a
 duplicated text counts each time. The file carries the corpus hash and the counts, sorted by count.
 Built by `scripts/build_tangut_frequency.py`; the finders read it to rank candidates inside their own
 tiers.
@@ -413,6 +421,27 @@ vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-nam
 `tests/names.test.js` keeps it equal to this table. `app/data/tangut-part-names.json` is the eighteen-row
 comparison on Parts: Japanese shape names, the English abstract's wording for くノ and ノメ, and
 empty cells where the sources read record no name.
+
+## tangut-component-shape-hints.json.gz
+
+An editorial ranking, not a name table. Each of the 768 Tangut components U+18800–18AFF is compared
+with the eighteen components that have an attested Japanese shape name, and the three nearest names
+are kept with a cosine score and whether the stroke count agrees. 16 KB gzipped, built by
+`uv run scripts/rank_component_shapes.py` from `app/public/fonts/TangutYinchuan.ttf`.
+
+The score says the ink resembles an attested component's ink; it does not say the two are the same
+component or that the name applies. The method cannot separate くノ from ノメ, which score about
+0.98 against each other. Use the file to find candidates for review, never to fill
+`data/tangut-component-names.tsv`.
+
+Format: `format`, `version`, `editorial`, `note`, `method` (font, size, metric, limitation), `counts`,
+`exemplars` and `components`, one row per component with `char`, `codepoint`, `strokes`, `named` and
+`candidates` (name, char, score, strokes, sameStrokes).
+
+- Font: Tangut Yinchuan, Jing Yongshi and Andrew West, served unmodified; its terms are in
+  `app/public/fonts/FONT-LICENCES.md`, including the acknowledgement when it appears in a
+  publication.
+- The file is **editorial** and carries no claim of attestation.
 
 ## component-name-wikidata.json
 

@@ -86,11 +86,18 @@ export function insert(chars) {
 
 /** Delete the character before the caret, as Backspace in an empty code box does. */
 export function backspace() {
-  const chars = [...text.value.slice(0, text.start < 0 ? text.value.length : text.start)]
+  const start = text.start < 0 ? text.value.length : text.start
+  // A selection is what goes, and nothing before it.
+  if (text.end > start) {
+    text.value = text.value.slice(0, start) + text.value.slice(text.end)
+    text.end = start
+    save()
+    return
+  }
+  const chars = [...text.value.slice(0, start)]
   if (!chars.length) return
   const removed = chars.pop() ?? ''
-  const start = text.start < 0 ? text.value.length : text.start
-  text.value = text.value.slice(0, start - removed.length) + text.value.slice(Math.max(start, text.end))
+  text.value = text.value.slice(0, start - removed.length) + text.value.slice(start)
   text.start = text.end = start - removed.length
   save()
 }

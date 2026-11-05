@@ -3,10 +3,11 @@
   // shape or by its sound, and it goes in at the caret. It is a board for the characters a keyboard
   // cannot type, so it stays open between picks.
   import { tick } from 'svelte'
-  import { db, ix, isTangut, gloss } from '../lib/db.svelte.js'
-  import { byMeaning, byParts, byCode, bySijiao, byCodePoint } from '../lib/search.js'
+  import { db, ix, isTangut, gloss, readingOf } from '../lib/db.svelte.js'
+  import { byMeaning, byParts, byCode, bySijiao, byCodePoint, byTibetan } from '../lib/search.js'
   import { searchReadings } from '../lib/reading.js'
   import { insert, remember } from '../lib/text.svelte.js'
+  import { ui } from '../lib/ui.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from './G.svelte'
 
@@ -49,6 +50,7 @@
       lists.push(['code', byCode(text).slice(0, 24).map(hit => ({ char: hit.char, note: hit.code }))])
       lists.push(['sound', searchReadings(ix.readings, text).slice(0, 24).map(hit => ({ char: hit.char, note: (hit.readings ?? []).join(' ') }))])
     }
+    lists.push(['tibetan', byTibetan(text).slice(0, 24).map(hit => ({ char: hit.char, note: hit.shown }))])
     if ([...text].some(isTangut)) lists.push(['parts', byParts([...text].filter(isTangut)).slice(0, 24).map(char => ({ char, note: gloss(char) }))])
     // A word in English can look like a code; when the shape searches find almost nothing, the
     // meanings are tried as well, so the one or two code matches do not hide the word's sense.
@@ -60,10 +62,18 @@
     /** @type {Map<string, Hit>} */
     const unique = new Map()
     for (const [, list] of lists) for (const hit of list) if (!unique.has(hit.char)) unique.set(hit.char, hit)
-    return { list: [...unique.values()].slice(0, 48), kinds: used }
+    // A whole Tibetan spelling keeps a place at the end, past the codes and readings a short query
+    // fills the list with; those stay where they are, so the number keys still pick the same ones.
+    const list = [...unique.values()]
+    const kept = list.slice(0, 48)
+    const whole = byTibetan(text).filter(hit => hit.tier === 0 && !kept.some(other => other.char === hit.char)).slice(0, 24)
+    return { list: [...kept.slice(0, 48 - whole.length), ...whole.map(hit => ({ char: hit.char, note: hit.shown }))], kinds: used }
   })
 
   const hits = $derived(found.list)
+  /** Whether the number keys pick a candidate: not before anything is typed, and not while the
+   *  query is one that takes digits, a four-corner code or a code point. */
+  const digitsPick = $derived(!!text && !/^(u|u\+[0-9a-f]*|u[0-9a-f]*[0-9][0-9a-f]*|[0-9]+)$/i.test(text))
   const kinds = $derived(found.kinds)
 
   $effect(() => { void text; active = -1 })
@@ -116,7 +126,7 @@
       return
     }
     // The number keys take the candidate at that place, as an input method does.
-    if (/^[1-9]$/.test(event.key) && hits.length >= Number(event.key)) {
+    if (digitsPick && /^[1-9]$/.test(event.key) && hits.length >= Number(event.key)) {
       event.preventDefault()
       put(hits[Number(event.key) - 1].char)
       return
@@ -167,10 +177,12 @@
         </p>
         <div class="hits" role="listbox" aria-label={t('ime.label')}>
           {#each hits as hit, i (hit.char)}
-            <button type="button" role="option" class="ui-tile" aria-selected={i === active} title={hit.note}
+            {@const sound = readingOf(hit.char, ui.reading)}
+            <button type="button" role="option" class="ui-tile" aria-selected={i === active} title={[sound, hit.note].filter(Boolean).join(' · ')}
               onclick={() => put(hit.char)} onmouseenter={() => { active = i }}>
               <G char={hit.char} />
-              {#if i < 9}<span class="n">{i + 1}</span>{/if}
+              {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
+              {#if digitsPick && i < 9}<span class="n">{i + 1}</span>{/if}
             </button>
           {/each}
         </div>
@@ -187,7 +199,8 @@
   .panel{position:absolute;right:0;top:calc(100% + 6px);z-index:var(--ui-z-menu);display:grid;gap:var(--ui-space-sm);inline-size:300px;padding:var(--ui-space-md)}
   .panel.start{right:auto;left:0}
   .hits{display:grid;grid-template-columns:repeat(8, 1fr);gap:2px;max-block-size:220px;overflow:auto}
-  .hits .ui-tile{min-block-size:34px;font-size:22px;position:relative}
-  .hits .n{position:absolute;top:0;left:2px;font:9px var(--ui-font-mono);color:var(--ui-color-ink-muted)}
+  .hits .ui-tile{min-block-size:42px;padding:2px 1px;font-size:22px;position:relative;gap:0}
+  .hits .ui-tile-sound{font-size:9px;line-height:1.1}
+  .hits .n{position:absolute;bottom:1px;left:2px;font:9px var(--ui-font-mono);color:var(--ui-color-ink-muted)}
   .hits .ui-tile[aria-selected='true']{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
 </style>

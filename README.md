@@ -30,7 +30,9 @@ it into your text. <https://tangut.mkpo.li/>
 The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
-further readings and meanings are linked to CCAMC's page for the character rather than copied. The text being written stays in the
+further readings and meanings are linked to CCAMC's page for the character rather than copied.
+Character tiles carry a reconstruction above the glyph — the one chosen at the top bar, or the one
+a reading search matched — with the finder's own note below it. The text being written stays in the
 browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).
@@ -145,3 +147,9 @@ The glyphs are set in Noto Serif Tangut from Google Fonts, with a small subset o
 version for the components Google's build lacks (`app/public/fonts/`, SIL OFL 1.1).
 
 The added code is MIT; see `LICENSE`.
+
+## Sponsor
+
+I build tangut-input on my own, with no funding behind it, and it's free for everyone. If it's useful to you, a tip on [Ko-fi](https://ko-fi.com/mkpoli) or [OFUSE](https://ofuse.me/mkpoli) gives me time to keep improving it. Companies interested in sponsoring can write to mkpoli@mkpo.li.
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mkpoli)

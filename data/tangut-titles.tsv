@@ -2,7 +2,8 @@ holder	identified	tangut	chinese	chinese_source	source	place	backs
 太祖	stated		應運法天神智仁聖至道廣德孝光皇帝	songshi	songshi		chinese
 景宗	stated		世祖始文本武興法建禮仁孝皇帝	songshi	songshi		chinese
 景宗	dated		聖文英武崇仁至孝皇帝	shi2003	shi2003		chinese
-景宗	caption	𘚶𗅡𗍁𘓺𘋨	風角城皇帝	commons	commons		tangut
+景宗	stated	𘚶𗅡𗍁𘓺𘋨	風角城皇帝	commons	commons		tangut
+景宗	stated	𘚶𗅡𗍁𘓺𘋨	風角城皇帝	commons	survey2007		chinese
 景宗	stated		嵬名吾祖	songshi	songshi		chinese
 景宗	stated	𘓺𘋨	兀卒	songshi	stele1094	wikisource:𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞	tangut
 景宗	stated	𘓺𘋨	兀卒	songshi	commons		tangut
@@ -16,11 +17,13 @@ holder	identified	tangut	chinese	chinese_source	source	place	backs
 惠宗母	stated	𘀗𗄷𘍞𗩱𗼇𗟶𗹙𗨤𗂧𗹑𘓺𗨺𘜹	天生全能禄番式法正国皇太后	yang2010	yang2010	lcdtt:慈悲道場懺法	tangut
 惠宗母	stated	𘀗𗄷𘍞𗩱𗼇𗟶𗹙𗨤𗂧𗹑𘓺𗨺𘜹	天生全能禄番式法正国皇太后	yang2010	wang2010		chinese
 惠宗母	dated	𗥮𗑗𘓺𗨺𘜹			stele1094	wikisource:𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞	tangut
-惠宗母	stated		天生圆能禄番圣祐依法慈睦正国皇太后	sun2021	sun2021		chinese
+惠宗母	codes	𘀗𗄷𘍞𗩱𗼇𗟶𗼃𘑨𗹙𗨤𗈁𗖠𗂧𗹑𘓺𗨺𘜹	天生圆能禄番圣祐依法慈睦正国皇太后	sun2021	sun2021		tangut
 崇宗	decoded	𗸯𗑗𘓺𘋨	…仁净皇帝	sun2021	stele1094	wikisource:𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞	tangut
 崇宗	stated		神功禄胜化德恤民仁净皇帝	sun2021	sun2021		chinese
 崇宗	caption	𗭼𗍁𘓺𘋨	明城皇帝	commons	commons		tangut
+崇宗	caption	𗭼𗍁𘓺𘋨	明城皇帝	commons	survey2007		chinese
 崇宗	caption	𘙮𗍁𘓺𘋨	白城皇帝	commons	commons		tangut
+崇宗	caption	𘙮𗍁𘓺𘋨	白城皇帝	commons	survey2007		chinese
 崇宗	stated		歸天廣祖皇帝	shi2003	shi2003		chinese
 崇宗母	decoded	𗣼𗯿𘓺𗨺𘜹	…德盛皇太后	sun2021	stele1094	wikisource:𗴂𗹭𗂧𘜶𘍞𗃛𗉔𗿣𗿷𗽔𘗣𗗙𘐆𘝞	tangut
 崇宗母	stated		智胜禄广恤民集礼德盛皇太后	sun2021	sun2021		chinese
@@ -35,5 +38,7 @@ holder	identified	tangut	chinese	chinese_source	source	place	backs
 仁宗	stated		仁尊圣德珠城皇帝	du2008	du2008		chinese
 仁宗	stated	𗓑𗍁𘓺𘋨	護城皇帝	commons	commons		tangut
 仁宗	stated	𗓑𗍁𘓺𘋨	護城皇帝	commons	shi2003		chinese
-仁宗	caption	𗓑𗍁𗼈𗣼𗫡𗤓𘓺𘋨	護城聖德至懿皇帝	commons	commons		tangut
-仁宗	caption	𗓑𗍁𗼈𗣼𗫡𗤓𘓺𘋨	護城聖德至懿皇帝	commons	du2008		chinese
+仁宗	stated	𗓑𗍁𘓺𘋨	護城皇帝	commons	survey2007		chinese
+仁宗	stated	𗓑𗍁𗼈𗣼𗫡𗤓𘓺𘋨	護城聖德至懿皇帝	commons	commons		tangut
+仁宗	stated	𗓑𗍁𗼈𗣼𗫡𗤓𘓺𘋨	護城聖德至懿皇帝	commons	du2008		chinese
+仁宗	stated	𗓑𗍁𗼈𗣼𗫡𗤓𘓺𘋨	護城聖德至懿皇帝	commons	survey2007		chinese
