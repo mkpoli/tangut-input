@@ -66,7 +66,7 @@
   const hits = $derived(found.list)
   /** Whether the number keys pick a candidate: not before anything is typed, and not while the
    *  query is one that takes digits, a four-corner code or a code point. */
-  const digitsPick = $derived(!!text && !/^(u\+[0-9a-f]*|u[0-9a-f]*[0-9][0-9a-f]*|[0-9]+)$/i.test(text))
+  const digitsPick = $derived(!!text && !/^(u|u\+[0-9a-f]*|u[0-9a-f]*[0-9][0-9a-f]*|[0-9]+)$/i.test(text))
   const kinds = $derived(found.kinds)
 
   $effect(() => { void text; active = -1 })
