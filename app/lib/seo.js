@@ -32,9 +32,13 @@ export const PAGE_SEO = {
     title: 'Reading — Tangut Input',
     description: 'Type a Tangut reconstruction in any of the six systems the site shows — Li Fanwen, Gong Xun 2024-11, Miyake, Nishida, Kychanov, Sofronov — and see the characters read so.',
   },
-  read: {
-    title: 'Read Tangut text — layers of reading and meaning',
-    description: 'Paste a line of Tangut and stack what you want under each character: reconstructions, 漢字, Japanese and English glosses, in any order and at any size.',
+  texts: {
+    title: 'Texts — Tangut Input',
+    description: 'Browse the texts behind the attested corpus, with their passages, characters and sources, and load a first passage into Transcribe.',
+  },
+  transcribe: {
+    title: 'Transcribe Tangut text — every character’s reading',
+    description: 'Paste a line of Tangut and read every character: its reconstruction in any of six systems, its rhyme and tone, and a table of all six for copying.',
   },
   fanqie: {
     title: 'Fanqie — Tangut Input',

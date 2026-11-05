@@ -28,9 +28,10 @@ test('nothing usable gives the default', () => {
 })
 
 const data = {
-  entry: { definitions: { en: ['to undergo; to suffer', 'to guard'], ja: ['終わり', '苦しみ'], zh: ['受、遭'] }, pronunciations: { li_fanwen: 'zar2', gong_xun_202411: 'rzar2' } },
+  entry: { definitions: { en: ['to undergo; to suffer', 'to guard'], ja: ['終わり', '苦しみ'] }, pronunciations: { li_fanwen: 'zar2', gong_xun_202411: 'rzar2' } },
   reading: 'gong_xun_202411',
   downes: 'undergo; bear',
+  leilin: [['受', 3], ['遭', 1]],
   rhyme: [85, 2],
   hands: { tibetan: [['A', 'lda', 1, 'ལྡ', 'lda'], ['B', 'g-yi', 13, 'གཡི', 'g.yi']] },
 }
@@ -42,7 +43,8 @@ test('a reading layer follows the chosen system or keeps to its own', () => {
 
 test('a meaning shows its first sense, with all of them on hover', () => {
   expect(layerValue({ kind: 'english', size: 12 }, '𗀅', data)).toEqual({ text: 'to undergo', title: 'to undergo; to suffer; to guard' })
-  expect(layerValue({ kind: 'sinograph', size: 17 }, '𗀅', data).text).toBe('受')
+  expect(layerValue({ kind: 'sinograph', size: 17 }, '𗀅', data)).toEqual({ text: '受', title: '受、遭' })
+  expect(layerValue({ kind: 'sinograph', size: 17 }, '𗀅', { ...data, leilin: undefined }).text).toBe('')
   expect(layerValue({ kind: 'japanese', size: 12 }, '𗀅', data).text).toBe('終わり')
 })
 

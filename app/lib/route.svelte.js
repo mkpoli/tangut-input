@@ -9,6 +9,15 @@ export const PRIMARY = /** @type {const} */ ({ path: '', label: 'nav.find', tab:
 
 export const GROUPS = /** @type {const} */ ([
   {
+    label: 'nav.group.text',
+    tab: 'nav.group.text.tab',
+    icon: 'book',
+    pages: [
+      { path: 'texts', label: 'nav.texts', icon: 'book', hint: 'nav.texts.hint' },
+      { path: 'transcribe', label: 'nav.transcribe', icon: 'transcribe', hint: 'nav.transcribe.hint' },
+    ],
+  },
+  {
     label: 'nav.group.shape',
     tab: 'nav.group.shape.tab',
     icon: 'shape',
@@ -27,7 +36,6 @@ export const GROUPS = /** @type {const} */ ([
       { path: 'fanqie', label: 'nav.fanqie', icon: 'fanqie', hint: 'nav.fanqie.hint' },
       { path: 'chart', label: 'nav.chart', icon: 'chart', hint: 'nav.chart.hint' },
       { path: 'reading', label: 'nav.reading', icon: 'reading', hint: 'nav.reading.hint' },
-      { path: 'read', label: 'nav.read', icon: 'read', hint: 'nav.read.hint' },
     ],
   },
   {

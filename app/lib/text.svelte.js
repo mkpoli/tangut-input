@@ -14,7 +14,7 @@ export const text = $state({
 /** The text a sample replaced, kept so the reader can return to it. */
 export const sampleHistory = $state({ backup: /** @type {string | null} */ (null) })
 
-/** Every field that holds this text: the writing strip. @type {Set<HTMLTextAreaElement>} */
+/** Every field that holds this text: the writing strip and the transcribe box. @type {Set<HTMLTextAreaElement>} */
 const fields = new Set()
 /** The field an insertion follows: the focused one, else the last one attached. @type {HTMLTextAreaElement | null} */
 let last = null

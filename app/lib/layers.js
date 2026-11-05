@@ -57,7 +57,7 @@ export const firstSense = text => (text ?? '').split(/[;,；，、。]/)[0].trim
  * @param {string} char
  * @param {{ entry?: { definitions?: { en?: string[], ja?: string[], zh?: string[] }, pronunciations?: Record<string, string> },
  *   reading: string, downes?: string, rhyme?: [number | null, number | null, ...unknown[]],
- *   hands?: { tibetan?: [string, string, number, string, ...string[]][] }, glosses?: [string, string, unknown][] }} data
+ *   leilin?: [string, number][], hands?: { tibetan?: [string, string, number, string, ...string[]][] }, glosses?: [string, string, unknown][] }} data
  * @returns {{ text: string, title: string }}
  */
 export function layerValue(layer, char, data) {
@@ -70,7 +70,7 @@ export function layerValue(layer, char, data) {
       const value = data.entry?.pronunciations?.[layer.system === CURRENT || !layer.system ? data.reading : layer.system]?.trim() ?? ''
       return { text: value, title: value }
     }
-    case 'sinograph': return sense(definitions.zh)
+    case 'sinograph': return { text: data.leilin?.[0]?.[0] ?? '', title: (data.leilin ?? []).map(([word]) => word).join('、') }
     case 'japanese': return sense(definitions.ja)
     case 'wiktionary': return sense(definitions.en)
     case 'downes': return { text: firstSense(data.downes), title: data.downes ?? '' }

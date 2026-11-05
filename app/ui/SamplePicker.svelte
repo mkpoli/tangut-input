@@ -1,6 +1,6 @@
 <script>
   // A short list of passages copied from the recorded texts. Picking one replaces the text being
-  // written, so a reader can try the reading tool on a real line without typing Tangut first.
+  // written, so a reader can try the transcribe table on a real line without typing Tangut first.
   import { tick } from 'svelte'
   import { db } from '../lib/db.svelte.js'
   import { setText, text, loadSample, restoreSample, sampleHistory } from '../lib/text.svelte.js'

@@ -18,10 +18,11 @@ The site has three parts.
   drawing land in the same place. It can be typed or pasted into directly, and copied as text, as
   code points or as Cangjie codes. Clicking beside a character in it opens that character's card.
 - **The finders.** One page for each way of naming a character: Find, Meaning, Cangjie,
-  Four-corner, Reading, Fanqie, Chart, Read, Draw and Parts. Their inputs differ in kind
+  Four-corner, Reading, Fanqie, Chart, Transcribe, Draw and Parts. Their inputs differ in kind
   (letters, a reconstruction, a drawing, a set of components), so each page is laid out for its own
   input. The one shared box with tabs is the Fanqie picker, where the point is to choose two
-  characters without leaving the field.
+  characters without leaving the field. Texts sits beside them: it starts from a whole text and
+  loads its first passage into Transcribe.
 - **The card.** Everything recorded about one character, with the actions first: add to the text,
   copy the character, copy the link, copy the code point (click it) or a Cangjie code (click it).
   Below them come the things that help a reader confirm the character is the one they mean:
@@ -67,6 +68,11 @@ stacks it above the name.
   lists the family that opens that way.
 
 With an empty box, the page shows the nine finders as doors with one line each, and examples.
+
+**Texts** (`/texts`) lists the 34 texts behind the attested corpus, grouped as the edition,
+Wikisource and the Lausanne Corpus. Each row gives its passages and characters, links its source,
+and loads its first line into Transcribe. The counts come from the attestation, not from a separate
+text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
 code box takes letters, candidates are numbered 1–9, `Space` or a digit commits into the text,
@@ -238,9 +244,9 @@ the Tangut block, and anything that is not a pick or a drawing.
   permission). There is no facsimile or translation for those pages, so a place shows the passage
   around the character and links to the page. The edition is CC BY 4.0, the Wikisource texts
   CC BY-SA 4.0 and the Lausanne Corpus used with permission; each source prints its own credit.
-- **Sample passages in the text strip and Read.** Eighteen passages copied from the attestation,
+- **Sample passages in the text strip and Transcribe.** Eighteen passages copied from the attestation,
   thirteen marked famous, sit in `app/data/tangut-samples.json`. Picking one replaces the text; on
-  Read it also becomes the address's line. The panel keeps the replaced text, so a reader can
+  Transcribe it also becomes the address's line. The panel keeps the replaced text, so a reader can
   return to it or clear the line. The list is a reading aid, not a frequency sample.
 - **Candidates by corpus frequency.** `app/data/tangut-frequency.json.gz` counts every place in the
   attestation. Each finder keeps its own tiers first — exact code, meaning tier, stroke count, rhyme
@@ -263,7 +269,7 @@ the Tangut block, and anything that is not a pick or a drawing.
 next-letter counts; reading search over 29,525 readings in eight systems; drawing search over
 6,913 glyphs; part search over 6,136 descriptions; the card with every field the records carry;
 attestation of 3,350 characters in 5,273 passages from fourteen sources, with 280 facsimile crops; a
-picker of eighteen corpus passages, thirteen marked famous, in the text strip and on Read;
+picker of eighteen corpus passages, thirteen marked famous, in the text strip and on Transcribe;
 frequency-ranked candidates in the finders; the text buffer
 with three copy formats; shareable URLs; light and dark; phone layout.
 

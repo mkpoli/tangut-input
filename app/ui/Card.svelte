@@ -34,6 +34,7 @@
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
+  const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
@@ -183,7 +184,7 @@
       </section>
     {/if}
 
-    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes}
+    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes || leilin?.length}
       <section>
         <h3 class="ui-label"><Icon name="meaning" size={15}/>{t('card.meaning')}</h3>
         {#if wordClass.length}
@@ -195,6 +196,7 @@
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
           {#if meanings.zh?.length}<dt>zh</dt><dd lang="zh-Hant">{meanings.zh.join('；')}</dd>{/if}
+          {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}
           {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
         </dl>
       </section>
@@ -203,18 +205,26 @@
     {#if variants}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
-        {#each [['card.variantOf', variants.of], ['card.variantForms', variants.forms], ['card.variantPossible', variants.possible]] as [label, others] (label)}
-          {#if others.length}
-            <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
-            <div class="ui-tiles rel" style:--ui-tile-size="48px">
-              {#each others as other (other)}
-                {@const sound = readingOf(other, ui.reading)}
-                <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
-              {/each}
-            </div>
+        {#each [
+          { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms], ['card.variantFormsPartial', variants.partialForms]] },
+          { source: 'card.variantReportedSource', rows: [['card.variantReported', variants.reported]] },
+          { source: 'card.variantsPossibleSource', rows: [['card.variantPossible', variants.possible]] },
+        ] as block (block.source)}
+          {#if block.rows.some(([, others]) => others.length)}
+            {#each block.rows as [label, others] (label)}
+              {#if others.length}
+                <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
+                <div class="ui-tiles rel" style:--ui-tile-size="48px">
+                  {#each others as other (other)}
+                    {@const sound = readingOf(other, ui.reading)}
+                    <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+                  {/each}
+                </div>
+              {/if}
+            {/each}
+            <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
-        <p class="ui-hint">{t(variants.of.length || variants.forms.length ? 'card.variantsSource' : 'card.variantsPossibleSource')}</p>
       </section>
     {/if}
 

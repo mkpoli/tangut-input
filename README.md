@@ -10,6 +10,8 @@ it into your text. <https://tangut.mkpo.li/>
   lists code points. Tangut components also answer to their Japanese shape names, such as くノ,
   ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
   opening part it lists the characters that open that way.
+- **Texts**: every text behind the corpus, grouped by edition, Wikisource and the Lausanne Corpus,
+  with its passages, characters, source and first line. Transcribe opens that first line.
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
@@ -64,7 +66,7 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   `data/wikisource/pages.json` pins the Wikisource revisions; refresh it with
   `python3 scripts/fetch_tangut_wikisource.py`.
 - `app/data/tangut-samples.json`: eighteen passages copied from the corpus, thirteen marked famous,
-  offered by the Samples button in the text strip and on Read; built by
+  offered by the Samples button in the text strip and on Transcribe; built by
   `scripts/build_tangut_samples.py` from the attestation file.
 - `app/data/tangut-frequency.json.gz`: how often each character occurs in the corpus, built by
   `scripts/build_tangut_frequency.py`; the finders put the commoner characters first within each
