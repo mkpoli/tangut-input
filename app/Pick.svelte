@@ -10,9 +10,10 @@
   applyTheme()
   applyTangut()
 
-  /** @param {string} char */
-  function onpick(char) {
-    window.parent.postMessage({ type: 'tangut-pick', char }, '*')
+  /** @param {string} char @param {number} _place @param {[number, number][][]} [strokes] */
+  function onpick(char, _place, strokes) {
+    // The strokes of a drawing travel with the pick, so the tool around this page can keep them.
+    window.parent.postMessage({ type: 'tangut-pick', char, strokes: strokes ? JSON.parse(JSON.stringify(strokes)) : undefined }, '*')
     return true
   }
 

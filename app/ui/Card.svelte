@@ -34,6 +34,8 @@
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
+  const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
+  const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
@@ -140,14 +142,47 @@
 
   const first = $derived(ready && char ? gloss(char) : '')
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
+
+  // The drawer follows one finger on its top bar, and a pull far enough down closes it.
+  const CLOSE_AT = 80
+  /** @type {{ id: number, y: number, drawer: HTMLElement } | null} */
+  let pull = null
+  /** @param {PointerEvent & { currentTarget: HTMLElement }} event */
+  function grab(event) {
+    if (pull || /** @type {Element} */ (event.target).closest('button')) return
+    const drawer = event.currentTarget.closest('aside')
+    if (!drawer) return
+    // A press that began a text selection would turn the next one into a native drag.
+    event.preventDefault()
+    pull = { id: event.pointerId, y: event.clientY, drawer }
+    event.currentTarget.setPointerCapture(event.pointerId)
+    drawer.style.transition = 'none'
+  }
+  /** @param {PointerEvent} event */
+  function drag(event) {
+    if (pull?.id === event.pointerId) pull.drawer.style.transform = `translateY(${Math.max(0, event.clientY - pull.y)}px)`
+  }
+  function release() {
+    if (!pull) return
+    pull.drawer.style.transition = ''
+    pull.drawer.style.transform = ''
+    pull = null
+  }
+  /** @param {PointerEvent} event */
+  function drop(event) {
+    if (pull?.id !== event.pointerId) return
+    if (event.type === 'pointerup' && event.clientY - pull.y > CLOSE_AT) ui.sheet = false
+    release()
+  }
+  // Closed some other way in the middle of a pull, the drawer must not keep where the pull left it.
+  $effect(() => { if (!ui.sheet) release() })
 </script>
 
 {#if ui.sheet}
-  <div class="sheetbar">
-    <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => { ui.sheet = false }}>
-      <Icon name="back" size={15}/>
-      {t('card.back')}
-    </button>
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="sheetbar" onpointerdown={grab} onpointermove={drag} onpointerup={drop} onpointercancel={drop} onlostpointercapture={drop}>
+    <span class="handle" aria-hidden="true"></span>
+    <button class="ui-button close" data-variant="quiet" data-size="sm" type="button" onclick={() => { ui.sheet = false }}>{t('card.close')}</button>
   </div>
 {/if}
 
@@ -214,7 +249,7 @@
       </section>
     {/if}
 
-    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length}
+    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes || leilin?.length}
       <section>
         <h3 class="ui-label"><Icon name="meaning" size={15}/>{t('card.meaning')}</h3>
         {#if wordClass.length}
@@ -234,6 +269,8 @@
               {/each}
             </dd>
           {/if}
+          {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}
+          {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
         </dl>
       </section>
     {/if}
@@ -241,18 +278,26 @@
     {#if variants}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
-        {#each [['card.variantOf', variants.of], ['card.variantForms', variants.forms], ['card.variantPossible', variants.possible]] as [label, others] (label)}
-          {#if others.length}
-            <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
-            <div class="ui-tiles rel" style:--ui-tile-size="48px">
-              {#each others as other (other)}
-                {@const sound = readingOf(other, ui.reading)}
-                <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
-              {/each}
-            </div>
+        {#each [
+          { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms], ['card.variantFormsPartial', variants.partialForms]] },
+          { source: 'card.variantReportedSource', rows: [['card.variantReported', variants.reported]] },
+          { source: 'card.variantsPossibleSource', rows: [['card.variantPossible', variants.possible]] },
+        ] as block (block.source)}
+          {#if block.rows.some(([, others]) => others.length)}
+            {#each block.rows as [label, others] (label)}
+              {#if others.length}
+                <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
+                <div class="ui-tiles rel" style:--ui-tile-size="48px">
+                  {#each others as other (other)}
+                    {@const sound = readingOf(other, ui.reading)}
+                    <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+                  {/each}
+                </div>
+              {/if}
+            {/each}
+            <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
-        <p class="ui-hint">{t(variants.of.length || variants.forms.length ? 'card.variantsSource' : 'card.variantsPossibleSource')}</p>
       </section>
     {/if}
 
@@ -432,7 +477,9 @@
 {/if}
 
 <style>
-  .sheetbar{position:sticky;top:0;z-index:2;padding:var(--ui-space-xs) var(--ui-space-lg);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border)}
+  .sheetbar{position:sticky;top:0;z-index:2;display:flex;justify-content:flex-end;align-items:center;min-block-size:44px;padding:var(--ui-space-2xs) var(--ui-space-sm);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border);touch-action:none;cursor:grab;user-select:none}
+  @media (min-width:901px){.sheetbar{display:none}}
+  .handle{position:absolute;inset-block-start:8px;inset-inline-start:50%;inline-size:40px;block-size:4px;border-radius:2px;background:var(--ui-color-border-strong);transform:translateX(-50%)}
   .blank{display:grid;gap:var(--ui-space-md);justify-items:center;text-align:center;padding:72px var(--ui-space-3xl);color:var(--ui-color-ink-soft)}
   .blank-glyph{font-size:88px;color:var(--ui-color-border-strong);line-height:1}
   .blank-line{max-inline-size:24em}
@@ -469,13 +516,13 @@
   .code small:empty{display:none}
   .type{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
   .ccamc-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-semibold);text-underline-offset:2px}
-  .means{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-sm);margin:0}
+  .means{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-sm);margin:0}
   .means dt{color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);font-weight:var(--ui-weight-semibold);line-height:1.9;text-transform:uppercase}
   .means dd{margin:0;font-size:var(--ui-text-md);line-height:var(--ui-leading-normal)}
   .means ol{margin:0;padding-inline-start:1.2em}
   .readings{border-collapse:collapse;inline-size:100%;font-size:var(--ui-text-sm)}
   .readings th{inline-size:46%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
-  .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
+  .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
   .cite{display:block;margin-block-start:2px;font-family:var(--ui-font-sans);font-size:var(--ui-text-xs);color:var(--ui-color-ink-muted)}

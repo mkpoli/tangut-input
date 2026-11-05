@@ -21,7 +21,8 @@ The site has three parts.
   Four-corner, Reading, Fanqie, Chart, Transcribe, Draw and Parts. Their inputs differ in kind
   (letters, a reconstruction, a drawing, a set of components), so each page is laid out for its own
   input. The one shared box with tabs is the Fanqie picker, where the point is to choose two
-  characters without leaving the field.
+  characters without leaving the field. Texts sits beside them: it starts from a whole text and
+  loads its first passage into Transcribe.
 - **The card.** Everything recorded about one character, with the actions first: add to the text,
   copy the character, copy the link, copy the code point (click it) or a Cangjie code (click it).
   Below them come the things that help a reader confirm the character is the one they mean:
@@ -33,20 +34,23 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 
 ## The frame
 
-**Desktop (1440×900).** One top bar: the mark, the grouped finders, each with its icon before the
-name, the reconstruction with its label and sound icon, and a settings button. The settings popover
-is two groups: Appearance, with the three-way theme (system, light or dark) and the colour scheme;
-and Text, with the interface language and the Tangut face. Each row carries its own icon. The text
-strip sits under the bar; the finder takes the left and the card a fixed 400 px column on the
-right, scrolling on its own. Sources sits at the foot of the finder. The card stays visible while
-candidates change, so meaning and reading are read alongside the list.
+**Desktop (1440×900).** The bar takes two rows: the mark, the reconstruction with its label and
+sound icon, the sponsor and a settings button on the first; the grouped finders, each with its
+icon before the name, and the introduction at their end on the second. From 1720 px the finders
+join the first row; between 901 and 1140 px the introduction moves up beside the mark, because
+the finder row has no room for it. The settings popover is two groups: Appearance, with the
+three-way theme (system, light or dark) and the colour scheme; and Text, with the interface
+language and the Tangut face. Each row carries its own icon. The text strip sits under the bar;
+the finder takes the left and the card a fixed 400 px column on the right, scrolling on its own.
+Sources sits at the foot of the finder. The card stays visible while candidates change, so meaning
+and reading are read alongside the list.
 
 **Phone (390 wide).** The top bar keeps the mark, the reconstruction and settings; settings opens
 as a sheet from the same button. The finders move to a bottom tab bar of groups, each tab with its
 icon over the name, each group opening its pages in a sheet with a row for each finder; More holds
-Sources. The sheets are native `<dialog>`s, so Escape closes them and focus returns to the tab that
-opened them. The card becomes a full-height sheet that a tap opens and Back or `Esc` closes;
-previews from the keyboard do not open it. The text strip stays at the top.
+Introduction and Sources. The sheets are native `<dialog>`s, so Escape closes them and focus
+returns to the tab that opened them. The card becomes a full-height sheet that a tap opens and
+Back or `Esc` closes; previews from the keyboard do not open it. The text strip stays at the top.
 
 Every finder, page title and action carries a line icon from `app/ui/Icon.svelte`: a 20-unit square
 drawn at 1.5 with the colour of the text, so both schemes and every palette need no separate set.
@@ -67,6 +71,11 @@ stacks it above the name.
   lists the family that opens that way.
 
 With an empty box, the page shows the nine finders as doors with one line each, and examples.
+
+**Texts** (`/texts`) lists the 34 texts behind the attested corpus, grouped as the edition,
+Wikisource and the Lausanne Corpus. Each row gives its passages and characters, links its source,
+and loads its first line into Transcribe. The counts come from the attestation, not from a separate
+text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
 code box takes letters, candidates are numbered 1–9, `Space` or a digit commits into the text,

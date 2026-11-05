@@ -10,6 +10,8 @@ it into your text. <https://tangut.mkpo.li/>
   lists code points. Tangut components also answer to their Japanese shape names, such as くノ,
   ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
   opening part it lists the characters that open that way.
+- **Texts**: every text behind the corpus, grouped by edition, Wikisource and the Lausanne Corpus,
+  with its passages, characters, source and first line. Transcribe opens that first line.
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).

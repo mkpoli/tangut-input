@@ -126,6 +126,10 @@ html {
   letter-spacing: 0.01em;
 }
 
+.ui-phonetic {
+  font-family: var(--ui-font-phonetic);
+}
+
 .ui-num {
   font-variant-numeric: tabular-nums;
 }

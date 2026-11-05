@@ -7,14 +7,14 @@
 // English, in the characters their name is written with in Chinese, Japanese and Korean. The other
 // spelling is the name's own title, so both are a hover away.
 export const SYSTEMS = /** @type {const} */ ([
-  { key: 'li_fanwen', short: 'Li', name: 'Li Fanwen 2008', zh: '李範文', tones: true },
-  { key: 'gong_huangcheng', short: 'Gong', name: 'Gong Hwang-cherng 2005', zh: '龔煌城', tones: true },
-  { key: 'arakawa_shintaro', short: 'Ar', name: 'Arakawa Shintarō', zh: '荒川慎太郎', tones: false },
-  { key: 'gong_xun_202411', short: 'GX', name: 'Gong Xun 2024-11', zh: '龔勛', tones: true },
-  { key: 'miyake', short: 'My', name: 'Marc Miyake', zh: '三宅', tones: true },
-  { key: 'nishida', short: 'Ni', name: 'Nishida 1966', zh: '西田龍雄', tones: true },
-  { key: 'kychanov', short: 'Ky', name: 'Kychanov 2006', zh: '克恰諾夫', tones: true },
-  { key: 'sofronov', short: 'So', name: 'Sofronov 1968', zh: '索弗羅諾夫', tones: true },
+  { key: 'li_fanwen', abbr: 'LFW2008', tag: 'LFW2008', name: 'Li Fanwen', zh: '李範文', year: '2008', tones: true },
+  { key: 'gong_huangcheng', abbr: 'GHC', tag: 'GHC', name: 'Gong Hwang-cherng', zh: '龔煌城', year: '2005', tones: true },
+  { key: 'arakawa_shintaro', abbr: 'Arakawa', tag: 'Arakawa 1999', name: 'Shintarō Arakawa', zh: '荒川慎太郎', year: '1999', tones: false },
+  { key: 'gong_xun_202411', abbr: 'GX202411', tag: 'GX202411', name: 'Gong Xun', zh: '龔勛', year: '2024-11', tones: true },
+  { key: 'miyake', abbr: 'Miyake', tag: 'Miyake 2019', name: 'Marc Miyake', zh: '三宅', year: '2019', tones: true },
+  { key: 'nishida', abbr: 'Nishida', tag: 'Nishida 1966', name: 'Tatsuo Nishida', zh: '西田龍雄', year: '1966', tones: true },
+  { key: 'kychanov', abbr: 'Kychanov', tag: 'Kychanov 2006', name: 'Yevgeny Kychanov', zh: '克恰諾夫', year: '2006', tones: true },
+  { key: 'sofronov', abbr: 'Sofronov', tag: 'Sofronov 1968', name: 'Mikhail Sofronov', zh: '索弗羅諾夫', year: '1968', tones: true },
 ])
 
 /** The system readings are shown in until a reader picks another. */
@@ -30,10 +30,13 @@ export const readingFromStore = stored => (SYSTEMS.some(system => system.key ===
  * @param {{ name: string, zh: string }} system
  * @param {string} locale
  */
-export const systemName = (system, locale) => (/^(ja|zh|ko)/.test(locale) ? system.zh : system.name)
+export const systemBaseName = (system, locale) => /^(ja|zh|ko)/.test(locale) ? system.zh : system.name
 
-/** Both spellings of a system's name, for a title. @param {{ name: string, zh: string }} system */
-export const systemTitle = system => `${system.name} · ${system.zh}`
+/** The name and year, for a list or a table. @param {{ name: string, zh: string, year: string }} system @param {string} locale */
+export const systemName = (system, locale) => `${systemBaseName(system, locale)} ${system.year}`
+
+/** Both spellings of a system's name and its abbreviation, for a title. @param {{ name: string, zh: string, year: string, abbr: string }} system */
+export const systemTitle = system => `${system.name} ${system.year} · ${system.zh} · ${system.abbr}`
 
 /** @typedef {typeof SYSTEMS[number]['key']} SystemKey */
 /** A reading from the records, or CCAMC's extra system, which is searchable but not shown.

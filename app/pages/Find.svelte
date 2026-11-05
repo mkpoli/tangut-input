@@ -49,7 +49,7 @@
           if (hit.via === 'ccamc') return { char: hit.char, sub: 'CCAMC' }
           const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
           const system = SYSTEMS.find(s => s.key === reading.system)
-          const tag = system && system.key !== ui.reading ? ` (${system.short})` : ''
+          const tag = system && system.key !== ui.reading ? ` (${system.tag})` : ''
           return { char: hit.char, sub: gloss(hit.char), sound: `${reading.raw}${tag}` }
         }) })
     }
@@ -64,7 +64,7 @@
     const readings = ix.byChar.get(char)?.pronunciations ?? {}
     if (readings[ui.reading]?.trim()) return readings[ui.reading].trim()
     const system = SYSTEMS.find(s => readings[s.key]?.trim())
-    return system ? `${readings[system.key].trim()} (${system.short})` : ''
+    return system ? `${readings[system.key].trim()} (${system.tag})` : ''
   }
   const flat = $derived(groups.flatMap(group => group.items))
 
