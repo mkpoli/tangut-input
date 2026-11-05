@@ -528,18 +528,52 @@ const desktopBar = await DESKTOP_BAR.newPage()
 await desktopBar.goto(`${APP}/`)
 await desktopBar.locator('main.finder').waitFor()
 await step('the introduction has its own place in the desktop bar', async () => {
-  const intro = desktopBar.getByRole('link', { name: 'Introduction', exact: true })
-  assert.equal(await intro.isVisible(), true, 'the bar carries the introduction')
-  assert.equal(await desktopBar.evaluate(() => Math.round(document.querySelector('.top').getBoundingClientRect().height)), 54, 'the bar keeps one row at 1920')
-  await intro.click()
-  await desktopBar.waitForURL(/\/intro$/)
-  assert.equal(await intro.getAttribute('aria-current'), 'page', 'the introduction is marked as current')
-  assert.equal(await desktopBar.locator('footer.foot a[href="/intro"]').count(), 0, 'the footer holds sources only')
-  await desktopBar.setViewportSize({ width: 1440, height: 900 })
+  const navIntro = desktopBar.locator('nav.finders a[href="/intro"]')
+  const headerIntro = desktopBar.locator('.intro-extra')
+  const layout = () => desktopBar.evaluate(() => {
+    const nav = document.querySelector('nav.finders')
+    const navLink = nav?.querySelector('a[href="/intro"]')
+    const extra = document.querySelector('.intro-extra')
+    const header = document.querySelector('.top')
+    const navRect = nav?.getBoundingClientRect()
+    const navLinkRect = navLink?.getBoundingClientRect()
+    const extraRect = extra?.getBoundingClientRect()
+    const headerRect = header?.getBoundingClientRect()
+    const shown = el => Boolean(el && el.getClientRects().length && getComputedStyle(el).display !== 'none')
+    return {
+      bar: Math.round(headerRect?.height ?? 0),
+      navShown: shown(navLink),
+      navFits: Boolean(shown(navLink) && navLinkRect && navRect && navLinkRect.right <= navRect.left + nav.clientWidth + 1),
+      extraShown: shown(extra),
+      extraFits: Boolean(shown(extra) && extraRect && headerRect && extraRect.right <= headerRect.right + 1),
+    }
+  })
   await desktopBar.goto(`${APP}/`)
   await desktopBar.locator('main.finder').waitFor()
-  assert.equal(await intro.isVisible(), true, 'the wrapped bar still carries the introduction')
-  assert.equal(await desktopBar.evaluate(() => Math.round(document.querySelector('.top').getBoundingClientRect().height)), 96, 'the finders keep a row at 1440')
+  assert.deepEqual(await layout(), { bar: 54, navShown: true, navFits: true, extraShown: false, extraFits: false }, 'the bar keeps one row at 1920')
+  await navIntro.click()
+  await desktopBar.waitForURL(/\/intro$/)
+  assert.equal(await navIntro.getAttribute('aria-current'), 'page', 'the introduction is marked as current')
+  assert.equal(await desktopBar.locator('footer.foot a[href="/intro"]').count(), 0, 'the footer holds sources only')
+  for (const [width, bar] of [[1719, 96], [1720, 54], [1440, 96], [1141, 96], [1140, 96], [1024, 96]]) {
+    await desktopBar.setViewportSize({ width, height: 900 })
+    await desktopBar.goto(`${APP}/`)
+    await desktopBar.locator('main.finder').waitFor()
+    const state = await layout()
+    assert.equal(state.bar, bar, `the bar height at ${width}`)
+    if (width >= 1141) {
+      assert.equal(state.navShown, true, `the finder row carries the introduction at ${width}`)
+      assert.equal(state.navFits, true, `the introduction fits the finder row at ${width}`)
+      assert.equal(state.extraShown, false, `the first row has no duplicate at ${width}`)
+    } else {
+      assert.equal(state.navShown, false, `the finder row leaves the introduction at ${width}`)
+      assert.equal(state.extraShown, true, `the first row carries the introduction at ${width}`)
+      assert.equal(state.extraFits, true, `the introduction fits the first row at ${width}`)
+    }
+  }
+  await desktopBar.goto(`${APP}/intro`)
+  await desktopBar.locator('main.finder').waitFor()
+  assert.equal(await headerIntro.getAttribute('aria-current'), 'page', 'the first-row introduction is marked as current')
 })
 await DESKTOP_BAR.close()
 
