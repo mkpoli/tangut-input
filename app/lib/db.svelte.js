@@ -1,6 +1,7 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
+import { variantIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
 
@@ -30,6 +31,7 @@ export const db = $state({
 export const ix = {
   /** @type {Entry[]} */ entries: [],
   /** @type {Map<string, Entry>} */ byChar: new Map(),
+  /** Variant forms, stated and possible. @type {Map<string, { of: string[], forms: string[], possible: string[] }>} */ variants: new Map(),
   /** Cangjie codes by character, shortest first. @type {Map<string, string[]>} */ codes: new Map(),
   /** Every [code, character] pair, ordered by code. @type {[string, string][]} */ codeList: [],
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
@@ -74,6 +76,7 @@ export async function load() {
     ix.tibetanHands = tibetanHands?.chars ?? {}
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
+    ix.variants = variantIndex(entries)
     ix.names = names
     ix.partNames = partNames
     for (const [char, code] of pairs) {
