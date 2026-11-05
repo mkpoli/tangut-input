@@ -43,6 +43,10 @@ palette shows its name with its code point, component number, strokes, uses and 
 adds an eighteen-row table comparing the names across Japanese, English, Chinese, Russian and Korean. The rest of the vocabulary
 is recorded here because the sources read for this note do not assign it to individual code points.
 
+`data/tangut-component-shape-hints.json.gz` is a separate editorial aid: the three nearest attested
+names for each of the 768 components, by ink similarity, with scores. It is not a name list. The
+method cannot separate くノ from ノメ; use the hints to find rows worth checking against a source.
+
 ## Sources
 
 - 荒川慎太郎 2018「西夏文字における、いくつかの左下要素の筆画について」『日本言語学会第157回大会予稿集』442–447. The proceedings are distributed as
