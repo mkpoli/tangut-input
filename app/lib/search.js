@@ -1,5 +1,6 @@
 // The finders that read the records directly: Cangjie codes, meanings, parts and code points.
 // Readings live in reading.js and drawings in shape.js.
+import { searchTibetan } from './tibetan.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
 import { searchShapeNames } from './names.js'
@@ -244,3 +245,6 @@ export const byDescription = text => describedBy(ix.entries, text)
 export function tangutIn(text) {
   return [...new Set([...text].filter(isTangut))]
 }
+
+/** Characters by a Tibetan spelling, in script, Wylie or the tables' notation. @param {string} text */
+export const byTibetan = text => searchTibetan(ix.tibetanIndex, text)

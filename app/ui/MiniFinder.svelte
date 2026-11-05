@@ -4,7 +4,7 @@
   // without leaving the spelling they belong to. A pick goes into the fanqie, never into the text.
   import { tick } from 'svelte'
   import { db, ix, gloss, codePoint, isTangut, isComponent, readingOf } from '../lib/db.svelte.js'
-  import { byCode, byMeaning, byCodePoint, bySijiao, byParts, partsAmong, tangutIn } from '../lib/search.js'
+  import { byCode, byMeaning, byCodePoint, bySijiao, byParts, byTibetan, partsAmong, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { loadShapes } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
@@ -137,6 +137,7 @@
         add(hit.char, gloss(hit.char), hit.readings.map(reading => reading.raw).join(' · '), readingLabel(hit))
       }
     }
+    for (const hit of byTibetan(trimmed).filter(hit => hit.tier === 0).slice(0, 12)) add(hit.char, gloss(hit.char), hit.shown)
     for (const hit of byMeaning(trimmed)) add(hit.char, gloss(hit.char), hit.sense)
     return out
   }

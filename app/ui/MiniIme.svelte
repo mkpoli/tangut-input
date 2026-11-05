@@ -4,7 +4,7 @@
   // cannot type, so it stays open between picks.
   import { tick } from 'svelte'
   import { db, ix, isTangut, gloss, readingOf } from '../lib/db.svelte.js'
-  import { byMeaning, byParts, byCode, bySijiao, byCodePoint } from '../lib/search.js'
+  import { byMeaning, byParts, byCode, bySijiao, byCodePoint, byTibetan } from '../lib/search.js'
   import { searchReadings } from '../lib/reading.js'
   import { insert, remember } from '../lib/text.svelte.js'
   import { ui } from '../lib/ui.svelte.js'
@@ -50,6 +50,7 @@
       lists.push(['code', byCode(text).slice(0, 24).map(hit => ({ char: hit.char, note: hit.code }))])
       lists.push(['sound', searchReadings(ix.readings, text).slice(0, 24).map(hit => ({ char: hit.char, note: (hit.readings ?? []).join(' ') }))])
     }
+    lists.push(['tibetan', byTibetan(text).slice(0, 24).map(hit => ({ char: hit.char, note: hit.shown }))])
     if ([...text].some(isTangut)) lists.push(['parts', byParts([...text].filter(isTangut)).slice(0, 24).map(char => ({ char, note: gloss(char) }))])
     // A word in English can look like a code; when the shape searches find almost nothing, the
     // meanings are tried as well, so the one or two code matches do not hide the word's sense.
