@@ -74,23 +74,37 @@
   const glossSources = [...new Set(rows.flatMap(row => row.gloss))]
   const doubtSources = [...new Set(rows.flatMap(row => row.doubt ? [row.doubt.source] : []))]
 
-  // The tab under the bar is the first of the page's sections on screen.
+  // The tab under the bar is the last section whose top has passed below it. A click sets the tab
+  // at once, and the scroll listener keeps it right once the page settles.
   let current = $state('eras')
-  onMount(() => {
-    const visible = new Set()
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) visible.add(entry.target.id)
-        else visible.delete(entry.target.id)
-      }
-      const first = tabs.map(tab => tab.id).find(id => visible.has(id))
-      if (first) current = first
-    }, { rootMargin: '-18% 0px -64% 0px' })
+  /** @type {HTMLElement | null} */
+  let toc = $state(null)
+  let frame = 0
+
+  function sync() {
+    if (!toc) return
+    const threshold = toc.getBoundingClientRect().bottom + 24
+    let active = tabs[0].id
     for (const tab of tabs) {
       const section = document.getElementById(tab.id)
-      if (section) observer.observe(section)
+      if (section && section.getBoundingClientRect().top <= threshold) active = tab.id
     }
-    return () => observer.disconnect()
+    current = active
+  }
+
+  onMount(() => {
+    sync()
+    const schedule = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(sync)
+    }
+    addEventListener('scroll', schedule, { passive: true })
+    addEventListener('resize', schedule)
+    return () => {
+      cancelAnimationFrame(frame)
+      removeEventListener('scroll', schedule)
+      removeEventListener('resize', schedule)
+    }
   })
 </script>
 
@@ -123,9 +137,9 @@
     <p class="ui-page-intro">{t('eras.intro')}</p>
   </header>
 
-  <nav class="ui-toc" aria-label={t('eras.toc')}>
+  <nav class="ui-toc" bind:this={toc} aria-label={t('eras.toc')}>
     {#each tabs as tab (tab.id)}
-      <a href={`#${tab.id}`} aria-current={current === tab.id ? 'true' : undefined}>
+      <a href={`#${tab.id}`} onclick={() => { current = tab.id }} aria-current={current === tab.id ? 'true' : undefined}>
         <span>{t(tab.key)}</span><span class="ui-count">{tab.count}</span>
       </a>
     {/each}
