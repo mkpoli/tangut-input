@@ -1,5 +1,5 @@
 <script module>
-  // One spelling's card at a time: opening another closes the one before it.
+  // A card needs an id for aria-controls; the module keeps the count across instances.
   let serial = 0
 </script>
 
@@ -7,7 +7,9 @@
   // One spelling as a reader needs it: the script with its romanisation beside it, and, on hover or
   // focus, the IPA and the records it comes from. The source prints transliteration; the script and
   // the IPA are worked out from it, so the card marks the printed form when it differs.
+  import { onDestroy } from 'svelte'
   import { t } from '../lib/i18n.svelte.js'
+  import { claim, release } from '../lib/spelling.js'
 
   /** @type {{ script: string, transcription: string, ipa: string, lang: 'bo' | 'sa',
    *   printed?: string, hand?: string, count?: number, babelstone?: boolean }} */
@@ -18,24 +20,66 @@
   let pinned = $state(false)
   let x = $state(0)
   let y = $state(0)
+  /** @type {HTMLButtonElement | undefined} */
+  let trigger = $state(/** @type {HTMLButtonElement | undefined} */ (undefined))
   /** @type {HTMLElement | undefined} */
   let tip = $state(/** @type {HTMLElement | undefined} */ (undefined))
   /** @type {HTMLElement | undefined} */
   let wrap = $state(/** @type {HTMLElement | undefined} */ (undefined))
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   let closing
+  // Set while Escape puts focus back on the button, whose focus must not reopen the card.
+  let restoring = false
 
-  // A pinned card closes when the reader presses anywhere outside it.
+  function close() {
+    pinned = false
+    open = false
+    release(close)
+  }
+
+  // A card closes when the reader presses outside it, or moves the page under it. A pinned card is
+  // no exception: its place would no longer point at the spelling.
   $effect(() => {
     if (!open) return
     /** @param {PointerEvent} event */
     const outside = event => {
       if (wrap?.contains(/** @type {Node | null} */ (event.target))) return
-      pinned = false
-      open = false
+      close()
+    }
+    /** Keep the card beside its spelling while the page moves, and close it when the spelling
+     *  leaves the viewport. */
+    const follow = () => {
+      if (!trigger) return
+      const box = trigger.getBoundingClientRect()
+      if (box.bottom < 0 || box.top > (globalThis.innerHeight || 600)) { close(); return }
+      place(trigger)
+    }
+    /** @param {KeyboardEvent} event */
+    const escape = event => {
+      if (event.key !== 'Escape') return
+      event.stopPropagation()
+      const inTip = Boolean(tip?.contains(document.activeElement))
+      close()
+      if (!inTip) return
+      restoring = true
+      trigger?.focus()
+      queueMicrotask(() => { restoring = false })
     }
     document.addEventListener('pointerdown', outside, true)
-    return () => document.removeEventListener('pointerdown', outside, true)
+    document.addEventListener('keydown', escape, true)
+    document.addEventListener('scroll', follow, true)
+    window.addEventListener('resize', follow)
+    return () => {
+      document.removeEventListener('pointerdown', outside, true)
+      document.removeEventListener('keydown', escape, true)
+      document.removeEventListener('scroll', follow, true)
+      window.removeEventListener('resize', follow)
+    }
+  })
+
+  onDestroy(() => {
+    release(close)
+    clearTimeout(closing)
   })
 
   /** Put the card beside the spelling, or above it when the page has no room below.
@@ -51,6 +95,8 @@
 
   /** @param {Event & { currentTarget: HTMLElement }} event */
   function show(event) {
+    if (restoring) return
+    claim(close)
     clearTimeout(closing)
     place(event.currentTarget)
     open = true
@@ -61,23 +107,16 @@
   }
 
   function later() {
-    if (pinned || (tip && tip.contains(document.activeElement))) return
+    if (pinned || wrap?.contains(document.activeElement)) return
     clearTimeout(closing)
     closing = setTimeout(() => { open = false }, 160)
   }
 
   /** @param {Event & { currentTarget: HTMLElement }} event */
   function toggle(event) {
-    if (pinned) { pinned = false; open = false; return }
+    if (pinned) { close(); return }
     pinned = true
     show(event)
-  }
-
-  /** @param {KeyboardEvent} event */
-  function key(event) {
-    if (event.key !== 'Escape') return
-    pinned = false
-    open = false
   }
 
   /** @param {FocusEvent & { currentTarget: HTMLElement }} event */
@@ -90,7 +129,7 @@
 
 <span class="spelling-wrap" bind:this={wrap} onfocusout={focusOut}>
   <button class="spelling" type="button" aria-expanded={open} aria-controls={open ? id : undefined}
-    onclick={toggle} onmouseenter={show} onmouseleave={later} onfocus={show} onkeydown={key}>
+    bind:this={trigger} onclick={toggle} onmouseenter={show} onmouseleave={later} onfocus={show}>
     {#if hand}<span class="hand">{hand}</span>{/if}
     <span class="script" lang={lang}>{script}</span>
     <span class="transcription">{transcription}</span>
@@ -99,7 +138,7 @@
   {#if open}
     <div id={id} class="spelling-tip ui-popover" style:left="{x}px" style:top="{y}px" role="dialog" tabindex="-1"
       aria-label={`${script} · ${transcription}${ipa ? ` · [${ipa}]` : ''}`} bind:this={tip}
-      onmouseenter={stay} onmouseleave={later} onfocusin={stay} onkeydown={key}>
+      onmouseenter={stay} onmouseleave={later} onfocusin={stay}>
       <header>
         <span class="tip-script" lang={lang}>{script}</span>
         <span class="tip-transcription">{transcription}</span>
