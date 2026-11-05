@@ -6,12 +6,16 @@
 
 The tables write a prefix with a hyphen (`g-yi`), འ as `v`, and k+h as `k.ha`. Checked against the
 script of the same spellings in BabelStone's index (268 of 268) and in 李範文's table (254 of 254).
-Run it to fill in the script after the transliteration changes:
+Run it to fill in the script and Wylie after the transliteration changes:
 
     uv run scripts/tangut_tibetan_script.py
 """
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_tangut_tibetan_rhymes import to_wylie
 
 import re
 ROOT={'k':'ཀ','kh':'ཁ','g':'ག','ng':'ང','c':'ཅ','ch':'ཆ','j':'ཇ','ny':'ཉ','t':'ཏ','th':'ཐ','d':'ད','n':'ན','p':'པ','ph':'ཕ','b':'བ','m':'མ','ts':'ཙ','tsh':'ཚ','dz':'ཛ','w':'ཝ','zh':'ཞ','z':'ཟ','v':'འ','y':'ཡ','r':'ར','l':'ལ','sh':'ཤ','s':'ས','h':'ཧ'}
@@ -65,11 +69,18 @@ def to_tibetan(s):
     return None if any(p is None for p in parts) else '་'.join(parts)
 
 
+def wylie_of(latin):
+    """Wylie for a spelling; one with an unread letter keeps its printed form, ? and all."""
+    if '?' in latin:
+        return latin
+    return ' '.join(to_wylie(part) for part in to_tibetan(latin).split('་'))
+
+
 def main():
     path = Path(__file__).resolve().parents[1] / 'app/data/tangut-tibetan-hands.json'
     record = json.loads(path.read_text(encoding='utf-8'))
     for entry in record['chars'].values():
-        entry['tibetan'] = [[hand, latin, count, to_tibetan(latin)] for hand, latin, count, *_ in entry.get('tibetan', [])] or None
+        entry['tibetan'] = [[hand, latin, count, to_tibetan(latin), wylie_of(latin)] for hand, latin, count, *_ in entry.get('tibetan', [])] or None
         if not entry['tibetan']:
             del entry['tibetan']
     path.write_text(json.dumps(record, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
