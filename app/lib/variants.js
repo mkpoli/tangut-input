@@ -1,9 +1,9 @@
-// Variant forms. English Wiktionary states a few in a character's definitions ("Variant form of 𗇫"),
-// and no other source the site may show states any. The rest are candidates found by comparison.
+// Variant forms. English Wiktionary states some outright. The rest are candidates found by comparison,
+// so they stay apart from the stated ones.
 
-const VARIANT_OF = /^Variant form of ([\u{17000}-\u{18AFF}\u{18D00}-\u{18D7F}])/u
+import VARIANTS from '../data/tangut-variants.json' with { type: 'json' }
 
-/** @typedef {{ char: string, definitions?: { en?: string[], ja?: string[] }, pronunciations?: Record<string, string> }} VariantEntry */
+/** @typedef {{ char: string, composition?: string, definitions?: { en?: string[], ja?: string[] }, pronunciations?: Record<string, string> }} VariantEntry */
 
 /**
  * The senses a character's Wiktionary definitions name, for comparing two characters.
@@ -19,13 +19,14 @@ function senses(entry) {
 }
 
 /**
- * Both directions of the stated relation, and the possible variants: characters that share a reading
- * in Li Fanwen's system and a sense in Wiktionary. Nothing states those, so they stay apart from the
- * stated ones, and characters already linked through a stated variant are left out.
+ * Both directions of the stated relation, and the possible variants: characters with the same reading
+ * in Li Fanwen's system that also share a sense in Wiktionary, or whose descriptions differ only by
+ * a pair of variant components. Characters already linked through a stated variant are left out.
  * @param {VariantEntry[]} entries
+ * @param {{ variants: string[][], components: string[][] }} [stated]
  * @returns {Map<string, { of: string[], forms: string[], possible: string[] }>}
  */
-export function variantIndex(entries) {
+export function variantIndex(entries, stated = VARIANTS) {
   /** @type {Map<string, { of: string[], forms: string[], possible: string[] }>} */
   const index = new Map()
   /** @param {string} char */
@@ -34,32 +35,42 @@ export function variantIndex(entries) {
     if (!record) index.set(char, record = { of: [], forms: [], possible: [] })
     return record
   }
-  for (const entry of entries) {
-    for (const sense of entry.definitions?.en ?? []) {
-      const base = VARIANT_OF.exec(sense)?.[1]
-      if (!base || base === entry.char || at(entry.char).of.includes(base)) continue
-      at(entry.char).of.push(base)
-      at(base).forms.push(entry.char)
-    }
+  for (const [form, base] of stated.variants) {
+    at(form).of.push(base)
+    at(base).forms.push(form)
   }
   /** @param {string} char */
   const family = char => {
     const record = index.get(char)
     return new Set([char, ...(record?.of ?? []), ...(record?.forms ?? []), ...(record?.of ?? []).flatMap(base => index.get(base)?.forms ?? [])])
   }
+  /** @param {string} one @param {string} other */
+  const link = (one, other) => {
+    if (family(one).has(other) || at(one).possible.includes(other)) return
+    at(one).possible.push(other)
+    at(other).possible.push(one)
+  }
   /** @type {Map<string, { char: string, senses: Set<string> }[]>} */
   const byReading = new Map()
+  /** @type {Map<string, VariantEntry[]>} */
+  const byDescription = new Map()
   for (const entry of entries) {
+    if (entry.composition) byDescription.set(entry.composition, [...(byDescription.get(entry.composition) ?? []), entry])
     const reading = entry.pronunciations?.li_fanwen?.trim()
     const named = senses(entry)
     if (!reading || !named.size) continue
     const peers = byReading.get(reading) ?? []
-    for (const peer of peers) {
-      if (family(entry.char).has(peer.char) || ![...named].some(sense => peer.senses.has(sense))) continue
-      at(entry.char).possible.push(peer.char)
-      at(peer.char).possible.push(entry.char)
-    }
+    for (const peer of peers) if ([...named].some(sense => peer.senses.has(sense))) link(entry.char, peer.char)
     byReading.set(reading, [...peers, { char: entry.char, senses: named }])
+  }
+  for (const [one, other] of stated.components) {
+    for (const entry of entries) {
+      if (!entry.composition?.includes(one)) continue
+      const reading = entry.pronunciations?.li_fanwen?.trim()
+      for (const match of byDescription.get(entry.composition.replaceAll(one, other)) ?? []) {
+        if (reading && match.pronunciations?.li_fanwen?.trim() === reading) link(entry.char, match.char)
+      }
+    }
   }
   return index
 }
