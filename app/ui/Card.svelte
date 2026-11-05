@@ -2,7 +2,7 @@
   // Everything recorded about the open character, arranged around using it: the actions come
   // first, then what helps a reader confirm it is the one they mean (meaning, readings, structure,
   // where it stands in a text), then the characters near it.
-  import { db, ix, codePoint, gloss, isComponent } from '../lib/db.svelte.js'
+  import { db, ix, codePoint, gloss, isComponent, readingOf } from '../lib/db.svelte.js'
   import { onMount } from 'svelte'
   import G from './G.svelte'
   import Icon from './Icon.svelte'
@@ -33,6 +33,7 @@
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
+  const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
@@ -40,6 +41,8 @@
   // is read from. 文海 where it has one, 合編 where it does not.
   const rhyme = $derived(ready && char ? ix.rhymes.get(char) : undefined)
   const rhymeClass = $derived(rhyme?.[0] ? String(rhyme[0]) : '')
+  // Tibetan and Sanskrit spellings from a study known only through a repost: see the sources page.
+  const hands = $derived(ready && char ? ix.tibetanHands[char] : undefined)
   const toneName = $derived(
     rhyme?.[1] === 1 ? 'card.tone.level'
       : rhyme?.[1] === 2 ? 'card.tone.rising'
@@ -102,8 +105,6 @@
     const box = /** @type {HTMLElement} */ (event.currentTarget).getBoundingClientRect()
     peek = { char: other, x: box.left, y: box.bottom + 6 }
   }
-  /** @param {string} other */
-  const readingOf = other => (ix.byChar.get(other)?.pronunciations ?? {})[/** @type {any} */ (ui.reading)]?.trim() ?? ''
 
   const first = $derived(ready && char ? gloss(char) : '')
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
@@ -197,6 +198,24 @@
       </section>
     {/if}
 
+    {#if variants}
+      <section>
+        <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
+        {#each [['card.variantOf', variants.of], ['card.variantForms', variants.forms], ['card.variantPossible', variants.possible]] as [label, others] (label)}
+          {#if others.length}
+            <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
+            <div class="ui-tiles rel" style:--ui-tile-size="48px">
+              {#each others as other (other)}
+                {@const sound = readingOf(other, ui.reading)}
+                <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+              {/each}
+            </div>
+          {/if}
+        {/each}
+        <p class="ui-hint">{t(variants.of.length || variants.forms.length ? 'card.variantsSource' : 'card.variantsPossibleSource')}</p>
+      </section>
+    {/if}
+
     {#if readings.length}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
@@ -210,6 +229,12 @@
             {/if}
             {#if spelling}
               <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="ui-script spelling">{spelling}</span></td></tr>
+            {/if}
+            {#if hands?.tibetan?.length}
+              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">{#each hands.tibetan as [hand, latin, count, script], index (index)}{index ? ' · ' : ''}<span class="ui-hint">{hand}</span> <span class="bo" lang="bo" title={latin}>{script}</span>{count === 1 ? '' : ` ×${count || '?'}`}{/each}</td></tr>
+            {/if}
+            {#if hands?.sanskrit?.length}
+              <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
             {/if}
           </tbody>
         </table>
@@ -267,7 +292,10 @@
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.usedIn', { count: users.length })}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
-          {#each users.slice(0, 48) as other (other)}<button class="ui-tile" type="button" data-note="none" title={gloss(other)} onclick={() => choose(other)}><G char={other} /></button>{/each}
+          {#each users.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
+            <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+          {/each}
         </div>
         {#if users.length > 48}<p class="more"><a href={link('parts', char, char)}><Icon name="arrow" size={13}/>{t('card.allInParts', { count: users.length })}</a></p>{/if}
       </section>
@@ -278,9 +306,10 @@
         <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.sameDescription')}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each same as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{readingOf(other) || gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>
@@ -292,9 +321,10 @@
         <h3 class="ui-label"><Icon name="fanqie" size={15}/>{t('card.fanqieFor', { count: spells.length })}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each spells.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{readingOf(other) || gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>
@@ -306,9 +336,10 @@
         <h3 class="ui-label"><Icon name="sound" size={15}/>{t('card.sameReading')}</h3>
         <div class="ui-tiles rel" style:--ui-tile-size="48px">
           {#each homophones.slice(0, 48) as other (other)}
+            {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} /><span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
             </button>
           {/each}
         </div>
@@ -395,4 +426,5 @@
     .glyph-frame :global(.ui-script){font-size:72px}
     .gloss{font-size:var(--ui-text-lg)}
   }
+  .bo{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:1.1em}
 </style>

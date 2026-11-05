@@ -170,6 +170,27 @@ export const ERA_SOURCES = {
     note: 'After 崔紅芬 and 文志勇, 西夏皇帝尊號考略: 城號 are a kind of 尊號 found only in the Western Xia, still without a clear explanation, and some scholars take them as about equal to posthumous titles.',
     url: 'https://zh.wikipedia.org/zh-hant/%E5%A4%8F%E6%83%A0%E5%AE%97',
   },
+  wu1983: {
+    author: '吳天墀',
+    title: '西夏稱「邦泥定」即「白上國」新解',
+    where: '寧夏大學學報（社會科學版）1983(3), read on 愛思想 without page numbers',
+    note: 'Treats 邦泥定 as the name in Tangut and 白上國 as its translation. Gives 邦泥鼎 from the 長編, warning that the Qing editors altered its transcriptions; 邦兒定 from the 東都事略; 邦面令 from the 石林燕語; and, from 聶歷山, a form 痝□領, whose middle character the web text drops and which he links to 面. His copy of the 涑水記聞 has 面邦國令, which he calls garbled.',
+    url: 'https://www.aisixiang.com/data/141396.html',
+  },
+  hu2006: {
+    author: '胡玉冰',
+    title: '漢文西夏文獻之特點及其研究意義和研究方法',
+    where: '西夏學 1 (2006), p. 141',
+    note: 'Quotes the 長編 with 邦尼定, where 吳天墀 quotes it with 邦泥鼎, and writes 邦泥定 on p. 142 from another text. The editions were not compared here.',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10617.pdf',
+  },
+  sushui: {
+    author: '司馬光',
+    title: '涑水記聞 卷11',
+    where: 'Wikisource, revision 2631990, which names no base text',
+    note: 'Has 稱男邦面令國兀卒曩霄上書父大宋皇帝, where the copy 吳天墀 used has 面邦國令.',
+    url: 'https://zh.wikisource.org/wiki/涑水記聞/卷11',
+  },
   kepping2001: {
     author: 'K. B. Kepping',
     title: 'Mi-nia (Tangut) Self-appellation and Self-portraiture in Khara Khoto Materials',
@@ -251,5 +272,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
 ])

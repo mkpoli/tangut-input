@@ -1,15 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-palette="paper">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
   <title>Pick a character — Tangut Input</title>
   <script>
-    // The theme kept from the last visit, set before the page paints.
+    // The theme and colour scheme kept from the last visit, set before the page paints.
     try {
       const theme = localStorage.getItem('tangut-input:theme')
       if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+      const palette = localStorage.getItem('tangut-input:scheme')
+      if (['paper', 'mineral', 'indigo', 'sand'].includes(palette)) document.documentElement.dataset.palette = palette
     } catch {}
   </script>
 </head>

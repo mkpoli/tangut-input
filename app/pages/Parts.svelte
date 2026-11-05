@@ -3,11 +3,11 @@
   // can be a component or a character the description spells whole, at any layer. Each choice
   // narrows the characters to those that hold it, and the palette to the parts that still occur, so
   // the next choice always leads somewhere.
-  import { db, ix, gloss, isTangut, codePoint } from '../lib/db.svelte.js'
+  import { db, ix, gloss, isTangut, codePoint, readingOf } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import PartInfo from '../ui/PartInfo.svelte'
   import { route, setQuery } from '../lib/route.svelte.js'
-  import { preview } from '../lib/ui.svelte.js'
+  import { preview, ui } from '../lib/ui.svelte.js'
   import { byParts, partsAmong, directPartsIn } from '../lib/search.js'
   import { foldShapeName } from '../lib/names.js'
   import { partInfoPlacement } from '../lib/part-info.js'
@@ -120,7 +120,7 @@
   function partLabel(p) {
     const code = ix.codes.get(p.part)?.[0] ?? ''
     const count = p.live >= 0 ? p.live : p.uses
-    return [p.part, shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : t('common.characters', { count })].filter(Boolean).join(' · ')
+    return [p.part, readingOf(p.part, ui.reading), shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : t('common.characters', { count })].filter(Boolean).join(' · ')
   }
 
   /** @param {KeyboardEvent} event */
@@ -178,11 +178,12 @@
             <h3 class="stroke-count" title={t('draw.strokes', { count })}>{count || '?'}</h3>
             <div class="ui-tiles comps" style:--ui-tile-size="46px">
               {#each parts as p (p.part)}
+                {@const sound = readingOf(p.part, ui.reading)}
                 <button type="button" class="ui-tile comp" data-dim={p.live === 0 ? '' : undefined} data-part={p.part} onclick={() => add(p.part)}
                   aria-describedby={info?.part === p.part ? 'part-info' : undefined}
                   aria-label={partLabel(p)}
                   onmouseenter={event => showInfo(event, p)} onmouseleave={hideInfo} onfocus={event => showInfo(event, p)} onblur={hideInfo}>
-                  <G char={p.part} />{#if p.live > 0}<small class="use">{p.live}</small>{/if}
+                  <G char={p.part} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}{#if p.live > 0}<small class="use">{p.live}</small>{/if}
                 </button>
               {/each}
             </div>
@@ -265,7 +266,7 @@
   .stroke-group{display:grid;grid-template-columns:30px minmax(0,1fr);gap:var(--ui-space-sm);align-items:start}
   .stroke-count{padding-top:var(--ui-space-xs);color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold);text-align:end}
   .comps{gap:3px}
-  .comp{position:relative;aspect-ratio:1}
+  .comp{position:relative;min-block-size:var(--ui-tile-size, 46px)}
   .comp :global(.ui-script){font-size:25px}
   .comp :global(.ui-nog){font-size:9px}
   .comp .use{position:absolute;right:3px;bottom:1px;color:var(--ui-color-ink-muted);font-size:9.5px;font-variant-numeric:tabular-nums}

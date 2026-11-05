@@ -414,6 +414,27 @@ vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-nam
 comparison on Parts: Japanese shape names, the English abstract's wording for くノ and ノメ, and
 empty cells where the sources read record no name.
 
+## tangut-component-shape-hints.json.gz
+
+An editorial ranking, not a name table. Each of the 768 Tangut components U+18800–18AFF is compared
+with the eighteen components that have an attested Japanese shape name, and the three nearest names
+are kept with a cosine score and whether the stroke count agrees. 16 KB gzipped, built by
+`uv run scripts/rank_component_shapes.py` from `app/public/fonts/TangutYinchuan.ttf`.
+
+The score says the ink resembles an attested component's ink; it does not say the two are the same
+component or that the name applies. The method cannot separate くノ from ノメ, which score about
+0.98 against each other. Use the file to find candidates for review, never to fill
+`data/tangut-component-names.tsv`.
+
+Format: `format`, `version`, `editorial`, `note`, `method` (font, size, metric, limitation), `counts`,
+`exemplars` and `components`, one row per component with `char`, `codepoint`, `strokes`, `named` and
+`candidates` (name, char, score, strokes, sameStrokes).
+
+- Font: Tangut Yinchuan, Jing Yongshi and Andrew West, served unmodified; its terms are in
+  `app/public/fonts/FONT-LICENCES.md`, including the acknowledgement when it appears in a
+  publication.
+- The file is **editorial** and carries no claim of attestation.
+
 ## component-name-wikidata.json
 
 The labels and aliases of the 214 radicals' Wikidata items, in English, Japanese, Chinese (all three
@@ -583,28 +604,30 @@ are absent from this font version and report a missing glyph.
 
 `app/data/tangut-entries.json.gz` holds the values a page may show: five readings from the Lua
 modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyake, Kychanov 2006,
-Sofronov 1968, Nishida 1966), Gong Xun's GX202411 from his Tangut Pronunciation Database, English
+Sofronov 1968, Nishida 1966), Gong Hwang-cherng's GHC and Gong Xun's GX202411 from the Tangut
+Pronunciation Database, English
 meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
 BabelStone's IDS description, the 文海's entry text for the twelve characters it carries in this
 snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
-meanings are CC BY-SA 4.0; GX202411 is cited from the Tangut Pronunciation Database under its
-Limited Public Use licence; the description is public domain; the radical and stroke data are
+meanings are CC BY-SA 4.0; GHC and GX202411 are cited from the Tangut Pronunciation Database under
+its Limited Public Use licence; the description is public domain; the radical and stroke data are
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
 `data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
-`data/gong-xun/gx202411.json.gz`, `data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
+`data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
+`data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
 
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
-two systems the site does not show (Gong Hwang-cherng and Arakawa Shintarō) and normalized English
-and Chinese glosses from CCAMC. The card links to
+one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from
+CCAMC. The card links to
 `http://ccamc.org/tangut.php?n4694=<char>`; no page renders the index. It is built from a copy of
 the former Open Tangut records, which is not committed.
 
 `data/wiktionary/txg-readings.json.gz` records the five modules' values with their revision ids;
 `data/wiktionary/definitions-ja.json.gz` records the ja.wiktionary pages with theirs. Both are
 refreshed by `uv run scripts/fetch_tangut_wiktionary.py`, which makes five module requests and six
-batches of fifty page titles. `data/gong-xun/gx202411.json.gz` holds GX202411 from the 2025-05-07
-table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh it with
-`uv run scripts/fetch_tangut_gong_xun.py`.
+batches of fifty page titles. `data/gong-xun/ghc.json.gz` and `data/gong-xun/gx202411.json.gz` hold GHC and GX202411 from the
+2025-05-07 table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh them
+with `uv run scripts/fetch_tangut_gong_xun.py`.
 
 ## Bopomofo outlines
 

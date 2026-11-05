@@ -145,21 +145,17 @@
     return found
   })
 
-  // 龔煌城's system is known here rhyme by rhyme, with no reading for any character, so only this page
-  // can offer it. The choice lasts until the reader's own system changes, here or in the top bar.
-  const GONG_HC = { key: 'gong_hwang_cherng', name: 'Gong Hwang-cherng 2005', zh: '龔煌城' }
-  const gongChosen = $state({ on: false })
-  $effect.pre(() => { void ui.reading; gongChosen.on = false })
-  const byGong = $derived(String(view.mode) === 'rhyme' && gongChosen.on)
-  /** @param {string} key */
-  function chooseSystem(key) {
-    gongChosen.on = key === GONG_HC.key
-    if (!gongChosen.on) setReading(key)
-  }
+  // 龔煌城's per-character values come from the Tangut Pronunciation Database. His separate rhyme
+  // table fills a rhyme that the characters in the records leave without a final.
   /** @param {{ key: string, rhyme: number }} row */
-  const shownFinals = row => (byGong ? (ix.gongRhymes[row.rhyme] ? [ix.gongRhymes[row.rhyme]] : []) : finals.get(row.key))
+  const shownFinals = row => {
+    const found = finals.get(row.key)
+    if (found?.length || ui.reading !== 'gong_huangcheng') return found
+    const value = ix.gongRhymes[row.rhyme]
+    return value ? [value] : found
+  }
   /** @param {string} roman */
-  const shownOnsets = roman => (byGong ? [] : onsets.get(roman))
+  const shownOnsets = roman => onsets.get(roman)
 
   /** The row whose Chinese transcription characters are open. */
   const opened = $state(/** @type {{ row: string | null }} */ ({ row: null }))
@@ -204,9 +200,8 @@
       <label class="choose">
         <span class="ui-label">{t('chart.system')}</span>
         <span class="ui-select-wrap">
-          <select class="ui-select" data-size="sm" value={byGong ? GONG_HC.key : ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => chooseSystem(event.currentTarget.value)} aria-label={t('chart.system')}>
+          <select class="ui-select" data-size="sm" value={ui.reading} onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)} aria-label={t('chart.system')}>
             {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
-            {#if String(view.mode) === 'rhyme'}<option value={GONG_HC.key} title={systemTitle(GONG_HC)}>{systemName(GONG_HC, i18n.locale)}</option>{/if}
           </select>
         </span>
       </label>
@@ -285,7 +280,7 @@
                     {/each}
                   {/if}
                   {#if ix.tibetanRhymes[row.key]?.[group]?.length}
-                    <p class="spellings" lang="bo">{ix.tibetanRhymes[row.key][group].join(' ')}</p>
+                    <p class="spellings">{#each ix.tibetanRhymes[row.key][group] as [script, wylie], index (index)}{index ? ' ' : ''}<span lang="bo" title={wylie}>{script}</span>{/each}</p>
                   {/if}
                 </td>
               {/each}
@@ -304,7 +299,6 @@
       </table>
     </div>
     <p class="ui-hint">{t('chart.legend')}</p>
-    {#if byGong}<p class="ui-hint">{t('chart.gongLegend')}</p>{/if}
     <p class="ui-hint">{t('chart.chineseLegend')}</p>
   {/if}
 </div>
