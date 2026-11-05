@@ -189,12 +189,18 @@
 
 <svelte:window onkeydown={keys} />
 
+{#snippet introLink(/** @type {string} */ className)}
+  <a class={className} href="/intro" class:on={route.page === 'intro'} aria-current={route.page === 'intro' ? 'page' : undefined}
+    title={t('nav.intro.hint')} onclick={event => nav(event, 'intro')}><Icon name="book" size={14} stroke={1.6}/><span>{t('nav.intro')}</span></a>
+{/snippet}
+
 <div class="shell">
   <header class="top">
     <a class="mark" href="/" onclick={event => nav(event, '')} aria-label={t('app.home')}>
       <span class="badge ui-script" aria-hidden="true">𘅤</span>
       <span class="name">{t('app.name')}</span>
     </a>
+    {@render introLink('intro-extra')}
     <nav class="finders" aria-label={t('nav.label')}>
       <a href="/" class="primary" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
         title={t(PRIMARY.hint)} onclick={event => nav(event, '')}><Icon name={PRIMARY.icon} size={14} stroke={1.6}/><span>{t(PRIMARY.label)}</span></a>
@@ -206,6 +212,9 @@
           {/each}
         </div>
       {/each}
+      <div class="group intro">
+        {@render introLink('intro-link')}
+      </div>
     </nav>
     <div class="aside">
       <label class="reading" title={`${t('reading.system')}: ${systemTitle(readingSystem)}`}>
@@ -271,7 +280,6 @@
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
-            {#if route.page !== 'intro'}· <a href="/intro" onclick={event => nav(event, 'intro')}>{t('nav.intro')}</a>{/if}
           </footer>
         {/if}
       </main>
@@ -357,6 +365,9 @@
   .mark{display:flex;align-items:center;gap:var(--ui-space-sm);color:var(--ui-color-ink);text-decoration:none}
   .badge{display:grid;place-items:center;inline-size:30px;block-size:30px;border-radius:var(--ui-radius-sm);background:var(--ui-color-accent);color:var(--ui-color-on-accent);font-size:21px}
   .name{font-family:var(--ui-font-serif);font-size:17px;font-weight:var(--ui-weight-semibold);letter-spacing:.005em;white-space:nowrap}
+  .intro-extra{display:none;align-items:center;gap:4px;block-size:55px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
+  .intro-extra:hover{color:var(--ui-color-ink)}
+  .intro-extra.on{color:var(--ui-color-accent-ink)}
   .finders{align-self:stretch;display:flex;align-items:stretch;gap:2px;min-inline-size:0;overflow-x:auto;scrollbar-width:none}
   .finders::-webkit-scrollbar{display:none}
   .finders a{position:relative;display:flex;align-items:center;gap:4px;padding:0 7px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
@@ -366,11 +377,16 @@
   .finders .group{display:flex;align-items:stretch;gap:2px}
   .finders .primary{font-weight:var(--ui-weight-semibold)}
   .finders .group + .group, .finders .primary + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
+  /* The finder row cannot hold the introduction below 1141px; it moves up beside the mark. */
+  @media (min-width:901px) and (max-width:1140px){
+    .intro-extra{display:flex}
+    .finders .intro{display:none}
+  }
   .aside{margin-inline-start:auto;display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .reading{display:flex;align-items:center;gap:var(--ui-space-xs)}
   .reading-label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
   .reading-icon{display:grid;place-items:center;color:var(--ui-color-ink-muted)}
-  @media (max-width:1600px){.reading-label{display:none}}
+  @media (max-width:900px){.reading-label{display:none}}
   .reading :global(.ui-select){inline-size:154px}
   /* The sponsor button: a soft pink pill led by the author's face, with a small heart on it that beats. */
   .sponsor{--sp-from:light-dark(#ffe6ef,#3d1a2b);--sp-to:light-dark(#fff0e0,#3a2318);--sp-ink:light-dark(#c2185b,#ffb3cd);--sp-heart:light-dark(#ff4f88,#ff7aa6);--sp-line:light-dark(#ffd0de,#5a2a3f);
@@ -383,8 +399,8 @@
   .sponsor-heart{position:absolute;right:-4px;bottom:-3px;inline-size:12px;block-size:12px;fill:var(--sp-heart);stroke:light-dark(#fff,#3d1a2b);stroke-width:2.5;paint-order:stroke;overflow:visible;transform-origin:50% 60%;animation:sponsor-beat 2.8s ease-in-out infinite}
   .sponsor-label{line-height:1}
   @keyframes sponsor-beat{0%,70%,100%{transform:scale(1)}78%{transform:scale(1.22)}86%{transform:scale(.96)}93%{transform:scale(1.12)}}
-  /* From 1440px the finders share one row with the reading system; the face alone leaves them room. */
-  @media (max-width:900px),(min-width:1440px) and (max-width:1600px){
+  /* On a phone the face alone carries the sponsor. */
+  @media (max-width:900px){
     .sponsor{justify-content:center;inline-size:32px;padding:0}
     .sponsor-label{display:none}
   }
@@ -421,9 +437,10 @@
     .finders a.on::after{inset-inline:var(--ui-space-xs)}
     .reading :global(.ui-select){inline-size:154px}
   }
-  /* A tablet keeps every finder: the bar takes a second row, and its rule runs the width of the
-     page like the row above. The sticky chrome below it follows the new height. */
-  @media (min-width:901px) and (max-width:1439px){
+  /* The finders keep a row of their own until the bar is wide enough for all of them, the
+     introduction included, beside the reconstruction and the sponsor. The threshold holds the
+     longest labels (English); the sticky chrome below follows the taller bar. */
+  @media (min-width:901px) and (max-width:1719px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
     .mark,.aside{block-size:55px}
