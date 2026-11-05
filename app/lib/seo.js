@@ -54,7 +54,7 @@ export const PAGE_SEO = {
   },
   draw: {
     title: 'Draw — Tangut Input',
-    description: 'Sketch a Tangut character on the pad and see the glyphs closest to it in shape, compared against five Tangut faces.',
+    description: 'Sketch a Tangut character on the pad and see the glyphs closest to it in shape, compared against five Tangut fonts.',
   },
   parts: {
     title: 'Parts — Tangut Input',
