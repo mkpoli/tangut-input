@@ -564,6 +564,12 @@ await step('the card opens as a sheet on a phone', async () => {
   await phone.getByRole('button', { name: 'Back', exact: true }).click()
   await phone.waitForFunction(() => !document.querySelector('aside.card')?.classList.contains('open'))
 })
+await step('a link to a character opens its card on a phone', async () => {
+  await phone.goto(`${APP}/?c=17000`)
+  await phone.locator('main.finder').waitFor({ state: 'attached' })
+  await phone.waitForFunction(() => document.querySelector('aside.card')?.classList.contains('open'))
+  assert.equal(await phone.locator('aside.card').isVisible(), true, 'the card sheet is visible')
+})
 await PHONE_APP.close()
 
 await browser.close()

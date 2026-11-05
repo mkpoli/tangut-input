@@ -29,6 +29,8 @@
 
   load()
   applyTheme()
+  // A shared link to a character shows that character on a phone too.
+  if (route.c && matchMedia('(max-width: 900px)').matches) ui.sheet = true
   applyTangut()
 
   /** @type {HTMLElement | null} */
