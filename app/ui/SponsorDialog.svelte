@@ -2,8 +2,8 @@
   // The author's portrait, what a tip pays for, then three steps that end at the tip buttons: Ko-fi
   // and OFUSE, OFUSE first in Japanese. Each button carries its service's own mark and colour,
   // unaltered as both brand kits require. Each service handles the amount and the payment;
-  // companies can write in to sponsor. The contents load when the dialog first opens, so a page
-  // view asks the supporters service for nothing.
+  // companies can write in to sponsor. The contents and the roll's script load when the dialog
+  // first opens, so a page view asks the supporters service for nothing.
   import { i18n, t } from '../lib/i18n.svelte.js'
   import Icon from './Icon.svelte'
   /** @type {{ open: boolean }} */
@@ -11,17 +11,28 @@
   /** @type {HTMLDialogElement | null} */
   let dialog = $state(null)
   const ofuseFirst = $derived(i18n.locale === 'ja')
+  let rollLoaded = false
+  let pressedOutside = false
 
   $effect(() => {
     if (!dialog) return
     if (open && !dialog.open) dialog.showModal()
     if (!open && dialog.open) dialog.close()
+    if (open && !rollLoaded) {
+      rollLoaded = true
+      const script = document.createElement('script')
+      script.type = 'module'
+      script.src = 'https://supporters.mkpo.li/roll.js'
+      document.head.append(script)
+    }
   })
-</script>
 
-<svelte:head>
-  <script type="module" src="https://supporters.mkpo.li/roll.js"></script>
-</svelte:head>
+  /** Whether a press lands on the backdrop. A drag that leaves the box, or the box's own scrollbar, also targets the dialog, so the test is by position. @param {MouseEvent} event */
+  function outside(event) {
+    const box = /** @type {HTMLDialogElement} */ (dialog).getBoundingClientRect()
+    return event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom
+  }
+</script>
 
 {#snippet arrow()}
   <svg class="arrow" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -45,7 +56,8 @@
 
 <dialog class="sponsor-dialog" bind:this={dialog} aria-labelledby="sponsor-title"
   onclose={() => { open = false }}
-  onclick={(/** @type {MouseEvent} */ event) => { if (event.target === dialog) open = false }}>
+  onpointerdown={(/** @type {PointerEvent} */ event) => { pressedOutside = outside(event) }}
+  onclick={(/** @type {MouseEvent} */ event) => { if (pressedOutside && outside(event)) open = false }}>
   {#if open}
     <header>
       <h2 id="sponsor-title">{t('app.sponsor.label')}</h2>
