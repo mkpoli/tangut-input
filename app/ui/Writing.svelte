@@ -102,7 +102,7 @@
   <div class="actions">
     <MiniIme />
     {#if count}<span class="count ui-count">{count}</span>{/if}
-    <SamplePicker syncQuery={route.page === 'transcribe'} onpick={() => field?.focus()} />
+    <SamplePicker syncQuery={route.page === 'read'} onpick={() => field?.focus()} />
     <button class="ui-button" data-size="sm" type="button" disabled={!text.value} onclick={() => copy(text.value, t('writing.text'))}><Icon name="copy" size={14}/>{t('common.copy')}</button>
     <div class="more" bind:this={more} onfocusout={closeMenu}>
       <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" bind:this={trigger}

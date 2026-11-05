@@ -93,7 +93,7 @@
     { page: 'fanqie', icon: 'fanqie', title: 'nav.fanqie', body: 'find.door.fanqie', glyph: '𘓐' },
     { page: 'chart', icon: 'chart', title: 'nav.chart', body: 'find.door.chart', glyph: '𘛽' },
     { page: 'reading', icon: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '𗁤' },
-    { page: 'transcribe', icon: 'transcribe', title: 'nav.transcribe', body: 'find.door.transcribe', glyph: '𗹱' },
+    { page: 'read', icon: 'read', title: 'nav.read', body: 'find.door.read', glyph: '𗹱' },
     { page: 'meaning', icon: 'meaning', title: 'nav.meaning', body: 'find.door.meaning', glyph: '𗼇' },
   ])
 

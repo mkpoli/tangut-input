@@ -64,7 +64,7 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   `data/wikisource/pages.json` pins the Wikisource revisions; refresh it with
   `python3 scripts/fetch_tangut_wikisource.py`.
 - `app/data/tangut-samples.json`: eighteen passages copied from the corpus, thirteen marked famous,
-  offered by the Samples button in the text strip and on Transcribe; built by
+  offered by the Samples button in the text strip and on Read; built by
   `scripts/build_tangut_samples.py` from the attestation file.
 - `app/data/tangut-frequency.json.gz`: how often each character occurs in the corpus, built by
   `scripts/build_tangut_frequency.py`; the finders put the commoner characters first within each
