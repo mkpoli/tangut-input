@@ -474,6 +474,8 @@
     .finders{order:3;flex:0 0 100%;block-size:40px;border-top:1px solid var(--ui-color-border)}
     .finders .primary,.finders .nav-group{padding-inline:var(--ui-space-sm);font-size:var(--ui-text-sm)}
     .finders .primary.on::after,.finders .nav-group.on::after{inset-inline:var(--ui-space-sm)}
+    /* More is the last control on the row: its menu grows to the left so it stays on screen. */
+    #nav-menu-more{inset-inline-start:auto;inset-inline-end:0}
   }
   @media (max-width:900px){
     .shell{--topbar-h:54px}

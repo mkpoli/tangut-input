@@ -523,11 +523,20 @@ await step('More holds the introduction and Sources on a wide screen', async () 
   assert.equal(await menu.count(), 0, 'the menu closes on the page it opens')
   assert.equal(await more.getAttribute('aria-current'), 'true', 'More is marked on the introduction')
 })
-await step('the bar keeps one row at 1180 and two at 1100', async () => {
+await step('the bar keeps one row at 1180 and two at 901', async () => {
   await desktop.setViewportSize({ width: 1180, height: 1000 })
   assert.ok(await desktop.locator('.top').evaluate(el => el.getBoundingClientRect().height) < 60, 'the bar is one row at 1180')
-  await desktop.setViewportSize({ width: 1100, height: 1000 })
-  assert.equal(Math.round(await desktop.locator('.top').evaluate(el => el.getBoundingClientRect().height)), 96, 'the bar is two rows at 1100')
+  await desktop.setViewportSize({ width: 901, height: 1000 })
+  assert.equal(Math.round(await desktop.locator('.top').evaluate(el => el.getBoundingClientRect().height)), 96, 'the bar is two rows at 901')
+  await desktop.getByRole('button', { name: 'More', exact: true }).click()
+  const menu = desktop.locator('.nav-menu')
+  await menu.waitFor()
+  const bounds = await menu.evaluate(el => {
+    const box = el.getBoundingClientRect()
+    return { left: box.left, right: box.right, view: innerWidth }
+  })
+  assert.ok(bounds.left >= 0 && bounds.right <= bounds.view + 1, `the menu stays on screen (${Math.round(bounds.left)}–${Math.round(bounds.right)} in ${bounds.view})`)
+  assert.ok(await desktop.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'an open menu does not widen the page')
 })
 await DESKTOP_APP.close()
 
