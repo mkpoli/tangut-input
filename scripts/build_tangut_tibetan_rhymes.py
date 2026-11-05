@@ -13,10 +13,51 @@ headings scanned at the first address agree, except that rhyme 58's also claims 
 """
 import csv
 import json
+import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ']
+
+
+WYLIE_ROOT={'ཀ':'k','ཁ':'kh','ག':'g','ང':'ng','ཅ':'c','ཆ':'ch','ཇ':'j','ཉ':'ny','ཏ':'t','ཐ':'th','ད':'d','ན':'n','པ':'p','ཕ':'ph','བ':'b','མ':'m','ཙ':'ts','ཚ':'tsh','ཛ':'dz','ཝ':'w','ཞ':'zh','ཟ':'z','འ':"'",'ཡ':'y','ར':'r','ལ':'l','ཤ':'sh','ས':'s','ཧ':'h','ཨ':''}
+WYLIE_SUB={'ྐ':'k','ྑ':'kh','ྒ':'g','ྔ':'ng','ྕ':'c','ྖ':'ch','ྗ':'j','ྙ':'ny','ྟ':'t','ྠ':'th','ྡ':'d','ྣ':'n','ྤ':'p','ྥ':'ph','ྦ':'b','ྨ':'m','ྩ':'ts','ྪ':'tsh','ྫ':'dz','ྭ':'w','ྱ':'y','ྲ':'r','ླ':'l','ྴ':'sh','ྶ':'s','ྷ':'h','ྯ':'z'}
+WYLIE_VOWEL={'ི':'i','ུ':'u','ེ':'e','ོ':'o'}
+def to_wylie(script):
+    """Wylie for one Tibetan spelling, in the form BabelStone's index uses."""
+    s=unicodedata.normalize('NFD',script)
+    letters=list(s);n=len(letters);i=0;groups=[]
+    while i<n:
+        c=letters[i]
+        if c not in WYLIE_ROOT: return None
+        g={'root':c,'sub':[],'vow':'','long':False};i+=1
+        while i<n and letters[i] in WYLIE_SUB: g['sub'].append(letters[i]);i+=1
+        while i<n and (letters[i] in WYLIE_VOWEL or letters[i]=='ཱ'):
+            if letters[i]=='ཱ': g['long']=True
+            else: g['vow']+=WYLIE_VOWEL[letters[i]]
+            i+=1
+        groups.append(g)
+    # the vowel-bearing group is the syllable's root; letters after it close the syllable
+    vi=next((k for k,g in enumerate(groups) if g['vow'] or g['long'] or g['sub']),None)
+    if vi is None: vi=len(groups)-1 if len(groups)==1 else (1 if len(groups)>1 and groups[0]['root'] in 'གདབམའ' else 0)
+    res=''
+    for k,g in enumerate(groups):
+        r=WYLIE_ROOT[g['root']];sub=''
+        for x in g['sub']:
+            v=WYLIE_SUB[x]
+            # h on a letter that would read as an aspirate keeps a plus: k+ha, kh+ha
+            if v=='h' and g['root'] in 'ཀཁཙ': sub+='+h'
+            else: sub+=v
+        if k==vi and k>0 and groups[k-1]['root'] in 'གདབམའ' and not groups[k-1]['sub'] and not groups[k-1]['vow'] and (r in('y','w','r','l') or (r=='h')) and groups[k-1]['root']!='འ' and not g['sub']:
+            res+='.'
+        elif k==vi and k>0 and groups[k-1]['root']=='བ' and r in('l','r') and g['sub']:
+            res+='.' if r=='l' else ''
+        res+=r+sub
+        if k==vi:
+            v=g['vow'] or 'a'
+            if g['long']: v=v.upper() if v in 'aiu' else v+v
+            res+=v
+    return res
 
 
 def read(name):
@@ -35,8 +76,11 @@ def main():
     for row in read('tangut-tibetan-rhymes.tsv'):
         key = f"{rhyme_of[(row['tone'], row['rhyme_in_tone'])]}·{row['tone']}"
         spellings = cells.setdefault(key, {}).setdefault(ROMAN[int(row['initial_class']) - 1], [])
-        if row['tibetan'] not in spellings:
-            spellings.append(row['tibetan'])
+        # A few table cells set two spellings apart with a space.
+        for script in row['tibetan'].split():
+            entry = [script, to_wylie(script)]
+            if entry not in spellings:
+                spellings.append(entry)
 
     record = {
         'format': 'tangut-input/tibetan-rhymes',

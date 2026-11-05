@@ -3,9 +3,9 @@
   // input; this panel keeps only the input and the candidates, so two characters can be chosen
   // without leaving the spelling they belong to. A pick goes into the fanqie, never into the text.
   import { tick } from 'svelte'
-  import { db, ix, gloss, codePoint, isTangut, isComponent } from '../lib/db.svelte.js'
+  import { db, ix, gloss, codePoint, isTangut, isComponent, readingOf } from '../lib/db.svelte.js'
   import { byCode, byMeaning, byCodePoint, bySijiao, byParts, partsAmong, tangutIn } from '../lib/search.js'
-  import { searchReadings } from '../lib/reading.js'
+  import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { loadShapes } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
   import { preview, ui } from '../lib/ui.svelte.js'
@@ -13,7 +13,7 @@
   import G from './G.svelte'
   import Icon from './Icon.svelte'
 
-  /** @typedef {{ char: string, note: string, title?: string }} MiniHit */
+  /** @typedef {{ char: string, note: string, title?: string, sound?: string }} MiniHit */
 
   // `always` is the panel with no field to serve: mounted on a page of its own, it has no trigger, no
   // heading that speaks of the fanqie, and nothing that closes it. `open` stays false, so the listeners
@@ -95,6 +95,7 @@
       .map(hit => ({ char: hit.char, note: gloss(hit.char), title: gloss(hit.char) }))
   })
 
+  /** @type {MiniHit[]} */
   const hits = $derived.by(() => {
     if (db.status !== 'ready') return []
     if (mode === 'find') return findHits(queries.find)
@@ -116,11 +117,11 @@
     /** @type {MiniHit[]} */
     const out = []
     const seen = new Set()
-    /** @param {string} char @param {string} note @param {string} [title] */
-    const add = (char, note, title = '') => {
+    /** @param {string} char @param {string} note @param {string} [title] @param {string} [sound] */
+    const add = (char, note, title = '', sound = '') => {
       if (out.length >= LIMIT || seen.has(char)) return
       seen.add(char)
-      out.push({ char, note, title: title || note })
+      out.push({ char, note, title: title || note, sound: sound || undefined })
     }
     const chars = tangutIn(trimmed)
     if (chars.length) {
@@ -133,8 +134,7 @@
     }
     if (/^[\p{Script=Latin}\p{M}0-9ʔɦɨɪʉɯəɛɔɑŋɣʁɲʷⁿ'·.\- ]+$/u.test(trimmed)) {
       for (const hit of searchReadings(ix.readings, trimmed).filter(hit => hit.tier < 2).slice(0, 12)) {
-        const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
-        add(hit.char, reading.raw, gloss(hit.char))
+        add(hit.char, gloss(hit.char), hit.readings.map(reading => reading.raw).join(' · '), readingLabel(hit))
       }
     }
     for (const hit of byMeaning(trimmed)) add(hit.char, gloss(hit.char), hit.sense)
@@ -148,14 +148,26 @@
     return byMeaning(trimmed).slice(0, LIMIT).map(hit => ({ char: hit.char, note: gloss(hit.char), title: hit.sense }))
   }
 
+  /**
+   * The reading a hit was found by, tagged with its system when that is not the chosen one.
+   * @param {import('../lib/reading.js').ReadingHit} hit
+   */
+  function readingLabel(hit) {
+    const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
+    const system = SYSTEMS.find(system => system.key === reading.system)
+    return system && system.key !== ui.reading ? `${reading.raw} (${system.short})` : reading.raw
+  }
+
   /** @param {string} text */
   function readingHits(text) {
     const trimmed = text.trim()
     if (!trimmed) return []
-    return searchReadings(ix.readings, trimmed).slice(0, LIMIT).map(hit => {
-      const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
-      return { char: hit.char, note: reading.raw, title: hit.readings.map(reading => reading.raw).join(' · ') }
-    })
+    return searchReadings(ix.readings, trimmed).slice(0, LIMIT).map(hit => ({
+      char: hit.char,
+      note: gloss(hit.char),
+      sound: readingLabel(hit),
+      title: hit.readings.map(reading => reading.raw).join(' · '),
+    }))
   }
 
   function loadDrawShapes() {
@@ -515,10 +527,12 @@
             <p class="ui-count" role="status">{t('common.characters', { count: hits.length })}</p>
             <div class="ui-tiles mini-tiles" style:--ui-tile-size="52px">
               {#each hits as hit, i (hit.char)}
-                <button type="button" class="ui-tile" aria-label={`${always ? hit.char : t('fanqie.picker.add', { char: hit.char })}${hit.note ? `, ${hit.note}` : ''}`}
+                {@const sound = hit.sound ?? readingOf(hit.char, ui.reading)}
+                <button type="button" class="ui-tile" aria-label={`${always ? hit.char : t('fanqie.picker.add', { char: hit.char })}${sound ? `, ${sound}` : ''}${hit.note ? `, ${hit.note}` : ''}`}
                   title={hit.title || hit.note} onmouseenter={() => peek(hit.char)} onfocus={() => peek(hit.char)}
                   onclick={() => pick(hit, i)}>
                   <span class="ui-tile-glyph"><G char={hit.char} /></span>
+                  {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
                   {#if hit.note}<span class="ui-tile-note">{hit.note}</span>{/if}
                 </button>
               {/each}
@@ -531,9 +545,11 @@
         {#if mode === 'parts'}
           <div class="part-palette ui-tiles" style:--ui-tile-size="44px">
             {#each palette as item (item.part)}
+              {@const sound = readingOf(item.part, ui.reading)}
               <button type="button" class="ui-tile" onclick={() => addPart(item.part)}
                 title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
                 <span class="ui-tile-glyph"><G char={item.part} /></span>
+                {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
                 <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}</span>
               </button>
             {/each}

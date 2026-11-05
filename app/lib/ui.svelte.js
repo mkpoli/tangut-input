@@ -1,4 +1,5 @@
 // The few view states that are not worth an address: the phone's card sheet and the theme.
+import { untrack } from 'svelte'
 import { open, route } from './route.svelte.js'
 import { insert } from './text.svelte.js'
 import { say } from './clip.svelte.js'
@@ -51,8 +52,10 @@ export function setReading(key) {
   try { localStorage.setItem(READING, key) } catch { /* a blocked store only loses the choice */ }
 }
 
-/** Show a character in the card without taking the reader anywhere (arrow keys, highlighting). @param {string} char */
-export const preview = char => open(char)
+/** Show a character in the card without taking the reader anywhere (arrow keys, highlighting).
+ * A page previews from an effect on its highlight; the open character stays out of that effect, so a
+ * choice made in the card is not put back. @param {string} char */
+export const preview = char => untrack(() => open(char))
 
 /** Open a character: the card on a wide screen, the sheet on a narrow one. @param {string} char */
 export function choose(char) {
