@@ -632,9 +632,8 @@ its Limited Public Use licence; the description is public domain; the radical an
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
 `data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
 `data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
-`data/wenhai/entry-text.json.gz`, `data/readings/readings.tsv` and the files above. The builder
-records no CCAMC value; the keyed readings and their citations are its own input and come from the
-editions.
+`data/wenhai/entry-text.json.gz`, `data/readings/readings.tsv` and the files above. The keyed
+readings and their citations are the builder's own input and come from the editions.
 
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
 one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from
@@ -1247,7 +1246,7 @@ text; its licence is not settled, and until it is the rows may be cited but not 
 
 ## `books/`
 
-The editions the site keys when it needs a value CCAMC used to supply, one record per work in
+The editions the site keys its readings and meanings from, one record per work in
 `source.yaml`, one row per file in `files.tsv` with its checksum, page count and resolution. The
 scans themselves are in `cache/books/`, which git does not carry; `scripts/fetch_books.py` fetches
 them and checks each against its md5. [The README](books/README.md) says which work gives what.

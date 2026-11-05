@@ -1,8 +1,7 @@
 # Readings
 
 The values keyed out of the books in `../books/`, one printed value per row, each with the page it
-stands on. This is where the columns CCAMC used to carry come back: they are keyed from the editions
-and cited, so a reader can open the page and check the reading rather than take it on trust.
+stands on. The values are keyed from the editions and cited, so a reader can open the page and check the reading rather than take it on trust.
 
 The files are keyed by hand. The scans carry no Tangut text layer, so the Tangut side is confirmed by
 eye against the printed glyph and written down as its code point; the readings and glosses are
@@ -64,8 +63,7 @@ second reading. `uv run scripts/check_readings.py` holds the shape; it does not 
 A value stands alone only when the page prints it plainly. A damaged or doubtful glyph is
 `uncertain`, and gets a second witness — the other 掌中珠 copy, or the dictionary's own recap — before
 the status rises. An uncertain row is held back from the build until then, so the card never shows a
-reading nobody has confirmed; its `note` says what is doubtful. Nothing here is retyped from another site: a value that only CCAMC carries is
-keyed again from the edition and the page is found afresh.
+reading nobody has confirmed; its `note` says what is doubtful. Nothing here is retyped from another site: every value is keyed from the edition, with its page.
 
 The non-commercial terms of the 掌中珠 photographs and the copyright in the other editions govern the
 images; the keyed rows are published with their citation.

@@ -42,7 +42,7 @@ cannot copy it.
 
 ## Books, keyed
 
-The editions the values CCAMC carried are keyed from, each row citing the edition and page. The
+The editions the site's readings and meanings are keyed from, each row citing the edition and page. The
 scans are large and sit out of the build in `cache/books/`; `data/books/source.yaml` gives each work,
 what it supplies and its terms, and `scripts/fetch_books.py` fetches them again and checks the md5.
 
@@ -61,12 +61,12 @@ dictionaries print both beside their readings.
 
 Keyed values go into `data/readings/readings.tsv`, one printed value per row with the work and the
 page; `scripts/check_readings.py` holds the shape and `scripts/build_tangut_entries.py --readings`
-folds the rows into the records, carrying the citation to the card. A value is keyed again from the
-edition even where CCAMC holds one.
+folds the rows into the records, carrying the citation to the card. Every value is keyed from the
+edition.
 
 ## Linked, not copied
 
-- [CCAMC](http://ccamc.org/) — per-character pages with 音（李范文）and its fanqie and 直音, 音（聂历山）, a 藏文對音 field, 聲韻, 同音, 擬音 for eight systems, and the 文海 commentary. HTTP only: the host serves no TLS. It blocks bursts, and it states no licence. Since 2026-11-04 the site copies none of its readings or glosses: a card links to `http://ccamc.org/tangut.php?n4694=<char>`, and the fields it carried are keyed from the editions above. Arakawa Shintarō's system and CCAMC's English and Chinese glosses are still unkeyed and survive only as normalized terms in `app/data/tangut-ccamc-index.json.gz`, which answers a search and is never rendered. The 文海 text is public domain and comes from `data/wenhai/entry-text.json.gz`. The site does not crawl CCAMC.
+- [CCAMC](http://ccamc.org/) — per-character pages with 音（李范文）and its fanqie and 直音, 音（聂历山）, a 藏文對音 field, 聲韻, 同音, 擬音 for eight systems, and the 文海 commentary. HTTP only: the host serves no TLS. It blocks bursts, and it states no licence. Since 2026-11-04 the site copies none of its readings or glosses: a card links to `http://ccamc.org/tangut.php?n4694=<char>`. The one system the site does not show (Arakawa Shintarō) and CCAMC's English and Chinese glosses survive only as normalized terms in `app/data/tangut-ccamc-index.json.gz`, which answers a search and is never rendered. The 文海 text is public domain and comes from `data/wenhai/entry-text.json.gz`. The site does not crawl CCAMC.
 
 ## Available, not used
 

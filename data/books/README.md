@@ -1,9 +1,8 @@
 # Books
 
-The works the site reads when it needs a value CCAMC used to supply. CCAMC asked that its records
-not be republished, so the fields it carried — 音（李范文）with its fanqie and 直音, 音（聂历山）, the
-藏文對音 field, the 文海 text and the Chinese meanings — are rebuilt here from the editions
-themselves, each row citing the edition and page it comes from.
+The works the site reads for 音（李范文）with its fanqie and 直音, 音（聂历山）, 藏文對音, the 文海 text and
+the Chinese meanings. These fields are keyed from the editions themselves, each row citing the edition
+and page it comes from.
 
 `source.yaml` records one work per entry: what it gives, the edition, its rights, and the route the
 file came by. `files.tsv` records what is on disk, with the checksum and the resolution of the scan.

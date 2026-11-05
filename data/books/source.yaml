@@ -1,4 +1,4 @@
-# Works the CCAMC-supplied fields are rebuilt from.
+# Works the keyed reading and meaning fields come from.
 #
 # status: acquired — on disk and checked; pending — the edition is recorded, no file obtained.
 # rights: what the edition's own terms allow; a work with none stated is keyed and cited, not
@@ -67,7 +67,7 @@ works:
     place: Москва
     year: 1960
     volumes: 2
-    gives: Nevsky's readings and Russian glosses, the column CCAMC shows as 音（聂历山）
+    gives: Nevsky's readings and Russian glosses, the field shown as 音（聂历山）
     script: Tangut, Russian
     status: acquired
     rights: >-

@@ -28,8 +28,8 @@ folded readings and lower-cased terms, not the records.
 Keyed readings come from ``data/readings/readings.tsv`` unless ``--readings`` names another file; a
 rebuild without them drops every keyed value, so the default is the table itself.
 
-Writes ``app/data/tangut-entries.json.gz``, ``app/data/tangut-ccamc-index.json.gz`` and
-``app/data/tangut-reading-sources.json.gz``.
+Writes ``app/data/tangut-entries.json.gz`` and ``app/data/tangut-ccamc-index.json.gz``.
+The keyed readings' citations go to ``app/data/tangut-reading-sources.json.gz``.
 """
 import argparse
 import gzip
