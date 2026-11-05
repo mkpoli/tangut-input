@@ -32,7 +32,7 @@ export const db = $state({
 export const ix = {
   /** @type {Entry[]} */ entries: [],
   /** @type {Map<string, Entry>} */ byChar: new Map(),
-  /** Variant forms, stated and possible. @type {Map<string, { of: string[], forms: string[], possible: string[] }>} */ variants: new Map(),
+  /** Variant forms, stated and possible. @type {Map<string, import('./variants.js').Variants>} */ variants: new Map(),
   /** Cangjie codes by character, shortest first. @type {Map<string, string[]>} */ codes: new Map(),
   /** Every [code, character] pair, ordered by code. @type {[string, string][]} */ codeList: [],
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
