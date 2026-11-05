@@ -569,6 +569,13 @@ await step('a link to a character opens its card on a phone', async () => {
   await phone.locator('main.finder').waitFor({ state: 'attached' })
   await phone.waitForFunction(() => document.querySelector('aside.card')?.classList.contains('open'))
   assert.equal(await phone.locator('aside.card').isVisible(), true, 'the card sheet is visible')
+  const closed = () => phone.evaluate(() => !document.querySelector('aside.card')?.classList.contains('open'))
+  await phone.reload()
+  await phone.locator('main.finder').waitFor({ state: 'attached' })
+  assert.equal(await closed(), true, 'a reload does not reopen the sheet')
+  await phone.goto(`${APP}/cangjie?q=msb&c=17E39`)
+  await phone.locator('main.finder').waitFor({ state: 'attached' })
+  assert.equal(await closed(), true, 'a finder keeps its page')
 })
 await PHONE_APP.close()
 
