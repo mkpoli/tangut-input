@@ -555,13 +555,13 @@ await step('the introduction has its own place in the desktop bar', async () => 
   await desktopBar.waitForURL(/\/intro$/)
   assert.equal(await navIntro.getAttribute('aria-current'), 'page', 'the introduction is marked as current')
   assert.equal(await desktopBar.locator('footer.foot a[href="/intro"]').count(), 0, 'the footer holds sources only')
-  for (const [width, bar] of [[1719, 96], [1720, 54], [1440, 96], [1141, 96], [1140, 96], [1024, 96]]) {
+  for (const [width, bar] of [[1719, 96], [1720, 54], [1440, 96], [1280, 96], [1279, 96], [1141, 96], [1140, 96], [1024, 96]]) {
     await desktopBar.setViewportSize({ width, height: 900 })
     await desktopBar.goto(`${APP}/`)
     await desktopBar.locator('main.finder').waitFor()
     const state = await layout()
     assert.equal(state.bar, bar, `the bar height at ${width}`)
-    if (width >= 1141) {
+    if (width >= 1280) {
       assert.equal(state.navShown, true, `the finder row carries the introduction at ${width}`)
       assert.equal(state.navFits, true, `the introduction fits the finder row at ${width}`)
       assert.equal(state.extraShown, false, `the first row has no duplicate at ${width}`)
