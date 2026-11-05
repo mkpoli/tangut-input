@@ -87,7 +87,7 @@ or `disputed`; the Tangut, if known; the Chinese exactly as `chinese_source` pri
 source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the Tangut;
 and `backs`, whether the work supports the Tangut or the Chinese. Compiled by hand.
 `scripts/build_tangut_titles.py` stops if a title does not occur in its place, and marks each title
-`text`, `reported` or `chinese` by what its Tangut rests on. The build sets `kind` from the Chinese: `city` (城號) when it names a city, otherwise `honorific`.
+`text`, `reported` or `chinese` by what its Tangut rests on. The build sets `kind`: `city` (城號) when the title has 城 or 𗍁, otherwise `honorific`.
 
 ## `tangut-frequency.json.gz`
 

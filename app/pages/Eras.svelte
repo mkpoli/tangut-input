@@ -60,7 +60,7 @@
 </script>
 
 {#snippet titleTable(/** @type {typeof TITLES} */ rows)}
-<div class="ui-table-wrap">
+    <div class="ui-table-wrap">
       <table class="ui-table list">
         <thead><tr><th scope="col">{t('eras.titles.holder')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.titles.chinese')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
         <tbody>
@@ -133,7 +133,7 @@
     <h3 class="subheading">{t('eras.titles.honorific')}</h3>
     {@render titleTable(TITLES.filter(title => title.kind === 'honorific'))}
     <h3 class="subheading">{t('eras.titles.city')}</h3>
-    <p class="ui-hint">{t('eras.titles.city.intro')}{@render cites(['survey2007', 'commons'])}</p>
+    <p class="ui-hint">{t('eras.titles.city.intro')}{@render cites(['zhwphui', 'survey2007'])}</p>
     {@render titleTable(TITLES.filter(title => title.kind === 'city'))}
     <p class="ui-hint">* {t('eras.titles.dated')} † {t('eras.titles.caption')} ‡ {t('eras.titles.decoded')} § {t('eras.titles.codes')} ? {t('eras.titles.disputed')}</p>
   </section>
