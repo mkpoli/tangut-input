@@ -40,7 +40,12 @@ test('every Tibetan spelling stands at a crossing the chart draws', () => {
   expect(Object.keys(cells).filter(key => !drawn.has(key))).toEqual([])
   expect(Object.keys(cells).length).toBe(124)
   // 2.1 is rhyme 1 in the rising tone, 2.9 rhyme 10: the two tones number their rhymes apart.
-  expect(cells['1·2'].Ⅰ).toEqual(['ཕུ'])
+  expect(cells['1·2'].Ⅰ).toEqual([['ཕུ', 'phu']])
+  // Every spelling has its Wylie, and no cell keeps two spellings as one.
+  for (const row of Object.values(cells)) for (const list of Object.values(row)) for (const [script, wylie] of list) {
+    expect(script).not.toContain(' ')
+    expect(wylie.length).toBeGreaterThan(0)
+  }
   expect(Object.keys(cells['10·2'] ?? {}).length).toBeGreaterThan(0)
 })
 
