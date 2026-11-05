@@ -204,7 +204,7 @@
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
         {#each [
-          { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms]] },
+          { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms], ['card.variantFormsPartial', variants.partialForms]] },
           { source: 'card.variantReportedSource', rows: [['card.variantReported', variants.reported]] },
           { source: 'card.variantsPossibleSource', rows: [['card.variantPossible', variants.possible]] },
         ] as block (block.source)}

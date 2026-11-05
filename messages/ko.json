@@ -245,6 +245,7 @@
   "card.variantOf": "다음 글자의 이체자",
   "card.variantOfPartial": "이 글자의 낱말 가운데 하나가 다음 글자의 이체자",
   "card.variantForms": "이 글자의 이체자",
+  "card.variantFormsPartial": "이 글자의 이체자(해당 글자의 낱말 가운데 하나에 한함)",
   "card.variantReported": "이체자라는 지적",
   "card.variantReportedSource": "NGWU YOH의 채팅 메시지(2026-11-05)에 따른 것으로, 출처는 제시되지 않았습니다.",
   "card.variantPossible": "같은 글자일 가능성",
