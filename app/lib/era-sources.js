@@ -156,6 +156,20 @@ export const ERA_SOURCES = {
     note: 'Reports that 王靜如, 李範文 (邦泥定國兀卒考釋) and 史金波 read 兀卒 as 皇帝, and quotes the 長編 for a rival gloss, 青天子.',
     url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606103541242.pdf',
   },
+  survey2007: {
+    author: '馬升林',
+    title: '西夏陵殘碑卷綜述',
+    where: 'Section 十四 of 中國藏西夏文獻綜述, 西夏學 2 (2007), pp. 70–74',
+    note: 'Lists 風角城, 明城, 白城, 珠城 and 護城皇帝, with 聖帝, 永平皇帝 and 珍陵帝, among names on the 西夏陵 stele fragments (p. 72). Reports from 李範文, 西夏陵墓出土殘碑粹編 (1984, not seen) that 城號 may be a posthumous title of the Western Xia\'s own, and that 風角城, 白城, 明城 and 護城 belong to 景宗, 崇宗 and 仁宗. It names three holders for the four titles, so which of 白城 and 明城 is 崇宗\'s is not settled by it; the Commons captions give both to him. The head of the stele of tomb 7, which it identifies as 仁宗\'s, reads 大白上國護城聖德至懿皇帝壽陵志文 (pp. 71–72).',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10372.pdf',
+  },
+  zhwphui: {
+    author: 'zh Wikipedia',
+    title: '夏惠宗',
+    where: 'revision 94732402, note a, read 2026-11-05',
+    note: 'After 崔紅芬 and 文志勇, 西夏皇帝尊號考略: 城號 are a kind of 尊號 found only in the Western Xia, still without a clear explanation, and some scholars take them as about equal to posthumous titles.',
+    url: 'https://zh.wikipedia.org/zh-hant/%E5%A4%8F%E6%83%A0%E5%AE%97',
+  },
   kepping2001: {
     author: 'K. B. Kepping',
     title: 'Mi-nia (Tangut) Self-appellation and Self-portraiture in Khara Khoto Materials',
@@ -237,5 +251,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
 ])
