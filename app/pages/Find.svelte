@@ -8,7 +8,7 @@
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
-  import { byCode, byName, byMeaning, byCodePoint, byDescription, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
 
@@ -19,7 +19,7 @@
 
   const groups = $derived.by(() => {
     if (!ready || !text) return []
-    /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string, sound?: string }[] }[]} */
+    /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string, sound?: string, tibetan?: boolean }[] }[]} */
     const out = []
     // A description, whole or cut after its opening part, is read against the records' own.
     const described = byDescription(text)
@@ -53,6 +53,8 @@
           return { char: hit.char, sub: gloss(hit.char), sound: `${reading.raw}${tag}` }
         }) })
     }
+    const spelled = byTibetan(text).filter(hit => hit.tier === 0 || /[\u0f40-\u0fbc]/.test(text))
+    if (spelled.length) out.push({ key: 'tibetan', title: t('find.group.tibetan'), total: spelled.length, items: spelled.slice(0, 24).map(hit => ({ char: hit.char, sub: gloss(hit.char), sound: hit.shown, tibetan: true })) })
     const meanings = byMeaning(text)
     if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: hit.via === 'ccamc' ? t('find.viaCcamc') : gloss(hit.char), extra: hit.via === 'ccamc' ? 'CCAMC' : undefined })) })
     return out
@@ -172,7 +174,7 @@
               {@const sound = item.sound ?? readingOf(item.char, ui.reading)}
               <button type="button" role="option" class="ui-tile" data-index={offset + i} aria-selected={offset + i === active || (active < 0 && route.c === item.char)}
                 title={gloss(item.char)} onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char, { place: offset + i })}>
-                <G char={item.char} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{item.sub}</span>
+                <G char={item.char} />{#if sound}<span class="ui-tile-sound" lang={item.tibetan ? 'bo' : undefined}>{sound}</span>{/if}<span class="ui-tile-note">{item.sub}</span>
               </button>
             {/each}
           </div>
@@ -197,4 +199,5 @@
     .gloss-row{grid-template-columns:38px 6.5rem minmax(0,1fr);gap:var(--ui-space-sm)}
     .gloss-row :global(.ui-script){font-size:28px}
   }
+  .ui-tile-sound[lang='bo']{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:14px;line-height:1.7;overflow:visible;text-overflow:clip;flex:none}
 </style>
