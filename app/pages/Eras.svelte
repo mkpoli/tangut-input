@@ -6,6 +6,7 @@
   // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`, and the
   // names of the state, from `app/data/tangut-state-names.json`, and later era names, from
   // `app/data/tangut-later-eras.json`.
+  import { onMount } from 'svelte'
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
   import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
@@ -57,6 +58,40 @@
     clear: rows.filter(row => row.tags.some(tag => tag.kind === 'coin' || tag.kind === 'text') && !row.tags.some(tag => tag.kind === 'disputed')).length,
     disputed: rows.filter(row => row.tags.some(tag => tag.kind === 'disputed')).length,
   }
+
+  /** The parts of the page the tab bar moves between, in their order down the page. */
+  const tabs = [
+    { id: 'eras', key: 'eras.tab.eras', count: rows.length },
+    { id: 'titles', key: 'eras.tab.titles', count: TITLES.length },
+    { id: 'posthumous', key: 'eras.tab.posthumous', count: POSTHUMOUS.length },
+    { id: 'states', key: 'eras.tab.states', count: STATE_NAMES.length },
+    { id: 'later-eras', key: 'eras.tab.later', count: LATER_ERAS.length },
+  ]
+  const KINDS = ['coin', 'text', 'disputed', 'calendar', 'post', 'none']
+  const kindCounts = Object.fromEntries(KINDS.map(kind => [kind, rows.filter(row => row.tags.some(tag => tag.kind === kind)).length]))
+  const TITLE_BASES = ['text', 'reported', 'chinese']
+  const titleBasisCounts = Object.fromEntries(TITLE_BASES.map(basis => [basis, TITLES.filter(title => title.basis === basis).length]))
+  const glossSources = [...new Set(rows.flatMap(row => row.gloss))]
+  const doubtSources = [...new Set(rows.flatMap(row => row.doubt ? [row.doubt.source] : []))]
+
+  // The tab under the bar is the first of the page's sections on screen.
+  let current = $state('eras')
+  onMount(() => {
+    const visible = new Set()
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visible.add(entry.target.id)
+        else visible.delete(entry.target.id)
+      }
+      const first = tabs.map(tab => tab.id).find(id => visible.has(id))
+      if (first) current = first
+    }, { rootMargin: '-18% 0px -64% 0px' })
+    for (const tab of tabs) {
+      const section = document.getElementById(tab.id)
+      if (section) observer.observe(section)
+    }
+    return () => observer.disconnect()
+  })
 </script>
 
 {#snippet titleTable(/** @type {typeof TITLES} */ rows)}
@@ -85,14 +120,30 @@
 <article class="ui-page eras">
   <header class="ui-page-head">
     <h1 class="ui-page-title"><Icon name="eras" size={22}/><span>{t('eras.title')}</span></h1>
-    <p class="ui-page-intro">{t('eras.intro', counts)}</p>
+    <p class="ui-page-intro">{t('eras.intro')}</p>
   </header>
 
-  <dl class="key">
-    {#each ['coin', 'text', 'disputed', 'calendar', 'post', 'none'] as kind (kind)}
-      <div><dt><span class="tag" data-kind={kind}>{t(`eras.kind.${kind}`)}</span></dt><dd>{t(`eras.kind.${kind}.hint`)}</dd></div>
+  <nav class="ui-toc" aria-label={t('eras.toc')}>
+    {#each tabs as tab (tab.id)}
+      <a href={`#${tab.id}`} aria-current={current === tab.id ? 'true' : undefined}>
+        <span>{t(tab.key)}</span><span class="ui-count">{tab.count}</span>
+      </a>
     {/each}
-  </dl>
+  </nav>
+
+  <p class="summary">
+    <span><strong>{counts.forms}</strong>{t('eras.forms')}</span>
+    <span><strong>{counts.clear}</strong>{t('eras.clear')}</span>
+    <span><strong>{counts.disputed}</strong>{t('eras.disputed')}</span>
+  </p>
+
+  <section class="ui-section" id="eras">
+    <h2 class="heading">{t('eras.tab.eras')}<span class="ui-count">{rows.length}</span></h2>
+    <ul class="key" aria-label={t('eras.basis')}>
+      {#each KINDS as kind (kind)}
+        <li title={t(`eras.kind.${kind}.hint`)}><span class="tag" data-kind={kind}>{t(`eras.kind.${kind}`)}</span><span class="ui-count">{kindCounts[kind]}</span></li>
+      {/each}
+    </ul>
 
   <div class="ui-table-wrap">
     <table class="ui-table list">
@@ -113,23 +164,26 @@
               {#each row.tags as tag (tag.kind)}
                 <span class="tagged"><span class="tag" data-kind={tag.kind}>{t(`eras.kind.${tag.kind}`)}</span>{@render cites(tag.sources)}</span>
               {/each}
-              {#if row.gloss.length}<p class="note">{t('eras.gloss')}{@render cites(row.gloss)}</p>{/if}
-              {#if row.doubt}<p class="note">{t('eras.doubt')}{@render cites([row.doubt.source])}</p>{/if}
+              {#if row.gloss.length}<span class="mark" title={t('eras.gloss')} aria-label={t('eras.gloss')}>†</span>{/if}
+              {#if row.doubt}<span class="mark" title={t('eras.doubt')} aria-label={t('eras.doubt')}>?</span>{/if}
             </td>
           </tr>
         {/each}
       </tbody>
     </table>
   </div>
+    {#if glossSources.length}<p class="ui-hint">† {t('eras.gloss')}{@render cites(glossSources)}</p>{/if}
+    {#if doubtSources.length}<p class="ui-hint">? {t('eras.doubt')}{@render cites(doubtSources)}</p>{/if}
+  </section>
 
   <section class="ui-section titles" id="titles">
-    <h2 class="heading">{t('eras.titles')}</h2>
+    <h2 class="heading">{t('eras.titles')}<span class="ui-count">{TITLES.length}</span></h2>
     <p class="ui-hint">{t('eras.titles.intro')}</p>
-    <dl class="key">
-      {#each ['text', 'reported', 'chinese'] as basis (basis)}
-        <div><dt><span class="tag" data-kind={basis}>{t(`eras.titles.basis.${basis}`)}</span></dt><dd>{t(`eras.titles.basis.${basis}.hint`)}</dd></div>
+    <ul class="key" aria-label={t('eras.basis')}>
+      {#each TITLE_BASES as basis (basis)}
+        <li title={t(`eras.titles.basis.${basis}.hint`)}><span class="tag" data-kind={basis}>{t(`eras.titles.basis.${basis}`)}</span><span class="ui-count">{titleBasisCounts[basis]}</span></li>
       {/each}
-    </dl>
+    </ul>
     <h3 class="subheading">{t('eras.titles.honorific')}</h3>
     {@render titleTable(TITLES.filter(title => title.kind === 'honorific'))}
     <h3 class="subheading">{t('eras.titles.city')}</h3>
@@ -139,7 +193,7 @@
   </section>
 
   <section class="ui-section titles" id="posthumous">
-    <h2 class="heading">{t('eras.posthumous')}</h2>
+    <h2 class="heading">{t('eras.posthumous')}<span class="ui-count">{POSTHUMOUS.length}</span></h2>
     <p class="ui-hint">{t('eras.posthumous.intro')}{@render cites(['songshi'])}</p>
     <div class="ui-table-wrap">
       <table class="ui-table plain">
@@ -167,7 +221,7 @@
   </section>
 
   <section class="ui-section titles" id="states">
-    <h2 class="heading">{t('eras.states')}</h2>
+    <h2 class="heading">{t('eras.states')}<span class="ui-count">{STATE_NAMES.length}</span></h2>
     <p class="ui-hint">{t('eras.states.intro')}</p>
     <div class="ui-table-wrap">
       <table class="ui-table list">
@@ -187,7 +241,7 @@
   </section>
 
   <section class="ui-section titles" id="later-eras">
-    <h2 class="heading">{t('eras.later')}</h2>
+    <h2 class="heading">{t('eras.later')}<span class="ui-count">{LATER_ERAS.length}</span></h2>
     <p class="ui-hint">{t('eras.later.intro')}{@render cites(['zoenshiueh2026'])} {t('eras.later.colophon')}{@render cites(['duan2024'])}</p>
     <div class="ui-table-wrap">
       <table class="ui-table list">
@@ -218,9 +272,18 @@
 
 <style>
   .eras{gap:var(--ui-space-xl);padding-bottom:var(--ui-space-5xl)}
-  .key{display:grid;gap:var(--ui-space-xs);margin:0}
-  .key div{display:grid;grid-template-columns:9.5em minmax(0,1fr);align-items:baseline;gap:var(--ui-space-sm)}
-  .key dd{margin:0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-sm)}
+  .ui-toc{position:sticky;top:calc(var(--topbar-h) + var(--writing-h));z-index:6;display:flex;gap:2px;margin-inline:calc(var(--ui-space-sm) * -1);padding-inline:var(--ui-space-sm);overflow-x:auto;background:var(--ui-color-canvas);border-bottom:1px solid var(--ui-color-border);scrollbar-width:none}
+  .ui-toc::-webkit-scrollbar{display:none}
+  .ui-toc a{display:flex;align-items:baseline;gap:var(--ui-space-xs);padding:9px 12px;border-bottom:2px solid transparent;color:var(--ui-color-ink-soft);font-size:var(--ui-text-sm);text-decoration:none;white-space:nowrap}
+  .ui-toc a:hover{color:var(--ui-color-ink)}
+  .ui-toc a[aria-current='true']{border-bottom-color:var(--ui-color-accent);color:var(--ui-color-ink);font-weight:var(--ui-weight-semibold)}
+  .ui-toc .ui-count{font-size:var(--ui-text-2xs)}
+  .summary{display:flex;flex-wrap:wrap;gap:var(--ui-space-sm);margin:0}
+  .summary span{display:flex;align-items:baseline;gap:var(--ui-space-xs);padding:6px 12px;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
+  .summary strong{color:var(--ui-color-ink);font-family:var(--ui-font-serif);font-size:22px;font-weight:var(--ui-weight-semibold);font-variant-numeric:tabular-nums;line-height:1}
+  .key{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;padding:0;list-style:none}
+  .key li{display:flex;align-items:center;gap:var(--ui-space-xs)}
+  .eras section[id]{scroll-margin-block-start:calc(var(--topbar-h) + var(--writing-h) + 58px)}
   .list th[scope='row']{font-weight:var(--ui-weight-medium);white-space:nowrap}
   .years{color:var(--ui-color-ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
   .forms{white-space:nowrap}
@@ -235,6 +298,7 @@
   .tag[data-kind='none'],.tag[data-kind='chinese'],.tag[data-kind='post']{border-style:dashed;color:var(--ui-color-ink-muted)}
   tr[data-kind='none'] th{color:var(--ui-color-ink-soft)}
   .note{margin:4px 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
+  .mark{margin-inline-start:var(--ui-space-xs);color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);cursor:help}
   .cite{margin-inline-start:2px;font-size:.72em;line-height:0;vertical-align:super}
   .cite a{padding-inline:1px;color:var(--ui-color-accent);text-decoration:none}
   .cite a:hover{text-decoration:underline}
@@ -244,6 +308,7 @@
   .chinese{min-inline-size:12em;font-size:var(--ui-text-sm)}
   .inferred{margin-inline-start:2px;color:var(--ui-color-ink-muted)}
   .heading{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold)}
+  .heading .ui-count{margin-inline-start:var(--ui-space-sm);font-size:var(--ui-text-sm)}
   .plain td,.plain th{font-size:var(--ui-text-sm)}
   .plain th[scope='row']{font-weight:var(--ui-weight-medium);white-space:nowrap}
   .state-gloss{display:block;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-regular,400);white-space:normal}
@@ -262,9 +327,6 @@
     .plain thead th{white-space:normal}
     .posthumous-form{display:flex;margin-inline-start:0}
     .no-chinese{display:none}
-    .key div{display:block}
-    .key dt{display:inline;margin-inline-end:var(--ui-space-xs)}
-    .key dd{display:inline}
     .list thead{display:none}
     .list tr{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:baseline;column-gap:var(--ui-space-sm);padding-block:var(--ui-space-sm);border-bottom:1px solid var(--ui-color-border)}
     .list tr:last-child{border-bottom:0}

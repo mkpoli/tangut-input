@@ -1,6 +1,6 @@
 <script>
   // Transcribe a line of Tangut: every character with the reading the reader's system gives it, the
-  // line copied as those readings, and a table of all six systems for pasting elsewhere. The box
+  // line copied as those readings, and a table of all seven systems for pasting elsewhere. The box
   // holds the same text as the writing strip, which flies into it on the way in.
   import { onMount } from 'svelte'
   import { db, ix, isTangut, gloss } from '../lib/db.svelte.js'
@@ -52,9 +52,9 @@
   const readingOf = char => (ix.byChar.get(char)?.pronunciations ?? {})[ui.reading]?.trim() ?? ''
   /** The line as readings, a dash where the data records none. */
   const transcription = $derived(chars.map(char => readingOf(char) || '—').join(' '))
-  /** All six systems, one row per character, tab-separated. */
+  /** All seven systems, one row per character, tab-separated. */
   const table = $derived.by(() => {
-    const rows = [['char', ...SYSTEMS.map(system => system.key), 'rhyme', 'meaning'].join('\t')]
+    const rows = [['char', ...SYSTEMS.map(system => systemName(system, i18n.locale)), 'rhyme', 'meaning'].join('\t')]
     for (const char of chars) {
       const readings = ix.byChar.get(char)?.pronunciations ?? {}
       const rhyme = ix.rhymes.get(char)
@@ -97,7 +97,7 @@
   </div>
 
   {#if chars.length}
-    <output class="transcription ui-serif" aria-live="polite">{transcription}</output>
+    <output class="transcription ui-phonetic" aria-live="polite">{transcription}</output>
 
     <div class="ui-table-wrap">
     <table class="ui-table">
@@ -143,7 +143,7 @@
   .glyph{display:inline-grid;place-items:center;min-inline-size:32px;min-block-size:32px;padding:2px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;line-height:1}
   .glyph:hover{background:var(--ui-color-surface-hover)}
   .glyph :global(.ui-script){font-size:26px}
-  .say{font-family:var(--ui-font-serif);font-size:var(--ui-text-md);white-space:nowrap}
+  .say{font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md);white-space:nowrap}
   .gloss{max-inline-size:22em}
   .rhyme-cell{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
   @media (max-width:700px){

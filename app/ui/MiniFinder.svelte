@@ -156,7 +156,7 @@
   function readingLabel(hit) {
     const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
     const system = SYSTEMS.find(system => system.key === reading.system)
-    return system && system.key !== ui.reading ? `${reading.raw} (${system.short})` : reading.raw
+    return system && system.key !== ui.reading ? `${reading.raw} (${system.tag})` : reading.raw
   }
 
   /** @param {string} text */

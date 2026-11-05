@@ -30,7 +30,7 @@ export const PAGE_SEO = {
   },
   reading: {
     title: 'Reading — Tangut Input',
-    description: 'Type a Tangut reconstruction in any of the six systems the site shows — Li Fanwen, Gong Xun 2024-11, Miyake, Nishida, Kychanov, Sofronov — and see the characters read so.',
+    description: 'Type a Tangut reconstruction in any of the seven systems the site shows — Li Fanwen, Gong Hwang-cherng, Gong Xun 2024-11, Miyake, Nishida, Kychanov, Sofronov — and see the characters read so.',
   },
   texts: {
     title: 'Texts — Tangut Input',
@@ -38,7 +38,7 @@ export const PAGE_SEO = {
   },
   transcribe: {
     title: 'Transcribe Tangut text — every character’s reading',
-    description: 'Paste a line of Tangut and read every character: its reconstruction in any of six systems, its rhyme and tone, and a table of all six for copying.',
+    description: 'Paste a line of Tangut and read every character: its reconstruction in any of seven systems, its rhyme and tone, and a table of all seven for copying.',
   },
   fanqie: {
     title: 'Fanqie — Tangut Input',

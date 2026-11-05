@@ -119,6 +119,7 @@
      points these at its own faces; everything else falls back to the serif. */
   --ui-font-script: var(--ui-font-serif);
   --ui-font-ids: var(--ui-font-script);
+  --ui-font-phonetic: var(--ui-font-serif);
   --ui-text-2xs: 11px;
   --ui-text-xs: 12px;
   --ui-text-sm: 13px;

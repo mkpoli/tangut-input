@@ -409,7 +409,7 @@
   .means ol{margin:0;padding-inline-start:1.2em}
   .readings{border-collapse:collapse;inline-size:100%;font-size:var(--ui-text-sm)}
   .readings th{inline-size:46%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
-  .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
+  .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
   .spelling{font-size:18px}

@@ -5,7 +5,7 @@
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES, GROUPS, PRIMARY } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, setReading } from './lib/ui.svelte.js'
-  import { SYSTEMS, systemName, systemTitle } from './lib/reading.js'
+  import { SYSTEMS, systemBaseName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
   import { i18n, t } from './lib/i18n.svelte.js'
   import { applySeo } from './lib/seo.js'
@@ -224,7 +224,7 @@
         <span class="ui-select-wrap">
           <select class="ui-select" data-size="sm" value={ui.reading}
             onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)}>
-            {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+            {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemBaseName(entry, i18n.locale)}</option>{/each}
           </select>
         </span>
       </label>
@@ -387,7 +387,7 @@
   .reading-label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
   .reading-icon{display:grid;place-items:center;color:var(--ui-color-ink-muted)}
   @media (max-width:900px){.reading-label{display:none}}
-  .reading :global(.ui-select){inline-size:154px}
+  .reading :global(.ui-select){inline-size:172px}
   /* The sponsor button: a soft pink pill led by the author's face, with a small heart on it that beats. */
   .sponsor{--sp-from:light-dark(#ffe6ef,#3d1a2b);--sp-to:light-dark(#fff0e0,#3a2318);--sp-ink:light-dark(#c2185b,#ffb3cd);--sp-heart:light-dark(#ff4f88,#ff7aa6);--sp-line:light-dark(#ffd0de,#5a2a3f);
     display:inline-flex;align-items:center;gap:var(--ui-space-xs);flex:none;block-size:32px;padding:0 12px 0 4px;border:1px solid var(--sp-line);border-radius:var(--ui-radius-pill);background:linear-gradient(120deg,var(--sp-from),var(--sp-to));color:var(--sp-ink);font:inherit;font-size:var(--ui-text-xs);font-weight:var(--ui-weight-bold);white-space:nowrap;cursor:pointer;transition:transform var(--ui-duration) var(--ui-ease),box-shadow var(--ui-duration) var(--ui-ease)}
@@ -435,7 +435,7 @@
     .top{gap:var(--ui-space-md);padding-inline:var(--ui-space-xl)}
     .finders a{padding-inline:var(--ui-space-xs);font-size:var(--ui-text-xs)}
     .finders a.on::after{inset-inline:var(--ui-space-xs)}
-    .reading :global(.ui-select){inline-size:154px}
+    .reading :global(.ui-select){inline-size:172px}
   }
   /* The finders keep a row of their own until the bar is wide enough for all of them, the
      introduction included, beside the reconstruction and the sponsor. The threshold holds the

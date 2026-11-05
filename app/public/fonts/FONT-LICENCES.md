@@ -13,6 +13,11 @@
   characters Noto lacks (`BabelStoneTangut-complement.woff2`): the components and the newest
   ideographs. The full font is in this directory for rebuilding that subset.
 
+- **Tangut IPA** (`TangutIPA-Regular.woff2`). A subset of Charis 7.000 (SIL, <https://software.sil.org/charis/>), cut to Latin, IPA extensions,
+  spacing modifiers, combining marks, dashes and superscripts for the reconstruction input and results.
+  Copyright (c) 1997–2025 SIL Global, SIL Open Font License 1.1 (`OFL-Charis.txt`); the subset is
+  renamed because the licence reserves the name Charis.
+
 - **IDS Operators** (`IDS.woff2`). The sixteen ideographic description characters U+2FF0–2FFF,
   subset from **GenZui Sans** (Source Han Sans-based, SIL Open Font License 1.1; `OFL-GenZuiSans.txt`
   in `fonts/`). 2 KB, so a description can always be shown as its own text. Rebuild it with
