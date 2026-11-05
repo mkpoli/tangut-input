@@ -486,6 +486,19 @@ await step('the tablet bar has two rows and settings closes when the layout chan
 })
 await TABLET_SETTINGS.close()
 
+await step('a choice in the card stays while a code is typed', async () => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
+  const page = await context.newPage()
+  await page.goto(`${APP}/cangjie`)
+  await page.locator('[data-primary]').pressSequentially('msb')
+  await page.waitForFunction(() => new URLSearchParams(location.search).has('c'))
+  const before = new URL(page.url()).searchParams.get('c')
+  await page.locator('aside.card .ui-tile, aside.card .inline').first().click()
+  await page.waitForTimeout(200)
+  assert.notEqual(new URL(page.url()).searchParams.get('c'), before)
+  await context.close()
+})
+
 const PHONE_APP = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: 'light' })
 const phone = await PHONE_APP.newPage()
 await phone.goto(`${APP}/meaning?q=water`)
