@@ -33,6 +33,7 @@
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
+  const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
@@ -194,6 +195,24 @@
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
           {#if meanings.zh?.length}<dt>zh</dt><dd lang="zh-Hant">{meanings.zh.join('；')}</dd>{/if}
         </dl>
+      </section>
+    {/if}
+
+    {#if variants}
+      <section>
+        <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
+        {#each [['card.variantOf', variants.of], ['card.variantForms', variants.forms], ['card.variantPossible', variants.possible]] as [label, others] (label)}
+          {#if others.length}
+            <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
+            <div class="ui-tiles rel" style:--ui-tile-size="48px">
+              {#each others as other (other)}
+                {@const sound = readingOf(other, ui.reading)}
+                <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+              {/each}
+            </div>
+          {/if}
+        {/each}
+        <p class="ui-hint">{t(variants.of.length || variants.forms.length ? 'card.variantsSource' : 'card.variantsPossibleSource')}</p>
       </section>
     {/if}
 
