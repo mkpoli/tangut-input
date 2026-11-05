@@ -227,7 +227,7 @@
   "attest.lineReadings": "행별 강독:",
   "attest.facsimile": "영인본과 잘라낸 자형 이미지는 Glyph Atlas가 기록하였습니다.",
   "card.label": "글자 정보",
-  "card.back": "뒤로",
+  "card.close": "닫기",
   "card.blank": "글자를 고르면 그 기록과 함께 복사하거나 본문에 추가하는 기능이 여기에 나타납니다.",
   "card.blankKeys": "화살표 키로 후보 사이를 이동하고, <kbd>Enter</kbd>로 강조된 글자를 추가합니다.",
   "card.copyCodePoint": "코드 포인트 복사",

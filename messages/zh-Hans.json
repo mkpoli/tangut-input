@@ -227,7 +227,7 @@
   "attest.lineReadings": "逐行研读：",
   "attest.facsimile": "影印与字形裁切由Glyph Atlas完成。",
   "card.label": "字符详情",
-  "card.back": "返回",
+  "card.close": "关闭",
   "card.blank": "选择一个字，即可在此查看其记录，并可复制或加入正文。",
   "card.blankKeys": "方向键在候选字间移动，<kbd>Enter</kbd>将高亮字加入正文。",
   "card.copyCodePoint": "复制码位",

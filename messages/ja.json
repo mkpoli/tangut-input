@@ -227,7 +227,7 @@
   "attest.lineReadings": "行ごとの講読：",
   "attest.facsimile": "影印と切り出し画像はGlyph Atlasによる。",
   "card.label": "文字情報",
-  "card.back": "戻る",
+  "card.close": "閉じる",
   "card.blank": "文字を選ぶと、その記録とコピーや本文への追加の操作がここに表示されます。",
   "card.blankKeys": "矢印キーで候補を移動し、<kbd>Enter</kbd>で選択中の文字を追加します。",
   "card.copyCodePoint": "符号位置をコピー",

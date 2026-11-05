@@ -109,14 +109,41 @@
 
   const first = $derived(ready && char ? gloss(char) : '')
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
+
+  // The drawer follows a finger on its top bar, and a pull far enough down closes it.
+  const CLOSE_AT = 80
+  /** @type {{ y: number, drawer: HTMLElement } | null} */
+  let pull = null
+  /** @param {PointerEvent & { currentTarget: HTMLElement }} event */
+  function grab(event) {
+    if (/** @type {Element} */ (event.target).closest('button')) return
+    const drawer = event.currentTarget.closest('aside')
+    if (!drawer) return
+    // A press that began a text selection would turn the next one into a native drag.
+    event.preventDefault()
+    pull = { y: event.clientY, drawer }
+    event.currentTarget.setPointerCapture(event.pointerId)
+    drawer.style.transition = 'none'
+  }
+  /** @param {PointerEvent} event */
+  function drag(event) {
+    if (pull) pull.drawer.style.transform = `translateY(${Math.max(0, event.clientY - pull.y)}px)`
+  }
+  /** @param {PointerEvent} event */
+  function drop(event) {
+    if (!pull) return
+    if (event.type === 'pointerup' && event.clientY - pull.y > CLOSE_AT) ui.sheet = false
+    pull.drawer.style.transition = ''
+    pull.drawer.style.transform = ''
+    pull = null
+  }
 </script>
 
 {#if ui.sheet}
-  <div class="sheetbar">
-    <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => { ui.sheet = false }}>
-      <Icon name="back" size={15}/>
-      {t('card.back')}
-    </button>
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="sheetbar" onpointerdown={grab} onpointermove={drag} onpointerup={drop} onpointercancel={drop}>
+    <span class="handle" aria-hidden="true"></span>
+    <button class="ui-button close" data-variant="quiet" data-size="sm" type="button" onclick={() => { ui.sheet = false }}>{t('card.close')}</button>
   </div>
 {/if}
 
@@ -366,7 +393,8 @@
 {/if}
 
 <style>
-  .sheetbar{position:sticky;top:0;z-index:2;padding:var(--ui-space-xs) var(--ui-space-lg);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border)}
+  .sheetbar{position:sticky;top:0;z-index:2;display:flex;justify-content:flex-end;align-items:center;min-block-size:44px;padding:var(--ui-space-2xs) var(--ui-space-sm);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border);touch-action:none;cursor:grab;user-select:none}
+  .handle{position:absolute;inset-block-start:8px;inset-inline-start:50%;inline-size:40px;block-size:4px;border-radius:2px;background:var(--ui-color-border-strong);transform:translateX(-50%)}
   .blank{display:grid;gap:var(--ui-space-md);justify-items:center;text-align:center;padding:72px var(--ui-space-3xl);color:var(--ui-color-ink-soft)}
   .blank-glyph{font-size:88px;color:var(--ui-color-border-strong);line-height:1}
   .blank-line{max-inline-size:24em}
