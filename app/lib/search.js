@@ -133,7 +133,7 @@ export function byMeaning(query, options = {}) {
       if (seen.has(char)) continue
       const tier = rank(text)
       if (tier < 9) {
-        hits.push({ char, tier: tier + 2, sense: text, lang: 'en' })
+        hits.push({ char, tier: tier + 3, sense: text, lang: 'en' })
         seen.add(char)
       }
     }

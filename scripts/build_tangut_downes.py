@@ -41,7 +41,7 @@ def main():
         'via': f'https://github.com/C27Ezx/TangutTranslator/blob/{COMMIT}/tangut_learning_data.json',
         'licence': 'MIT, as the repository states it',
         'note': 'The site itself returned HTTP 521 when tried on 2026-11-05, so these glosses were read '
-                'only through the repository. Of 456 characters that also have a Wiktionary gloss, 374 '
+                'only through the repository. Of 441 characters that also have a Wiktionary gloss, 373 '
                 'share a word with it; some of the others are synonyms and some disagree.',
         'glosses': {char: '; '.join(senses) for char, senses in sorted(glosses.items())},
     }
