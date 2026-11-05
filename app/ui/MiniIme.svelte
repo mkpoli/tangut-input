@@ -62,7 +62,12 @@
     /** @type {Map<string, Hit>} */
     const unique = new Map()
     for (const [, list] of lists) for (const hit of list) if (!unique.has(hit.char)) unique.set(hit.char, hit)
-    return { list: [...unique.values()].slice(0, 48), kinds: used }
+    // A whole Tibetan spelling keeps a place at the end, past the codes and readings a short query
+    // fills the list with; those stay where they are, so the number keys still pick the same ones.
+    const list = [...unique.values()]
+    const kept = list.slice(0, 48)
+    const whole = byTibetan(text).filter(hit => hit.tier === 0 && !kept.some(other => other.char === hit.char)).slice(0, 24)
+    return { list: [...kept.slice(0, 48 - whole.length), ...whole.map(hit => ({ char: hit.char, note: hit.shown }))], kinds: used }
   })
 
   const hits = $derived(found.list)

@@ -39,6 +39,11 @@ test('a whole spelling comes before one that begins with the query, and the comm
   expect(new Set(hits.map(hit => hit.char)).size).toBe(hits.length)
 })
 
+test('a spelling of two syllables is found with or without the space', () => {
+  expect(exact('me lda')).toEqual(exact('melda'))
+  expect(exact('melda').length).toBeGreaterThan(0)
+})
+
 test('an unread letter is never indexed, and other text finds nothing', () => {
   expect(index.some(spelling => spelling.shown.includes('?'))).toBe(false)
   expect(searchTibetan(index, '菩')).toEqual([])
