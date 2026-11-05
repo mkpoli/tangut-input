@@ -36,7 +36,7 @@ export const ix = {
   /** @type {import('./reading.js').Reading[]} */ readings: [],
   /** CCAMC readings Wiktionary does not carry, used by the search and never shown. @type {import('./reading.js').HiddenReading[]} */ hiddenReadings: [],
   /** CCAMC glosses as normalized terms, used by the meaning search and never shown.
-   *  @type {{ meanings: Record<string, Record<string, [string, string][]>> }} */ ccamcMeanings: { meanings: {} },
+   *  @type {{ meanings: Record<string, Record<string, string[]>> }} */ ccamcMeanings: { meanings: {} },
   /** @type {Map<string, number>} */ strokes: new Map(),
   /** The parts of each description at every layer, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
   /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
