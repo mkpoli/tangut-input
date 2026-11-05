@@ -377,8 +377,8 @@
   .finders .group{display:flex;align-items:stretch;gap:2px}
   .finders .primary{font-weight:var(--ui-weight-semibold)}
   .finders .group + .group, .finders .primary + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
-  /* The finder row cannot hold the introduction below 1141px; it moves up beside the mark. */
-  @media (min-width:901px) and (max-width:1140px){
+  /* The finder row cannot hold the introduction below 1280px; it moves up beside the mark. */
+  @media (min-width:901px) and (max-width:1279px){
     .intro-extra{display:flex}
     .finders .intro{display:none}
   }
@@ -386,7 +386,9 @@
   .reading{display:flex;align-items:center;gap:var(--ui-space-xs)}
   .reading-label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
   .reading-icon{display:grid;place-items:center;color:var(--ui-color-ink-muted)}
-  @media (max-width:900px){.reading-label{display:none}}
+  /* The finder row needs the label's space until the bar is wide enough for the intro, the
+     reconstruction and the sponsor together. */
+  @media (max-width:1799px){.reading-label{display:none}}
   .reading :global(.ui-select){inline-size:172px}
   /* The sponsor button: a soft pink pill led by the author's face, with a small heart on it that beats. */
   .sponsor{--sp-from:light-dark(#ffe6ef,#3d1a2b);--sp-to:light-dark(#fff0e0,#3a2318);--sp-ink:light-dark(#c2185b,#ffb3cd);--sp-heart:light-dark(#ff4f88,#ff7aa6);--sp-line:light-dark(#ffd0de,#5a2a3f);
