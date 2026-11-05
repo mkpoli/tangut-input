@@ -329,6 +329,7 @@
   "card.spellingPrinted": "As printed",
   "card.spellingSource": "Scanned tables",
   "card.spellingIndex": "BabelStone’s index",
+  "card.spellingUnread": "Written as the table prints it; ? is a letter it could not read.",
   "card.tone.level": "level tone",
   "card.tone.rising": "rising tone",
   "card.tone.entering": "entering tone",

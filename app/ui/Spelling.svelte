@@ -147,6 +147,7 @@
         {#if ipa}<dt title={t('card.spellingIpaNote')}>{t('card.spellingIpa')}</dt><dd class="ipa">[{ipa}]</dd>{/if}
         {#if printed && printed !== transcription}<dt>{t('card.spellingPrinted')}</dt><dd class="ui-mono">{printed}</dd>{/if}
       </dl>
+      {#if printed.includes('?')}<p class="unread ui-hint">{t('card.spellingUnread')}</p>{/if}
       <p class="links">
         <a href="https://zhuanlan.zhihu.com/p/272058247" target="_blank" rel="noopener noreferrer">{t('card.spellingSource')}<span aria-hidden="true">↗</span></a>
         {#if babelstone}<a href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.spellingIndex')}<span aria-hidden="true">↗</span></a>{/if}
@@ -175,6 +176,7 @@
   dt{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
   dd{margin:0;font-size:var(--ui-text-xs);overflow-wrap:anywhere}
   .ipa{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm);letter-spacing:0.01em}
+  .unread{margin:var(--ui-space-sm) 0 0;font-size:var(--ui-text-2xs);line-height:1.35}
   .links{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-md);margin:var(--ui-space-sm) 0 0;padding-top:var(--ui-space-sm);border-top:1px solid var(--ui-color-border)}
   .links a{display:inline-flex;align-items:center;gap:2px;font-size:var(--ui-text-xs);text-underline-offset:2px}
 </style>
