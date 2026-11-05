@@ -156,6 +156,27 @@ export const ERA_SOURCES = {
     note: 'Reports that 王靜如, 李範文 (邦泥定國兀卒考釋) and 史金波 read 兀卒 as 皇帝, and quotes the 長編 for a rival gloss, 青天子.',
     url: 'https://www.sinoss.net/uploadfile/2012/0606/20120606103541242.pdf',
   },
+  wu1983: {
+    author: '吳天墀',
+    title: '西夏稱「邦泥定」即「白上國」新解',
+    where: '寧夏大學學報（社會科學版）1983(3), read on 愛思想 without page numbers',
+    note: 'Gives 邦泥鼎 from the 長編, 邦兒定 from the 東都事略 and 邦面令 from the 石林燕語, and takes them as transcriptions of 白上國.',
+    url: 'https://www.aisixiang.com/data/141396.html',
+  },
+  hu2006: {
+    author: '胡玉冰',
+    title: '漢文西夏文獻之特點及其研究意義和研究方法',
+    where: '西夏學 1 (2006), p. 141',
+    note: 'Quotes the 長編 with 邦尼定, where 吳天墀 quotes it with 邦泥鼎. The editions were not compared here.',
+    url: 'https://www.sinoss.net/uploadfile/2010/1130/10617.pdf',
+  },
+  ngwu2026: {
+    author: 'NGWU YOH',
+    title: 'Chat message',
+    where: '2026-11-05',
+    note: 'Says the 泥 of 邦泥定 may be an error for 尾, a remark with no source or argument given. The comparison with 𗹭 and with 邦面令 is made on this page.',
+    url: '',
+  },
   kepping2001: {
     author: 'K. B. Kepping',
     title: 'Mi-nia (Tangut) Self-appellation and Self-portraiture in Khara Khoto Materials',
@@ -237,5 +258,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'commons', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'ngwu2026', 'commons', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
 ])
