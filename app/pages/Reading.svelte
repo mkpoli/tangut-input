@@ -5,7 +5,7 @@
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
-  import { SYSTEMS, TIERS, searchReadings, fold, systemTitle } from '../lib/reading.js'
+  import { SYSTEMS, TIERS, searchReadings, fold, systemName, systemTitle } from '../lib/reading.js'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import Icon from '../ui/Icon.svelte'
 
@@ -76,7 +76,9 @@
         <div class="ui-chip-row">
           <button type="button" class="ui-chip" aria-pressed={!systems.length} onclick={() => { systems = [] }}>{t('common.all')}</button>
           {#each SYSTEMS as system (system.key)}
-            <button type="button" class="ui-chip" aria-pressed={systems.includes(system.key)} title={system.name} onclick={() => toggle(system.key)}>{system.name.replace(/ \d.*$/, '')}</button>
+            <button type="button" class="ui-chip system" aria-pressed={systems.includes(system.key)} title={systemTitle(system)} onclick={() => toggle(system.key)}>
+              <span>{systemName(system, i18n.locale)}</span><span class="abbr" aria-hidden="true">{system.abbr}</span>
+            </button>
           {/each}
           <button type="button" class="ui-chip" aria-pressed={systems.includes('ccamc')} title={t('reading.ccamc')} onclick={() => toggle('ccamc')}>CCAMC</button>
         </div>
@@ -88,7 +90,7 @@
     <div class="start">
       <span class="ui-hint">{t('find.try')}</span>
       {#each EXAMPLES as example (example)}
-        <button type="button" class="ui-chip ui-mono" onclick={() => { query = example; setQuery(example) }}>{example}</button>
+        <button type="button" class="ui-chip ui-phonetic" onclick={() => { query = example; setQuery(example) }}>{example}</button>
       {/each}
     </div>
   {:else if !ready}
@@ -112,7 +114,7 @@
                 <span class="r" title={t('reading.ccamcNote')}><span class="ui-tag">CCAMC</span></span>
               {:else}
                 {#each hit.readings as reading (reading.system)}
-                  <span class="r"><span class="ui-tag" title={systemTitle(NAMES[/** @type {keyof typeof NAMES} */ (reading.system)])}>{NAMES[/** @type {keyof typeof NAMES} */ (reading.system)].short}</span>{reading.raw}</span>
+                  <span class="r" title={systemTitle(NAMES[/** @type {keyof typeof NAMES} */ (reading.system)])}><span class="ui-tag">{NAMES[/** @type {keyof typeof NAMES} */ (reading.system)].tag}</span>{reading.raw}</span>
                 {/each}
               {/if}
             </span>
@@ -131,7 +133,7 @@
 
 <style>
   .controls{display:grid;gap:var(--ui-space-md)}
-  .reading-input{font-family:var(--ui-font-serif);font-size:18px}
+  .reading-input{font-family:var(--ui-font-phonetic);font-size:18px}
   .filters{display:grid;gap:var(--ui-space-sm)}
   .filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-sm)}
   .filter-row > .ui-label{inline-size:92px}
@@ -139,9 +141,11 @@
   .tier + .tier::before{content:" · "}
   .reading-row{grid-template-columns:48px minmax(0,1.3fr) minmax(0,1fr)}
   .reading-row :global(.ui-script){font-size:32px;text-align:center}
-  .said{display:flex;flex-wrap:wrap;gap:2px var(--ui-space-lg);font-family:var(--ui-font-serif);font-size:var(--ui-text-lg)}
+  .said{display:flex;flex-wrap:wrap;gap:2px var(--ui-space-lg);font-family:var(--ui-font-phonetic);font-size:var(--ui-text-lg)}
   .said .r{white-space:nowrap}
   .said .ui-tag{margin-inline-end:var(--ui-space-2xs)}
+  .system{gap:var(--ui-space-xs)}
+  .system .abbr{color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);letter-spacing:.02em}
   .ui-group-head{padding:var(--ui-space-lg) 0 var(--ui-space-2xs)}
   @media (max-width:900px){
     .filter-row > .ui-label{inline-size:100%}

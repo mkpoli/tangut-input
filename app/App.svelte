@@ -5,7 +5,7 @@
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES, GROUPS, PRIMARY } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, setReading } from './lib/ui.svelte.js'
-  import { SYSTEMS, systemName, systemTitle } from './lib/reading.js'
+  import { SYSTEMS, systemBaseName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
   import { i18n, t } from './lib/i18n.svelte.js'
   import { applySeo } from './lib/seo.js'
@@ -224,7 +224,7 @@
         <span class="ui-select-wrap">
           <select class="ui-select" data-size="sm" value={ui.reading}
             onchange={(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) => setReading(event.currentTarget.value)}>
-            {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemName(entry, i18n.locale)}</option>{/each}
+            {#each SYSTEMS as entry (entry.key)}<option value={entry.key} title={systemTitle(entry)}>{systemBaseName(entry, i18n.locale)}</option>{/each}
           </select>
         </span>
       </label>
