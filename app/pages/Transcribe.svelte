@@ -52,7 +52,7 @@
   const readingOf = char => (ix.byChar.get(char)?.pronunciations ?? {})[ui.reading]?.trim() ?? ''
   /** The line as readings, a dash where the data records none. */
   const transcription = $derived(chars.map(char => readingOf(char) || '—').join(' '))
-  /** All six systems, one row per character, tab-separated. */
+  /** All seven systems, one row per character, tab-separated. */
   const table = $derived.by(() => {
     const rows = [['char', ...SYSTEMS.map(system => systemName(system, i18n.locale)), 'rhyme', 'meaning'].join('\t')]
     for (const char of chars) {
