@@ -93,6 +93,16 @@ test('Downes\'s glosses belong to known characters and none is empty', () => {
   expect(glosses['𘞗']).toBe('seed')
 })
 
+test('the 類林 glosses belong to known characters, the commonest first', () => {
+  const { glosses } = JSON.parse(readFileSync(new URL('../app/data/tangut-leilin.json', import.meta.url), 'utf8'))
+  const known = new Set(entries.rows.map(row => row[0]))
+  expect(Object.keys(glosses).length).toBe(1703)
+  // The text also uses two characters of the Tangut Supplement block, which the records do not hold.
+  expect(Object.keys(glosses).filter(char => !known.has(char))).toEqual(['𘴄', '𘴈'])
+  for (const list of Object.values(glosses)) expect(list.map(([, count]) => count)).toEqual(list.map(([, count]) => count).toSorted((a, b) => b - a))
+  expect(glosses['𘄿'][0]).toEqual(['篇', 22])
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {
