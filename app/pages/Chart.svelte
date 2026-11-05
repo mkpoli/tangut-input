@@ -322,7 +322,7 @@
   tbody th.head-cell{position:sticky;left:0;z-index:1;padding:var(--ui-space-2xs) var(--ui-space-sm);border-inline-end:1px solid var(--ui-color-border);background:var(--ui-color-surface);text-align:end;white-space:nowrap;min-inline-size:52px;font-family:var(--ui-font-mono);font-size:var(--ui-text-xs)}
   tbody th.head-cell .ui-script{display:block;font-size:20px;color:var(--ui-color-ink)}
   tbody th.head-cell small{display:block;font-weight:var(--ui-weight-normal);font-size:10px;color:var(--ui-color-ink-muted)}
-  .rhyme-number.open{padding:0 4px;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font:inherit;font-weight:var(--ui-weight-semibold);cursor:pointer}
+  .rhyme-number.open{display:inline-grid;place-items:center;min-inline-size:24px;min-block-size:24px;padding:0 4px;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font:inherit;font-weight:var(--ui-weight-semibold);cursor:pointer}
   .rhyme-number.open:hover{background:var(--ui-color-surface-hover)}
   .rhyme-number.open[aria-expanded='true']{background:var(--ui-color-surface-sunken)}
   tr.chinese td{padding:var(--ui-space-xs) var(--ui-space-sm);background:var(--ui-color-surface-sunken)}
