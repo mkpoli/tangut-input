@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://x18n.dev/schema/reviews.json
+x18n: 1
+sources:
+  core:card.loadingFaces:
+    ja: 19d59c0ef5edeb
+    ko: 19d59c0ef5edeb
+    zh-Hans: 19d59c0ef5edeb
+    zh-Hant: 19d59c0ef5edeb
+  core:card.renderings:
+    ja: a6fd7f4208e9
+    ko: a6fd7f4208e9
+    zh-Hans: a6fd7f4208e9
+    zh-Hant: a6fd7f4208e9
+  core:card.showFaces:
+    ja: c5063e869b28f
+    ko: c5063e869b28f
+    zh-Hans: c5063e869b28f
+    zh-Hant: c5063e869b28f
+  core:find.door.parts:
+    ja: d31b156f15727
+    ko: d31b156f15727
+    zh-Hans: d31b156f15727
+    zh-Hant: d31b156f15727
+  core:font.face:
+    ja: 7daff76ae48ba
+    ko: 7daff76ae48ba
+    zh-Hans: 7daff76ae48ba
+    zh-Hant: 7daff76ae48ba
+  core:ime.kind.parts:
+    ja: 34605252812f9
+    ko: 34605252812f9
+    zh-Hans: 34605252812f9
+    zh-Hant: 34605252812f9
+  core:nav.parts.hint:
+    ko: 26ed3e3aa6d8f
+    zh-Hans: 26ed3e3aa6d8f
+    zh-Hant: 26ed3e3aa6d8f
+  core:parts.allComponents:
+    ja: 128c2ab8b89648
+    ko: 128c2ab8b89648
+    zh-Hans: 128c2ab8b89648
+    zh-Hant: 128c2ab8b89648
+  core:parts.filterLabel:
+    ja: 11e474546d9423
+    ko: 11e474546d9423
+    zh-Hans: 11e474546d9423
+    zh-Hant: 11e474546d9423
+  core:parts.intro:
+    ja: 12b3a684c07152
+    ko: 12b3a684c07152
+    zh-Hans: 12b3a684c07152
+    zh-Hant: 12b3a684c07152
+  core:parts.paletteLabel:
+    ja: 34605252812f9
+    ko: 34605252812f9
+    zh-Hans: 34605252812f9
+    zh-Hant: 34605252812f9
