@@ -1,5 +1,6 @@
 // The finders that read the records directly: Cangjie codes, meanings, parts and code points.
 // Readings live in reading.js and drawings in shape.js.
+import { searchTibetan } from './tibetan.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
 import { searchShapeNames } from './names.js'
@@ -88,11 +89,12 @@ export const MEANING_LANGUAGES = /** @type {const} */ (['en', 'ja', 'zh'])
 
 /**
  * Characters whose recorded meanings contain the words: a whole sense first, then a whole word, then
- * any substring. The glosses are Open Tangut's, in English, Japanese and Chinese; a search can keep
- * to one of the three. The 文海 explanation of a character is searched too, after every gloss.
+ * any substring. The displayed glosses are Wiktionary's, in English, Japanese and Chinese; a search
+ * can keep to one of the three. CCAMC's normalized terms answer the search too, after every gloss,
+ * but a result that only CCAMC answers carries no sense: the card links to CCAMC instead.
  * @param {string} query
  * @param {{ languages?: string[] }} [options]
- * @returns {{ char: string, tier: number, sense: string, lang: string }[]}
+ * @returns {{ char: string, tier: number, sense: string, lang: string, via?: 'ccamc' }[]}
  */
 export function byMeaning(query, options = {}) {
   const needle = query.trim().toLowerCase()
@@ -105,8 +107,10 @@ export function byMeaning(query, options = {}) {
     const senses = lower.split(/[;；,，。、]\s*/)
     return senses.some(/** @param {string} part */ part => part.trim() === needle) ? 0 : word.test(lower) ? 1 : lower.includes(needle) ? 2 : 9
   }
-  /** @type {{ char: string, tier: number, sense: string, lang: string }[]} */
+  /** @type {{ char: string, tier: number, sense: string, lang: string, via?: 'ccamc' }[]} */
   const hits = []
+  /** @type {Set<string>} */
+  const seen = new Set()
   for (const entry of ix.entries) {
     const d = entry.definitions ?? {}
     let tier = 9, sense = '', lang = ''
@@ -114,14 +118,26 @@ export function byMeaning(query, options = {}) {
       const t = rank(text)
       if (t < tier) { tier = t; sense = text; lang = key }
     }
-    // A character the 文海 explains with the word, without glossing it so, still answers the search.
+    // The 文海's own entry text can answer even when the gloss does not use the word.
     if (tier > 2) for (const key of languages) {
-      const text = /** @type {any} */ (entry)[`wenhai_text_${key}`]
-      if (typeof text !== 'string') continue
-      const t = rank(text)
-      if (t + 3 < tier) { tier = t + 3; sense = text; lang = key }
+      const value = key === 'en' ? entry.wenhai_text_en : key === 'zh' ? entry.wenhai_text_zh : ''
+      if (typeof value !== 'string') continue
+      const t = rank(value)
+      if (t + 3 < tier) { tier = t + 3; sense = value; lang = key }
     }
-    if (tier < 9) hits.push({ char: entry.char, tier, sense, lang })
+    if (tier < 9) { hits.push({ char: entry.char, tier, sense, lang }); seen.add(entry.char) }
+  }
+  const hidden = ix.ccamcMeanings
+  for (const key of languages) {
+    for (const [char, terms] of Object.entries(hidden.meanings?.[key] ?? {})) {
+      if (seen.has(char)) continue
+      let tier = 9
+      for (const text of terms) tier = Math.min(tier, rank(text))
+      if (tier < 9) {
+        hits.push({ char, tier: tier + 3, sense: '', lang: key, via: 'ccamc' })
+        seen.add(char)
+      }
+    }
   }
   return hits.sort((a, b) => a.tier - b.tier || frequency(b.char) - frequency(a.char)
     || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
@@ -229,3 +245,6 @@ export const byDescription = text => describedBy(ix.entries, text)
 export function tangutIn(text) {
   return [...new Set([...text].filter(isTangut))]
 }
+
+/** Characters by a Tibetan spelling, in script, Wylie or the tables' notation. @param {string} text */
+export const byTibetan = text => searchTibetan(ix.tibetanIndex, text)

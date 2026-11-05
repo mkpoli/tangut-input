@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data' / 'zhangzhongzhu'
 STATUSES = {'ok', 'uncertain', 'illegible', 'absent'}
 GLOSS_STATUSES = {'ok', 'uncertain', 'illegible'}
+COLUMN_ROLES = {'gloss', 'transcription', 'tangut', 'unknown'}
 ROLES = {'tangut', 'transcription', 'gloss_spelling'}
 # Tangut, Tangut components, Tangut Supplement. Khitan Small Script (U+18B00) is
 # a different script and must not pass.
@@ -46,6 +47,8 @@ def main():
         entries[entry] = row
         if row['gloss_status'] and row['gloss_status'] not in GLOSS_STATUSES:
             problems.append(f'entries.tsv:{line} gloss_status {row["gloss_status"]!r} is not one of {sorted(GLOSS_STATUSES)}')
+        if row['column_role'] not in COLUMN_ROLES:
+            problems.append(f'entries.tsv:{line} column_role {row["column_role"]!r} is not one of {sorted(COLUMN_ROLES)}')
         if row['reviewed'] not in {'', '0', '1'}:
             problems.append(f'entries.tsv:{line} reviewed {row["reviewed"]!r} is not 0 or 1')
 

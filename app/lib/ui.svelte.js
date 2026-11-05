@@ -1,9 +1,11 @@
 // The few view states that are not worth an address: the phone's card sheet and the theme.
+import { untrack } from 'svelte'
 import { open, route } from './route.svelte.js'
 import { insert } from './text.svelte.js'
 import { say } from './clip.svelte.js'
 import { i18n, t } from './i18n.svelte.js'
 import { record } from './record.js'
+import { readingFromStore } from './reading.js'
 
 const THEME = 'tangut-input:theme'
 const TANGUT = 'tangut-input:font'
@@ -40,8 +42,8 @@ export const ui = $state({
   ),
   /** The face Tangut is set in. @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */
   tangut: /** @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(TANGUT)) || 'serif'),
-  /** Which reconstruction readings are shown in, wherever a system can be chosen. 龔勛's by default. */
-  reading: (typeof localStorage !== 'undefined' && localStorage.getItem(READING)) || 'gong_xun_202411',
+  /** Which reconstruction readings are shown in, wherever a system can be chosen. */
+  reading: readingFromStore(typeof localStorage !== 'undefined' ? localStorage.getItem(READING) : null),
 })
 
 /** Remember the reconstruction a reader picked, for the pages that show readings. @param {string} key */
@@ -50,8 +52,10 @@ export function setReading(key) {
   try { localStorage.setItem(READING, key) } catch { /* a blocked store only loses the choice */ }
 }
 
-/** Show a character in the card without taking the reader anywhere (arrow keys, highlighting). @param {string} char */
-export const preview = char => open(char)
+/** Show a character in the card without taking the reader anywhere (arrow keys, highlighting).
+ * A page previews from an effect on its highlight; the open character stays out of that effect, so a
+ * choice made in the card is not put back. @param {string} char */
+export const preview = char => untrack(() => open(char))
 
 /** Open a character: the card on a wide screen, the sheet on a narrow one. @param {string} char */
 export function choose(char) {

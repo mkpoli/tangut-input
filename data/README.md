@@ -17,6 +17,14 @@ snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
 underlying editions are in `wikisource/README.md` and in the source records of the built file.
 
+## `mica/`
+
+Two texts the Mi Corpus Annotation Group transcribed itself: 華嚴經 juan 77, from the images in 荒川慎太郎
+2011, and the Lotus Sutra's Universal Gateway chapter, from the images in 陈炳应 1985. The group's
+licence is CC BY 4.0, and `manifest.json` pins the commit they were copied from. Its other ten texts
+come from Wikisource, which this corpus reads directly. `scripts/build_tangut_attestation.py` reads them
+as the source `mica`.
+
 ## `lcdtt/`
 
 The 21 text files of the Lausanne Corpus of Digital Tangut Texts
@@ -47,16 +55,52 @@ texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausa
 ## `tangut-era-evidence.tsv`
 
 What each Tangut era form rests on, one row per form and source: the era and its first year as the
-Western Xia calendar gives them, the Tangut form, the kind (`coin`, `disputed`, `text`, or `unknown`
-when a source says no form is known, with the form left empty) and the source's key in
-`app/lib/era-sources.js`. Compiled by hand from West's coin article (2007), his post on the law
-code's title (2020) and Nie Hongyin (2004) as quoted by 公維章 (2020). Eras without a row rest on
-the calendar alone. `scripts/build_tangut_eras.py` joins it to the calendar.
+Western Xia calendar gives them, the Tangut form, the kind (`coin`, `disputed`, `text`, `gloss`, `post`, or
+`unknown` when a source says no form is known, with the form left empty), the source's key in
+`app/lib/era-sources.js` and, for a form found in this repository's own texts, the `place`
+(`wikisource:<page>` or `lcdtt:<file>`). Compiled by hand from West's coin article (2007), his post
+on the law code's title (2020), Nie Hongyin (2004) as quoted by 公維章 (2020), and dated lines in
+the Wikisource and Lausanne texts. A `text` row is a date, except 天盛, which rests on the law code's
+title and has no `place`. A `post` form comes from a social media post and may differ from the
+calendar's. Eras without a row rest on the calendar alone.
+`scripts/build_tangut_eras.py` joins it to the calendar and stops unless a form with a `place`
+is followed there by a year.
+
+## `tangut-posthumous.tsv`
+
+Posthumous, temple and tomb names, one row per emperor or empress: `kind`, the names, an empress's `relation` to a ruler, Tangut with its
+`tangut_source` where a source gives it, and the `quote` from 宋史 卷485–486 that names them. Compiled
+by hand. `scripts/build_tangut_posthumous.py` stops if a name is not in its quotation.
+
+## `tangut-state-names.tsv`
+
+Names of the state, one row per name and citing work: the Chinese, if a source gives it, with the
+`chinese_source` printing it; the Tangut, if known; an English `gloss` a source gives; a `note` key for a message on the row;
+the source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the
+Tangut; and `backs`, whether the work bears on the Tangut, the Chinese or the note. Compiled by hand.
+`scripts/build_tangut_state_names.py` stops if a name does not occur in its place.
+
+## `tangut-later-eras.tsv`
+
+Era names matching Yuan eras, in Tangut, one row per era: the era, the Tangut and the source's key in
+`app/lib/era-sources.js`. Read by hand from an image in a post by @zoenshiueh_lieu, which does not say whose
+eras these are. `scripts/build_tangut_later_eras.py` builds the page's data.
+
+## `tangut-titles.tsv`
+
+Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or
+history, `caption`, stated only by a Commons caption, `codes`, named by a study whose font codes for the title are worked out here, `decoded`, matched here to the font codes of a title a
+study prints, `dated`, inferred from the date of the passage,
+or `disputed`; the Tangut, if known; the Chinese exactly as `chinese_source` prints it, if any; the
+source's key in `app/lib/era-sources.js`; a `place` when a text in this repository writes the Tangut;
+and `backs`, whether the work supports the Tangut or the Chinese. Compiled by hand.
+`scripts/build_tangut_titles.py` stops if a title does not occur in its place, and marks each title
+`text`, `reported` or `chinese` by what its Tangut rests on. The build sets `kind`: `city` (城號) when the title has 城 or 𗍁, otherwise `honorific`.
 
 ## `tangut-frequency.json.gz`
 
 One count per Tangut character: the number of places it occupies in
-`app/data/tangut-attestation.json.gz`, 92,509 places over 3,350 characters. A character repeated in a
+`app/data/tangut-attestation.json.gz`, 105,542 places over 3,379 characters. A character repeated in a
 duplicated text counts each time. The file carries the corpus hash and the counts, sorted by count.
 Built by `scripts/build_tangut_frequency.py`; the finders read it to rank candidates inside their own
 tiers.
@@ -378,6 +422,27 @@ vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-nam
 comparison on Parts: Japanese shape names, the English abstract's wording for くノ and ノメ, and
 empty cells where the sources read record no name.
 
+## tangut-component-shape-hints.json.gz
+
+An editorial ranking, not a name table. Each of the 768 Tangut components U+18800–18AFF is compared
+with the eighteen components that have an attested Japanese shape name, and the three nearest names
+are kept with a cosine score and whether the stroke count agrees. 16 KB gzipped, built by
+`uv run scripts/rank_component_shapes.py` from `app/public/fonts/TangutYinchuan.ttf`.
+
+The score says the ink resembles an attested component's ink; it does not say the two are the same
+component or that the name applies. The method cannot separate くノ from ノメ, which score about
+0.98 against each other. Use the file to find candidates for review, never to fill
+`data/tangut-component-names.tsv`.
+
+Format: `format`, `version`, `editorial`, `note`, `method` (font, size, metric, limitation), `counts`,
+`exemplars` and `components`, one row per component with `char`, `codepoint`, `strokes`, `named` and
+`candidates` (name, char, score, strokes, sameStrokes).
+
+- Font: Tangut Yinchuan, Jing Yongshi and Andrew West, served unmodified; its terms are in
+  `app/public/fonts/FONT-LICENCES.md`, including the acknowledgement when it appears in a
+  publication.
+- The file is **editorial** and carries no claim of attestation.
+
 ## component-name-wikidata.json
 
 The labels and aliases of the 214 radicals' Wikidata items, in English, Japanese, Chinese (all three
@@ -543,59 +608,34 @@ constants in `src/composer/constants.json` come from han-compose at bd0829b (MIT
 previously used by the composer's test fixture. Tangut Components Supplement glyphs
 are absent from this font version and report a missing glyph.
 
-## `tangut-gloss-words.tsv.gz`
+## Tangut entries
 
-One Chinese word for each Tangut character, for a table that reads a character by its meaning: 毒,
-佛, 日 and 世界 can be read as they stand, 【宿】 writes a sound and has no meaning to read. 6,144
-rows, 56 KB gzipped. Format: `char`, `gloss`, `tier`, `reading`; comments start with `#`.
+`app/data/tangut-entries.json.gz` holds the values a page may show: five readings from the Lua
+modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyake, Kychanov 2006,
+Sofronov 1968, Nishida 1966), Gong Hwang-cherng's GHC and Gong Xun's GX202411 from the Tangut
+Pronunciation Database, English
+meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
+BabelStone's IDS description, the 文海's entry text for the twelve characters it carries in this
+snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
+meanings are CC BY-SA 4.0; GHC and GX202411 are cited from the Tangut Pronunciation Database under
+its Limited Public Use licence; the description is public domain; the radical and stroke data are
+Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
+`data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
+`data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
+`data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
 
-`gloss` is the first sense of the entry's first Chinese gloss in `app/data/tangut-entries.json.gz`.
-Senses are separated by 、；， or a space outside brackets; numbering, part-of-speech tags and
-placeholder senses (暫無解釋, 不識) are dropped. A note in brackets stays with the gloss and is
-tiered `long`, so （滴）答 is not guessed into 滴答. `tier` counts the characters of the gloss:
-`word`, one (3,117); `phrase`, two to four (2,053); `long`, five or more, a note in brackets, or a
-description that begins 用在 or 作為 (162); `transliteration`, a foreign sound (728); `empty`,
-nothing to read (61); `redirect`, the first gloss points at another character (23). `reading` is
-Gong Xun's 202411 reconstruction, which 5,829 characters have.
+`app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
+one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from
+CCAMC. The card links to
+`http://ccamc.org/tangut.php?n4694=<char>`; no page renders the index. It is built from a copy of
+the former Open Tangut records, which is not committed.
 
-The gloss is the dictionary's first sense, not a chosen reading: a character glossed 世界、京城 keeps
-世界, and its senses differ in how well they read. Weighted by the 24,265 characters of the thirteen
-attested texts that the entries cover, 17,836 (73.5%) are `word`, 3,685 `phrase`, 1,462
-`transliteration`, 1,128 `long`, 151 `empty` and 3 `redirect`.
-
-Rebuild with `uv run scripts/build_tangut_gloss_words.py`, which also prints that coverage and would
-leave the file unchanged. The source is Open Tangut, whose export is MIT licensed and merges CCAMC
-and Wiktionary; `app/data/tangut-entries.json.gz` is its re-pack.
-
-Licence: **MIT**, following the entries file.
-
-## `tangut-gloss-readings.tsv.gz`
-
-How to read the word the table above gives: the 3,117 characters whose gloss is a single Chinese
-character, each with whatever readings KANJIDIC2 has for that character — pinyin, Japanese on and
-Japanese kun. 45 KB gzipped. Format: `char`, `gloss`, `pinyin`, `on`, `kun`; comments start with `#`.
-
-The readings are KANJIDIC2's — database version 2026-307, created 2026-11-03, its SHA-256 in the file
-header — in the order that file gives them: 佛 is `fo2 fu2`, ブツ フツ, ほとけ; 日 is `ri4`,
-ニチ ジツ, ひ. Pinyin keeps KANJIDIC2's tone numbers. A kun reading keeps the dot of its okurigana
-stem (行 い.く); a bound form marked with a hyphen at either end is left out, because it belongs to the
-word the character ends or begins (日 -び, 上 うわ-). 3,068 rows have pinyin, 3,063 on and 2,801 kun.
-The 35 gloss characters KANJIDIC2 does not carry (說, 悅, 內, 腳, 歲), 49 rows, keep empty readings
-rather than borrow a Japanese variant's, which is a different character, or a Chinese reading from
-another system; the remaining rows without kun are Sino-Japanese words with no Japanese word of their
-own, 毒 being ドク.
-
-Only the `word` tier is read. A gloss of two or more characters is a phrase whose Japanese reading is
-not its parts joined — 世界 is セカイ, not よかい — so the phrase, long, transliteration and empty
-rows wait for an editor.
-
-Rebuild with `uv run scripts/build_tangut_gloss_readings.py`, which fetches KANJIDIC2 into `cache/`
-against the pinned SHA-256 and prints the counts above. The gloss words come from the MIT file beside
-this one.
-
-Licence: **CC BY-SA 4.0** for the readings, KANJIDIC2's
-(<https://creativecommons.org/licenses/by-sa/4.0/>), Electronic Dictionary Research and Development
-Group, Copyright EDRDG.
+`data/wiktionary/txg-readings.json.gz` records the five modules' values with their revision ids;
+`data/wiktionary/definitions-ja.json.gz` records the ja.wiktionary pages with theirs. Both are
+refreshed by `uv run scripts/fetch_tangut_wiktionary.py`, which makes five module requests and six
+batches of fifty page titles. `data/gong-xun/ghc.json.gz` and `data/gong-xun/gx202411.json.gz` hold GHC and GX202411 from the
+2025-05-07 table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh them
+with `uv run scripts/fetch_tangut_gong_xun.py`.
 
 ## Bopomofo outlines
 
