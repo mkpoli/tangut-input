@@ -86,12 +86,10 @@ export function searchTibetan(index, query) {
   return [...hits.values()].sort((a, b) => a.tier - b.tier || b.count - a.count || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
 
-// How a Tibetan gloss is shown: the script as the manuscript writes it, with a dotted circle under a
-// lone vowel sign and a ? where the Wylie has a letter that could not be read, and the manuscripts
-// it stands in with a count for each.
-
-/** @param {string} wylie @param {string} script */
-export const tibetanShown = (wylie, script) => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}${wylie.includes('[?]') ? '?' : ''}`
+// Add a dotted circle to a lone vowel sign for display. Unread letters remain in the Wylie,
+// whose [?] records their position; the partial script alone cannot locate them.
+/** @param {string} script */
+export const tibetanShown = script => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}`
 
 /** @param {[string, number][]} where */
 export const tibetanWhere = where => where.map(([shelf, count]) => `${shelf} ×${count}`).join(', ')

@@ -291,7 +291,7 @@
                 <td><div class="tibetan-glosses">
                   {#each tibetanGlosses as [wylie, script, where], i (i)}
                     <span class="tibetan-gloss">
-                      <span lang="bo" class="tibetan-script">{tibetanShown(wylie, script)}</span>
+                      <span lang="bo" class="tibetan-script">{tibetanShown(script)}</span>
                       <span class="ui-mono wylie">{wylie}</span>
                       <span class="ui-hint">{tibetanWhere(where)}</span>
                     </span>

@@ -126,10 +126,15 @@ test('Readings appears for each kind of evidence without a reconstruction', () =
 
 test('a manuscript gloss keeps its script, Wylie and manuscript counts', () => {
   const [wylie, script, where] = tibetan.glosses['𗄈'][0]
-  expect(tibetanShown(wylie, script)).toBe('ཤོ')
+  expect(tibetanShown(script)).toBe('ཤོ')
   expect(wylie).toBe('sho')
   expect(tibetanWhere(where)).toBe('Or.12380/1842 ×1')
-  expect(tibetanShown('a[?]', 'ི')).toBe('◌ི?')
+  expect(tibetanShown('ི')).toBe('◌ི')
+  for (const [char, uncertain] of [['𗭍', "[?]je'"], ['𗧓', "d[?]'"]]) {
+    const gloss = tibetan.glosses[char].find(([wylie]) => wylie === uncertain)
+    expect(gloss).toBeDefined()
+    expect(tibetanShown(gloss[1])).toBe(gloss[1])
+  }
 })
 
 test('the Tibetan glosses carry a Wylie reading, a script spelling and a manuscript', () => {
