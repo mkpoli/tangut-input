@@ -21,7 +21,7 @@
     <section class="group" id={group.id}>
       <h2 class="heading">{t(`gyalrongic.group.${group.id}`)}</h2>
       {#if group.names}<p class="names">{group.names}</p>{/if}
-      <ol class="works">
+      <ol class="works" role="list">
         {#each LITERATURE[group.id] as work (work.url)}
           <li>
             <p class="work-title"><a href={work.url} target="_blank" rel="noreferrer">{work.title}</a>{#if work.gloss}{' '}<span class="gloss">({work.gloss})</span>{/if}</p>
