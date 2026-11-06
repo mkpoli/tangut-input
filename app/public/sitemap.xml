@@ -11,5 +11,7 @@
   <url><loc>https://tangut.mkpo.li/chart</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/draw</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/parts</loc><priority>0.8</priority></url>
+  <url><loc>https://tangut.mkpo.li/variants</loc><priority>0.8</priority></url>
+  <url><loc>https://tangut.mkpo.li/eras</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/about</loc><priority>0.5</priority></url>
 </urlset>

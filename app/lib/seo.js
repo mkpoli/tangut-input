@@ -60,6 +60,10 @@ export const PAGE_SEO = {
     title: 'Parts — Tangut Input',
     description: 'Choose the components you can see in a Tangut character and narrow the list to the characters built with them.',
   },
+  variants: {
+    title: 'Variant forms — Tangut Input',
+    description: 'Tangut characters and components written in more than one way, each with what supports it.',
+  },
   intro: {
     title: 'Tangut: people, script, language and texts — Tangut Input',
     description: 'A short introduction to the Tanguts (党項), the Western Xia state, the Tangut script and language, the surviving texts, and how the script is used today.',

@@ -3,6 +3,7 @@
   // can be a component or a character the description spells whole, at any layer. Each choice
   // narrows the characters to those that hold it, and the palette to the parts that still occur, so
   // the next choice always leads somewhere.
+  import { keepVariantsTogether } from '../lib/variants.js'
   import { db, ix, gloss, isTangut, codePoint, readingOf } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import PartInfo from '../ui/PartInfo.svelte'
@@ -44,7 +45,8 @@
   })
   const LAYOUT_KEYS = ['⿰', '⿱', '⿲', '⿳', '⿺', '⿸', '⿵', '⿻']
 
-  // Every part at every layer, by strokes then by how often characters use it; narrowed by the choice so far.
+  // Every part at every layer, by strokes then by how often characters use it, with variant components
+  // kept together; narrowed by the choice so far.
   const palette = $derived.by(() => {
     if (!ready) return []
     const query = filter.trim()
@@ -55,12 +57,12 @@
     let parts = [...ix.usedBy.keys()].map(part => ({ part, uses: ix.usedBy.get(part)?.size ?? 0, strokes: ix.strokes.get(part) ?? 0, live: among ? among.get(part) ?? 0 : -1 }))
     if (query) parts = parts.filter(p => named.has(p.part) || (ix.codes.get(p.part) ?? []).some(code => code.startsWith(codes) || code.startsWith(`p${codes}`)))
     if (among && !everything) parts = parts.filter(p => p.live > 0)
-    return parts.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses)
+    return keepVariantsTogether(parts.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses))
   })
   const byStroke = $derived.by(() => {
     /** @type {Map<number, typeof palette>} */
     const map = new Map()
-    for (const p of palette) map.set(p.strokes, [...(map.get(p.strokes) ?? []), p])
+    for (const p of palette) map.set(p.section, [...(map.get(p.section) ?? []), p])
     return [...map]
   })
 
@@ -183,7 +185,7 @@
                   aria-describedby={info?.part === p.part ? 'part-info' : undefined}
                   aria-label={partLabel(p)}
                   onmouseenter={event => showInfo(event, p)} onmouseleave={hideInfo} onfocus={event => showInfo(event, p)} onblur={hideInfo}>
-                  <G char={p.part} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}{#if p.live > 0}<small class="use">{p.live}</small>{/if}
+                  <G char={p.part} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}{#if p.live > 0}<small class="use">{p.live}</small>{/if}{#if p.strokes !== p.section}<small class="own-strokes" title={t('draw.strokes', { count: p.strokes })}>{p.strokes}</small>{/if}
                 </button>
               {/each}
             </div>
@@ -270,6 +272,7 @@
   .comp :global(.ui-script){font-size:25px}
   .comp :global(.ui-nog){font-size:9px}
   .comp .use{position:absolute;right:3px;bottom:1px;color:var(--ui-color-ink-muted);font-size:9.5px;font-variant-numeric:tabular-nums}
+  .comp .own-strokes{position:absolute;left:3px;bottom:1px;color:var(--ui-color-ink-muted);font-size:9.5px;font-variant-numeric:tabular-nums}
   .comp[data-dim]{opacity:.32}
   .name-table{margin-top:var(--ui-space-xl);border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg)}
   .name-table summary{cursor:pointer;font-weight:var(--ui-weight-semibold)}

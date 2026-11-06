@@ -259,6 +259,7 @@
             <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
+        <p class="more"><a href={link('variants', char)}><Icon name="arrow" size={13}/>{t('card.variantsAll')}</a></p>
       </section>
     {/if}
 
