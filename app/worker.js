@@ -11,8 +11,8 @@
 // rows land in D1 (`migrations/0001_records.sql`); `bun run records` reads them back.
 import { seoOf } from './lib/seo.js'
 
-// The paths that answer with a head of their own: `PAGES` in `app/lib/route.svelte.js`, About and the introduction.
-const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'chart', 'eras', 'transcribe', 'draw', 'parts', 'intro', 'about'])
+// The paths that answer with a head of their own: `PAGES` in `app/lib/route.svelte.js`, About, the introduction and the variants page.
+const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'chart', 'eras', 'transcribe', 'draw', 'parts', 'variants', 'intro', 'about'])
 
 // A drawing of a few hundred points is a few kilobytes; anything past this is not a reader's pen.
 const LIMIT = 60_000

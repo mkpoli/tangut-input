@@ -2,6 +2,7 @@
   // A short way into the finders from the Fanqie field. The full pages are laid out for their own
   // input; this panel keeps only the input and the candidates, so two characters can be chosen
   // without leaving the spelling they belong to. A pick goes into the fanqie, never into the text.
+  import { keepVariantsTogether } from '../lib/variants.js'
   import { tick } from 'svelte'
   import { db, ix, gloss, codePoint, isTangut, isComponent, readingOf } from '../lib/db.svelte.js'
   import { byCode, byMeaning, byCodePoint, bySijiao, byParts, byTibetan, partsAmong, tangutIn } from '../lib/search.js'
@@ -83,7 +84,7 @@
     }))
     if (needle) list = list.filter(item => (ix.codes.get(item.part) ?? []).some(code => code.startsWith(needle) || code.startsWith(`p${needle}`)))
     if (partAmong) list = list.filter(item => item.live > 0)
-    return list.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses)
+    return keepVariantsTogether(list.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses))
   })
 
   /** The palette by stroke count, the order a reader looks for a component in. */
@@ -91,9 +92,9 @@
     /** @type {Map<number, typeof palette>} */
     const groups = new Map()
     for (const item of palette) {
-      const list = groups.get(item.strokes) ?? []
+      const list = groups.get(item.section) ?? []
       list.push(item)
-      groups.set(item.strokes, list)
+      groups.set(item.section, list)
     }
     return [...groups.entries()].sort((a, b) => a[0] - b[0])
   })
@@ -568,7 +569,7 @@
                     title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
                     <span class="ui-tile-glyph"><G char={item.part} /></span>
                     {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
-                    <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}</span>
+                    <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}{#if item.strokes !== item.section}{' · '}{t('draw.strokes', { count: item.strokes })}{/if}</span>
                   </button>
                 {/each}
               </div>

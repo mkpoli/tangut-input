@@ -22,6 +22,7 @@
   import Fanqie from './pages/Fanqie.svelte'
   import Chart from './pages/Chart.svelte'
   import Eras from './pages/Eras.svelte'
+  import Variants from './pages/Variants.svelte'
   import Texts from './pages/Texts.svelte'
   import Transcribe from './pages/Transcribe.svelte'
   import Meaning from './pages/Meaning.svelte'
@@ -35,7 +36,7 @@
   // gives, on arrival. A finder's preview also puts a character in the address, and a reload keeps
   // whatever the reader had closed.
   const reloaded = /** @type {PerformanceNavigationTiming | undefined} */ (performance.getEntriesByType('navigation')[0])?.type === 'reload'
-  if (route.c && route.page === '' && !route.q && !reloaded && matchMedia('(max-width: 900px)').matches) ui.sheet = true
+  if (route.c && (route.page === '' || route.page === 'variants') && !route.q && !reloaded && matchMedia('(max-width: 900px)').matches) ui.sheet = true
   applyTangut()
 
   /** @type {HTMLElement | null} */
@@ -261,7 +262,7 @@
     <p class="fault">{t('app.failed')}</p>
   {:else}
     <div class="body" class:full={route.page === 'about' || route.page === 'intro'}>
-      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'intro' ? 'intro.title' : 'nav.sources'))}>
+      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'variants' ? 'card.variants' : route.page === 'intro' ? 'intro.title' : 'nav.sources'))}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'meaning'}<Meaning />
         {:else if route.page === 'cangjie'}<Cangjie />
@@ -270,6 +271,7 @@
         {:else if route.page === 'fanqie'}<Fanqie />
         {:else if route.page === 'chart'}<Chart />
         {:else if route.page === 'eras'}<Eras />
+        {:else if route.page === 'variants'}<Variants />
         {:else if route.page === 'texts'}<Texts />
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
