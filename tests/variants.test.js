@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
-import { keepVariantsTogether, variantIndex } from '../app/lib/variants.js'
+import { componentPositions, keepVariantsTogether, possiblePairs, variantIndex } from '../app/lib/variants.js'
 import VARIANTS from '../app/data/tangut-variants.json' with { type: 'json' }
 
 const NONE = { variants: [], partial: [], synonyms: [], components: [], reported: [] }
@@ -14,7 +14,7 @@ test('a stated variant links both characters', () => {
 
 test('a shared reading and sense makes a possible variant, and neither alone does', () => {
   const entry = (char, reading, en) => ({ char, pronunciations: { li_fanwen: reading }, definitions: { en } })
-  const index = variantIndex([entry('𗀀', 'a1', ['flag']), entry('𗀁', 'a1', ['to flag; banner']), entry('𗀂', 'a1', ['fish']), entry('𗀃', 'b1', ['flag'])], NONE)
+  const index = variantIndex(possiblePairs([entry('𗀀', 'a1', ['flag']), entry('𗀁', 'a1', ['to flag; banner']), entry('𗀂', 'a1', ['fish']), entry('𗀃', 'b1', ['flag'])], NONE), NONE)
   expect(index.get('𗀀')?.possible).toEqual(['𗀁'])
   expect(index.get('𗀂')).toBeUndefined()
   expect(index.get('𗀃')).toBeUndefined()
@@ -22,19 +22,19 @@ test('a shared reading and sense makes a possible variant, and neither alone doe
 
 test('variant components link characters only when the reading also matches', () => {
   const entry = (char, composition, reading) => ({ char, composition, pronunciations: { li_fanwen: reading } })
-  const index = variantIndex([entry('𗀀', '⿰𘢩𘠀', 'a1'), entry('𗀁', '⿰𘢪𘠀', 'a1'), entry('𗀂', '⿰𘢩𘠁', 'a1'), entry('𗀃', '⿰𘢪𘠁', 'b1')], { ...NONE, components: [['𘢩', '𘢪']] })
+  const index = variantIndex(possiblePairs([entry('𗀀', '⿰𘢩𘠀', 'a1'), entry('𗀁', '⿰𘢪𘠀', 'a1'), entry('𗀂', '⿰𘢩𘠁', 'a1'), entry('𗀃', '⿰𘢪𘠁', 'b1')], { ...NONE, components: [['𘢩', '𘢪']] }), { ...NONE, components: [['𘢩', '𘢪']] })
   expect(index.get('𗀀')?.possible).toEqual(['𗀁'])
   expect(index.get('𗀂')).toBeUndefined()
 })
 
 test('a usage line is not a shared meaning', () => {
   const entry = (char, en) => ({ char, pronunciations: { li_fanwen: 'a1' }, definitions: { en } })
-  expect(variantIndex([entry('𗀀', ['Transliteration of Middle Chinese 俄']), entry('𗀁', ['Transliteration of Middle Chinese 娥'])], NONE).size).toBe(0)
+  expect(variantIndex(possiblePairs([entry('𗀀', ['Transliteration of Middle Chinese 俄']), entry('𗀁', ['Transliteration of Middle Chinese 娥'])], NONE), NONE).size).toBe(0)
 })
 
 test('synonyms are not possible variants', () => {
   const entry = (char, en) => ({ char, pronunciations: { li_fanwen: 'a1' }, definitions: { en } })
-  const index = variantIndex([entry('𗀀', ['name']), entry('𗀁', ['name'])], { ...NONE, synonyms: [['𗀀', '𗀁']] })
+  const index = variantIndex(possiblePairs([entry('𗀀', ['name']), entry('𗀁', ['name'])], { ...NONE, synonyms: [['𗀀', '𗀁']] }), { ...NONE, synonyms: [['𗀀', '𗀁']] })
   expect(index.size).toBe(0)
 })
 
@@ -43,8 +43,15 @@ test('the recorded data gives the stated variants and the possible ones', () => 
   const li = packed.systems.indexOf('li_fanwen')
   const entries = packed.rows.map((/** @type {any[]} */ row) => ({ char: row[0], composition: row[1], pronunciations: { li_fanwen: row[7][li] }, definitions: { en: row[4], ja: row[5] } }))
   const known = new Set(entries.map(entry => entry.char))
-  const index = variantIndex(entries)
+  const pairs = possiblePairs(entries)
+  const index = variantIndex(pairs)
   expect(VARIANTS.variants.length + VARIANTS.partial.length).toBe(28)
+  expect(pairs.length).toBe(19)
+  expect(pairs.filter(pair => pair.components).length).toBe(13)
+  const places = componentPositions(entries)
+  expect(Object.keys(places.get('𘡍'))).toEqual(['top'])
+  expect(Object.keys(places.get('𘠠'))[0]).toBe('left')
+  expect(Object.keys(places.get('𘠟'))[0]).toBe('right')
   for (const [form, base] of [...VARIANTS.variants, ...VARIANTS.partial]) {
     expect(known.has(form)).toBe(true)
     expect(known.has(base)).toBe(true)

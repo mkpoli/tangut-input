@@ -22,16 +22,17 @@ function senses(entry) {
 }
 
 /**
- * Both directions of the stated relation, reported pairs, and the possible variants: characters
- * with the same reading in Li Fanwen's system that also share a sense in Wiktionary, or whose
- * descriptions differ only by a pair of variant components. Characters already linked, or that
- * Wiktionary calls synonyms, are left out.
  * @typedef {{ of: string[], partial: string[], forms: string[], partialForms: string[], reported: string[], possible: string[] }} Variants
- * @param {VariantEntry[]} entries
- * @param {{ variants: string[][], partial: string[][], synonyms: string[][], components: string[][], reported: string[][] }} [stated]
+ * @typedef {{ variants: string[][], partial: string[][], synonyms: string[][], components: string[][], reported: string[][] }} Stated
+ * @typedef {{ one: string, other: string, reading: string, components?: string }} PossiblePair
+ */
+
+/**
+ * Both directions of what is stated, and the reported pairs.
+ * @param {Stated} stated
  * @returns {Map<string, Variants>}
  */
-export function variantIndex(entries, stated = VARIANTS) {
+function statedIndex(stated) {
   /** @type {Map<string, Variants>} */
   const index = new Map()
   /** @param {string} char */
@@ -52,6 +53,19 @@ export function variantIndex(entries, stated = VARIANTS) {
     at(one).reported.push(other)
     at(other).reported.push(one)
   }
+  return index
+}
+
+/**
+ * The possible variants: characters with the same reading in Li Fanwen's system that also share a
+ * sense in Wiktionary, or whose descriptions differ only by a pair of variant components. Characters
+ * already linked, or that Wiktionary calls synonyms, are left out.
+ * @param {VariantEntry[]} entries
+ * @param {Stated} [stated]
+ * @returns {PossiblePair[]}
+ */
+export function possiblePairs(entries, stated = VARIANTS) {
+  const index = statedIndex(stated)
   const synonyms = new Set(stated.synonyms.flatMap(([one, other]) => [one + other, other + one]))
   /** @param {string} char */
   const family = char => {
@@ -59,11 +73,14 @@ export function variantIndex(entries, stated = VARIANTS) {
     const bases = [...(record?.of ?? []), ...(record?.partial ?? [])]
     return new Set([char, ...bases, ...(record?.forms ?? []), ...(record?.partialForms ?? []), ...(record?.reported ?? []), ...bases.flatMap(base => [...(index.get(base)?.forms ?? []), ...(index.get(base)?.partialForms ?? [])])])
   }
-  /** @param {string} one @param {string} other */
-  const link = (one, other) => {
-    if (synonyms.has(one + other) || family(one).has(other) || index.get(one)?.possible.includes(other)) return
-    at(one).possible.push(other)
-    at(other).possible.push(one)
+  /** @type {Map<string, PossiblePair>} */
+  const pairs = new Map()
+  /** @param {string} one @param {string} other @param {string} reading @param {string} [components] */
+  const link = (one, other, reading, components) => {
+    const key = [one, other].sort().join('')
+    if (synonyms.has(one + other) || family(one).has(other) || pairs.has(key)) return
+    const [first, second] = [...key]
+    pairs.set(key, { one: first, other: second, reading, ...(components ? { components } : {}) })
   }
   /** @type {Map<string, { char: string, senses: Set<string> }[]>} */
   const byReading = new Map()
@@ -75,7 +92,7 @@ export function variantIndex(entries, stated = VARIANTS) {
     const named = senses(entry)
     if (!reading || !named.size) continue
     const peers = byReading.get(reading) ?? []
-    for (const peer of peers) if ([...named].some(sense => peer.senses.has(sense))) link(entry.char, peer.char)
+    for (const peer of peers) if ([...named].some(sense => peer.senses.has(sense))) link(entry.char, peer.char, reading)
     byReading.set(reading, [...peers, { char: entry.char, senses: named }])
   }
   for (const [one, other] of stated.components) {
@@ -83,11 +100,63 @@ export function variantIndex(entries, stated = VARIANTS) {
       if (!entry.composition?.includes(one)) continue
       const reading = entry.pronunciations?.li_fanwen?.trim()
       for (const match of byDescription.get(entry.composition.replaceAll(one, other)) ?? []) {
-        if (reading && match.pronunciations?.li_fanwen?.trim() === reading) link(entry.char, match.char)
+        if (reading && match.pronunciations?.li_fanwen?.trim() === reading) link(entry.char, match.char, reading, one + other)
       }
     }
   }
+  return [...pairs.values()].sort((a, b) => a.one.localeCompare(b.one))
+}
+
+/**
+ * What the card shows for each character.
+ * @param {PossiblePair[]} pairs
+ * @param {Stated} [stated]
+ */
+export function variantIndex(pairs, stated = VARIANTS) {
+  const index = statedIndex(stated)
+  for (const { one, other } of pairs) {
+    for (const [char, peer] of [[one, other], [other, one]]) {
+      let record = index.get(char)
+      if (!record) index.set(char, record = { of: [], partial: [], forms: [], partialForms: [], reported: [], possible: [] })
+      record.possible.push(peer)
+    }
+  }
   return index
+}
+
+const ARITY = /** @type {Record<string, number>} */ ({ '⿰': 2, '⿱': 2, '⿲': 3, '⿳': 3, '⿴': 2, '⿵': 2, '⿶': 2, '⿷': 2, '⿸': 2, '⿹': 2, '⿺': 2, '⿻': 2 })
+const PLACES = /** @type {Record<string, string[]>} */ ({ '⿰': ['left', 'right'], '⿱': ['top', 'bottom'], '⿲': ['left', 'middle', 'right'], '⿳': ['top', 'middle', 'bottom'] })
+
+/**
+ * How often each variant component stands in each place in the characters' descriptions, most often
+ * first. A place is its slot under the operator directly above it.
+ * @param {VariantEntry[]} entries
+ * @param {{ members: string }[]} [groups]
+ * @returns {Map<string, Record<string, number>>}
+ */
+export function componentPositions(entries, groups = VARIANTS.groups) {
+  const wanted = new Set(groups.flatMap(group => [...group.members]))
+  /** @type {Map<string, Record<string, number>>} */
+  const found = new Map()
+  for (const entry of entries) {
+    const units = [...(entry.composition ?? '')]
+    let at = 0
+    /** @param {string} place */
+    const walk = place => {
+      const unit = units[at++]
+      if (unit === undefined) return
+      const arity = ARITY[unit]
+      if (arity) {
+        for (let slot = 0; slot < arity; slot++) walk(PLACES[unit]?.[slot] ?? (slot === 0 ? 'outer' : 'inner'))
+      } else if (wanted.has(unit)) {
+        const counts = found.get(unit) ?? {}
+        counts[place] = (counts[place] ?? 0) + 1
+        found.set(unit, counts)
+      }
+    }
+    walk('whole')
+  }
+  return new Map([...found].map(([unit, counts]) => [unit, Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]))]))
 }
 
 /**
@@ -99,7 +168,7 @@ export function variantIndex(entries, stated = VARIANTS) {
  * @param {string[]} [groups]
  * @returns {(P & { section: number })[]}
  */
-export function keepVariantsTogether(parts, groups = VARIANTS.groups) {
+export function keepVariantsTogether(parts, groups = VARIANTS.groups.map(group => group.members)) {
   /** @type {Map<string, string>} */
   const groupOf = new Map(groups.flatMap(group => [...group].map(member => [member, group])))
   const placed = new Set()
