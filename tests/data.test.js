@@ -180,6 +180,31 @@ test('every place points at the character it attests', () => {
   }
 })
 
+test('each verse of the monthly ode names its month and language form', () => {
+  const ode = Object.entries(attestation.lines).filter(([id]) => id.startsWith('wikisource-monthly-pleasures:')).map(([, line]) => line)
+  const months = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th'].map(month => `${month} month`)
+  // The common-language name of each month, ending in 𗼑 'month'. Nishida 1986: numeral + month, except the 1st and 12th.
+  const common = ['𗩭', '𗍫', '𘕕', '𗥃', '𗏁', '𗤁', '𗒹', '𘉋', '𗢭', '𗰗', '𗰗𘈩', '𗎊'].map(name => `${name}𗼑`)
+  months.forEach((month, index) => {
+    expect([...ode.find(line => line.section === `${month}, ritual language`).text].slice(2, 4).join('')).toBe('𘘞𗳝')
+    expect(ode.find(line => line.section === `${month}, common language`).text.startsWith(common[index])).toBe(true)
+  })
+  expect(ode.map(line => line.section)).toEqual([
+    undefined,
+    'Opening, ritual language', 'Opening, common language', 'Opening, ritual language', 'Opening, common language',
+    ...months.flatMap(month => [`${month}, ritual language`, `${month}, common language`]),
+    undefined, 'End title', 'Colophon',
+  ])
+})
+
+test('an end title comment names its line, and a dated colophon keeps its section', () => {
+  for (const source of ['wikisource-monthly-pleasures', 'wikisource-grains-of-gold']) {
+    expect(attestation.lines[`${source}:end`]).toMatchObject({ label: 'End title', section: 'End title' })
+  }
+  const grains = Object.entries(attestation.lines).filter(([id]) => id.startsWith('wikisource-grains-of-gold:')).map(([, line]) => line.section)
+  expect(grains).toContain('Colophon dated the 4th day of the 1st month')
+})
+
 const samples = JSON.parse(readFileSync(new URL('../app/data/tangut-samples.json', import.meta.url)).toString())
 
 test('the sample passages are exact lines from the attestation', () => {
