@@ -12,7 +12,7 @@
     { id: 'jurchen', href: 'https://jurchen.mkpo.li/', logo: '/sites/jurchen.svg', name: 'Jurchen Input' },
     { id: 'ids', href: 'https://ids.mkpo.li/', logo: '/sites/ids.svg', name: 'IDS Workshop' },
   ]
-  const more = $derived(`https://scripts.mkpo.li/${i18n.locale === 'en' ? '' : `${i18n.locale}/`}`)
+  const more = $derived(`https://moji.mkpo.li/${i18n.locale === 'en' ? '' : `${i18n.locale}/`}`)
 
   let open = $state(false)
   /** @type {HTMLDivElement | null} */
