@@ -402,7 +402,7 @@
   "about.classNamesTitle": "九音品名",
   "about.classNames": "《同音》以西夏文为九类声母命名，如重唇音一品，西夏语序作“唇音重一品”。图表标题据孙伯君（2017）<a href=\"https://www.ngiam.cn/tangut/papers/%E5%AD%AB%E4%BC%AF%E5%90%9B_2017_%E8%AB%96%E8%A5%BF%E5%A4%8F%E5%B0%8D%E6%BC%A2%E8%AA%9E%E9%9F%B3%E9%9F%BB%E5%AD%B8%E7%9A%84%E7%B9%BC%E6%89%BF%E8%88%87%E5%89%B5%E6%96%B0.pdf\">《论西夏对汉语音韵学的继承与创新》</a>表二。第九类，《五音切韵》称舌齿音，《同音》称来日音九品。",
   "about.zzzTitle": "《番汉合时掌中珠》",
-  "about.zzz": "<a href=\"https://kokusho.nijl.ac.jp/biblio/100354804\">《番汉合时掌中珠》</a>（1190年，骨勒茂才）：这部词汇集在西夏字下各印一个汉字，用以注其音。录文据国文学研究资料馆所藏民国贻安堂印本（清光山西岩寺藏）的扫描。图像为 CC BY-NC 4.0，不转载；录文为本项目所录，授权未定。卡片于已录之字显示其注音。",
+  "about.zzz": "<a href=\"https://kokusho.nijl.ac.jp/biblio/100354804\">《番汉合时掌中珠》</a>（1190年，骨勒茂才）：这部词汇集在西夏字下各印一个汉字，用以注其音。录文据国文学研究资料馆扫描的清光山西岩寺藏民国贻安堂印本。图像为CC BY-NC 4.0，不转载；录文为本项目所录，授权未定。卡片于已录之字显示其注音。",
   "about.tibetanTitle": "藏文对音",
   "about.tibetan": "Andrew West（BabelStone，2011-12-19）<a href=\"https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html\">《Index of Tangut Characters with Corresponding Tibetan Phonetic Glosses》</a>：据大英图书馆藏五件写本（Or.12380/1842、3495、3909、3910、3911）辑录197字的藏文对音，凡261例。韵图列出其中194字，<span class=\"txg-inline\" lang=\"txg\">𗤠</span>、<span class=\"txg-inline\" lang=\"txg\">𘂧</span>在韵表中无位置，<span class=\"txg-inline\" lang=\"txg\">𗈪</span>缺韵号。卡片则列出索引所收的全部对音。原页注明省去了部分不完整的对音，部分对音难以辨读，所录大概有误读；无法辨读的字母标“?”。原页未声明许可协议。韵图页格底的拼写出自李范文的表（《宋代西北方音》，1994，第270–281页），录自<a href=\"https://zhuanlan.zhihu.com/p/272058247\">KwingiemChan在知乎的转载</a>，未与原书核对。",
   "about.gongTitle": "龚煌城的韵类音值",
