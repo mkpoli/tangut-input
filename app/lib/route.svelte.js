@@ -49,9 +49,10 @@ export const GROUPS = /** @type {const} */ ([
   },
 ])
 
-// The pages outside the finder groups: the introduction and the sources.
+// The pages outside the finder groups: the introduction, the Gyalrongic note and the sources.
 export const MORE = /** @type {const} */ ([
   { path: 'intro', label: 'nav.intro', icon: 'book', hint: 'nav.intro.hint' },
+  { path: 'gyalrongic', label: 'gyalrongic.title', icon: 'book', hint: 'gyalrongic.hint' },
   { path: 'about', label: 'nav.sources', icon: 'sources', hint: 'nav.sources.hint' },
 ])
 

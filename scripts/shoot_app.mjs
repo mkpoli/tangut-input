@@ -47,6 +47,7 @@ const SCREENS = [
     }, phone ? 72 : 18)
   } },
   { name: 'intro', path: '/intro' },
+  { name: 'gyalrongic', path: '/gyalrongic' },
   { name: 'sources', path: '/about' },
 ]
 

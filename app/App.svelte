@@ -30,6 +30,7 @@
   import Parts from './pages/Parts.svelte'
   import About from './pages/About.svelte'
   import Intro from './pages/Intro.svelte'
+  import Gyalrongic from './pages/Gyalrongic.svelte'
 
   load()
   applyTheme()
@@ -72,6 +73,9 @@
     if (menu && !wide && !sheet.open) sheet.showModal()
     if ((!menu || wide) && sheet.open) sheet.close()
   })
+
+  // The pages that are read, full width and without the character card.
+  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic'])
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page @returns {boolean} whether the page changes */
   function nav(event, page) {
@@ -251,8 +255,8 @@
         </div>
       {/each}
       <div class="nav-item" onfocusout={menuBlur}>
-        <button type="button" class="nav-group" class:on={route.page === 'about' || route.page === 'intro'}
-          aria-current={route.page === 'about' || route.page === 'intro' ? 'true' : undefined}
+        <button type="button" class="nav-group" class:on={MORE.some(page => page.path === route.page)}
+          aria-current={MORE.some(page => page.path === route.page) ? 'true' : undefined}
           aria-expanded={menu?.kind === 'more'} aria-controls="nav-menu-more"
           onclick={event => menu?.kind === 'more' ? closeMenu() : openMenu(event, { kind: 'more' })}>
           <Icon name="more" size={14} stroke={1.6}/><span>{t('nav.more')}</span>{@render caret()}
@@ -313,8 +317,8 @@
   {#if db.status === 'failed'}
     <p class="fault">{t('app.failed')}</p>
   {:else}
-    <div class="body" class:full={route.page === 'about' || route.page === 'intro'}>
-      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'variants' ? 'card.variants' : route.page === 'intro' ? 'intro.title' : 'nav.sources'))}>
+    <div class="body" class:full={READING_PAGES.includes(route.page)}>
+      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'variants' ? 'card.variants' : route.page === 'intro' ? 'intro.title' : route.page === 'gyalrongic' ? 'gyalrongic.title' : 'nav.sources'))}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'meaning'}<Meaning />
         {:else if route.page === 'cangjie'}<Cangjie />
@@ -329,6 +333,7 @@
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
         {:else if route.page === 'intro'}<Intro />
+        {:else if route.page === 'gyalrongic'}<Gyalrongic />
         {:else}<About />{/if}
         {#if route.page !== 'about'}
           <footer class="foot ui-hint">
@@ -337,7 +342,7 @@
           </footer>
         {/if}
       </main>
-      {#if route.page !== 'about' && route.page !== 'intro'}
+      {#if !READING_PAGES.includes(route.page)}
         {#if ui.sheet}<button type="button" class="scrim" tabindex="-1" aria-hidden="true" onclick={() => { ui.sheet = false }}></button>{/if}
         <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
           <Card />
@@ -358,8 +363,8 @@
         <span>{t(group.tab)}{@render caret()}</span>
       </button>
     {/each}
-    <button class="tab" type="button" class:on={route.page === 'about' || route.page === 'intro'}
-      aria-current={route.page === 'about' || route.page === 'intro' ? 'true' : undefined}
+    <button class="tab" type="button" class:on={MORE.some(page => page.path === route.page)}
+      aria-current={MORE.some(page => page.path === route.page) ? 'true' : undefined}
       aria-haspopup="dialog" aria-expanded={menu?.kind === 'more'}
       onclick={event => openMenu(event, { kind: 'more' })}><Icon name="more" size={18}/><span>{t('nav.more')}</span></button>
   </nav>

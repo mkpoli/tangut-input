@@ -275,7 +275,7 @@ async function noSideScroll(page) {
   assert.ok(overflow.scroll <= overflow.view + 1, `the page scrolls sideways (${overflow.scroll} > ${overflow.view})`)
 }
 
-const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chart', '/eras', '/texts', '/transcribe?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6', '/draw', '/parts', '/variants', '/intro', '/about']
+const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chart', '/eras', '/texts', '/gyalrongic', '/transcribe?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6', '/draw', '/parts', '/variants', '/intro', '/about']
 
 /** Visits every page at one viewport and checks it renders without script errors or side scroll. */
 async function checkPages(viewport, scheme) {
@@ -512,12 +512,12 @@ await step('a wide-screen menu closes on an outside click and on the page it ope
   assert.equal(await menu.count(), 0, 'the menu closes on the page it opens')
   assert.equal(await shape.getAttribute('aria-current'), 'true', 'the group stays marked on a page inside it')
 })
-await step('More holds the introduction and Sources on a wide screen', async () => {
+await step('More holds the introduction, the Gyalrongic note and Sources on a wide screen', async () => {
   const more = desktop.getByRole('button', { name: 'More', exact: true })
   await more.click()
   const menu = desktop.locator('.nav-menu')
   await menu.waitFor()
-  assert.deepEqual(await menu.getByRole('link').evaluateAll(links => links.map(link => link.querySelector('span')?.textContent)), ['Introduction', 'Sources'])
+  assert.deepEqual(await menu.getByRole('link').evaluateAll(links => links.map(link => link.querySelector('span')?.textContent)), ['Introduction', 'Gyalrongic literature', 'Sources'])
   await menu.getByRole('link', { name: /^Introduction/ }).click()
   await desktop.waitForURL(/\/intro$/)
   assert.equal(await menu.count(), 0, 'the menu closes on the page it opens')
