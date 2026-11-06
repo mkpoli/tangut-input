@@ -10,6 +10,7 @@
   const SITES = [
     { id: 'tangut', href: '/', logo: '/favicon.svg', name: 'Tangut Input' },
     { id: 'jurchen', href: 'https://jurchen.mkpo.li/', logo: '/sites/jurchen.svg', name: 'Jurchen Input' },
+    { id: 'han', href: 'https://han.mkpo.li/', logo: '/sites/han.svg', name: 'Han Input' },
     { id: 'ids', href: 'https://ids.mkpo.li/', logo: '/sites/ids.svg', name: 'IDS Workshop' },
   ]
   const more = $derived(`https://moji.mkpo.li/${i18n.locale === 'en' ? '' : `${i18n.locale}/`}`)
