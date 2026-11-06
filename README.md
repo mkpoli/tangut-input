@@ -27,7 +27,8 @@ it into your text. <https://tangut.mkpo.li/>
   narrow the candidates.
 - **Parts**: choose parts, components or character-sized, from the palette or by drawing them;
   each choice narrows the characters and the remaining parts. The filter takes a Cangjie code or a Japanese shape name, and hovering a
-  part shows its code point, component number, strokes, uses, Cangjie codes and name. A collapsible
+  part shows its code point, component number, strokes, uses, Cangjie codes and name; a part with no
+  recorded name shows an unconfirmed shape hint when one is close. A collapsible
   table compares the names across the languages that record one.
 
 The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
