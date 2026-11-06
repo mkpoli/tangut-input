@@ -1,6 +1,6 @@
-members	kind	source
-𘠣𘡍𘠅	position	NGWU YOH, chat messages, 2026-11-05 and 2026-11-06
-𘠠𘠟	position	NGWU YOH, chat message, 2026-11-05
-𘢓𘢔	position	NGWU YOH, chat message, 2026-11-05
-𘢩𘢪	interchangeable	NGWU YOH, chat message, 2026-11-05
-𘠽𘠼	interchangeable	NGWU YOH, chat message, 2026-11-05
+members	kind	kind_source	source
+𘠣𘡍𘠅	apart	NGWU YOH, chat message, 2026-11-06	NGWU YOH, chat message, 2026-11-05
+𘠠𘠟	apart	this site, from the counts	NGWU YOH, chat message, 2026-11-05
+𘢓𘢔	apart	this site, from the counts	NGWU YOH, chat message, 2026-11-05
+𘢩𘢪	shared	this site, from the counts	NGWU YOH, chat message, 2026-11-05
+𘠽𘠼	shared	this site, from the counts	NGWU YOH, chat message, 2026-11-05

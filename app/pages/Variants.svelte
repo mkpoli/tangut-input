@@ -2,6 +2,7 @@
   // Every variant form the site records, in the groups the card shows them in, each with what supports
   // it, and the variant components with where each stands in a character.
   import VARIANTS from '../data/tangut-variants.json' with { type: 'json' }
+  import { tick } from 'svelte'
   import { db, ix, hex, readingOf } from '../lib/db.svelte.js'
   import { componentPositions } from '../lib/variants.js'
   import { choose, ui } from '../lib/ui.svelte.js'
@@ -13,6 +14,13 @@
   const ready = $derived(db.status === 'ready')
   const possible = $derived(ready ? ix.variantPairs : [])
   const positions = $derived(ready ? componentPositions(ix.entries) : new Map())
+  // A reader who follows the card's link should land on the character, once.
+  let arrived = false
+  $effect(() => {
+    if (!ready || arrived) return
+    arrived = true
+    if (route.c) tick().then(() => document.querySelector('.char[aria-current="true"]')?.scrollIntoView({ block: 'center' }))
+  })
   const stated = [
     ...VARIANTS.variants.map(([form, base, revisions]) => ({ form, base, revisions, partial: false })),
     ...VARIANTS.partial.map(([form, base, revisions]) => ({ form, base, revisions, partial: true })),
@@ -26,12 +34,12 @@
 </script>
 
 {#snippet char(/** @type {string} */ value)}
-  {@const sound = readingOf(value, ui.reading)}
+  {@const sound = ready ? readingOf(value, ui.reading) : ''}
   <button type="button" class="char" aria-current={route.c === value ? 'true' : undefined} aria-label={t('eras.open', { char: value, code: hex(value) })} title={sound} onclick={() => choose(value)}><G char={value} /></button>
 {/snippet}
 
-{#snippet heading(/** @type {string} */ key, /** @type {number} */ count)}
-  <h2 class="heading">{t(key)} <span class="ui-tag">{count}</span></h2>
+{#snippet heading(/** @type {string} */ id, /** @type {string} */ text, /** @type {number} */ count)}
+  <h2 class="heading" {id}>{text} <span class="ui-tag">{count}</span></h2>
 {/snippet}
 
 <article class="ui-page variants">
@@ -41,9 +49,9 @@
   </header>
 
   <section class="ui-section" id="stated">
-    {@render heading('variants.stated', stated.length)}
+    {@render heading('stated-heading', t('variants.stated'), stated.length)}
     <div class="ui-table-wrap">
-      <table class="ui-table list">
+      <table class="ui-table list" aria-labelledby="stated-heading">
         <thead><tr><th scope="col">{t('variants.form')}</th><th scope="col">{t('variants.base')}</th><th scope="col">{t('variants.source')}</th></tr></thead>
         <tbody>
           {#each stated as row (row.form + row.base)}
@@ -62,11 +70,11 @@
   </section>
 
   <section class="ui-section" id="reported">
-    {@render heading('variants.reported', VARIANTS.reported.length)}
+    {@render heading('reported-heading', t('variants.reported'), VARIANTS.reported.length)}
     <p class="ui-hint">{t('card.variantReportedSource')}</p>
     <div class="ui-table-wrap">
-      <table class="ui-table list">
-        <thead><tr><th scope="col">{t('variants.form')}</th><th scope="col">{t('variants.form')}</th></tr></thead>
+      <table class="ui-table list" aria-labelledby="reported-heading">
+        <thead><tr><th scope="colgroup" colspan="2">{t('variants.forms')}</th></tr></thead>
         <tbody>
           {#each VARIANTS.reported as [one, other] (one + other)}
             <tr><td>{@render char(one)}</td><td>{@render char(other)}</td></tr>
@@ -77,18 +85,18 @@
   </section>
 
   <section class="ui-section" id="possible">
-    {@render heading('card.variantPossible', possible.length)}
+    {@render heading('possible-heading', t('card.variantPossible'), possible.length)}
     <p class="ui-hint">{t('card.variantsPossibleSource')}</p>
     <div class="ui-table-wrap">
-      <table class="ui-table list">
-        <thead><tr><th scope="col">{t('variants.form')}</th><th scope="col">{t('variants.form')}</th><th scope="col">{t('variants.reading')}</th><th scope="col">{t('variants.ground')}</th></tr></thead>
+      <table class="ui-table list" aria-labelledby="possible-heading">
+        <thead><tr><th scope="colgroup" colspan="2">{t('variants.forms')}</th><th scope="col">{t('variants.reading')}</th><th scope="col">{t('variants.ground')}</th></tr></thead>
         <tbody>
           {#each possible as pair (pair.one + pair.other)}
             <tr>
               <td>{@render char(pair.one)}</td>
               <td>{@render char(pair.other)}</td>
               <td class="reading">{pair.reading}</td>
-              <td>{#if pair.components}<span class="ui-tag">{t('variants.ground.component')}</span> <span class="pair" aria-hidden="true">{#each [...pair.components] as part (part)}<G char={part} />{/each}</span>{:else}<span class="ui-tag">{t('variants.ground.sense')}</span>{/if}</td>
+              <td>{#if pair.components}<span class="ui-tag">{t('variants.ground.component')}</span> <span class="pair" role="img" aria-label={pair.components}>{#each [...pair.components] as part (part)}<G char={part} />{/each}</span>{:else}<span class="ui-tag">{t('variants.ground.sense')}</span>{/if}</td>
             </tr>
           {/each}
         </tbody>
@@ -97,16 +105,16 @@
   </section>
 
   <section class="ui-section" id="components">
-    {@render heading('variants.components', VARIANTS.groups.length)}
+    {@render heading('components-heading', t('variants.components'), VARIANTS.groups.length)}
     <p class="ui-hint">{t('variants.components.hint')}</p>
     <div class="ui-table-wrap">
-      <table class="ui-table list">
+      <table class="ui-table list" aria-labelledby="components-heading">
         <thead><tr><th scope="col">{t('variants.kind')}</th><th scope="col">{t('variants.form')}</th><th scope="col">{t('variants.positions')}</th></tr></thead>
         <tbody>
           {#each VARIANTS.groups as group (group.members)}
             {#each [...group.members] as member, i (member)}
               <tr>
-                {#if i === 0}<td rowspan={[...group.members].length}><span class="ui-tag">{t(`variants.kind.${group.kind}`)}</span></td>{/if}
+                {#if i === 0}<th scope="rowgroup" class="kind" rowspan={[...group.members].length}><span class="ui-tag">{t(`variants.kind.${group.kind}`)}</span>{#if group.explained}<small class="said">{t('variants.kind.explained')}</small>{/if}</th>{/if}
                 <td>{@render char(member)}</td>
                 <td><span class="places">
                   {#each Object.entries(positions.get(member) ?? {}) as [place, count] (place)}<span class="place">{t(`variants.place.${place}`)} <b>{count}</b></span>{/each}
@@ -127,6 +135,9 @@
   .char :global(.ui-script){font-size:30px;line-height:1.2}
   .char:hover,.char[aria-current='true']{background:var(--ui-color-accent-soft)}
   .source{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-sm)}
+  .source a{display:inline-flex;align-items:center;justify-content:center;min-inline-size:28px;min-block-size:28px}
+  .kind{font-weight:inherit;text-align:start;vertical-align:top}
+  .said{display:block;margin-block-start:var(--ui-space-xs);color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .reading{font-variant-numeric:tabular-nums;white-space:nowrap}
   .pair{display:inline-flex;gap:2px;vertical-align:middle}
   .places{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm);color:var(--ui-color-ink-soft)}

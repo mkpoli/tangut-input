@@ -5,7 +5,8 @@
 """Build `app/data/tangut-variants.json` from `data/tangut-variants.tsv`, what Wiktionary states,
 `data/tangut-component-variants.tsv`, component pairs used to find possible variants, and
 `data/tangut-variants-reported.tsv`, pairs a person reported, and `data/tangut-component-groups.tsv`, the
-components the parts palette keeps together, each marked `position` or `interchangeable`. The build stops on a value
+components the parts palette keeps together, each marked `apart` when its members mostly stand in different places
+or `shared` when they stand in the same ones, with who says so in `kind_source`. The build stops on a value
 that is not one Tangut character.
 
     uv run scripts/build_tangut_variants.py
@@ -39,7 +40,7 @@ def main() -> None:
         'synonyms': [pair(row, 'form', 'base') for row in stated if row['kind'] == 'synonym'],
         'components': [pair(row, 'one', 'other') for row in rows('tangut-component-variants.tsv')],
         'reported': [pair(row, 'one', 'other') for row in rows('tangut-variants-reported.tsv')],
-        'groups': [{'members': row['members'], 'kind': row['kind']} for row in rows('tangut-component-groups.tsv')],
+        'groups': [{'members': row['members'], 'kind': row['kind'], 'explained': not row['kind_source'].startswith('this site')} for row in rows('tangut-component-groups.tsv')],
     }
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
     print({key: len(value) for key, value in data.items()})

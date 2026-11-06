@@ -36,7 +36,7 @@
   // gives, on arrival. A finder's preview also puts a character in the address, and a reload keeps
   // whatever the reader had closed.
   const reloaded = /** @type {PerformanceNavigationTiming | undefined} */ (performance.getEntriesByType('navigation')[0])?.type === 'reload'
-  if (route.c && route.page === '' && !route.q && !reloaded && matchMedia('(max-width: 900px)').matches) ui.sheet = true
+  if (route.c && (route.page === '' || route.page === 'variants') && !route.q && !reloaded && matchMedia('(max-width: 900px)').matches) ui.sheet = true
   applyTangut()
 
   /** @type {HTMLElement | null} */

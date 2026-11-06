@@ -84,3 +84,10 @@ test('a member filtered out of the palette leaves the rest in place', () => {
   const part = (name, strokes) => ({ part: name, strokes })
   expect(keepVariantsTogether([part('𘠟', 4)], ['𘠠𘠟'])).toEqual([{ part: '𘠟', strokes: 4, section: 4 }])
 })
+
+test('positions come from the slot under the operator directly above', () => {
+  const places = componentPositions([{ char: '𗀀', composition: '⿰𘠀⿱𘠁𘠂' }, { char: '𗀁', composition: '⿲𘠂𘠀𘠁' }], [{ members: '𘠀𘠁𘠂' }])
+  expect(places.get('𘠀')).toEqual({ left: 1, middle: 1 })
+  expect(places.get('𘠁')).toEqual({ top: 1, right: 1 })
+  expect(places.get('𘠂')).toEqual({ bottom: 1, left: 1 })
+})

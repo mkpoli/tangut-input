@@ -104,7 +104,7 @@ export function possiblePairs(entries, stated = VARIANTS) {
       }
     }
   }
-  return [...pairs.values()].sort((a, b) => a.one.localeCompare(b.one))
+  return [...pairs.values()].sort((a, b) => (a.one < b.one ? -1 : 1))
 }
 
 /**
