@@ -36,6 +36,7 @@ const SCREENS = [
   { name: 'draw', path: '/draw', act: draw },
   { name: 'parts', path: '/parts?q=%F0%98%A0%80%F0%98%A0%86' },
   { name: 'texts', path: '/texts' },
+  { name: 'text-reader', path: '/texts?q=wikisource-diamond' },
   { name: 'card', path: '/cangjie?c=172D5', act: async (page, phone) => { if (phone) await page.goto(`${ORIGIN}/?q=%F0%97%8B%95`).then(() => page.locator('.ui-row-pick').first().click()) } },
   { name: 'card-attested', path: '/cangjie?c=172D5', act: async (page, phone) => {
     if (phone) await page.goto(`${ORIGIN}/?q=%F0%97%8B%95`).then(() => page.locator('.ui-row-pick').first().click())
