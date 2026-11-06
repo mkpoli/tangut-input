@@ -92,9 +92,9 @@
     /** @type {Map<number, typeof palette>} */
     const groups = new Map()
     for (const item of palette) {
-      const list = groups.get(item.strokes) ?? []
+      const list = groups.get(item.section) ?? []
       list.push(item)
-      groups.set(item.strokes, list)
+      groups.set(item.section, list)
     }
     return [...groups.entries()].sort((a, b) => a[0] - b[0])
   })
@@ -569,7 +569,7 @@
                     title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
                     <span class="ui-tile-glyph"><G char={item.part} /></span>
                     {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
-                    <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}</span>
+                    <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}{#if item.strokes !== item.section}{' · '}{t('draw.strokes', { count: item.strokes })}{/if}</span>
                   </button>
                 {/each}
               </div>
