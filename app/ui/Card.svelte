@@ -20,6 +20,7 @@
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
   import { tibetanShown, tibetanWhere } from '../lib/tibetan.js'
+  import { hasCardReadings } from '../lib/card-readings.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -46,6 +47,7 @@
   const rhymeClass = $derived(rhyme?.[0] ? String(rhyme[0]) : '')
   // Tibetan and Sanskrit spellings from a study known only through a repost: see the sources page.
   const hands = $derived(ready && char ? ix.tibetanHands[char] : undefined)
+  const tibetanGlosses = $derived(ready && char ? ix.tibetan.get(char) ?? [] : [])
   const toneName = $derived(
     rhyme?.[1] === 1 ? 'card.tone.level'
       : rhyme?.[1] === 2 ? 'card.tone.rising'
@@ -263,7 +265,7 @@
       </section>
     {/if}
 
-    {#if readings.length}
+    {#if hasCardReadings({ readings, rhymeClass, spelling, hands, glosses: tibetanGlosses })}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
@@ -283,12 +285,27 @@
             {#if hands?.sanskrit?.length}
               <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
             {/if}
+            {#if tibetanGlosses.length}
+              <tr>
+                <th scope="row"><a href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.transcriptionTibetan')}<span aria-hidden="true">↗</span></a></th>
+                <td><div class="tibetan-glosses">
+                  {#each tibetanGlosses as [wylie, script, where], i (i)}
+                    <span class="tibetan-gloss">
+                      <span lang="bo" class="tibetan-script">{tibetanShown(wylie, script)}</span>
+                      <span class="ui-mono wylie">{wylie}</span>
+                      <span class="ui-hint">{tibetanWhere(where)}</span>
+                    </span>
+                  {/each}
+                  <span class="source-note ui-hint">{t('card.transcriptionTibetanNote')}</span>
+                </div></td>
+              </tr>
+            {/if}
           </tbody>
         </table>
       </section>
     {/if}
 
-    {#if ready && (ix.zzz.has(char) || ix.tibetan.has(char))}
+    {#if ready && ix.zzz.has(char)}
       <section>
         <h3 class="ui-label"><Icon name="sound" size={15}/>{t('card.transcriptions')}</h3>
         <dl class="transcriptions">
@@ -297,19 +314,6 @@
             <dd class="zzz">
               {#each ix.zzz.get(char) ?? [] as pair, i (pair.entry + pair.text)}{#if i}<span class="sep" aria-hidden="true">·</span>{/if}<span class="zzz-pair"><span lang="zh-Hant" title={pair.entry}>{pair.text}</span><span class="entry-ref ui-hint">{t('card.transcriptionEntry', { id: (pair.entry.split(':').pop() ?? '') })}</span></span>{/each}
               <span class="source-note ui-hint">{t('card.transcriptionZzzNote')}</span>
-            </dd>
-          {/if}
-          {#if ix.tibetan.has(char)}
-            <dt><a href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.transcriptionTibetan')}<span aria-hidden="true">↗</span></a></dt>
-            <dd class="tibetan-glosses">
-              {#each ix.tibetan.get(char) ?? [] as [wylie, script, where], i (i)}
-                <span class="tibetan-gloss">
-                  <span lang="bo" class="tibetan-script">{tibetanShown(wylie, script)}</span>
-                  <span class="ui-mono wylie">{wylie}</span>
-                  <span class="ui-hint">{tibetanWhere(where)}</span>
-                </span>
-              {/each}
-              <span class="source-note ui-hint">{t('card.transcriptionTibetanNote')}</span>
             </dd>
           {/if}
         </dl>

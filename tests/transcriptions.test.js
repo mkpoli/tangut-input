@@ -5,6 +5,8 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { pairZzz, parseTsv } from '../scripts/build_tangut_zzz.mjs'
+import { hasCardReadings } from '../app/lib/card-readings.js'
+import { tibetanShown, tibetanWhere } from '../app/lib/tibetan.js'
 
 const read = name => JSON.parse(readFileSync(new URL(`../app/data/${name}`, import.meta.url), 'utf8'))
 const zzz = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-zzz.json.gz', import.meta.url))).toString())
@@ -109,6 +111,25 @@ test('the tables parse as the builder reads them', () => {
   const cells = parseTsv(readFileSync(new URL('../data/zhangzhongzhu/cells.tsv', import.meta.url), 'utf8'))
   expect(Array.isArray(entries)).toBe(true)
   expect(Array.isArray(cells)).toBe(true)
+})
+
+test('Readings appears for each kind of evidence without a reconstruction', () => {
+  const empty = { readings: [], rhymeClass: '', spelling: '', glosses: [] }
+  expect(hasCardReadings(empty)).toBe(false)
+  for (const evidence of [
+    { readings: ['reading'] }, { rhymeClass: '1' }, { spelling: '𗄈𗍍' },
+    { hands: { tibetan: [['B']] } }, { hands: { sanskrit: ['śo'] } },
+    { glosses: tibetan.glosses['𗄈'] },
+  ]) expect(hasCardReadings({ ...empty, ...evidence })).toBe(true)
+  expect(hasCardReadings({ ...empty, hands: { tibetan: [], sanskrit: [] } })).toBe(false)
+})
+
+test('a manuscript gloss keeps its script, Wylie and manuscript counts', () => {
+  const [wylie, script, where] = tibetan.glosses['𗄈'][0]
+  expect(tibetanShown(wylie, script)).toBe('ཤོ')
+  expect(wylie).toBe('sho')
+  expect(tibetanWhere(where)).toBe('Or.12380/1842 ×1')
+  expect(tibetanShown('a[?]', 'ི')).toBe('◌ི?')
 })
 
 test('the Tibetan glosses carry a Wylie reading, a script spelling and a manuscript', () => {
