@@ -9,6 +9,15 @@ export const PRIMARY = /** @type {const} */ ({ path: '', label: 'nav.find', tab:
 
 export const GROUPS = /** @type {const} */ ([
   {
+    label: 'nav.group.text',
+    tab: 'nav.group.text.tab',
+    icon: 'book',
+    pages: [
+      { path: 'texts', label: 'nav.texts', icon: 'book', hint: 'nav.texts.hint' },
+      { path: 'transcribe', label: 'nav.transcribe', icon: 'transcribe', hint: 'nav.transcribe.hint' },
+    ],
+  },
+  {
     label: 'nav.group.shape',
     tab: 'nav.group.shape.tab',
     icon: 'shape',
@@ -27,7 +36,6 @@ export const GROUPS = /** @type {const} */ ([
       { path: 'fanqie', label: 'nav.fanqie', icon: 'fanqie', hint: 'nav.fanqie.hint' },
       { path: 'chart', label: 'nav.chart', icon: 'chart', hint: 'nav.chart.hint' },
       { path: 'reading', label: 'nav.reading', icon: 'reading', hint: 'nav.reading.hint' },
-      { path: 'transcribe', label: 'nav.transcribe', icon: 'transcribe', hint: 'nav.transcribe.hint' },
     ],
   },
   {
@@ -47,19 +55,19 @@ export const MORE = /** @type {const} */ ([
   { path: 'about', label: 'nav.sources', icon: 'sources', hint: 'nav.sources.hint' },
 ])
 
-/** @typedef {typeof GROUPS[number]['pages'][number] | typeof MORE[number]} FinderEntry */
+/** @typedef {typeof GROUPS[number]['pages'][number] | typeof MORE[number]} MenuEntry */
 
-/** @typedef {typeof PRIMARY | FinderEntry} PageEntry */
+/** @typedef {typeof PRIMARY | MenuEntry} PageEntry */
 
 /** @type {PageEntry[]} */
 export const PAGES = [PRIMARY, ...GROUPS.flatMap(group => /** @type {PageEntry[]} */ ([...group.pages]))]
 
-/** @typedef {PageEntry['path'] | 'about' | 'intro'} Page */
+/** @typedef {PageEntry['path'] | 'variants'} Page */
 
 /** @returns {{ page: Page, q: string, c: string }} */
 function read() {
   const path = location.pathname.replace(/^\/+|\/+$/g, '')
-  const page = /** @type {Page} */ ([...PAGES, ...MORE].some(entry => entry.path === path) ? path : '')
+  const page = /** @type {Page} */ ([...PAGES, ...MORE].some(entry => entry.path === path) || path === 'variants' ? path : '')
   const params = new URLSearchParams(location.search)
   const code = params.get('c') ?? ''
   const c = /^[0-9a-f]{4,5}$/i.test(code) ? String.fromCodePoint(parseInt(code, 16)) : ''

@@ -34,6 +34,7 @@
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
+  const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
@@ -109,14 +110,47 @@
 
   const first = $derived(ready && char ? gloss(char) : '')
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
+
+  // The drawer follows one finger on its top bar, and a pull far enough down closes it.
+  const CLOSE_AT = 80
+  /** @type {{ id: number, y: number, drawer: HTMLElement } | null} */
+  let pull = null
+  /** @param {PointerEvent & { currentTarget: HTMLElement }} event */
+  function grab(event) {
+    if (pull || /** @type {Element} */ (event.target).closest('button')) return
+    const drawer = event.currentTarget.closest('aside')
+    if (!drawer) return
+    // A press that began a text selection would turn the next one into a native drag.
+    event.preventDefault()
+    pull = { id: event.pointerId, y: event.clientY, drawer }
+    event.currentTarget.setPointerCapture(event.pointerId)
+    drawer.style.transition = 'none'
+  }
+  /** @param {PointerEvent} event */
+  function drag(event) {
+    if (pull?.id === event.pointerId) pull.drawer.style.transform = `translateY(${Math.max(0, event.clientY - pull.y)}px)`
+  }
+  function release() {
+    if (!pull) return
+    pull.drawer.style.transition = ''
+    pull.drawer.style.transform = ''
+    pull = null
+  }
+  /** @param {PointerEvent} event */
+  function drop(event) {
+    if (pull?.id !== event.pointerId) return
+    if (event.type === 'pointerup' && event.clientY - pull.y > CLOSE_AT) ui.sheet = false
+    release()
+  }
+  // Closed some other way in the middle of a pull, the drawer must not keep where the pull left it.
+  $effect(() => { if (!ui.sheet) release() })
 </script>
 
 {#if ui.sheet}
-  <div class="sheetbar">
-    <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => { ui.sheet = false }}>
-      <Icon name="back" size={15}/>
-      {t('card.back')}
-    </button>
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="sheetbar" onpointerdown={grab} onpointermove={drag} onpointerup={drop} onpointercancel={drop} onlostpointercapture={drop}>
+    <span class="handle" aria-hidden="true"></span>
+    <button class="ui-button close" data-variant="quiet" data-size="sm" type="button" onclick={() => { ui.sheet = false }}>{t('card.close')}</button>
   </div>
 {/if}
 
@@ -183,7 +217,7 @@
       </section>
     {/if}
 
-    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes}
+    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes || leilin?.length}
       <section>
         <h3 class="ui-label"><Icon name="meaning" size={15}/>{t('card.meaning')}</h3>
         {#if wordClass.length}
@@ -195,6 +229,7 @@
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
           {#if meanings.zh?.length}<dt>zh</dt><dd lang="zh-Hant">{meanings.zh.join('；')}</dd>{/if}
+          {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}
           {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
         </dl>
       </section>
@@ -223,6 +258,7 @@
             <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
+        <p class="more"><a href={link('variants', char)}><Icon name="arrow" size={13}/>{t('card.variantsAll')}</a></p>
       </section>
     {/if}
 
@@ -366,7 +402,9 @@
 {/if}
 
 <style>
-  .sheetbar{position:sticky;top:0;z-index:2;padding:var(--ui-space-xs) var(--ui-space-lg);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border)}
+  .sheetbar{position:sticky;top:0;z-index:2;display:flex;justify-content:flex-end;align-items:center;min-block-size:44px;padding:var(--ui-space-2xs) var(--ui-space-sm);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border);touch-action:none;cursor:grab;user-select:none}
+  @media (min-width:901px){.sheetbar{display:none}}
+  .handle{position:absolute;inset-block-start:8px;inset-inline-start:50%;inline-size:40px;block-size:4px;border-radius:2px;background:var(--ui-color-border-strong);transform:translateX(-50%)}
   .blank{display:grid;gap:var(--ui-space-md);justify-items:center;text-align:center;padding:72px var(--ui-space-3xl);color:var(--ui-color-ink-soft)}
   .blank-glyph{font-size:88px;color:var(--ui-color-border-strong);line-height:1}
   .blank-line{max-inline-size:24em}
@@ -409,7 +447,7 @@
   .means ol{margin:0;padding-inline-start:1.2em}
   .readings{border-collapse:collapse;inline-size:100%;font-size:var(--ui-text-sm)}
   .readings th{inline-size:46%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
-  .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
+  .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
   .spelling{font-size:18px}

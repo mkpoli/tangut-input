@@ -21,7 +21,8 @@ The site has three parts.
   Four-corner, Reading, Fanqie, Chart, Transcribe, Draw and Parts. Their inputs differ in kind
   (letters, a reconstruction, a drawing, a set of components), so each page is laid out for its own
   input. The one shared box with tabs is the Fanqie picker, where the point is to choose two
-  characters without leaving the field.
+  characters without leaving the field. Texts sits beside them: it starts from a whole text and
+  loads its first passage into Transcribe.
 - **The card.** Everything recorded about one character, with the actions first: add to the text,
   copy the character, copy the link, copy the code point (click it) or a Cangjie code (click it).
   Below them come the things that help a reader confirm the character is the one they mean:
@@ -33,19 +34,19 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 
 ## The frame
 
-**Desktop (1180 or wider).** One top bar: the mark, Find, one button for each finder group (From a
-shape, From a sound, From a meaning), More, the reconstruction with its label and sound icon, and a
-settings button. A group button opens a menu under the bar listing its finders, each with its hint
-and the open one marked; the button stays marked while a page inside its group is open. More holds
-the introduction and Sources. The foot of the finder keeps both links. Escape, a click elsewhere or
-a change of layout closes the menu, and Escape puts focus back on its button. The settings popover
-is two groups: Appearance, with the
-three-way theme (system, light or dark) and the colour scheme; and Text, with the interface language
-and the Tangut face. Each row carries its own icon. The text strip sits under the bar; the finder
-takes the left and the card a fixed 400 px column on the right, scrolling on its own. The card
-stays visible while candidates change, so meaning and reading are read alongside the list.
+**Desktop (1280 or wider).** One top bar: the site select around the mark, Find, one button for each
+finder group (From a text, From a shape, From a sound, From a meaning), More, the reconstruction
+with its label and sound icon, the sponsor and a settings button. A group button opens a menu under
+the bar listing its finders, each with its hint and the open one marked; the button stays marked
+while a page inside its group is open. More holds the introduction and Sources. The foot of the
+finder keeps Sources. Escape, a click elsewhere or a change of layout closes the menu, and Escape
+puts focus back on its button. The settings popover is two groups: Appearance, with the three-way
+theme (system, light or dark) and the colour scheme; and Text, with the interface language and the
+Tangut face. Each row carries its own icon. The text strip sits under the bar; the finder takes the
+left and the card a fixed 400 px column on the right, scrolling on its own. The card stays visible
+while candidates change, so meaning and reading are read alongside the list.
 
-**Tablet (901–1179).** The same bar keeps every group, with the group buttons on a second row whose
+**Tablet (901–1279).** The same bar keeps every group, with the group buttons on a second row whose
 rule runs the width of the page. The sticky chrome below follows the taller bar.
 
 **Phone (390 wide).** The top bar keeps the mark, the reconstruction and settings; settings opens
@@ -74,6 +75,11 @@ stacks it above the name.
   lists the family that opens that way.
 
 With an empty box, the page shows the nine finders as doors with one line each, and examples.
+
+**Texts** (`/texts`) lists the 34 texts behind the attested corpus, grouped as the edition,
+Wikisource and the Lausanne Corpus. Each row gives its passages and characters, links its source,
+and loads its first line into Transcribe. The counts come from the attestation, not from a separate
+text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
 code box takes letters, candidates are numbered 1–9, `Space` or a digit commits into the text,

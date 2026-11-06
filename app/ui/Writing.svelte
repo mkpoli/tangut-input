@@ -1,7 +1,7 @@
 <script>
   // The text being written. Every finder inserts here at the caret; it can also be typed or pasted
   // into directly. Clicking beside a character opens that character in the card.
-  import { tick } from 'svelte'
+  import { tick, onMount } from 'svelte'
   import { text, attach, detach, setText, remember, asCodePoints, asCodes } from '../lib/text.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { isTangut } from '../lib/db.svelte.js'
@@ -12,6 +12,8 @@
   import SamplePicker from './SamplePicker.svelte'
   import Icon from './Icon.svelte'
 
+  /** @type {HTMLElement | null} */
+  let strip = $state(null)
   /** @type {HTMLTextAreaElement | null} */
   let field = $state(null)
   let menu = $state(false)
@@ -26,6 +28,17 @@
   $effect(() => {
     if (field) attach(field)
     return () => { if (field) detach(field) }
+  })
+
+  // The strip is sticky above the page, and a page's own sticky bar hangs below it. Its height
+  // changes with the text, so the offset follows the rendered strip rather than the token.
+  onMount(() => {
+    if (!strip) return
+    const observer = new ResizeObserver(([entry]) => {
+      document.documentElement.style.setProperty('--writing-h', `${entry.target.getBoundingClientRect().height}px`)
+    })
+    observer.observe(strip)
+    return () => observer.disconnect()
   })
 
   // Grow with the text up to three lines.
@@ -93,7 +106,7 @@
   }
 </script>
 
-<section class="writing" aria-label={t('writing.label')}>
+<section class="writing" bind:this={strip} aria-label={t('writing.label')}>
   <label class="ui-label writing-label" for="writing">{t('writing.text')}</label>
   <textarea id="writing" bind:this={field} class="ui-input writing-field ui-script" rows="1" spellcheck="false" autocomplete="off"
     value={text.value} placeholder={t('writing.placeholder')}

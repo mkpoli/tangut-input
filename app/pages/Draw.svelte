@@ -178,7 +178,8 @@
   /** @param {KeyboardEvent} event */
   function keys(event) {
     const typing = /** @type {HTMLElement} */ (event.target).closest('input, textarea')
-    if (typing) return
+    // An open dialog owns the keyboard, and the drawing behind it stays as it is.
+    if (typing || document.querySelector('dialog[open]')) return
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') { event.preventDefault(); undo(); return }
     if (event.key === 'Escape') { clear(); return }
     if (event.key === 'Enter' && active < 0 && hits[0]) { put(hits[0].char, { place: 0 }); clear(); return }

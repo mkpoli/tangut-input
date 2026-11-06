@@ -30,11 +30,15 @@ export const PAGE_SEO = {
   },
   reading: {
     title: 'Reading — Tangut Input',
-    description: 'Type a Tangut reconstruction in any of the six systems the site shows — Li Fanwen, Gong Xun 2024-11, Miyake, Nishida, Kychanov, Sofronov — and see the characters read so.',
+    description: 'Type a Tangut reconstruction in any of the seven systems the site shows — Li Fanwen, Gong Hwang-cherng, Gong Xun 2024-11, Miyake, Nishida, Kychanov, Sofronov — and see the characters read so.',
+  },
+  texts: {
+    title: 'Texts — Tangut Input',
+    description: 'Browse the texts behind the attested corpus, with their passages, characters and sources, and load a first passage into Transcribe.',
   },
   transcribe: {
     title: 'Transcribe Tangut text — every character’s reading',
-    description: 'Paste a line of Tangut and read every character: its reconstruction in any of six systems, its rhyme and tone, and a table of all six for copying.',
+    description: 'Paste a line of Tangut and read every character: its reconstruction in any of seven systems, its rhyme and tone, and a table of all seven for copying.',
   },
   fanqie: {
     title: 'Fanqie — Tangut Input',
@@ -50,11 +54,15 @@ export const PAGE_SEO = {
   },
   draw: {
     title: 'Draw — Tangut Input',
-    description: 'Sketch a Tangut character on the pad and see the glyphs closest to it in shape, compared against five Tangut faces.',
+    description: 'Sketch a Tangut character on the pad and see the glyphs closest to it in shape, compared against five Tangut fonts.',
   },
   parts: {
     title: 'Parts — Tangut Input',
     description: 'Choose the components you can see in a Tangut character and narrow the list to the characters built with them.',
+  },
+  variants: {
+    title: 'Variant forms — Tangut Input',
+    description: 'Tangut characters and components written in more than one way, each with what supports it.',
   },
   intro: {
     title: 'Tangut: people, script, language and texts — Tangut Input',

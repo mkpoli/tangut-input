@@ -2,6 +2,7 @@
   // A short way into the finders from the Fanqie field. The full pages are laid out for their own
   // input; this panel keeps only the input and the candidates, so two characters can be chosen
   // without leaving the spelling they belong to. A pick goes into the fanqie, never into the text.
+  import { keepVariantsTogether } from '../lib/variants.js'
   import { tick } from 'svelte'
   import { db, ix, gloss, codePoint, isTangut, isComponent, readingOf } from '../lib/db.svelte.js'
   import { byCode, byMeaning, byCodePoint, bySijiao, byParts, byTibetan, partsAmong, tangutIn } from '../lib/search.js'
@@ -18,7 +19,7 @@
   // `always` is the panel with no field to serve: mounted on a page of its own, it has no trigger, no
   // heading that speaks of the fanqie, and nothing that closes it. `open` stays false, so the listeners
   // that close a popover never run.
-  /** @type {{ selected?: string, always?: boolean, onpick: (char: string, place: number) => boolean }} */
+  /** @type {{ selected?: string, always?: boolean, onpick: (char: string, place: number, strokes?: [number, number][][]) => boolean }} */
   let { selected = '', always = false, onpick } = $props()
 
   const MODES = /** @type {const} */ ([
@@ -83,7 +84,19 @@
     }))
     if (needle) list = list.filter(item => (ix.codes.get(item.part) ?? []).some(code => code.startsWith(needle) || code.startsWith(`p${needle}`)))
     if (partAmong) list = list.filter(item => item.live > 0)
-    return list.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses)
+    return keepVariantsTogether(list.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses))
+  })
+
+  /** The palette by stroke count, the order a reader looks for a component in. */
+  const paletteGroups = $derived.by(() => {
+    /** @type {Map<number, typeof palette>} */
+    const groups = new Map()
+    for (const item of palette) {
+      const list = groups.get(item.section) ?? []
+      list.push(item)
+      groups.set(item.section, list)
+    }
+    return [...groups.entries()].sort((a, b) => a[0] - b[0])
   })
 
   const drawHits = $derived.by(() => {
@@ -156,7 +169,7 @@
   function readingLabel(hit) {
     const reading = hit.readings.find(reading => reading.system === ui.reading) ?? hit.readings[0]
     const system = SYSTEMS.find(system => system.key === reading.system)
-    return system && system.key !== ui.reading ? `${reading.raw} (${system.short})` : reading.raw
+    return system && system.key !== ui.reading ? `${reading.raw} (${system.tag})` : reading.raw
   }
 
   /** @param {string} text */
@@ -260,7 +273,9 @@
 
   /** @param {MiniHit} hit @param {number} place */
   function pick(hit, place) {
-    if (onpick(hit.char, place)) always ? reset() : close()
+    // A pick made from a drawing carries the strokes: whoever asked may keep them as a sample.
+    const drawn = mode === 'draw' ? strokes.map(stroke => stroke.map(([x, y]) => /** @type {[number, number]} */ ([x, y]))) : undefined
+    if (onpick(hit.char, place, drawn)) always ? reset() : close()
   }
 
   /** The next character starts clean: strokes left on the pad would be ranked with the new ones, and
@@ -544,15 +559,20 @@
         </div>
 
         {#if mode === 'parts'}
-          <div class="part-palette ui-tiles" style:--ui-tile-size="44px">
-            {#each palette as item (item.part)}
-              {@const sound = readingOf(item.part, ui.reading)}
-              <button type="button" class="ui-tile" onclick={() => addPart(item.part)}
-                title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
-                <span class="ui-tile-glyph"><G char={item.part} /></span>
-                {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
-                <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}</span>
-              </button>
+          <div class="part-palette">
+            {#each paletteGroups as [strokes, items] (strokes)}
+              <p class="ui-label part-group">{strokes === 1 ? t('parts.strokeOne') : t('parts.strokeGroup', { count: strokes })}</p>
+              <div class="ui-tiles" style:--ui-tile-size="44px">
+                {#each items as item (item.part)}
+                  {@const sound = readingOf(item.part, ui.reading)}
+                  <button type="button" class="ui-tile" onclick={() => addPart(item.part)}
+                    title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
+                    <span class="ui-tile-glyph"><G char={item.part} /></span>
+                    {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
+                    <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}{#if item.strokes !== item.section}{' · '}{t('draw.strokes', { count: item.strokes })}{/if}</span>
+                  </button>
+                {/each}
+              </div>
             {/each}
           </div>
         {/if}
@@ -579,7 +599,7 @@
   .picker-results .ui-count{margin:0}
   .picker-results .ui-empty{margin:0}
   .draw-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--ui-space-lg)}
-  .pad{position:relative;inline-size:160px;aspect-ratio:1;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-md);background:var(--ui-color-surface-sunken);overflow:hidden}
+  .pad{position:relative;inline-size:100%;max-inline-size:320px;aspect-ratio:1;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-md);background:var(--ui-color-surface-sunken);overflow:hidden}
   canvas{display:block;inline-size:100%;block-size:100%;touch-action:none;cursor:crosshair;color:var(--ui-color-ink)}
   .draw-hint{position:absolute;inset-inline:0;bottom:10px;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);letter-spacing:var(--ui-tracking-caps);text-align:center;text-transform:uppercase;pointer-events:none}
   .draw-tools{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
@@ -588,11 +608,13 @@
   .part-pick{position:relative;display:grid;place-items:center;inline-size:42px;block-size:42px;border:1px solid var(--ui-color-accent);border-radius:var(--ui-radius-sm);background:var(--ui-color-accent-soft);color:var(--ui-color-ink)}
   .part-pick :global(.ui-script){font-size:26px}
   .part-pick .part-x{position:absolute;top:0;right:4px;color:var(--ui-color-accent-ink);font-size:var(--ui-text-xs)}
-  .part-palette{max-block-size:150px;overflow:auto;padding:1px;overscroll-behavior:contain}
+  /* The palette runs its full length; the panel around it is what scrolls. */
+  .part-palette{padding:1px;display:grid;gap:var(--ui-space-2xs)}
+  .part-group{margin:var(--ui-space-2xs) 0 0}
   @media (max-width:700px){
     .picker-head{padding:var(--ui-space-md) var(--ui-space-lg) var(--ui-space-xs)}
     .picker-modes{padding-inline:var(--ui-space-lg)}
     .picker-body{padding:var(--ui-space-sm) var(--ui-space-lg) var(--ui-space-lg)}
-    .pad{inline-size:132px}
+    .pad{inline-size:100%;max-inline-size:260px}
   }
 </style>
