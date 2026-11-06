@@ -64,6 +64,7 @@
         {#each paragraphs(t(`intro.s${index + 1}.body`)) as paragraph}
           <p class="intro-para">{#each parts(paragraph) as part}{#if 'ns' in part}<sup class="cite">{#each part.ns as n, i}{#if i}<span class="sep">,</span>{/if}<a href={`#source-${n}`} title={SOURCES[n - 1]?.title}>{n}</a>{/each}</sup>{:else}{part.text}{/if}{/each}</p>
         {/each}
+        {#if section.id === 'language'}<p class="intro-more"><a href="/gyalrongic">{t('gyalrongic.more')}</a></p>{/if}
       </div>
       <IntroFigure id={section.figure} />
     </section>
@@ -100,8 +101,8 @@
   .intro-heading{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold);line-height:1.3}
   .intro-para{max-inline-size:66ch;color:var(--ui-color-ink);font-size:var(--ui-text-md);line-height:var(--ui-leading-loose)}
   .intro-close{font-family:var(--ui-font-serif);font-size:var(--ui-text-lg)}
-  .intro-start{margin:0}
-  .intro-start a{color:var(--ui-color-accent);font-size:var(--ui-text-sm);text-underline-offset:3px}
+  .intro-start,.intro-more{margin:0}
+  .intro-start a,.intro-more a{color:var(--ui-color-accent);font-size:var(--ui-text-sm);text-underline-offset:3px}
   .cite{font-size:.72em;line-height:0;vertical-align:super}
   .cite .sep{margin-inline-end:1px}
   .cite a{padding-inline:1px;color:var(--ui-color-accent);text-decoration:none}
