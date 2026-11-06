@@ -738,6 +738,36 @@ await step('the sponsor dialog offers both tips, OFUSE first in Japanese, and Es
   await context.close()
 })
 
+await step('an open sponsor dialog leaves the drawing behind it alone', async () => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: 'en-US' })
+  const draw = await context.newPage()
+  await draw.goto(`${APP}/draw`, { waitUntil: 'load' })
+  const canvas = draw.locator('canvas').first()
+  await canvas.waitFor()
+  const box = /** @type {{ x: number, y: number, width: number, height: number }} */ (await canvas.boundingBox())
+  await draw.mouse.move(box.x + box.width * .2, box.y + box.height * .4)
+  await draw.mouse.down()
+  await draw.mouse.move(box.x + box.width * .8, box.y + box.height * .6, { steps: 8 })
+  await draw.mouse.up()
+  const ink = () => canvas.evaluate(element => {
+    const pad = /** @type {HTMLCanvasElement} */ (element)
+    const data = /** @type {CanvasRenderingContext2D} */ (pad.getContext('2d')).getImageData(0, 0, pad.width, pad.height).data
+    let painted = 0
+    for (let at = 3; at < data.length; at += 4) if (data[at]) painted++
+    return painted
+  })
+  const before = await ink()
+  assert.ok(before > 0, 'the stroke is on the pad')
+  await draw.locator('button.sponsor').click()
+  await draw.locator('dialog.sponsor-dialog .tip').first().waitFor()
+  await draw.keyboard.press('Control+z')
+  assert.equal(await ink(), before, 'Ctrl+Z leaves the stroke')
+  await draw.keyboard.press('Escape')
+  assert.equal(await draw.locator('dialog.sponsor-dialog').evaluate(element => /** @type {HTMLDialogElement} */ (element).open), false, 'Escape closes the dialog')
+  assert.equal(await ink(), before, 'Escape leaves the stroke')
+  await context.close()
+})
+
 await browser.close()
 console.log(`\n${passed} passed, ${failed.length} failed`)
 if (failed.length) process.exit(1)
