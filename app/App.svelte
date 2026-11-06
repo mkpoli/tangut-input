@@ -14,6 +14,7 @@
   import Card from './ui/Card.svelte'
   import SponsorDialog from './ui/SponsorDialog.svelte'
   import Icon from './ui/Icon.svelte'
+  import SiteSelect from './ui/SiteSelect.svelte'
   import Find from './pages/Find.svelte'
   import Cangjie from './pages/Cangjie.svelte'
   import Sijiao from './pages/Sijiao.svelte'
@@ -197,10 +198,14 @@
 
 <div class="shell">
   <header class="top">
-    <a class="mark" href="/" onclick={event => nav(event, '')} aria-label={t('app.home')}>
-      <span class="badge ui-script" aria-hidden="true">𘅤</span>
-      <span class="name">{t('app.name')}</span>
-    </a>
+    <div class="site">
+      <SiteSelect home={event => nav(event, '')}>
+        <span class="mark">
+          <span class="badge ui-script" aria-hidden="true">𘅤</span>
+          <span class="name">{t('app.name')}</span>
+        </span>
+      </SiteSelect>
+    </div>
     {@render introLink('intro-extra')}
     <nav class="finders" aria-label={t('nav.label')}>
       <a href="/" class="primary" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
@@ -365,7 +370,8 @@
 <style>
   .shell{min-block-size:100dvh;display:flex;flex-direction:column}
   .top{position:sticky;top:0;z-index:var(--ui-z-chrome);display:flex;align-items:center;gap:var(--ui-space-xl);block-size:var(--topbar-h);padding-inline:var(--ui-space-2xl);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border)}
-  .mark{display:flex;align-items:center;gap:var(--ui-space-sm);color:var(--ui-color-ink);text-decoration:none}
+  .site{align-self:stretch}
+  .mark{display:flex;align-items:center;gap:var(--ui-space-sm)}
   .badge{display:grid;place-items:center;inline-size:30px;block-size:30px;border-radius:var(--ui-radius-sm);background:var(--ui-color-accent);color:var(--ui-color-on-accent);font-size:21px}
   .name{font-family:var(--ui-font-serif);font-size:17px;font-weight:var(--ui-weight-semibold);letter-spacing:.005em;white-space:nowrap}
   .intro-extra{display:none;align-items:center;gap:4px;block-size:55px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
@@ -449,7 +455,7 @@
   @media (min-width:901px) and (max-width:1719px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
-    .mark,.aside{block-size:55px}
+    .site,.aside{block-size:55px}
     .finders{order:3;flex:0 0 100%;block-size:40px;border-top:1px solid var(--ui-color-border)}
     .finders a{padding-inline:var(--ui-space-sm);font-size:var(--ui-text-sm)}
     .finders a.on::after{inset-inline:var(--ui-space-sm)}
