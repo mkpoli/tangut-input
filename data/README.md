@@ -66,6 +66,28 @@ calendar's. Eras without a row rest on the calendar alone.
 `scripts/build_tangut_eras.py` joins it to the calendar and stops unless a form with a `place`
 is followed there by a year.
 
+## `app/data/tangut-coins.json`
+
+Six coin types from Andrew West, [Tangut Coins](https://www.babelstone.co.uk/Blog/2007/01/tangut-coins.html),
+BabelStone Blog, 29 January 2007, addendum 17 March 2007, Unicode update 1 January 2017;
+read 2026-11-07. Each record gives the conventional era attribution, Chinese names, complete
+four-character inscriptions in clockwise order (top, right, bottom, left), the interpretation’s
+status and the specimen link West supplies. 福聖 and 稟德 are competing readings of one type;
+貞觀/觀德 and 正德/治德 each share an inscription. The last two characters, 𘏨𘔭, mean “precious coin”.
+
+The character table preserves West’s reconstructions and four-digit references to 李範文,
+夏漢字典 (1997, XHZD), and 文海研究 (1983, WHYJ), including 𗘞 from his reference table, which occurs
+in none of the listed legends. These are quoted through West; the books were not consulted.
+The 1997 readings and numbering are independent of the dictionary editions in the character cards.
+One sentence in West’s 福聖 discussion prints 𗧯 for 德; his tables give 德 as 𗣼 and 稟 as 𗧯.
+The records follow those tables. Era dates elsewhere on the page follow West’s 2023 calendar,
+whose start years differ from the coin article for 大安, 貞觀 and 乾祐.
+
+West warns about wear and forgeries and leaves three types disputed: 福聖/稟德 is unresolved,
+貞觀’s identification with 觀德 is questioned, and 正德 has both a tentative 治 character and a
+questioned era attribution. No reuse licence is stated; photographs remain linked at the source.
+The citation key `west2007` resolves in `app/lib/era-sources.js`.
+
 ## `tangut-posthumous.tsv`
 
 Posthumous, temple and tomb names, one row per emperor or empress: `kind`, the names, an empress's `relation` to a ruler, Tangut with its
