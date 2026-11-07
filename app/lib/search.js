@@ -124,7 +124,8 @@ export function byMeaning(query, options = {}) {
     }
     // The 文海's own entry text can answer even when the gloss does not use the word.
     if (tier > 2) for (const key of languages) {
-      const value = key === 'en' ? entry.wenhai_text_en : key === 'zh' ? entry.wenhai_text_zh : ''
+      if (key !== 'zh') continue
+      const value = entry.wenhai_text_zh
       if (typeof value !== 'string') continue
       const t = rank(value)
       if (t + 3 < tier) { tier = t + 3; sense = value; lang = key }
@@ -255,12 +256,12 @@ export function bySijiao(digits) {
 }
 
 /**
- * Characters whose recorded description begins with the typed or pasted text: the whole description
+ * Characters whose recorded or editorial description begins with the typed or pasted text: the whole description
  * names its character, a description cut after its opening part names the family that opens so.
  * @param {string} text
  * @returns {string[]}
  */
-export const byDescription = text => describedBy(ix.entries, text)
+export const byDescription = text => describedBy(ix.descriptions, text)
 
 /** The Tangut characters in a piece of text, each once, in order. @param {string} text */
 export function tangutIn(text) {

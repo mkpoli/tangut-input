@@ -19,8 +19,8 @@ export const ERA_SOURCES = {
   west2007: {
     author: 'Andrew West',
     title: 'Tangut Coins',
-    where: 'BabelStone Blog, 2007',
-    note: 'Readings of the coins, with the earlier readings of Luo Fuchang, Chen Bingying and Zhao Quanzhi.',
+    where: 'BabelStone Blog, 29 January 2007; addendum 17 March 2007; Unicode update 1 January 2017',
+    note: 'West’s readings, with earlier interpretations by Luo Fuchang, Chen Bingying and Zhao Quanzhi, and Bai Bin’s identification of 正德. Worn specimens and forgeries limit the evidence; the 福聖/稟德 reading and the 貞觀 and 正德 attributions are disputed. Reconstructions and dictionary numbers are quoted through West from 李範文, 夏漢字典 (1997), and 文海研究 (1983); the books were not consulted. One sentence prints 𗧯 for 德, where his tables give 𗣼. The addendum credits S. W. Bushell’s 1895–1896 article with deciphering the 大安 legend. No reuse licence is stated.',
     url: 'https://babelstone.co.uk/Blog/2007/01/tangut-coins.html',
   },
   west2020: {

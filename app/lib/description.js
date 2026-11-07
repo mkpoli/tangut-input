@@ -2,24 +2,46 @@
 // that starts with an operator is a description: the whole of it names the one character it
 // describes, and a description cut after its opening part names the family that opens that way.
 import { OPERATORS } from './composition.js'
+import { idsViews } from './ids-views.js'
 
 /**
- * Characters whose recorded description begins with the typed or pasted text, in code order.
+ * Index both displayed descriptions once, ordered for prefix lookup.
  * @param {{ char: string, composition?: string }[]} entries
+ * @param {Map<string, Set<string>>} idsIndex
+ * @returns {[string, string][]}
+ */
+export function indexDescriptions(entries, idsIndex) {
+  /** @type {[string, string][]} */
+  const descriptions = []
+  for (const { char, composition } of entries) {
+    if (!composition) continue
+    descriptions.push([composition, char])
+    const view = idsViews(char, composition, idsIndex)
+    if (view.showEditorial && view.editorial !== composition) descriptions.push([view.editorial, char])
+  }
+  return descriptions.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)
+}
+
+/**
+ * Characters whose recorded or editorial description begins with the text, in code order.
+ * @param {[string, string][]} index
  * @param {string} text
  * @returns {string[]}
  */
-export function describedBy(entries, text) {
+export function describedBy(index, text) {
   const chars = [...text]
   // A description starts with an operator and holds at least one part after it.
   if (chars.length < 2 || !OPERATORS.has(chars[0])) return []
   if (!chars.slice(1).some(char => !OPERATORS.has(char))) return []
-  /** @type {string[]} */
-  const hits = []
-  for (const entry of entries) {
-    if (entry.composition?.startsWith(text)) hits.push(entry.char)
+  let low = 0, high = index.length
+  while (low < high) {
+    const mid = (low + high) >> 1
+    if (index[mid][0] < text) low = mid + 1
+    else high = mid
   }
-  return hits.sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
+  const hits = new Set()
+  for (let i = low; i < index.length && index[i][0].startsWith(text); i++) hits.add(index[i][1])
+  return [...hits].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
 
 // Operators that take three parts; the rest take two.

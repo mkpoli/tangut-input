@@ -34,23 +34,29 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 
 ## The frame
 
-**Desktop (1440×900).** The bar takes two rows: the mark, the reconstruction with its label and
-sound icon, the sponsor and a settings button on the first; the grouped finders, each with its
-icon before the name, and the introduction at their end on the second. From 1720 px the finders
-join the first row; between 901 and 1140 px the introduction moves up beside the mark, because
-the finder row has no room for it. The settings popover is two groups: Appearance, with the
-three-way theme (system, light or dark) and the colour scheme; and Text, with the interface
-language and the Tangut face. Each row carries its own icon. The text strip sits under the bar;
-the finder takes the left and the card a fixed 400 px column on the right, scrolling on its own.
-Sources sits at the foot of the finder. The card stays visible while candidates change, so meaning
-and reading are read alongside the list.
+**Desktop (1280 or wider).** One top bar: the site select around the mark, Find, one button for each
+finder group (From a text, From a shape, From a sound, From a meaning), More, the reconstruction
+with its label and sound icon, the sponsor and a settings button. A group button opens a menu under
+the bar listing its finders, each with its hint and the open one marked; the button stays marked
+while a page inside its group is open. More holds the introduction, the Gyalrongic note and
+Sources. The foot of the finder keeps Sources. Escape, a click elsewhere or a change of layout
+closes the menu, and Escape puts focus back on its button. The settings popover is two groups:
+Appearance, with the three-way theme (system, light or dark) and the colour scheme; and Text, with
+the interface language and the Tangut face. Each row carries its own icon. The text strip sits
+under the bar; the finder takes the left and the card a fixed 400 px column on the right, scrolling
+on its own. The card stays visible while candidates change, so meaning and reading are read
+alongside the list.
+
+**Tablet (901–1279).** The same bar keeps every group, with the group buttons on a second row whose
+rule runs the width of the page. The sticky chrome below follows the taller bar.
 
 **Phone (390 wide).** The top bar keeps the mark, the reconstruction and settings; settings opens
 as a sheet from the same button. The finders move to a bottom tab bar of groups, each tab with its
 icon over the name, each group opening its pages in a sheet with a row for each finder; More holds
-Introduction and Sources. The sheets are native `<dialog>`s, so Escape closes them and focus
-returns to the tab that opened them. The card becomes a full-height sheet that a tap opens and
-Back or `Esc` closes; previews from the keyboard do not open it. The text strip stays at the top.
+the introduction, the Gyalrongic note and Sources. The sheets are native `<dialog>`s, so Escape
+closes them and focus returns to the tab that opened them. The card becomes a full-height sheet
+that a tap opens and Back or `Esc` closes; previews from the keyboard do not open it. The text
+strip stays at the top.
 
 Every finder, page title and action carries a line icon from `app/ui/Icon.svelte`: a 20-unit square
 drawn at 1.5 with the colour of the text, so both schemes and every palette need no separate set.
@@ -72,9 +78,10 @@ stacks it above the name.
 
 With an empty box, the page shows the nine finders as doors with one line each, and examples.
 
-**Texts** (`/texts`) lists the 34 texts behind the attested corpus, grouped as the edition,
-Wikisource and the Lausanne Corpus. Each row gives its passages and characters, links its source,
-and loads its first line into Transcribe. The counts come from the attestation, not from a separate
+**Texts** (`/texts`) lists the 36 texts behind the attested corpus, grouped as the edition,
+Wikisource, the Lausanne Corpus and MiCA. Each row gives its passages and characters, links its
+source, and loads its first line into Transcribe. Read opens the text passage by passage; every
+Tangut character there opens its card. The counts come from the attestation, not from a separate
 text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
@@ -170,8 +177,10 @@ loading the seven extra outlines only when asked. The mark is 𘅤 (U+18164), gl
 Open Tangut, drawn from the font into the favicon.
 
 Google Fonts' Noto Serif Tangut lacks the newest components (U+18AF3–18AFF, U+18D00–18D08), so a
-4 KB subset of the bundled version 2.168 covers those code points. Characters no font draws yet
-(U+187F8–187FF, U+18D80 onward) appear as their code point in a dashed box.
+4 KB subset of the bundled version 2.168 covers those code points. Tangut N4694 draws the other new
+characters — the supplement ideographs and components through U+18DF2 — and a subset of its
+version 18 joins the stack for them. A character no bundled face draws still appears as its code
+point in a dashed box.
 
 ## Drawing search
 

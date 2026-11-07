@@ -4,15 +4,25 @@
   // palette's shapes, prepared with the palette or built from the page's fonts. The closest are
   // listed as the Find tab's own buttons; a pick is handed to `onpick`, and the pad is cleared for
   // the next drawing.
-  import { onMount, untrack } from 'svelte'
+  import { onMount, onDestroy, untrack } from 'svelte'
+  import { createDrawingCapture } from '../core/drawing-capture.js'
   import { SIZE, rank, shapesOf } from '../core/sketch.js'
   import { sketchTemplates } from './sketch-templates.js'
   import { translator } from './i18n.js'
 
   /** @typedef {{ x: number, y: number }} Point */
   /** @type {{ adapter: import('../adapter/types.js').IdsAdapter, disabled?: boolean, messages?: Record<string, string>, locale?: string,
-   *   onpick: (part: string) => void, onclose: () => void }} */
-  let { adapter, disabled = false, messages, locale = 'en', onpick, onclose } = $props()
+   *   onpick: (part: string) => void, onclose: () => void, onrecord?: (event: any) => void, collectionNotice?: string }} */
+  let { adapter, disabled = false, messages, locale = 'en', onpick, onclose, onrecord, collectionNotice } = $props()
+  const capture = createDrawingCapture(event => onrecord?.(event))
+  function snapshot() {
+    capture.update({ origin: 'sketch', strokes: strokes.map(stroke => stroke.map(at => [+(at.x / PAD).toFixed(4), +(at.y / PAD).toFixed(4)])), width: PAD, height: PAD })
+  }
+  function leave() {
+    if (drawing !== null) { drawing = null; snapshot() }
+    capture.capture()
+  }
+  onDestroy(() => { leave(); capture.clear() })
   const t = $derived(translator(messages, locale))
   const uid = $props.id()
 
@@ -147,6 +157,7 @@
   function up(event) {
     if (drawing !== event.pointerId) return
     drawing = null
+    snapshot()
     schedule()
   }
 
@@ -224,7 +235,9 @@
 
   function undo() {
     if (!strokes.length) return
+    leave()
     strokes = strokes.slice(0, -1)
+    snapshot()
     characters = []
     results = []
     tangut = []
@@ -235,6 +248,8 @@
   }
 
   function clear() {
+    leave()
+    capture.clear()
     strokes = []
     characters = []
     results = []
@@ -249,6 +264,8 @@
 
   /** @param {string} part */
   function take(part) {
+    if (drawing !== null) { drawing = null; snapshot() }
+    capture.capture({ picked: part })
     onpick(part)
     clear()
     canvas?.focus({ preventScroll: true })
@@ -267,8 +284,12 @@
     : looked && strokes.length ? t('ids.draw.none') : '')
 </script>
 
+<svelte:window onpagehide={leave} onbeforeunload={leave} />
+<svelte:document onvisibilitychange={() => { if (document.hidden) leave() }} />
+
 <div class="ids-sketch" bind:this={host} role="group" aria-label={t('ids.draw.label')} onkeydowncapture={key}>
   <p class="hint" id={`${uid}-hint`}>{t('ids.draw.hint')}</p>
+  {#if onrecord && collectionNotice}<p class="ids-note">{collectionNotice}</p>{/if}
   <canvas bind:this={canvas} class="pad" tabindex="0" aria-label={t('ids.draw.canvas')} aria-describedby={`${uid}-hint`}
     class:disabled onpointerdown={down} onpointermove={move} onpointerup={up} onpointercancel={up} onlostpointercapture={up}></canvas>
   <div class="actions">

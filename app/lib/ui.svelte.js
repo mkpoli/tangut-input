@@ -69,11 +69,11 @@ export function choose(char) {
 }
 
 /** The pad a page is drawing on, if any: a pick made while it has a drawing carries that drawing.
- * @type {null | (() => { strokes: [number, number][][], width?: number, height?: number } | null)} */
+ * @type {null | ((picked: string, place: number | null) => boolean)} */
 let pad = null
 
 /** Hand the page's drawing to the pick that follows. `null` when the pad goes away.
- * @param {null | (() => { strokes: [number, number][][], width?: number, height?: number } | null)} source */
+ * @param {null | ((picked: string, place: number | null) => boolean)} source */
 export function attachPad(source) {
   pad = source
 }
@@ -84,10 +84,8 @@ export function attachPad(source) {
  * @param {{ place?: number }} [context]
  */
 export function put(char, context = {}) {
-  const drawing = pad?.()
-  if (drawing?.strokes?.length) {
-    record({ type: 'drawing', origin: 'draw', strokes: drawing.strokes, picked: char, place: context.place ?? null, width: drawing.width ?? null, height: drawing.height ?? null })
-  } else {
+  const drawing = pad?.(char, context.place ?? null)
+  if (!drawing) {
     record({ type: 'pick', char, finder: route.page || 'find', query: route.q || null, place: context.place ?? null, locale: i18n.locale })
   }
   insert(char)
