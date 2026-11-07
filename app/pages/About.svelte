@@ -26,6 +26,8 @@
       <dd>{@html t('about.rhymeBooks')}</dd>
       <dt>{t('about.classNamesTitle')}</dt>
       <dd>{@html t('about.classNames')}</dd>
+      <dt>{t('about.zzzTitle')}</dt>
+      <dd>{@html t('about.zzz')}</dd>
       <dt>{t('about.tibetanTitle')}</dt>
       <dd>{@html t('about.tibetan')}</dd>
       <dt>{t('about.gongTitle')}</dt>
@@ -110,6 +112,7 @@
   dt:first-of-type{padding-top:0;margin-top:0;border-top:0}
   dd{margin:var(--ui-space-2xs) 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-md);line-height:var(--ui-leading-loose)}
   .about :global(.ui-script){font-size:22px;vertical-align:-3px}
+  .about :global(.txg-inline){font-family:var(--ui-font-script);font-size:1.1em;line-height:1;vertical-align:-0.06em}
   .corpus{list-style:none;margin:var(--ui-space-lg) 0 0;padding:0;display:grid;gap:var(--ui-space-md)}
   .corpus li{padding-top:var(--ui-space-md);border-top:1px solid var(--ui-color-border)}
   .corpus p{margin:0}

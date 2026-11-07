@@ -1245,3 +1245,29 @@ validates the tables; `scripts/fetch_zhangzhongzhu.py` pulls a canvas or a crop 
 Licence: the images are **CC BY-NC 4.0**, 清光山西巖寺 / 国文学研究資料館, and are not
 redistributed here or on the site. The keyed text is this workshop's own work over a public-domain
 text; its licence is not settled, and until it is the rows may be cited but not reused at scale.
+
+## `tangut-zzz.json.gz`
+
+The 掌中珠 read as a concordance: each Tangut character with the Chinese character the glossary
+transcribes it by, and the entry that character stands in. The print sets one Chinese character
+under each Tangut character, so an entry is joined only where both columns name the same positions.
+An entry with both columns keyed but unequal or offset is counted as `unpairedEntries`, a finding;
+an entry with only one column keyed is counted as `incompleteEntries`, the keying still in progress.
+
+Cells are published only where both are `ok`. The other statuses keep their own counts:
+`uncertainCells` awaits a second witness, `illegibleCells` cannot be read, and `absentCells` means
+the print has no character at that position, which is a reading rather than a gap. `text` is the
+printed transcription; the Tangut key is the standard form from `glyph_norm` where the table has
+one. The table is empty until the keying reaches the Tangut headwords. Rebuild with
+`bun scripts/build_tangut_zzz.mjs` from `data/zhangzhongzhu/entries.tsv` and `cells.tsv`; the source
+record and licence are the `zhangzhongzhu/` ones above.
+
+## `tangut-tibetan.json`
+
+Tibetan phonetic glosses of 197 Tangut characters, from Andrew West's
+[BabelStone index](https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html) of five British
+Library manuscripts (Or.12380/1842, 3495, 3909, 3910, 3911), 2011-12-19. Each gloss is its Wylie
+reading, its Tibetan spelling, and the manuscripts it stands in with a count for each. The page
+omits some incomplete glosses and warns that some readings are uncertain; a `[?]` in the Wylie
+marks a letter that could not be read. No licence is stated upstream. Refresh with
+`uv run --with beautifulsoup4 python scripts/fetch_babelstone_tibetan.py`.

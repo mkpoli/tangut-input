@@ -21,6 +21,8 @@
   import Peek from './Peek.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
+  import { tibetanShown, tibetanWhere } from '../lib/tibetan.js'
+  import { hasCardReadings } from '../lib/card-readings.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -47,6 +49,7 @@
   const rhymeClass = $derived(rhyme?.[0] ? String(rhyme[0]) : '')
   // Tibetan and Sanskrit spellings from a study known only through a repost: see the sources page.
   const hands = $derived(ready && char ? ix.tibetanHands[char] : undefined)
+  const tibetanGlosses = $derived(ready && char ? ix.tibetan.get(char) ?? [] : [])
   const toneName = $derived(
     rhyme?.[1] === 1 ? 'card.tone.level'
       : rhyme?.[1] === 2 ? 'card.tone.rising'
@@ -264,7 +267,7 @@
       </section>
     {/if}
 
-    {#if readings.length}
+    {#if hasCardReadings({ readings, rhymeClass, spelling, hands, glosses: tibetanGlosses })}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
@@ -284,8 +287,38 @@
             {#if hands?.sanskrit?.length}
               <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
             {/if}
+            {#if tibetanGlosses.length}
+              <tr>
+                <th scope="row"><a href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.transcriptionTibetan')}<span aria-hidden="true">↗</span></a></th>
+                <td><div class="tibetan-glosses">
+                  {#each tibetanGlosses as [wylie, script, where], i (i)}
+                    <span class="tibetan-gloss">
+                      <span lang="bo" class="tibetan-script">{tibetanShown(script)}</span>
+                      <span class="ui-mono wylie">{wylie}</span>
+                      <span class="ui-hint">{tibetanWhere(where)}</span>
+                    </span>
+                  {/each}
+                  <span class="source-note ui-hint">{t('card.transcriptionTibetanNote')}</span>
+                </div></td>
+              </tr>
+            {/if}
           </tbody>
         </table>
+      </section>
+    {/if}
+
+    {#if ready && ix.zzz.has(char)}
+      <section>
+        <h3 class="ui-label"><Icon name="sound" size={15}/>{t('card.transcriptions')}</h3>
+        <dl class="transcriptions">
+          {#if ix.zzz.has(char)}
+            <dt><a href="https://kokusho.nijl.ac.jp/biblio/100354804" target="_blank" rel="noopener noreferrer">{t('card.transcriptionZzz')}<span aria-hidden="true">↗</span></a></dt>
+            <dd class="zzz">
+              {#each ix.zzz.get(char) ?? [] as pair, i (pair.entry + pair.text)}{#if i}<span class="sep" aria-hidden="true">·</span>{/if}<span class="zzz-pair"><span lang="zh-Hant" title={pair.entry}>{pair.text}</span><span class="entry-ref ui-hint">{t('card.transcriptionEntry', { id: (pair.entry.split(':').pop() ?? '') })}</span></span>{/each}
+              <span class="source-note ui-hint">{t('card.transcriptionZzzNote')}</span>
+            </dd>
+          {/if}
+        </dl>
       </section>
     {/if}
 
@@ -462,6 +495,20 @@
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
   .spelling{font-size:18px}
+  .transcriptions{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;align-items:baseline}
+  .transcriptions dt{color:var(--ui-color-ink-muted);font-size:var(--ui-text-sm)}
+  .transcriptions dt a{display:inline-flex;align-items:center;gap:3px;color:inherit;text-underline-offset:2px}
+  .transcriptions dd{margin:0;min-inline-size:0}
+  .transcriptions .zzz{font-size:var(--ui-text-xl);line-height:1.3}
+  .zzz-pair{display:inline-flex;align-items:baseline;gap:var(--ui-space-xs)}
+  .zzz-pair .entry-ref{font-size:var(--ui-text-2xs)}
+  .transcriptions .sep{margin-inline:0.4em;color:var(--ui-color-ink-muted)}
+  .tibetan-glosses{display:grid;gap:2px}
+  .tibetan-gloss{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--ui-space-2xs) var(--ui-space-sm)}
+  .tibetan-script{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:var(--ui-text-lg);line-height:1.35}
+  .tibetan-gloss .wylie{font-size:var(--ui-text-sm);color:var(--ui-color-ink)}
+  .tibetan-gloss .ui-hint{font-size:var(--ui-text-2xs)}
+  .source-note{display:block;margin-top:2px;font-size:var(--ui-text-2xs);line-height:1.35}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
   .ids-view{display:grid;gap:var(--ui-space-xs);min-inline-size:0}
