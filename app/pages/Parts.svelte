@@ -5,6 +5,7 @@
   // the next choice always leads somewhere.
   import { keepVariantsTogether } from '../lib/variants.js'
   import { db, ix, gloss, isTangut, codePoint, readingOf } from '../lib/db.svelte.js'
+  import { isDescriptionPart, leavesOf } from '../lib/composition.js'
   import Handwriting from '../ui/Handwriting.svelte'
   import G from '../ui/G.svelte'
   import PartInfo from '../ui/PartInfo.svelte'
@@ -13,13 +14,14 @@
   import { byParts, partsAmong, directPartsIn } from '../lib/search.js'
   import { foldShapeName } from '../lib/names.js'
   import { partInfoPlacement } from '../lib/part-info.js'
-  import { LAYOUTS } from '../ui/Ids.svelte'
+  import { PART_LAYOUTS, encodePartsQuery, decodePartsQuery } from '../lib/parts-query.js'
+  import PartGlyph from '../ui/PartGlyph.svelte'
   import Layout from '../ui/Layout.svelte'
   import Candidates from '../ui/Candidates.svelte'
   import Icon from '../ui/Icon.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
-  let chosen = $state(/** @type {string[]} */ ([...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : directPartsIn(char))))
+  let chosen = $state(/** @type {string[]} */ ([]))
   let handwritingOpen = $state(false)
   let handwritingMounted = $state(false)
   let layout = $state('')
@@ -34,9 +36,12 @@
   let results = $state(null)
 
   const ready = $derived(db.status === 'ready')
-  // A part from the address waits for the records before it can be checked.
+  // Legacy links contain characters; structured queries preserve whole part keys and layout.
   $effect(() => {
-    if (ready && !chosen.length && route.q) chosen = [...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : directPartsIn(char))
+    if (!ready) return
+    const query = decodePartsQuery(route.q)
+    chosen = query.legacy ? query.parts.filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : directPartsIn(char)) : query.parts
+    layout = query.layout
   })
 
   const hits = $derived(ready ? byParts(chosen, layout) : [])
@@ -46,10 +51,27 @@
     void hits
     if (results) results.scrollTop = 0
   })
-  const LAYOUT_KEYS = ['⿰', '⿱', '⿲', '⿳', '⿺', '⿸', '⿵', '⿻']
+  const LAYOUT_KEYS = PART_LAYOUTS
+  function saveQuery() { setQuery(encodePartsQuery(chosen, layout)) }
+  /** @param {string} op */
+  function setLayout(op) { layout = op; saveQuery() }
+
+  /** The strokes of a part: a description part counts the strokes of what it is written with.
+   *  An unknown leaf leaves the total unknown, and the part is grouped under `?`. @param {string} part */
+  function strokesOf(part) {
+    if (!isDescriptionPart(part)) return ix.strokes.get(part) ?? 0
+    let total = 0
+    for (const leaf of leavesOf(part)) {
+      const count = ix.strokes.get(leaf) ?? 0
+      if (!count) return 0
+      total += count
+    }
+    return total
+  }
 
   // Every part at every layer, by strokes then by how often characters use it, with variant components
-  // kept together; narrowed by the choice so far.
+  // kept together; narrowed by the choice so far. Description parts are read off the characters in
+  // view, so they wait until a part is chosen or the filter asks for one.
   const palette = $derived.by(() => {
     if (!ready) return []
     const query = filter.trim()
@@ -57,10 +79,11 @@
     const shape = foldShapeName(query)
     /** @type {Set<string>} */
     const named = shape ? new Set(ix.names.filter(row => foldShapeName(row.name).includes(shape)).map(row => row.char)) : new Set()
-    let parts = [...ix.usedBy.keys()].map(part => ({ part, uses: ix.usedBy.get(part)?.size ?? 0, strokes: ix.strokes.get(part) ?? 0, live: among ? among.get(part) ?? 0 : -1 }))
-    if (query) parts = parts.filter(p => named.has(p.part) || (ix.codes.get(p.part) ?? []).some(code => code.startsWith(codes) || code.startsWith(`p${codes}`)))
+    let parts = [...ix.usedBy.keys()].map(part => ({ part, uses: ix.usedBy.get(part)?.size ?? 0, strokes: strokesOf(part), live: among ? among.get(part) ?? 0 : -1 }))
+    if (!query && !chosen.length) parts = parts.filter(p => !isDescriptionPart(p.part))
+    if (query) parts = parts.filter(p => named.has(p.part) || p.part.includes(query) || (ix.codes.get(p.part) ?? []).some(code => code.startsWith(codes) || code.startsWith(`p${codes}`)))
     if (among && !everything) parts = parts.filter(p => p.live > 0)
-    return keepVariantsTogether(parts.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses))
+    return keepVariantsTogether(parts.sort((a, b) => (a.strokes || Infinity) - (b.strokes || Infinity) || b.uses - a.uses))
   })
   const byStroke = $derived.by(() => {
     /** @type {Map<number, typeof palette>} */
@@ -72,8 +95,8 @@
   /** @param {string} part */
   function add(part) {
     chosen = [...chosen, part]
-    preview(part)
-    setQuery(chosen.join(''))
+    if (isTangut(part)) preview(part)
+    saveQuery()
     active = -1
     info = null
   }
@@ -83,14 +106,14 @@
     const inner = directPartsIn(chosen[index])
     if (!inner.length) return
     chosen = [...chosen.slice(0, index), ...inner, ...chosen.slice(index + 1)]
-    setQuery(chosen.join(''))
+    saveQuery()
     active = -1
   }
 
   /** @param {number} index */
   function remove(index) {
     chosen = chosen.filter((_, i) => i !== index)
-    setQuery(chosen.join(''))
+    saveQuery()
     active = -1
   }
   function reset() {
@@ -125,7 +148,7 @@
   function partLabel(p) {
     const code = ix.codes.get(p.part)?.[0] ?? ''
     const count = p.live >= 0 ? p.live : p.uses
-    return [p.part, readingOf(p.part, ui.reading), shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : t('common.characters', { count })].filter(Boolean).join(' · ')
+    return [[...p.part].length > 1 ? t('card.idsEditorial') : '', p.part, readingOf(p.part, ui.reading), shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : t('common.characters', { count })].filter(Boolean).join(' · ')
   }
 
   /** @param {KeyboardEvent} event */
@@ -146,7 +169,7 @@
     <div class="chosen">
       {#each chosen as part, i (i)}
         <div class="partwrap">
-          <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')}><G char={part} /><span class="x" aria-hidden="true">×</span><span class="ui-visually-hidden">{t('parts.remove')}</span></button>
+          <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')} aria-label={`${part} · ${t('parts.remove')}`}><PartGlyph {part} /><span class="x" aria-hidden="true">×</span></button>
           {#if directPartsIn(part).length}
             <button type="button" class="split" onclick={() => split(i)} title={t('parts.splitTitle', { part })} aria-label={t('parts.splitTitle', { part })}>⿱</button>
           {/if}
@@ -157,9 +180,9 @@
     </div>
     <div class="ui-toolbar layouts" role="group" aria-label={t('parts.layout')}>
       <span class="ui-label">{t('parts.layout')}</span>
-      <button type="button" class="ui-chip" aria-pressed={!layout} onclick={() => { layout = '' }}>{t('parts.anyLayout')}</button>
+      <button type="button" class="ui-chip" aria-pressed={!layout} onclick={() => setLayout('')}>{t('parts.anyLayout')}</button>
       {#each LAYOUT_KEYS as op (op)}
-        <button type="button" class="ui-chip" aria-pressed={layout === op} title={t(`layout.${op}`)} onclick={() => { layout = layout === op ? '' : op }}>
+        <button type="button" class="ui-chip" aria-pressed={layout === op} title={t(`layout.${op}`)} onclick={() => setLayout(layout === op ? '' : op)}>
           <Layout {op} size={14} /><span>{t(`layout.${op}`)}</span>
         </button>
       {/each}
@@ -193,7 +216,7 @@
                   aria-describedby={info?.part === p.part ? 'part-info' : undefined}
                   aria-label={partLabel(p)}
                   onmouseenter={event => showInfo(event, p)} onmouseleave={hideInfo} onfocus={event => showInfo(event, p)} onblur={hideInfo}>
-                  <G char={p.part} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}{#if p.live > 0}<small class="use">{p.live}</small>{/if}{#if p.strokes !== p.section}<small class="own-strokes" title={t('draw.strokes', { count: p.strokes })}>{p.strokes}</small>{/if}
+                  <PartGlyph part={p.part} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}{#if p.live > 0}<small class="use">{p.live}</small>{/if}{#if p.strokes !== p.section}<small class="own-strokes" title={t('draw.strokes', { count: p.strokes })}>{p.strokes}</small>{/if}
                 </button>
               {/each}
             </div>
@@ -258,6 +281,7 @@
   .chosen{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs);min-block-size:56px}
   .partwrap{position:relative}
   .part{display:grid;place-items:center;inline-size:56px;block-size:56px;border:1px solid var(--ui-color-accent);border-radius:var(--ui-radius-md);background:var(--ui-color-accent-soft)}
+  .part{font-size:34px}
   .part :global(.ui-script){font-size:34px}
   .part .x{position:absolute;top:1px;right:5px;font-size:var(--ui-text-xs);color:var(--ui-color-accent-ink)}
   .split{position:absolute;top:-7px;left:-7px;display:grid;place-items:center;inline-size:20px;block-size:20px;padding:0;border:1px solid var(--ui-color-accent);border-radius:var(--ui-radius-pill);background:var(--ui-color-surface);color:var(--ui-color-accent-ink);font-family:var(--ui-font-ids);font-size:11px;line-height:1}
@@ -276,7 +300,7 @@
   .stroke-group{display:grid;grid-template-columns:30px minmax(0,1fr);gap:var(--ui-space-sm);align-items:start}
   .stroke-count{padding-top:var(--ui-space-xs);color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-semibold);text-align:end}
   .comps{gap:3px}
-  .comp{position:relative;min-block-size:var(--ui-tile-size, 46px)}
+  .comp{position:relative;min-block-size:var(--ui-tile-size, 46px);font-size:25px}
   .comp :global(.ui-script){font-size:25px}
   .comp :global(.ui-nog){font-size:9px}
   .comp .use{position:absolute;right:3px;bottom:1px;color:var(--ui-color-ink-muted);font-size:9.5px;font-variant-numeric:tabular-nums}

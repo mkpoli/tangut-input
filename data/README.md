@@ -659,6 +659,21 @@ Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_
 `data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
 `data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
 
+The parts finder indexes complete subtrees of these IDS descriptions as selectable shapes. Where a
+subtree matches a single character's complete description, the editorial form can use that
+character; this is a shape comparison, not a documented historical derivation. A description of
+three columns or three rows is read as two parts when exactly one pair of adjacent operands spells a
+character: 𗆫 (`⿲𘠐𘧘𘣩`) reads as 𘠐 and 𘓔 (`⿰𘧘𘣩`), 633 of the 1,707 three-operand records. When
+both pairs spell a character, or neither does, the three operands stay as the source writes them.
+The cut is editorial and comes from the shapes alone; the recorded description is unchanged.
+
+The suggestion to retain intermediate parts, including `⿱𘡊𗎘`, and to keep a whole character such as
+𘓔 as one base, came from a private communication shared on 2026-11-07 (name withheld); it gives
+examples rather than a complete decomposition authority. The underlying IDS data is Andrew West's
+[Tangut IDS](https://www.babelstone.co.uk/Tangut/TangutIDS.txt), as recorded above. The distinction
+between IDS containment and the 文海's cuts is discussed in
+[the construction note](../docs/wenhai-composition.md).
+
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
 one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from
 CCAMC. The card links to
