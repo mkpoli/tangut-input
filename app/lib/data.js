@@ -15,8 +15,8 @@
  *   publisher: string, url: string, licence: string, licenceUrl?: string, manuscript?: string, facsimile?: string,
  *   facsimileCredit?: string, reading?: string, readingUrl?: string, retrieved?: string, revision?: number, note?: string,
  *   study?: string, studyUrl?: string, pages?: { title: string, url: string, revision: number }[], commit?: string }} AttestationSource */
-/** @typedef {{ text: string, label: string, english?: string, page?: number, read?: boolean, url?: string, section?: string,
- *   chapter?: number, revision?: number }} AttestedLine */
+/** @typedef {{ text: string, label: string, english?: string, chinese?: string, chineseUrl?: string, chineseCredit?: string,
+ *   page?: number, read?: boolean, url?: string, section?: string, chapter?: number, revision?: number }} AttestedLine */
 /** @typedef {[line: string, position: number]} Place */
 /** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sources: number, sha256: string },
  *   sources: AttestationSource[], lines: Record<string, AttestedLine>, rows: Record<string, Record<string, Place[]>> }} Attestation */

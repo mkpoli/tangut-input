@@ -68,7 +68,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   facsimile crops, English translation and links to ぶんぽ's line readings. Twelve are on Wikisource
   (CC BY-SA 4.0): five Buddhist texts, the three poems, the Liangzhou stele, the Forest of
   Categories, the Precious Dual Maxims and the Tongyin preface. The last is the Lausanne Corpus of
-  Digital Tangut Texts, 21 texts used with permission; see `data/lcdtt/README.md`.
+  Digital Tangut Texts, 21 texts used with permission; see `data/lcdtt/README.md`. The Dragon King's
+  Chinese parallel is the line-by-line *佛為海龍王説法印經* on BabelStone's page, added to the
+  Lausanne and Wikisource transcriptions; see `data/babelstone/README.md`.
   `data/wikisource/pages.json` pins the Wikisource revisions; refresh it with
   `python3 scripts/fetch_tangut_wikisource.py`.
 - `app/data/tangut-samples.json`: eighteen passages copied from the corpus, thirteen marked famous,

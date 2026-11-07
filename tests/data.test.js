@@ -213,6 +213,25 @@ test('the monthly ode links the printed study its page cites', () => {
   expect(ode.studyUrl).toBe('https://hdl.handle.net/2433/73030')
 })
 
+test('the Dragon King’s Chinese follows the BabelStone page line by line', () => {
+  const lines = Object.entries(attestation.lines).filter(([id]) => id.startsWith('lcdtt:dragon-king:'))
+  expect(lines).toHaveLength(25)
+  for (const [, line] of lines) {
+    expect(line.chinese).toBeTruthy()
+    expect(line.chinese).not.toContain('□')
+    expect(line.chineseUrl).toBe('https://www.babelstone.co.uk/Tangut/DragonKing.html')
+  }
+  expect(lines[0][1].chinese).toBe('如是我聞：')
+  expect(lines.at(-1)[1].chinese).toBe('佛為海龍王説法印經　畢')
+  const wikisource = Object.entries(attestation.lines).filter(([id]) => id.startsWith('wikisource-dragon-king:'))
+  expect(wikisource).toHaveLength(2)
+  const [body, end] = wikisource.map(([, line]) => line)
+  expect(body.chinese).toBe(lines.slice(0, -1).map(([, line]) => line.chinese).join(''))
+  expect(end.chinese).toBe('佛為海龍王説法印經　畢')
+  const others = Object.entries(attestation.lines).filter(([id, line]) => line.chinese && !id.startsWith('lcdtt:dragon-king:') && !id.startsWith('wikisource-dragon-king:'))
+  expect(others).toEqual([])
+})
+
 test('every place points at the character it attests', () => {
   const sources = new Set(attestation.sources.map(source => source.id))
   for (const [char, bySource] of Object.entries(attestation.rows)) {
