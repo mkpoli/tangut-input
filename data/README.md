@@ -663,7 +663,7 @@ The parts finder indexes complete subtrees of these IDS descriptions as selectab
 subtree matches a single character's complete description, the editorial form can use that
 character; this is a shape comparison, not a documented historical derivation. A description of
 three columns or three rows is read as two parts when exactly one pair of adjacent operands spells a
-character: 𗆫 (`⿲𘠐𘧘𘣩`) reads as 𘠐 and 𘓔 (`⿰𘧘𘣩`), 633 of the 1,707 three-operand records. When
+character: 𗆫 (`⿲𘠐𘧘𘣩`) reads as 𘠐 and 𘓔 (`⿰𘧘𘣩`), 633 of the 1,707 complete single-root three-operand descriptions. When
 both pairs spell a character, or neither does, the three operands stay as the source writes them.
 The cut is editorial and comes from the shapes alone; the recorded description is unchanged.
 
