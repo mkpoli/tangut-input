@@ -13,6 +13,10 @@ across the opening.
 folio number printed at the right fore-edge names the leaf: canvas 40 is folio 三十五, canvas 41 is
 三十六 and holds the title that ends the work.
 
+A band holds fewer columns than the opening looks wide enough for. Canvas 41 band 1 has 20 entry
+columns in five groups, 12 on the right leaf and 8 on the left, and the left leaf's outer edge carries
+the two running-title columns (合時掌中珠 and its Tangut 𗼇𘂜𗿳𗖵𘃎𘇂𗊏) that are not entries.
+
 ## The line
 
 `canvas band index role glyph codepoints note`
