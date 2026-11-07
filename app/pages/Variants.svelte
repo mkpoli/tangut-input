@@ -1,6 +1,7 @@
 <script>
-  // Every variant form the site records, in the groups the card shows them in, each with what supports
-  // it, and the variant components with where each stands in a character.
+  // Every variant form the site records, in the groups the card shows them in, the groups a chain of
+  // forms joins, each with what supports it, and the variant components with where each stands in a
+  // character.
   import VARIANTS from '../data/tangut-variants.json' with { type: 'json' }
   import { tick } from 'svelte'
   import { db, ix, hex, readingOf } from '../lib/db.svelte.js'
@@ -14,6 +15,9 @@
   const ready = $derived(db.status === 'ready')
   const possible = $derived(ready ? ix.variantPairs : [])
   const positions = $derived(ready ? componentPositions(ix.entries) : new Map())
+  // The groups a pair list cannot show: a character reached through another form, and the pair
+  // reported by hand. Every other pair is in the tables below, one record to a row.
+  const linked = $derived(ready ? ix.variantGroups.filter(family => family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) : [])
   // A reader who follows the card's link should land on the character, once.
   let arrived = false
   $effect(() => {
@@ -47,6 +51,25 @@
     <h1 class="ui-page-title"><Icon name="link" size={22}/><span>{t('card.variants')}</span></h1>
     <p class="ui-page-intro">{t('variants.intro')}</p>
   </header>
+
+  <section class="ui-section" id="linked">
+    {@render heading('linked-heading', t('variants.linked'), linked.length)}
+    <p class="ui-hint">{t('variants.linked.hint')}</p>
+    <ul class="families">
+      {#each linked as family (family.members.join(''))}
+        <li class="family">
+          {#each family.links as link (link.one + link.other + link.kind)}
+            <span class="linkrow">
+              {@render char(link.one)}
+              <span class="linktie" aria-hidden="true"></span>
+              {@render char(link.other)}
+              <span class="ui-tag">{t(`variants.link.${link.ground}`)}</span>
+            </span>
+          {/each}
+        </li>
+      {/each}
+    </ul>
+  </section>
 
   <section class="ui-section" id="stated">
     {@render heading('stated-heading', t('variants.stated'), stated.length)}
@@ -142,4 +165,8 @@
   .pair{display:inline-flex;gap:2px;vertical-align:middle}
   .places{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm);color:var(--ui-color-ink-soft)}
   .place b{font-weight:var(--ui-weight-semibold);color:var(--ui-color-ink);font-variant-numeric:tabular-nums}
+  .families{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--ui-space-sm);margin:0;padding:0;list-style:none}
+  .family{display:grid;gap:var(--ui-space-xs);padding:var(--ui-space-sm) var(--ui-space-md);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface)}
+  .linkrow{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
+  .linktie{inline-size:12px;block-size:1px;background:var(--ui-color-border-strong)}
 </style>

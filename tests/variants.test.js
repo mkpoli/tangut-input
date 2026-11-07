@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
-import { componentPositions, keepVariantsTogether, possiblePairs, variantIndex } from '../app/lib/variants.js'
+import { componentPositions, familyIndex, keepVariantsTogether, possiblePairs, variantFamilies, variantIndex } from '../app/lib/variants.js'
 import VARIANTS from '../app/data/tangut-variants.json' with { type: 'json' }
 
 const NONE = { variants: [], partial: [], synonyms: [], components: [], reported: [] }
@@ -90,4 +90,44 @@ test('positions come from the slot under the operator directly above', () => {
   expect(places.get('𘠀')).toEqual({ left: 1, middle: 1 })
   expect(places.get('𘠁')).toEqual({ top: 1, right: 1 })
   expect(places.get('𘠂')).toEqual({ bottom: 1, left: 1 })
+})
+
+test('a form of a form stands in the same group as the first', () => {
+  const families = variantFamilies([{ one: '𗁒', other: '𗄢', reading: 'a1' }], { ...NONE, variants: [['𗁘', '𗁒']] })
+  expect(families.length).toBe(1)
+  expect(families[0].members).toEqual(['𗁒', '𗁘', '𗄢'])
+  expect(families[0].links.map(link => [link.one, link.other, link.ground])).toEqual([['𗁘', '𗁒', 'stated'], ['𗁒', '𗄢', 'possible']])
+  expect(families[0].grounds).toEqual([{ kind: 'stated', count: 1 }, { kind: 'possible', count: 1 }])
+})
+
+test('a partial variant counts as stated, and a report comes first', () => {
+  const families = variantFamilies([], { ...NONE, partial: [['𗀑', '𗀉']], reported: [['𗢨', '𘓐']] })
+  expect(families.map(family => family.members)).toEqual([['𗢨', '𘓐'], ['𗀉', '𗀑']])
+  expect(families[1].grounds).toEqual([{ kind: 'stated', count: 1 }])
+  expect(families[1].links[0].ground).toBe('stated')
+})
+
+test('every member of a group maps to it', () => {
+  const [family] = variantFamilies([], { ...NONE, reported: [['𗢨', '𘓐']] })
+  const index = familyIndex([family])
+  expect(index.get('𗢨')).toBe(family)
+  expect(index.get('𘓐')).toBe(family)
+})
+
+test('the recorded data gives the groups a pair list hides', () => {
+  const packed = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-entries.json.gz', import.meta.url))).toString())
+  const li = packed.systems.indexOf('li_fanwen')
+  const entries = packed.rows.map((/** @type {any[]} */ row) => ({ char: row[0], composition: row[1], pronunciations: { li_fanwen: row[7][li] }, definitions: { en: row[4], ja: row[5] } }))
+  const families = variantFamilies(possiblePairs(entries))
+  expect(families.length).toBe(46)
+  expect(families[0].members).toEqual(['𗢨', '𘓐'])
+  expect(families[0].grounds).toEqual([{ kind: 'reported', count: 1 }])
+  const linked = families.filter(family => family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported'))
+  expect(linked.map(family => family.members.join(''))).toEqual(['𗢨𘓐', '𗁒𗁘𗄢', '𗄄𗇐𗇫'])
+  // Each family draws only the records it has, so a chain never suggests a link that is not there.
+  expect(linked.map(family => family.links.map(link => `${link.one}${link.other}${link.ground}`))).toEqual([
+    ['𗢨𘓐' + 'reported'],
+    ['𗁘𗁒' + 'stated', '𗁒𗄢' + 'possible'],
+    ['𗄄𗇫' + 'stated', '𗇐𗇫' + 'stated'],
+  ])
 })
