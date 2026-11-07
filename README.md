@@ -36,8 +36,8 @@ readings, structure, the lines of the recorded corpus where it stands with the s
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
 further readings and meanings are linked to CCAMC's page for the character.
 Character tiles show the chosen reconstruction above the glyph, then a Chinese gloss and the
-finder's note. Chinese glosses come from Wiktionary, with contextual words from 類林 where
-Wiktionary has none; [coverage and sources](docs/han-glosses.md). The text being written stays in the
+finder's note. Chinese glosses come from keyed dictionary senses, then Wiktionary, then
+contextual words from 類林; [coverage and sources](docs/han-glosses.md). The text being written stays in the
 browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).

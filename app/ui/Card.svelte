@@ -282,7 +282,7 @@
             </dd>
           {/if}
           {#if entry?.wiktionary_zh?.length}
-            <dt><a href={`https://zh.wiktionary.org/wiki/${encodeURIComponent(char)}`} title={t('card.chineseWiktionary')}>zh</a></dt>
+            <dt><a href={entry.wiktionary_zh_url ?? `https://zh.wiktionary.org/wiki/${encodeURIComponent(char)}`} target="_blank" rel="noopener noreferrer" title={t('card.chineseWiktionary')}>zh</a></dt>
             <dd lang="zh">{entry.wiktionary_zh.join('；')}</dd>
           {/if}
           {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}

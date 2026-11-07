@@ -39,6 +39,6 @@ test('missing Chinese glosses produce no placeholder or invented translation', (
 test('tiles and the 漢字 reading layer select the same gloss and preserve source attribution', () => {
   const leilin = [['水', 7], ['河', 3]]
   expect(layerValue({ kind: 'sinograph', size: 17 }, '𗍊', { reading: '', leilin })).toEqual({ text: '水', title: '水、河' })
-  expect(layerValue({ kind: 'sinograph', size: 17 }, '𗋽', { reading: '', leilin, entry: { wiktionary_zh: ['水；河流'] } })).toEqual({ text: '水', title: 'Wiktionary: 水；河流' })
-  expect(layerValue({ kind: 'sinograph', size: 17 }, '𗋽', { reading: '', leilin, entry: { definitions: { zh: ['水；河流'] } } })).toEqual({ text: '水', title: 'Chinese dictionary: 水；河流' })
+  expect(layerValue({ kind: 'sinograph', size: 17 }, '𗋽', { reading: '', leilin, entry: { wiktionary_zh: ['水；河流'] } })).toEqual({ text: '水', title: '水；河流', source: 'wiktionary' })
+  expect(layerValue({ kind: 'sinograph', size: 17 }, '𗋽', { reading: '', leilin, entry: { definitions: { zh: ['水；河流'] } } })).toEqual({ text: '水', title: '水；河流', source: 'keyed' })
 })

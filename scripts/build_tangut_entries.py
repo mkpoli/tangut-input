@@ -43,7 +43,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ENTRIES = ROOT / 'app/data/tangut-entries.json.gz'
 INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
 SOURCES = ROOT / 'app/data/tangut-reading-sources.json.gz'
-FORMAT = 'tangut-input/entries/5'
+FORMAT = 'tangut-input/entries/6'
 SYSTEMS = ['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
            'nishida', 'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'tibetan']
 READINGS = ROOT / 'data/readings/readings.tsv'
@@ -186,7 +186,8 @@ def main():
         definitions_ja = ja.get(char, {}).get('definitions') or []
         keyed_fields = keyed_readings.get(char, {})
         definitions_zh = [value[0] for value in keyed_fields.get('gloss_zh', [])]
-        wiktionary_zh = zh.get(char, {}).get('definitions') or []
+        wiktionary_page = zh.get(char, {})
+        wiktionary_zh = wiktionary_page.get('definitions') or []
         pron = [
             readings['li_fanwen'].get(char, ''),
             '；'.join(value[0] for value in keyed_fields.get('gong_huangcheng', []))
@@ -218,6 +219,7 @@ def main():
             pron,
             text.get('zh', ''),
             wiktionary_zh,
+            wiktionary_page.get('url') or '',
         ])
 
     data = {'format': FORMAT, 'systems': SYSTEMS, 'rows': out}

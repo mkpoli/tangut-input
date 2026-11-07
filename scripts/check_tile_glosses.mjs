@@ -10,7 +10,7 @@ import { chromium } from 'playwright-core'
 const root = new URL('..', import.meta.url).pathname
 const out = process.argv[2]
 const captureOnly = process.argv.includes('--capture-only')
-const query = process.env.TILE_QUERY ?? 'tiger'
+const query = process.env.TILE_QUERY ?? 'poison'
 const origin = 'http://tangut.test'
 const cache = join(homedir(), '.cache/ms-playwright')
 const executablePath = readdirSync(cache).filter(name => name.startsWith('chromium-')).sort().reverse()

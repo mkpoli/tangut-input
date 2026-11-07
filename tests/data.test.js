@@ -9,7 +9,7 @@ const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
 test('the packed records keep every character, the five Wiktionary readings and the two Database readings', () => {
-  expect(entries.format).toBe('tangut-input/entries/5')
+  expect(entries.format).toBe('tangut-input/entries/6')
   expect(entries.rows.length).toBe(6144)
   expect(entries.systems).toEqual([
     'li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
@@ -23,6 +23,7 @@ test('the packed records keep every character, the five Wiktionary readings and 
   expect(first[6]).toEqual([])
   expect(first[8]).toBe('蝎中蛇右。')
   expect(first[9]).toEqual(['毒', '下毒者', '毒死'])
+  expect(first[10]).toBe('https://zh.wiktionary.org/w/index.php?title=%F0%97%80%80&oldid=9036839')
 })
 
 test('the 文海 Chinese text is kept for the entries it carries', () => {
@@ -36,7 +37,10 @@ test('the displayable meanings cover only the Wiktionary entries', () => {
   expect(count(6)).toBe(0)
   expect(count(9)).toBe(110)
   const snapshot = JSON.parse(gunzipSync(readFileSync(new URL('../data/wiktionary/definitions-zh.json.gz', import.meta.url))).toString())
-  for (const row of entries.rows) expect(row[9]).toEqual(snapshot.pages[row[0]]?.definitions ?? [])
+  for (const row of entries.rows) {
+    expect(row[9]).toEqual(snapshot.pages[row[0]]?.definitions ?? [])
+    if (row[9].length) expect(row[10]).toBe(snapshot.pages[row[0]].url)
+  }
 })
 
 test('every Tibetan spelling stands at a crossing the chart draws', () => {

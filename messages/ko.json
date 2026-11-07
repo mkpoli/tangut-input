@@ -496,7 +496,7 @@
   "layers.reset": "기본 설정으로 복원",
   "layers.current": "{system} (상단에서 선택한 체계)",
   "layers.tangut": "서하 문자",
-  "layers.sinograph": "한자 (類林)",
+  "layers.sinograph": "한자",
   "layers.english": "영어",
   "layers.wiktionary": "영어 (Wiktionary)",
   "layers.downes": "영어 (Downes)",

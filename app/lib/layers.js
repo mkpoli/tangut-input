@@ -59,7 +59,7 @@ export const firstSense = text => (text ?? '').split(/[;,；，、。]/)[0].trim
  * @param {{ entry?: { definitions?: { en?: string[], ja?: string[], zh?: string[] }, pronunciations?: Record<string, string>, wiktionary_zh?: string[] },
  *   reading: string, downes?: string, rhyme?: [number | null, number | null, ...unknown[]],
  *   leilin?: [string, number][], hands?: { tibetan?: [string, string, number, string, ...string[]][] }, glosses?: [string, string, unknown][] }} data
- * @returns {{ text: string, title: string }}
+ * @returns {{ text: string, title: string, source?: 'keyed' | 'wiktionary' }}
  */
 export function layerValue(layer, char, data) {
   const definitions = data.entry?.definitions ?? {}
@@ -73,8 +73,8 @@ export function layerValue(layer, char, data) {
     }
     case 'sinograph': {
       const gloss = hanGloss(data.leilin, definitions.zh, data.entry?.wiktionary_zh)
-      const source = gloss.source === 'wiktionary' ? 'Wiktionary: ' : gloss.source === 'keyed' ? 'Chinese dictionary: ' : ''
-      return { text: gloss.text, title: `${source}${gloss.title}` }
+      const source = gloss.source === 'wiktionary' ? 'wiktionary' : gloss.source === 'keyed' ? 'keyed' : undefined
+      return { text: gloss.text, title: gloss.title, source }
     }
     case 'japanese': return sense(definitions.ja)
     case 'wiktionary': return sense(definitions.en)
