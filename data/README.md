@@ -467,7 +467,9 @@ are kept with a cosine score and whether the stroke count agrees. 16 KB gzipped,
 The score says the ink resembles an attested component's ink; it does not say the two are the same
 component or that the name applies. The method cannot separate くノ from ノメ, which score about
 0.98 against each other. Use the file to find candidates for review, never to fill
-`data/tangut-component-names.tsv`.
+`data/tangut-component-names.tsv`. `app/data/tangut-component-shape-hints.json.gz` is the copy the
+part card reads; it shows the first candidate only when the component has no attested name, the
+score is at least 0.70 and the stroke count agrees, labelled Shape hint.
 
 Format: `format`, `version`, `editorial`, `note`, `method` (font, size, metric, limitation), `counts`,
 `exemplars` and `components`, one row per component with `char`, `codepoint`, `strokes`, `named` and
@@ -643,9 +645,9 @@ Tangut previews load these outlines locally. Exact descriptions use the correspo
 character's glyph; edited descriptions use the composition engine's geometric layout.
 Mixed Han–Tangut descriptions also load the host's Han export. The shared layout
 constants in `src/composer/constants.json` come from han-compose at bd0829b (MIT),
-previously used by the composer's test fixture. Tangut Components Supplement glyphs
-are absent from this font version; the site draws them from a subset of Tangut N4694 (see
-`app/public/fonts/FONT-LICENCES.md`).
+previously used by the composer's test fixture. The newest ideographs (U+187F8–187FF) and the
+Tangut Components Supplement glyphs are absent from this font version; the site draws them from a
+subset of Tangut N4694 (see `app/public/fonts/FONT-LICENCES.md`).
 
 ## Tangut entries
 
@@ -654,8 +656,8 @@ modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyak
 Sofronov 1968, Nishida 1966), Gong Hwang-cherng's GHC and Gong Xun's GX202411 from the Tangut
 Pronunciation Database, English
 meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
-BabelStone's IDS description, the 文海's entry text for the twelve characters it carries in this
-snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
+BabelStone's IDS description, the 文海's Chinese entry text for the six characters it carries in
+this snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
 meanings are CC BY-SA 4.0; GHC and GX202411 are cited from the Tangut Pronunciation Database under
 its Limited Public Use licence; the description is public domain; the radical and stroke data are
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
