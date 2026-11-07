@@ -190,8 +190,14 @@
       void fetch('/api/capture', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...body, captureId: crypto.randomUUID() }), keepalive: true }).catch(() => {})
     }
   }
-  addEventListener('pagehide', capture)
-  document.addEventListener('visibilitychange', () => { if (document.hidden) capture() })
+  function leave() {
+    current = null
+    first = null
+    capture()
+  }
+  addEventListener('beforeunload', leave)
+  addEventListener('pagehide', leave)
+  document.addEventListener('visibilitychange', () => { if (document.hidden) leave() })
 
   document.getElementById('undo').onclick = () => {
     if (!strokes.length) return

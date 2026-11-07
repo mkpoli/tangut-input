@@ -102,6 +102,7 @@ def main():
     parser.add_argument('--ink', type=int, default=110, help='grey level below which a pixel counts as ink')
     parser.add_argument('--column-merge', type=int, default=3, help='gap in working pixels joined into one column')
     parser.add_argument('--pages', action='store_true', help='also write one image per page, ruled every 200 px')
+    parser.add_argument('--grid', action='store_true', help='write page images with a labelled grid every 100 px')
     options = parser.parse_args()
 
     image = canvas_image(options.canvas)
@@ -113,6 +114,30 @@ def main():
     pages = pages_of(grey)[:2]
     if len(pages) < 2:
         sys.exit('could not find two pages; the canvas may be a cover')
+
+    if options.grid:
+        # A plain coordinate grid over the page: the bands are not ruled in this
+        # print and the row profile does not find them reliably, so the reader
+        # reads positions off the grid instead of trusting a detected box.
+        for side, (x0, x1) in zip('lr', pages):
+            paper = paper_of(grey, x0, x1)
+            if not paper:
+                continue
+            top, bottom = paper
+            left, right = int(x0 / scale), int(x1 / scale)
+            crop = image.crop((left, int(top / scale), right, int(bottom / scale))).convert('RGB')
+            grid = ImageDraw.Draw(crop)
+            for tick in range(0, crop.size[0], 100):
+                grid.line([(tick, 0), (tick, crop.size[1])], fill=(220, 120, 120), width=1)
+                if tick % 500 == 0:
+                    grid.text((tick + 2, 2), str(left + tick), fill=(180, 0, 0))
+            for tick in range(0, crop.size[1], 100):
+                grid.line([(0, tick), (crop.size[0], tick)], fill=(220, 120, 120), width=1)
+                if tick % 500 == 0:
+                    grid.text((2, tick + 2), str(int(top / scale) + tick), fill=(180, 0, 0))
+            out = CACHE / f'{options.canvas:02d}-grid-{side}.png'
+            crop.save(out)
+            print(f'grid\t{side}\t{out.relative_to(ROOT)}', file=sys.stderr)
 
     if options.pages:
         for side, (x0, x1) in zip('lr', pages):
