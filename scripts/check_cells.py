@@ -34,7 +34,9 @@ def groups(path: Path) -> list[list[dict[str, str]]]:
     found: list[list[dict[str, str]]] = []
     current: list[dict[str, str]] = []
     for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
-        if not line.strip() or line.startswith("#"):
+        # A comment is a row to the converter, which pairs a transcription with the line after it, so
+        # only the header at the top of the file may be skipped.
+        if not line.strip() or (line.startswith("#") and not found and not current):
             continue
         if line.strip() == "-":
             if current:
@@ -71,7 +73,7 @@ def main(argv: list[str]) -> int:
             roles = [row["role"] for row in group]
             if not last and roles != list(ORDER):
                 report(path, group[0], f"group {number} has {roles}, not {list(ORDER)}")
-            elif last and roles != list(ORDER) and not set(roles) <= set(ORDER):
+            elif last and roles != list(ORDER[:len(roles)]):
                 report(path, group[0], f"group {number} has {roles}, which is not a shorter entry")
             for row in group:
                 if canvas is None:

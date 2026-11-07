@@ -1,91 +1,91 @@
 char	field	value	work	locator	note	status	checked
 𗀀	sound_li_fanwen	舌頭音，地羅切，音毒	xiahan-zidian	p.1	probe row; the page is not checked yet	keyed	2026-11-04
-𗉛	sound_li_fanwen	日	zhangzhongzhu	canvas 40 band 1 c2	日(知)→𗉛 音示（日知）	keyed	2026-11-07
-𗷫	sound_li_fanwen	能	zhangzhongzhu	canvas 40 band 1 c2	能→𗷫 音能	keyed	2026-11-07
-𗆂	sound_li_fanwen	裴	zhangzhongzhu	canvas 40 band 1 c2	裴→𗆂 音裴	keyed	2026-11-07
-𗈑	sound_li_fanwen	責	zhangzhongzhu	canvas 40 band 1 c2	責→𗈑 音自（尼則）; each confirmed against the print at 3x; certain	keyed	2026-11-07
-𗵺	sound_li_fanwen	斡	zhangzhongzhu	canvas 40 band 1 c6	斡→𗵺 音斡 certain	keyed	2026-11-07
-𗅉	sound_li_fanwen	娘	zhangzhongzhu	canvas 40 band 1 c6	娘→𗅉 音娘 probable (𗅾 U+1717E, 娘羅切, is the competing shape; 𗅉 scores higher against the print and its 直音 matches)	uncertain	2026-11-07
-𗤶	sound_li_fanwen	你	zhangzhongzhu	canvas 40 band 1 c6	你→𗤶 音你 certain	keyed	2026-11-07
-𗛻	sound_li_fanwen	荅	zhangzhongzhu	canvas 40 band 1 c6	荅→𗛻 音達 certain	keyed	2026-11-07
-𘔫	sound_li_fanwen	路	zhangzhongzhu	canvas 40 band 1 c10	路→𘔫 音路 certain (𗘝 U+1761D shares the reading but not the form)	keyed	2026-11-07
-𗷺	sound_li_fanwen	怛	zhangzhongzhu	canvas 40 band 1 c10	怛→𗷺 名怛切 音馬 probable	uncertain	2026-11-07
-𗐆	sound_li_fanwen	張	zhangzhongzhu	canvas 40 band 1 c10	張→𗐆 音章 certain	keyed	2026-11-07
-𗟻	sound_li_fanwen	皮	zhangzhongzhu	canvas 40 band 1 c10	皮→𗟻 音皮 certain	keyed	2026-11-07
-𘕕	sound_li_fanwen	桑	zhangzhongzhu	canvas 40 band 1 c14	桑→𘕕 西當切 音桑	keyed	2026-11-07
-𘊄	sound_li_fanwen	娘	zhangzhongzhu	canvas 40 band 1 c14	娘→𘊄 音娘	keyed	2026-11-07
-𗈲	sound_li_fanwen	屈	zhangzhongzhu	canvas 40 band 1 c14	屈→𗈲 枯擦切 音屈	keyed	2026-11-07
-𗈜	sound_li_fanwen	割	zhangzhongzhu	canvas 40 band 1 c14	割→𗈜 隔操切 音割; each left component checked against the competing shapes (𘚒 U+18692 for 桑, 𘔼 U+1853C for 娘, 𗈔 U+17214 for 割) at 8x; shape and reading agree in all four; certain	keyed	2026-11-07
-𘑰	sound_li_fanwen	羅	zhangzhongzhu	canvas 40 band 1 c18	羅→𘑰 音瀆, printed ⿰ [乛 over 冂 with legs] [殳], a clean match but 𘄍 U+1810D 音播 scores level and neither reading fits 羅	uncertain	2026-11-07
-𗣭	sound_li_fanwen	勤	zhangzhongzhu	canvas 40 band 1 c18	勤→𗣭 妻因切 音秦 is a shape and reading match, certain; the other three are shape matches whose dictionary readings do not fit the transcription	keyed	2026-11-07
-𘓂	sound_li_fanwen	盖	zhangzhongzhu	canvas 40 band 1 c18	盖(尼)→𘓂 音力, the printed left is 丰 with three horizontals and no lower sweep, which separates it from 𘏢 U+183E2 音根 (the only velar-initial shape that comes close and the one the reading would favour)	uncertain	2026-11-07
-𗨤	sound_li_fanwen	精	zhangzhongzhu	canvas 40 band 1 c18	精→𗨤 捷勞切 音族, printed ⿲ [幺] [乛 over horizontals] [hooked 乚], matching 𗨤 well but reading dzjo2 does not fit 精; no character with a 羅, 盖 or 精 reading matches these forms anywhere in the 6144-character corpus; open	uncertain	2026-11-07
-𘝵	sound_li_fanwen	盈	zhangzhongzhu	canvas 40 band 1 c22	盈→𘝵 夷根切 音盈	keyed	2026-11-07
-𘎚	sound_li_fanwen	為	zhangzhongzhu	canvas 40 band 1 c22	為→𘎚 韋竭切 音畏	keyed	2026-11-07
-𘌴	sound_li_fanwen	壞	zhangzhongzhu	canvas 40 band 1 c22	壞→𘌴 虎根切 音懷	keyed	2026-11-07
-𗢳	sound_li_fanwen	他	zhangzhongzhu	canvas 40 band 1 c22	他→𗢳 突位切 音他; the 盈 slot was checked against 𗲒 U+17C92 音英 and the 壞 slot against 𗽪 U+17F6A 音懷, both rejected on the lower component; certain	keyed	2026-11-07
-𗦻	sound_li_fanwen	酩	zhangzhongzhu	canvas 40 band 2 c2	酩→𗦻 音mji̱j2 certain (model proposed; print agrees at 6x: 幺+广+彡 with two pendant verticals; draft gloss 名)	keyed	2026-11-07
-𗉜	sound_li_fanwen	戴	zhangzhongzhu	canvas 40 band 2 c2	戴→𗉜 音dze̱j1 probable (model proposed; print agrees: 犭+兆 with the long hook; reading d- matches, ẹj against 戴's -ai is the only gap)	uncertain	2026-11-07
-𘞙	sound_li_fanwen	迎	zhangzhongzhu	canvas 40 band 2 c2	迎→𘞙 音gjịj1 probable (model proposed; print agrees: 匚+品+攵; g- against 迎 is the 疑母 reflex, not a direct match)	uncertain	2026-11-07
-𘚾	sound_li_fanwen	能	zhangzhongzhu	canvas 40 band 2 c2	能→𘚾 音də̱1 probable (model proposed; print agrees: 彡+月+頁; GX reads ndə̱1, whose prenasalised onset matches 能 n-); draft glosses of the four are 名 爭 利 趨, which are the gloss column's four characters in Tangut order — a second opinion for the whole set	uncertain	2026-11-07
-𗅴	sound_li_fanwen	癩	zhangzhongzhu	canvas 40 band 2 c6	癩→𗅴 音lẹj2 certain (model proposed; print agrees: ⿰忄解 at 6x; lẹj2 fits 癩)	keyed	2026-11-07
-𗕣	sound_li_fanwen	截	zhangzhongzhu	canvas 40 band 2 c6	截→𗕣 音tshjạ1 probable (model proposed; print agrees: 鹿-like body with the 互 top and the hook; tśh- against 截's dz-)	uncertain	2026-11-07
-𘚠	sound_li_fanwen	勒	zhangzhongzhu	canvas 40 band 2 c6	勒→𘚠 音lə2 certain (model proposed; print agrees: 屏, 尸+并; lə2 fits 勒)	keyed	2026-11-07
-𗄈	sound_li_fanwen	常	zhangzhongzhu	canvas 40 band 2 c6	常→𗄈 音śjwo1 probable (model proposed; print agrees: 三 over 儿 with the hook; ś- against 常 dź-); draft glosses are 貪 嗔 癡 起, the gloss column's four characters in Tangut order, a second opinion for the set; my earlier note that only the first sign was established is superseded	uncertain	2026-11-07
-𗇼	sound_li_fanwen	特	zhangzhongzhu	canvas 40 band 2 c10	特→𗇼 音gjwã2 open (model proposed; the print's 彳-like left and 上+氏 with the hook are only partly the render's 雍-like form; g- does not fit 特 t-)	uncertain	2026-11-07
-𘈼	sound_li_fanwen	傾	zhangzhongzhu	canvas 40 band 2 c10	傾→𘈼 音ma2 open (model proposed; print 戶+丰+攵 against a 髟+攵 render; m- does not fit 傾)	uncertain	2026-11-07
-𗪺	sound_li_fanwen	隄	zhangzhongzhu	canvas 40 band 2 c10	隄→𗪺 音ɣie1 probable (model proposed; print and render both 糸+段; ɣ- against 隄 d- does not fit, but the draft gloss 力 matches the gloss column's 力)	uncertain	2026-11-07
-𗖵	sound_li_fanwen	諜	zhangzhongzhu	canvas 40 band 2 c10	諜→𗖵 音bju1 probable (model proposed; print and render both 犭+巛; b- against 諜 d- does not fit)	uncertain	2026-11-07
-𗼃	sound_li_fanwen	聖	zhangzhongzhu	canvas 41 band 1 c2	聖→𗼃 音śjɨj2 certain (model proposed; print agrees at 6x: 勿-like form; draft gloss 聖)	keyed	2026-11-07
-𘔒	sound_li_fanwen	麻	zhangzhongzhu	canvas 41 band 1 c2	麻→𘔒 音njij2 probable (model proposed; print agrees: 敉-like; n- does not spell 麻)	uncertain	2026-11-07
-𘕥	sound_li_fanwen	幹	zhangzhongzhu	canvas 41 band 1 c2	幹→𘕥 音ljạ1 probable (model proposed; print agrees: 艹 over the 月+匕 body; draft gloss 證)	uncertain	2026-11-07
-𘃪	sound_li_fanwen	說	zhangzhongzhu	canvas 41 band 1 c2	說→𘃪 音dźjwa1 probable (model proposed; print agrees: 發-like; dźjwa against 說 śjwät shares only the -jwa)	uncertain	2026-11-07
-𘉋	sound_li_fanwen	盈	zhangzhongzhu	canvas 41 band 1 c6	盈→𘉋 音ꞏjar1 certain (model proposed; print agrees: 貝-like; ꞏj- fits 盈, draft gloss 八)	keyed	2026-11-07
-𗕑	sound_li_fanwen	尅	zhangzhongzhu	canvas 41 band 1 c6	尅→𗕑 音khjɨ2 certain (model proposed; print agrees: 髟/贏 form; kh- fits 尅, draft gloss 萬)	keyed	2026-11-07
-𗲬	sound_li_fanwen	勤	zhangzhongzhu	canvas 41 band 1 c6	勤→𗲬 音kia̱2 probable (model proposed; print agrees: 髟+冉 form; k- only)	uncertain	2026-11-07
-𗡞	sound_li_fanwen	都	zhangzhongzhu	canvas 41 band 1 c6	都→𗡞 音tụ1 certain (model proposed; print agrees: 殿/叚 form; t- fits 都, draft gloss 千); the draft glosses 八 萬 ? 千 follow the gloss column 八萬四千	keyed	2026-11-07
-𗱝	sound_li_fanwen	名	zhangzhongzhu	canvas 41 band 1 c10	名→𗱝 音dźiwe1 probable (model proposed; print agrees: 齋/爾 form; dź- does not spell 名)	uncertain	2026-11-07
-𗄻	sound_li_fanwen	那	zhangzhongzhu	canvas 41 band 1 c10	那→𗄻 音nwə1 certain (model proposed; print agrees: 髟/巛 form; n- fits 那)	keyed	2026-11-07
-𘈧	sound_li_fanwen	娘	zhangzhongzhu	canvas 41 band 1 c10	娘→𘈧 音de̱j1 probable (model proposed; print agrees: 殿/叚 form; d- against 娘 n-)	uncertain	2026-11-07
-𗖢	sound_li_fanwen	万	zhangzhongzhu	canvas 41 band 1 c10	万→𗖢 音ne̱j2 probable (model proposed; print agrees: 疏 form; n- against 万 m-); draft glosses 回音 知 傳 指示 put 指示 and 知 in the column, matching the gloss 指示寂知	uncertain	2026-11-07
-𗤃	sound_li_fanwen	抽	zhangzhongzhu	canvas 41 band 1 c14	抽→𗤃 音nia̱2 probable (model proposed; print agrees: 終/務 form; n- does not spell 抽)	uncertain	2026-11-07
-𗷖	sound_li_fanwen	華	zhangzhongzhu	canvas 41 band 1 c14	華→𗷖 音tshwew1 probable (model proposed; print agrees: 巍/龕 form; tshw- against 華 hw-)	uncertain	2026-11-07
-𘆗	sound_li_fanwen	責	zhangzhongzhu	canvas 41 band 1 c14	責→𘆗 音śiə2 probable (model proposed; print agrees: 效/敉 form; ś- against 責 ts-)	uncertain	2026-11-07
-𘚢	sound_li_fanwen	蔣	zhangzhongzhu	canvas 41 band 1 c14	蔣→𘚢 音dźiej2 probable (model proposed; print agrees: 骫/沈 form; dź- against 蔣 ts-); draft glosses 口吃 施 輪迴 輪 give 輪迴 and 輪, matching the gloss 六趣輪迴	uncertain	2026-11-07
-𗔞	sound_li_fanwen	責	zhangzhongzhu	canvas 41 band 1 c18	責→𗔞 音mjɨr1 probable (model proposed; print agrees: 巍/魏 form; m- against 責 ts-)	uncertain	2026-11-07
-𗹢	sound_li_fanwen	忨	zhangzhongzhu	canvas 41 band 1 c18	忨→𗹢 音djọ2 probable (model proposed; print agrees: 滕 form; d- against 忨 w-)	uncertain	2026-11-07
-𗤶	sound_li_fanwen	你	zhangzhongzhu	canvas 41 band 1 c18	你→𗤶 音nji̱j1 certain (model proposed; print agrees: 鮮/觧 form; n- fits 你, draft gloss 心)	keyed	2026-11-07
-𘝯	sound_li_fanwen	蔣	zhangzhongzhu	canvas 41 band 1 c18	蔣→𘝯 音bjo̱1 probable (model proposed; print agrees: 獺/魏 form; b- against 蔣 ts-); draft glosses 牲畜 修造 心 觀 give 修造 心 觀, matching the gloss 修行觀心	uncertain	2026-11-07
-𗖏	sound_li_fanwen	娘	zhangzhongzhu	canvas 41 band 2 c2	娘→𗖏 音娘, shapes match, certain	keyed	2026-11-07
-𗏴	sound_li_fanwen	似	zhangzhongzhu	canvas 41 band 2 c2	似→𗏴 音術, open, three-part print with a final hook, 𘆬 U+181AC 音施 and 𗪘 U+17A98 音世 are the rivals and none matches the printed left element	uncertain	2026-11-07
-𘔟	sound_li_fanwen	責	zhangzhongzhu	canvas 41 band 2 c2	責→𘔟 音示, probable, reading is given as 示 with the 尼責 notation that the printed 責 plus small 尼 spells, but 𘝭 U+1876D is near-identical in shape	uncertain	2026-11-07
-𗖵	sound_li_fanwen	謀	zhangzhongzhu	canvas 41 band 2 c2	謀→𗖵 音謀, certain	keyed	2026-11-07
-𘔭	sound_li_fanwen	精	zhangzhongzhu	canvas 41 band 2 c6	精→𘔭 音精, probable, shape clean, dictionary writes the reading as 尼精 while the print has plain 精	uncertain	2026-11-07
-𗒧	sound_li_fanwen	罨	zhangzhongzhu	canvas 41 band 2 c6	罨→𗒧 音罨, probable, right element is a clear 攵 as in the candidate	uncertain	2026-11-07
-𗨈	sound_li_fanwen	嘌	zhangzhongzhu	canvas 41 band 2 c6	嘌→𗨈 音并, probable, shape matches stroke for stroke and the initial class is labial, but the rhyme does not fit 嘌	uncertain	2026-11-07
-𘎪	sound_li_fanwen	青	zhangzhongzhu	canvas 41 band 2 c6	青→𘎪 音青, probable, shape and reading agree, scored well clear of the field	uncertain	2026-11-07
-𗣫	sound_li_fanwen	播	zhangzhongzhu	canvas 41 band 2 c10	播→𗣫 音栽, probable, the right element is the three-stroke form the print shows, but the reading does not fit 播; the reading-fitting 𗣧 U+178E7 音波 carries a different right element	uncertain	2026-11-07
-𗼗	sound_li_fanwen	丁	zhangzhongzhu	canvas 41 band 2 c10	丁→𗼗 音定, probable, shape good, 𗤘 U+17918 matches as well but has no recorded reading	uncertain	2026-11-07
-𘈬	sound_li_fanwen	涅	zhangzhongzhu	canvas 41 band 2 c10	涅→𘈬 音涅, certain	keyed	2026-11-07
-𗦺	sound_li_fanwen	盤	zhangzhongzhu	canvas 41 band 2 c10	盤→𗦺 音盤, certain	keyed	2026-11-07
-𗹰	sound_li_fanwen	知	zhangzhongzhu	canvas 41 band 2 c14	知→𗹰 音桎, probable, shape clean and the left element is the same one the print shows in column 4 slot 3	uncertain	2026-11-07
-𗱱	sound_li_fanwen	截	zhangzhongzhu	canvas 41 band 2 c14	截→𗱱 音截, certain	keyed	2026-11-07
-𘟥	sound_li_fanwen	沒	zhangzhongzhu	canvas 41 band 2 c14	沒→𘟥 音沒, certain	keyed	2026-11-07
-𘃰	sound_li_fanwen	嘴	zhangzhongzhu	canvas 41 band 2 c14	嘴→𘃰 音罪, probable, shape clean and 罪 is the near-homophone	uncertain	2026-11-07
-𗼃	sound_li_fanwen	聖	zhangzhongzhu	canvas 41 band 2 c18	聖→𗼃 音聖, certain, two-part print matched exactly	keyed	2026-11-07
-𗪵	sound_li_fanwen	折	zhangzhongzhu	canvas 41 band 2 c18	折→𗪵 音折, probable	uncertain	2026-11-07
-𗬾	sound_li_fanwen	六	zhangzhongzhu	canvas 41 band 2 c18	六→𗬾 音六, certain, enclosing structure and reading both match	keyed	2026-11-07
-𗜬	sound_li_fanwen	力	zhangzhongzhu	canvas 41 band 2 c18	力→𗜬 音老, probable, structure matches and the initial is l-, but 老 is not 力	uncertain	2026-11-07
-𗡞	sound_li_fanwen	都	zhangzhongzhu	canvas 41 band 3 c2	都→𗡞 音都(底度切), its dictionary sense is "thousand" and matches the gloss 千, certain	keyed	2026-11-07
-𘂫	sound_li_fanwen	勿	zhangzhongzhu	canvas 41 band 3 c2	勿→𘂫 音帷(勿), ⿰[丿over㐅][hooked 乃] matches the print, certain; a small 三 is printed below the pair at x 3500-3550 y 416-473, recorded here not in the glyph field	keyed	2026-11-07
 𗁑	sound_li_fanwen	辢	zhangzhongzhu	canvas 41 band 3 c6	辢→𗁑 音勒(俗至切), ⿰[丿over moon-box][夂] matches the print and the crossing of the box leg with the 夂 stroke gives the X at lower left, probable, the reading is a 來母 entering-tone syllable rather than 辢 itself and 𘄳 U+18133, 𗒌 U+1748C share that reading but not the shape	uncertain	2026-11-07
-𗱨	sound_li_fanwen	六	zhangzhongzhu	canvas 41 band 3 c10	六→𗱨 音六, ⿱[wide stroke][廿 beside 乚] matches, certain	keyed	2026-11-07
-𘞄	sound_li_fanwen	力	zhangzhongzhu	canvas 41 band 3 c10	力→𘞄 音力(魯賊切), the X at upper left rules out 𘃦 U+180E6, certain	keyed	2026-11-07
-𗟻	sound_li_fanwen	皮	zhangzhongzhu	canvas 41 band 3 c10	皮→𗟻 音皮(普計切), certain	keyed	2026-11-07
-𗌭	sound_li_fanwen	姑	zhangzhongzhu	canvas 41 band 3 c10	姑→𗌭 音故(姑都切), ⿰[two stacked hooks][夂 over 开] matches and rules out 𗭱 U+17B71, certain	keyed	2026-11-07
-𗽅	sound_li_fanwen	姪	zhangzhongzhu	canvas 41 band 3 c14	姪→𗽅 音執(主乞切), ⿰㐅幸 matches, certain	keyed	2026-11-07
-𗸒	sound_li_fanwen	酥	zhangzhongzhu	canvas 41 band 3 c14	酥→𗸒 音蘇(西路切), top of 6144 by shape, certain	keyed	2026-11-07
-𘝵	sound_li_fanwen	盈	zhangzhongzhu	canvas 41 band 3 c14	盈→𘝵 音盈(夷根切), ⿱[二 with hook][夂 beside 爪] matches, certain	keyed	2026-11-07
-𘞩	sound_li_fanwen	力	zhangzhongzhu	canvas 41 band 3 c14	力→𘞩 音綠(力菊切), ⿰[乛over㐅][卄] matches, probable, the 直音 is 綠 not 力	uncertain	2026-11-07
+𗄈	sound_li_fanwen	常	zhangzhongzhu	canvas 40 band 2 c6	常→𗄈 音śjwo1 probable (model proposed; print agrees: 三 over 儿 with the hook; ś- against 常 dź-); draft glosses are 貪 嗔 癡 起, the gloss column's four characters in Tangut order, a second opinion for the set; my earlier note that only the first sign was established is superseded	uncertain	2026-11-07
+𗄻	sound_li_fanwen	那	zhangzhongzhu	canvas 41 band 1 c10	那→𗄻 音nwə1 certain (model proposed; print agrees: 髟/巛 form; n- fits 那)	keyed	2026-11-07
+𗅉	sound_li_fanwen	娘	zhangzhongzhu	canvas 40 band 1 c6	娘→𗅉 音娘 probable (𗅾 U+1717E, 娘羅切, is the competing shape; 𗅉 scores higher against the print and its 直音 matches)	uncertain	2026-11-07
 𗅋	sound_li_fanwen	名	zhangzhongzhu	canvas 41 band 3 c18	名→𗅋 音彌(名)(沒乙切), ⿰[忄][乛over hooked stroke] matches, certain	uncertain	2026-11-07
+𗅴	sound_li_fanwen	癩	zhangzhongzhu	canvas 40 band 2 c6	癩→𗅴 音lẹj2 certain (model proposed; print agrees: ⿰忄解 at 6x; lẹj2 fits 癩)	keyed	2026-11-07
+𗆂	sound_li_fanwen	裴	zhangzhongzhu	canvas 40 band 1 c2	裴→𗆂 音裴	keyed	2026-11-07
+𗇼	sound_li_fanwen	特	zhangzhongzhu	canvas 40 band 2 c10	特→𗇼 音gjwã2 open (model proposed; the print's 彳-like left and 上+氏 with the hook are only partly the render's 雍-like form; g- does not fit 特 t-)	uncertain	2026-11-07
+𗈑	sound_li_fanwen	責	zhangzhongzhu	canvas 40 band 1 c2	責→𗈑 音自（尼則）; each confirmed against the print at 3x; certain	keyed	2026-11-07
+𗈜	sound_li_fanwen	割	zhangzhongzhu	canvas 40 band 1 c14	割→𗈜 隔操切 音割; each left component checked against the competing shapes (𘚒 U+18692 for 桑, 𘔼 U+1853C for 娘, 𗈔 U+17214 for 割) at 8x; shape and reading agree in all four; certain	keyed	2026-11-07
+𗈲	sound_li_fanwen	屈	zhangzhongzhu	canvas 40 band 1 c14	屈→𗈲 枯擦切 音屈	keyed	2026-11-07
+𗉛	sound_li_fanwen	日	zhangzhongzhu	canvas 40 band 1 c2	日(知)→𗉛 音示（日知）	keyed	2026-11-07
+𗉜	sound_li_fanwen	戴	zhangzhongzhu	canvas 40 band 2 c2	戴→𗉜 音dze̱j1 probable (model proposed; print agrees: 犭+兆 with the long hook; reading d- matches, ẹj against 戴's -ai is the only gap)	uncertain	2026-11-07
+𗌭	sound_li_fanwen	姑	zhangzhongzhu	canvas 41 band 3 c10	姑→𗌭 音故(姑都切), ⿰[two stacked hooks][夂 over 开] matches and rules out 𗭱 U+17B71, certain	keyed	2026-11-07
+𗏴	sound_li_fanwen	似	zhangzhongzhu	canvas 41 band 2 c2	似→𗏴 音術, open, three-part print with a final hook, 𘆬 U+181AC 音施 and 𗪘 U+17A98 音世 are the rivals and none matches the printed left element	uncertain	2026-11-07
+𗐆	sound_li_fanwen	張	zhangzhongzhu	canvas 40 band 1 c10	張→𗐆 音章 certain	keyed	2026-11-07
+𗒧	sound_li_fanwen	罨	zhangzhongzhu	canvas 41 band 2 c6	罨→𗒧 音罨, probable, right element is a clear 攵 as in the candidate	uncertain	2026-11-07
+𗔞	sound_li_fanwen	責	zhangzhongzhu	canvas 41 band 1 c18	責→𗔞 音mjɨr1 probable (model proposed; print agrees: 巍/魏 form; m- against 責 ts-)	uncertain	2026-11-07
+𗕑	sound_li_fanwen	尅	zhangzhongzhu	canvas 41 band 1 c6	尅→𗕑 音khjɨ2 certain (model proposed; print agrees: 髟/贏 form; kh- fits 尅, draft gloss 萬)	keyed	2026-11-07
+𗕣	sound_li_fanwen	截	zhangzhongzhu	canvas 40 band 2 c6	截→𗕣 音tshjạ1 probable (model proposed; print agrees: 鹿-like body with the 互 top and the hook; tśh- against 截's dz-)	uncertain	2026-11-07
+𗖏	sound_li_fanwen	娘	zhangzhongzhu	canvas 41 band 2 c2	娘→𗖏 音娘, shapes match, certain	keyed	2026-11-07
+𗖢	sound_li_fanwen	万	zhangzhongzhu	canvas 41 band 1 c10	万→𗖢 音ne̱j2 probable (model proposed; print agrees: 疏 form; n- against 万 m-); draft glosses 回音 知 傳 指示 put 指示 and 知 in the column, matching the gloss 指示寂知	uncertain	2026-11-07
+𗖵	sound_li_fanwen	諜	zhangzhongzhu	canvas 40 band 2 c10	諜→𗖵 音bju1 probable (model proposed; print and render both 犭+巛; b- against 諜 d- does not fit)	uncertain	2026-11-07
+𗖵	sound_li_fanwen	謀	zhangzhongzhu	canvas 41 band 2 c2	謀→𗖵 音謀, certain	keyed	2026-11-07
+𗛻	sound_li_fanwen	荅	zhangzhongzhu	canvas 40 band 1 c6	荅→𗛻 音達 certain	keyed	2026-11-07
+𗜬	sound_li_fanwen	力	zhangzhongzhu	canvas 41 band 2 c18	力→𗜬 音老, probable, structure matches and the initial is l-, but 老 is not 力	uncertain	2026-11-07
+𗟻	sound_li_fanwen	皮	zhangzhongzhu	canvas 40 band 1 c10	皮→𗟻 音皮 certain	keyed	2026-11-07
+𗟻	sound_li_fanwen	皮	zhangzhongzhu	canvas 41 band 3 c10	皮→𗟻 音皮(普計切), certain	keyed	2026-11-07
+𗡞	sound_li_fanwen	都	zhangzhongzhu	canvas 41 band 1 c6	都→𗡞 音tụ1 certain (model proposed; print agrees: 殿/叚 form; t- fits 都, draft gloss 千); the draft glosses 八 萬 ? 千 follow the gloss column 八萬四千	keyed	2026-11-07
+𗡞	sound_li_fanwen	都	zhangzhongzhu	canvas 41 band 3 c2	都→𗡞 音都(底度切), its dictionary sense is "thousand" and matches the gloss 千, certain	keyed	2026-11-07
+𗢳	sound_li_fanwen	他	zhangzhongzhu	canvas 40 band 1 c22	他→𗢳 突位切 音他; the 盈 slot was checked against 𗲒 U+17C92 音英 and the 壞 slot against 𗽪 U+17F6A 音懷, both rejected on the lower component; certain	keyed	2026-11-07
+𗣫	sound_li_fanwen	播	zhangzhongzhu	canvas 41 band 2 c10	播→𗣫 音栽, probable, the right element is the three-stroke form the print shows, but the reading does not fit 播; the reading-fitting 𗣧 U+178E7 音波 carries a different right element	uncertain	2026-11-07
+𗣭	sound_li_fanwen	勤	zhangzhongzhu	canvas 40 band 1 c18	勤→𗣭 妻因切 音秦 is a shape and reading match, certain; the other three are shape matches whose dictionary readings do not fit the transcription	keyed	2026-11-07
+𗤃	sound_li_fanwen	抽	zhangzhongzhu	canvas 41 band 1 c14	抽→𗤃 音nia̱2 probable (model proposed; print agrees: 終/務 form; n- does not spell 抽)	uncertain	2026-11-07
 𗤓	sound_li_fanwen	托	zhangzhongzhu	canvas 41 band 3 c18	托→𗤓 音托(提多切), ⿰[two stacked hooks][乛over又] matches, certain; only two characters are carved, the slot facing 勤 is blank and the gloss and spelling columns of this group are blank, the band ending here	uncertain	2026-11-07
+𗤶	sound_li_fanwen	你	zhangzhongzhu	canvas 40 band 1 c6	你→𗤶 音你 certain	keyed	2026-11-07
+𗤶	sound_li_fanwen	你	zhangzhongzhu	canvas 41 band 1 c18	你→𗤶 音nji̱j1 certain (model proposed; print agrees: 鮮/觧 form; n- fits 你, draft gloss 心)	keyed	2026-11-07
+𗦺	sound_li_fanwen	盤	zhangzhongzhu	canvas 41 band 2 c10	盤→𗦺 音盤, certain	keyed	2026-11-07
+𗦻	sound_li_fanwen	酩	zhangzhongzhu	canvas 40 band 2 c2	酩→𗦻 音mji̱j2 certain (model proposed; print agrees at 6x: 幺+广+彡 with two pendant verticals; draft gloss 名)	keyed	2026-11-07
+𗨈	sound_li_fanwen	嘌	zhangzhongzhu	canvas 41 band 2 c6	嘌→𗨈 音并, probable, shape matches stroke for stroke and the initial class is labial, but the rhyme does not fit 嘌	uncertain	2026-11-07
+𗨤	sound_li_fanwen	精	zhangzhongzhu	canvas 40 band 1 c18	精→𗨤 捷勞切 音族, printed ⿲ [幺] [乛 over horizontals] [hooked 乚], matching 𗨤 well but reading dzjo2 does not fit 精; no character with a 羅, 盖 or 精 reading matches these forms anywhere in the 6144-character corpus; open	uncertain	2026-11-07
+𗪵	sound_li_fanwen	折	zhangzhongzhu	canvas 41 band 2 c18	折→𗪵 音折, probable	uncertain	2026-11-07
+𗪺	sound_li_fanwen	隄	zhangzhongzhu	canvas 40 band 2 c10	隄→𗪺 音ɣie1 probable (model proposed; print and render both 糸+段; ɣ- against 隄 d- does not fit, but the draft gloss 力 matches the gloss column's 力)	uncertain	2026-11-07
+𗬾	sound_li_fanwen	六	zhangzhongzhu	canvas 41 band 2 c18	六→𗬾 音六, certain, enclosing structure and reading both match	keyed	2026-11-07
+𗱝	sound_li_fanwen	名	zhangzhongzhu	canvas 41 band 1 c10	名→𗱝 音dźiwe1 probable (model proposed; print agrees: 齋/爾 form; dź- does not spell 名)	uncertain	2026-11-07
+𗱨	sound_li_fanwen	六	zhangzhongzhu	canvas 41 band 3 c10	六→𗱨 音六, ⿱[wide stroke][廿 beside 乚] matches, certain	keyed	2026-11-07
+𗱱	sound_li_fanwen	截	zhangzhongzhu	canvas 41 band 2 c14	截→𗱱 音截, certain	keyed	2026-11-07
+𗲬	sound_li_fanwen	勤	zhangzhongzhu	canvas 41 band 1 c6	勤→𗲬 音kia̱2 probable (model proposed; print agrees: 髟+冉 form; k- only)	uncertain	2026-11-07
+𗵺	sound_li_fanwen	斡	zhangzhongzhu	canvas 40 band 1 c6	斡→𗵺 音斡 certain	keyed	2026-11-07
+𗷖	sound_li_fanwen	華	zhangzhongzhu	canvas 41 band 1 c14	華→𗷖 音tshwew1 probable (model proposed; print agrees: 巍/龕 form; tshw- against 華 hw-)	uncertain	2026-11-07
+𗷫	sound_li_fanwen	能	zhangzhongzhu	canvas 40 band 1 c2	能→𗷫 音能	keyed	2026-11-07
+𗷺	sound_li_fanwen	怛	zhangzhongzhu	canvas 40 band 1 c10	怛→𗷺 名怛切 音馬 probable	uncertain	2026-11-07
+𗸒	sound_li_fanwen	酥	zhangzhongzhu	canvas 41 band 3 c14	酥→𗸒 音蘇(西路切), top of 6144 by shape, certain	keyed	2026-11-07
+𗹢	sound_li_fanwen	忨	zhangzhongzhu	canvas 41 band 1 c18	忨→𗹢 音djọ2 probable (model proposed; print agrees: 滕 form; d- against 忨 w-)	uncertain	2026-11-07
+𗹰	sound_li_fanwen	知	zhangzhongzhu	canvas 41 band 2 c14	知→𗹰 音桎, probable, shape clean and the left element is the same one the print shows in column 4 slot 3	uncertain	2026-11-07
+𗼃	sound_li_fanwen	聖	zhangzhongzhu	canvas 41 band 1 c2	聖→𗼃 音śjɨj2 certain (model proposed; print agrees at 6x: 勿-like form; draft gloss 聖)	keyed	2026-11-07
+𗼃	sound_li_fanwen	聖	zhangzhongzhu	canvas 41 band 2 c18	聖→𗼃 音聖, certain, two-part print matched exactly	keyed	2026-11-07
+𗼗	sound_li_fanwen	丁	zhangzhongzhu	canvas 41 band 2 c10	丁→𗼗 音定, probable, shape good, 𗤘 U+17918 matches as well but has no recorded reading	uncertain	2026-11-07
+𗽅	sound_li_fanwen	姪	zhangzhongzhu	canvas 41 band 3 c14	姪→𗽅 音執(主乞切), ⿰㐅幸 matches, certain	keyed	2026-11-07
+𘂫	sound_li_fanwen	勿	zhangzhongzhu	canvas 41 band 3 c2	勿→𘂫 音帷(勿), ⿰[丿over㐅][hooked 乃] matches the print, certain; a small 三 is printed below the pair at x 3500-3550 y 416-473, recorded here not in the glyph field	keyed	2026-11-07
+𘃪	sound_li_fanwen	說	zhangzhongzhu	canvas 41 band 1 c2	說→𘃪 音dźjwa1 probable (model proposed; print agrees: 發-like; dźjwa against 說 śjwät shares only the -jwa)	uncertain	2026-11-07
+𘃰	sound_li_fanwen	嘴	zhangzhongzhu	canvas 41 band 2 c14	嘴→𘃰 音罪, probable, shape clean and 罪 is the near-homophone	uncertain	2026-11-07
+𘆗	sound_li_fanwen	責	zhangzhongzhu	canvas 41 band 1 c14	責→𘆗 音śiə2 probable (model proposed; print agrees: 效/敉 form; ś- against 責 ts-)	uncertain	2026-11-07
+𘈧	sound_li_fanwen	娘	zhangzhongzhu	canvas 41 band 1 c10	娘→𘈧 音de̱j1 probable (model proposed; print agrees: 殿/叚 form; d- against 娘 n-)	uncertain	2026-11-07
+𘈬	sound_li_fanwen	涅	zhangzhongzhu	canvas 41 band 2 c10	涅→𘈬 音涅, certain	keyed	2026-11-07
+𘈼	sound_li_fanwen	傾	zhangzhongzhu	canvas 40 band 2 c10	傾→𘈼 音ma2 open (model proposed; print 戶+丰+攵 against a 髟+攵 render; m- does not fit 傾)	uncertain	2026-11-07
+𘉋	sound_li_fanwen	盈	zhangzhongzhu	canvas 41 band 1 c6	盈→𘉋 音ꞏjar1 certain (model proposed; print agrees: 貝-like; ꞏj- fits 盈, draft gloss 八)	keyed	2026-11-07
+𘊄	sound_li_fanwen	娘	zhangzhongzhu	canvas 40 band 1 c14	娘→𘊄 音娘	keyed	2026-11-07
+𘌴	sound_li_fanwen	壞	zhangzhongzhu	canvas 40 band 1 c22	壞→𘌴 虎根切 音懷	keyed	2026-11-07
+𘎚	sound_li_fanwen	為	zhangzhongzhu	canvas 40 band 1 c22	為→𘎚 韋竭切 音畏	keyed	2026-11-07
+𘎪	sound_li_fanwen	青	zhangzhongzhu	canvas 41 band 2 c6	青→𘎪 音青, probable, shape and reading agree, scored well clear of the field	uncertain	2026-11-07
+𘑰	sound_li_fanwen	羅	zhangzhongzhu	canvas 40 band 1 c18	羅→𘑰 音瀆, printed ⿰ [乛 over 冂 with legs] [殳], a clean match but 𘄍 U+1810D 音播 scores level and neither reading fits 羅	uncertain	2026-11-07
+𘓂	sound_li_fanwen	盖	zhangzhongzhu	canvas 40 band 1 c18	盖(尼)→𘓂 音力, the printed left is 丰 with three horizontals and no lower sweep, which separates it from 𘏢 U+183E2 音根 (the only velar-initial shape that comes close and the one the reading would favour)	uncertain	2026-11-07
+𘔒	sound_li_fanwen	麻	zhangzhongzhu	canvas 41 band 1 c2	麻→𘔒 音njij2 probable (model proposed; print agrees: 敉-like; n- does not spell 麻)	uncertain	2026-11-07
+𘔟	sound_li_fanwen	責	zhangzhongzhu	canvas 41 band 2 c2	責→𘔟 音示, probable, reading is given as 示 with the 尼責 notation that the printed 責 plus small 尼 spells, but 𘝭 U+1876D is near-identical in shape	uncertain	2026-11-07
+𘔫	sound_li_fanwen	路	zhangzhongzhu	canvas 40 band 1 c10	路→𘔫 音路 certain (𗘝 U+1761D shares the reading but not the form)	keyed	2026-11-07
+𘔭	sound_li_fanwen	精	zhangzhongzhu	canvas 41 band 2 c6	精→𘔭 音精, probable, shape clean, dictionary writes the reading as 尼精 while the print has plain 精	uncertain	2026-11-07
+𘕕	sound_li_fanwen	桑	zhangzhongzhu	canvas 40 band 1 c14	桑→𘕕 西當切 音桑	keyed	2026-11-07
+𘕥	sound_li_fanwen	幹	zhangzhongzhu	canvas 41 band 1 c2	幹→𘕥 音ljạ1 probable (model proposed; print agrees: 艹 over the 月+匕 body; draft gloss 證)	uncertain	2026-11-07
+𘚠	sound_li_fanwen	勒	zhangzhongzhu	canvas 40 band 2 c6	勒→𘚠 音lə2 certain (model proposed; print agrees: 屏, 尸+并; lə2 fits 勒)	keyed	2026-11-07
+𘚢	sound_li_fanwen	蔣	zhangzhongzhu	canvas 41 band 1 c14	蔣→𘚢 音dźiej2 probable (model proposed; print agrees: 骫/沈 form; dź- against 蔣 ts-); draft glosses 口吃 施 輪迴 輪 give 輪迴 and 輪, matching the gloss 六趣輪迴	uncertain	2026-11-07
+𘚾	sound_li_fanwen	能	zhangzhongzhu	canvas 40 band 2 c2	能→𘚾 音də̱1 probable (model proposed; print agrees: 彡+月+頁; GX reads ndə̱1, whose prenasalised onset matches 能 n-); draft glosses of the four are 名 爭 利 趨, which are the gloss column's four characters in Tangut order — a second opinion for the whole set	uncertain	2026-11-07
+𘝯	sound_li_fanwen	蔣	zhangzhongzhu	canvas 41 band 1 c18	蔣→𘝯 音bjo̱1 probable (model proposed; print agrees: 獺/魏 form; b- against 蔣 ts-); draft glosses 牲畜 修造 心 觀 give 修造 心 觀, matching the gloss 修行觀心	uncertain	2026-11-07
+𘝵	sound_li_fanwen	盈	zhangzhongzhu	canvas 40 band 1 c22	盈→𘝵 夷根切 音盈	keyed	2026-11-07
+𘝵	sound_li_fanwen	盈	zhangzhongzhu	canvas 41 band 3 c14	盈→𘝵 音盈(夷根切), ⿱[二 with hook][夂 beside 爪] matches, certain	keyed	2026-11-07
+𘞄	sound_li_fanwen	力	zhangzhongzhu	canvas 41 band 3 c10	力→𘞄 音力(魯賊切), the X at upper left rules out 𘃦 U+180E6, certain	keyed	2026-11-07
+𘞙	sound_li_fanwen	迎	zhangzhongzhu	canvas 40 band 2 c2	迎→𘞙 音gjịj1 probable (model proposed; print agrees: 匚+品+攵; g- against 迎 is the 疑母 reflex, not a direct match)	uncertain	2026-11-07
+𘞩	sound_li_fanwen	力	zhangzhongzhu	canvas 41 band 3 c14	力→𘞩 音綠(力菊切), ⿰[乛over㐅][卄] matches, probable, the 直音 is 綠 not 力	uncertain	2026-11-07
+𘟥	sound_li_fanwen	沒	zhangzhongzhu	canvas 41 band 2 c14	沒→𘟥 音沒, certain	keyed	2026-11-07
