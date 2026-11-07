@@ -50,7 +50,7 @@ export const PAGE_SEO = {
   },
   eras: {
     title: 'Names and titles of the Western Xia — Tangut Input',
-    description: 'The era names, imperial titles, posthumous names and state names of the Western Xia, with Tangut where recorded and each marked by what it rests on.',
+    description: 'Era names, imperial titles, posthumous and state names, surnames, offices and places of the Western Xia, in Tangut where recorded.',
   },
   draw: {
     title: 'Draw — Tangut Input',
