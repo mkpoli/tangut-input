@@ -54,6 +54,15 @@ A 直音 read from 掌中珠 into `sound_li_fanwen` names `zhangzhongzhu` as its
 掌中珠 prints a Chinese character for a Tangut one, which is the 直音 itself, and 夏漢字典 is the
 second reading. `uv run scripts/check_readings.py` holds the shape; it does not judge a reading.
 
+## The other dictionaries
+
+Arakawa's 西夏語通韻字典 is a table, not prose: one row per syllable, with the rhyme number, the
+characters that share the syllable, and the reconstruction in an IPA column. A page rendered at
+200 dpi comes apart cleanly enough for the model to be useful on the first three — the rhyme header
+`R. 19 平声19韻·上声16韻` is read, and so are the character cells — but the IPA column is beyond it
+(`mγ-ia` comes back as `mYa`, `tsh-ia` as `tha̱`). So the characters and their grouping are within
+reach of a parser, and the readings they share will need an eye. 149 pages.
+
 ## Locators
 
 - `zhangzhongzhu`: `canvas <n>`, `band <n>` and `c<n>`, the column's number counting from the band's
