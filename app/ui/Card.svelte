@@ -301,11 +301,35 @@
             {#if spelling}
               <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="ui-script spelling">{spelling}</span></td></tr>
             {/if}
-            {#if hands?.tibetan?.length}
-              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">
-                {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
-                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone />
-                {/each}
+            {#if hands?.tibetan?.length || tibetanGlosses.length}
+              <tr><th scope="row">{t('card.tibetanHands')}</th><td>
+                <div class="tibetan-sources">
+                  {#if hands?.tibetan?.length}
+                    <div class="tibetan-source">
+                      <a class="source-label ui-hint" href="https://zhuanlan.zhihu.com/p/272058247" target="_blank" rel="noopener noreferrer" title={t('card.handsTitle')}>{t('card.spellingSource')}<span aria-hidden="true">↗</span></a>
+                      <div class="hands">
+                        {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
+                          <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone />
+                        {/each}
+                      </div>
+                    </div>
+                  {/if}
+                  {#if tibetanGlosses.length}
+                    <div class="tibetan-source">
+                      <a class="source-label ui-hint" href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.transcriptionTibetan')}<span aria-hidden="true">↗</span></a>
+                      <div class="tibetan-glosses">
+                        {#each tibetanGlosses as [wylie, script, where], i (i)}
+                          <span class="tibetan-gloss">
+                            <span lang="bo" class="tibetan-script">{tibetanShown(script)}</span>
+                            <span class="ui-mono wylie">{wylie}</span>
+                            <span class="ui-hint">{tibetanWhere(where)}</span>
+                          </span>
+                        {/each}
+                        <span class="source-note ui-hint">{t('card.transcriptionTibetanNote')}</span>
+                      </div>
+                    </div>
+                  {/if}
+                </div>
               </td></tr>
             {/if}
             {#if hands?.sanskrit?.length}
@@ -314,21 +338,6 @@
                   <Spelling {script} transcription={printed} {ipa} lang="sa" />
                 {/each}
               </td></tr>
-            {/if}
-            {#if tibetanGlosses.length}
-              <tr>
-                <th scope="row"><a href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.transcriptionTibetan')}<span aria-hidden="true">↗</span></a></th>
-                <td><div class="tibetan-glosses">
-                  {#each tibetanGlosses as [wylie, script, where], i (i)}
-                    <span class="tibetan-gloss">
-                      <span lang="bo" class="tibetan-script">{tibetanShown(script)}</span>
-                      <span class="ui-mono wylie">{wylie}</span>
-                      <span class="ui-hint">{tibetanWhere(where)}</span>
-                    </span>
-                  {/each}
-                  <span class="source-note ui-hint">{t('card.transcriptionTibetanNote')}</span>
-                </div></td>
-              </tr>
             {/if}
           </tbody>
         </table>
@@ -525,7 +534,10 @@
   .readings th{inline-size:46%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
-  .readings td.hands{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--ui-space-xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
+  .readings .hands{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--ui-space-xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
+  .tibetan-sources{display:grid;gap:var(--ui-space-sm)}
+  .tibetan-source{display:grid;gap:2px}
+  .source-label{width:fit-content;text-underline-offset:2px}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
   .spelling{font-size:18px}
   .transcriptions{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;align-items:baseline}
