@@ -221,7 +221,7 @@
   }
 </script>
 
-<svelte:window onresize={resize} onkeydown={keys} onpagehide={leave} />
+<svelte:window onresize={resize} onkeydown={keys} onpagehide={leave} onbeforeunload={leave} />
 <svelte:document onvisibilitychange={() => { if (document.hidden) leave() }} />
 
 <div class="ui-page draw" class:component-mode={componentsOnly} data-width="wide">
