@@ -342,6 +342,7 @@
   "card.tone.entering": "entering tone",
   "parts.splitTitle": "Break {part} into the parts it is built from",
   "parts.info.oneCharacter": "1 character",
+  "parts.info.hint": "Shape hint",
   "parts.names.title": "Part names in other languages",
   "parts.names.hint": "Only names recorded in the sources read are filled; a dash means none is recorded.",
   "parts.names.component": "Part",
