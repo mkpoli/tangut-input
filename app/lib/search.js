@@ -166,7 +166,9 @@ export function byMeaning(query, options = {}) {
 export function byParts(parts, layout = '') {
   if (!parts.length && !layout) return []
   let hits = parts.length ? matchByParts(ix, parts) : [...ix.byChar.keys()]
-  if (layout) hits = hits.filter(char => ix.byChar.get(char)?.composition?.startsWith(layout))
+  // The layout filters the description the parts finder reads, so a three-part description that
+  // the editorial cut reads as two matches the operator of that cut.
+  if (layout) hits = hits.filter(char => ix.layoutOf.get(char) === layout)
   return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99)
     || frequency(b) - frequency(a) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }

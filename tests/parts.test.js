@@ -72,6 +72,13 @@ test('a character of three columns reads as one part beside a character of two',
   expect(matchByParts(index, ['𘠐', '𘓔'])).toContain('𗆫')
 })
 
+test('the outermost operator is the editorial one, for the layout filter', () => {
+  // 𗆫 is recorded as ⿲𘠐𘧘𘣩 and read as two parts, so its layout is ⿰.
+  expect(index.layoutOf.get('𗆫')).toBe('⿰')
+  // 𗁋 is ⿲𘠁𘦢𘠅 with both pairs spelling a character, so it stays three.
+  expect(index.layoutOf.get('𗁋')).toBe('⿲')
+})
+
 test('three operands stay three when both pairs spell characters or neither does', () => {
   const synthetic = buildPartIndex([
     { char: '𗀁', composition: '⿰𘠀𘠁' },

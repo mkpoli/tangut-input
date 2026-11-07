@@ -74,7 +74,7 @@ export const isDescriptionPart = part => [...(part ?? '')].some(char => OPERATOR
  * A leaf that spells several characters keeps its written component as the character's direct part,
  * but each candidate remains a part of it. A description short of an operand keeps its components.
  * @param {{ char: string, composition?: string }[]} entries
- * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, partGroups: Map<string, PartGroup[]> }}
+ * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, layoutOf: Map<string, string>, partGroups: Map<string, PartGroup[]> }}
  */
 export function buildPartIndex(entries) {
   /** @type {Map<string, string[]>} */
@@ -103,6 +103,7 @@ export function buildPartIndex(entries) {
     /** @param {Node} node @returns {Node} */
     const regroup = node => {
       if (typeof node === 'string') return node
+      // A truncated node is no character's description, but the operands it kept may be.
       if (node.cut) return { ...node, parts: node.parts }
       // A node that spells a character is that character's base; its own cut is the character's.
       if (charactersFor(writeDescription(node)).length) return { ...node, parts: node.parts }
@@ -263,11 +264,15 @@ export function buildPartIndex(entries) {
   const usedBy = new Map()
   /** @type {Map<string, string[]>} */
   const directPartsOf = new Map()
+  /** @type {Map<string, string>} */
+  const layoutOf = new Map()
   for (const entry of entries) {
     const char = entry.char
     const parts = collect(char, new Set())
     partsOf.set(char, parts)
     directPartsOf.set(char, directParts(char))
+    const root = read.get(char)?.roots[0]
+    if (root !== undefined) layoutOf.set(char, typeof root === 'string' ? '' : root.op)
     for (const part of parts.keys()) {
       let users = usedBy.get(part)
       if (!users) usedBy.set(part, users = new Set())
@@ -283,7 +288,7 @@ export function buildPartIndex(entries) {
       directPartsOf.set(part, root.parts.map(child => editorialNode(child, part)).filter(child => isTangut(child) || isDescriptionPart(child)))
     }
   }
-  return { partsOf, usedBy, directPartsOf, partGroups: groupCache }
+  return { partsOf, usedBy, directPartsOf, layoutOf, partGroups: groupCache }
 }
 
 /**
