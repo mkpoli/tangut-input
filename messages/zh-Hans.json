@@ -300,7 +300,7 @@
   "find.door.sijiao": "输入四角号码的六位数字。候选字带有编号，便于快速选定。屏幕上的数字键同时是字根表。",
   "nav.meaning": "释义",
   "nav.meaning.hint": "检索字义训释",
-  "meaning.intro": "可用维基词典、CCAMC和Alan Downes的释义检索。CCAMC的结果会链接到其条目。",
+  "meaning.intro": "可按释义或文献中记载的名称查字。",
   "meaning.placeholder": "water、毒、马…",
   "meaning.label": "按释义查找",
   "meaning.languages": "语言",

@@ -159,7 +159,7 @@
         <header class="ui-section-head">
           <h2 class="ui-label">{group.title}</h2>
           <span class="ui-count">{group.total > group.items.length ? t('common.of', { shown: group.items.length, total: group.total }) : group.total}</span>
-          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(`nav.${group.page}`) })}<Icon name="arrow" size={13}/></a>{/if}
+          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(`nav.${group.page}`) })}</a>{/if}
         </header>
         {#if group.key === 'text'}
           <ol class="ui-rows">
