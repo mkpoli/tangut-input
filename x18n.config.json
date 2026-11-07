@@ -53,6 +53,7 @@
     "core:card.variantsPossibleSource",
     "core:card.variantsSource",
     "core:chart.tone.unknown",
+    "core:eras.contemporary.tab",
     "core:eras.tab.later",
     "core:eras.tab.posthumous",
     "core:eras.tab.states",
