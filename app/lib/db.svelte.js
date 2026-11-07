@@ -1,7 +1,7 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { indexTibetan } from './tibetan.js'
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadZzz, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadZzz, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources } from './data.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
@@ -80,15 +80,17 @@ export const ix = {
   /** Characters one component away, built on the first ask: a reader who means one shape and draws
    *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
   /** Whether the sibling index has been built. */ siblingsReady: false,
+  /** Where a keyed value stands: char → field → the books and pages it was read from. @type {Record<string, Record<string, { work: string, locator: string, note: string }[]>>} */ citations: {},
 }
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, zzz, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, zzz, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
       loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadZzz().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
-      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null),
+      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
     ])
+    ix.citations = cited?.citations ?? {}
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
     ix.zzz = new Map(Object.entries(zzz?.pairs ?? {}))
     ix.tibetanRhymes = tibetanRhymes?.cells ?? {}

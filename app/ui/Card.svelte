@@ -24,6 +24,7 @@
   import { ccamcUrl } from '../lib/ccamc.js'
   import { tibetanShown, tibetanWhere } from '../lib/tibetan.js'
   import { hasCardReadings } from '../lib/card-readings.js'
+  import { bookTitle } from '../lib/books.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -47,6 +48,19 @@
   const linkedGroup = $derived(family && (family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) ? family : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
+  const READING_FIELDS = /** @type {readonly { key: string, name?: string, zh?: string, label?: string, lang: string }[]} */ ([
+    { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文', lang: 'zh-Hant' },
+    { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山', lang: 'zh-Hant' },
+    { key: 'tibetan', label: 'card.tibetan', lang: 'bo' },
+  ])
+  /** A transcribed field's label: a sound gloss names the scholar in the reader's script, a
+   * transcription its own script. @param {{ name?: string, zh?: string, label?: string }} field */
+  const fieldLabel = field => {
+    if (!field.name) return t(/** @type {string} */ (field.label))
+    const name = /^(ja|zh|ko)/.test(i18n.locale) && field.zh ? field.zh : field.name
+    return t('card.soundGloss', { name })
+  }
+
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
   // is read from. 文海 where it has one, 合編 where it does not.
@@ -74,6 +88,26 @@
     if (!entry?.composition) return []
     return ix.entries.filter(other => other.char !== char && other.composition === entry.composition).map(other => other.char)
   })
+  /**
+   * The books and pages a keyed value stands on. @param {string} field
+   * @returns {{ work: string, locator: string, note: string }[]}
+   */
+  const cites = field => ix.citations[char]?.[field] ?? []
+
+  /**
+   * A locator as the reader sees it: a 掌中珠 column is canvas, band and column, the rest is the
+   * page as written. @param {string} locator
+   */
+  const place = locator => locator
+    .replace(/^canvas (\d+) band (\d+) c(\d+)$/, (_, canvas, band, column) => `${canvas}·${band}·${column}`)
+    .replace(/^canvas (\d+) c(\d+)$/, (_, canvas, column) => `${canvas}·${column}`)
+
+  // The readings keyed from the editions — 音（李范文）, 音（聂历山）, the 藏文對音 — each with the
+  // page it stands on. They stand in the readings table like every other reading.
+  const keyed = $derived(READING_FIELDS
+    .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cites: cites(field.key) }))
+    .filter(field => field.value))
+
   const homophones = $derived.by(() => {
     const li = entry?.pronunciations?.li_fanwen?.trim()
     if (!li) return []
@@ -241,7 +275,15 @@
         <dl class="means">
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
-          {#if meanings.zh?.length}<dt>zh</dt><dd lang="zh-Hant">{meanings.zh.join('；')}</dd>{/if}
+          {#if meanings.zh?.length}
+            <dt>zh</dt>
+            <dd lang="zh-Hant">
+              {meanings.zh.join('；')}
+              {#each cites('gloss_zh') as cite (cite.locator)}
+                <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+              {/each}
+            </dd>
+          {/if}
           {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}
           {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
         </dl>
@@ -290,13 +332,32 @@
       </section>
     {/if}
 
-    {#if hasCardReadings({ readings, rhymeClass, spelling, hands, glosses: tibetanGlosses })}
+    {#if hasCardReadings({ readings, keyed, rhymeClass, spelling, hands, glosses: tibetanGlosses })}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
           <tbody>
             {#each readings as reading (reading.key)}
-              <tr><th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th><td>{reading.value}</td></tr>
+              <tr>
+                <th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th>
+                <td>
+                  {reading.value}
+                  {#each cites(reading.key) as cite (cite.locator)}
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+                  {/each}
+                </td>
+              </tr>
+            {/each}
+            {#each keyed as field (field.key)}
+              <tr>
+                <th scope="row" title={field.name ? `${field.name} · ${field.zh}` : fieldLabel(field)}>{fieldLabel(field)}</th>
+                <td class:cjk={field.lang !== 'bo'}>
+                  <span class:bo={field.lang === 'bo'} lang={field.lang}>{field.value}</span>
+                  {#each field.cites as cite (cite.locator)}
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+                  {/each}
+                </td>
+              </tr>
             {/each}
             {#if rhymeClass}
               <tr><th scope="row">{t('card.rhyme')}</th><td>{rhymeClass}{#if toneName}<span class="ui-hint"> · {t(toneName)}</span>{/if}</td></tr>
@@ -373,7 +434,12 @@
     {#if entry?.wenhai_text_zh}
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
-        <p lang="zh-Hant">{entry.wenhai_text_zh}</p>
+        <p lang="zh-Hant">
+          {entry.wenhai_text_zh}
+          {#each cites('wenhai_zh') as cite (cite.locator)}
+            <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+          {/each}
+        </p>
       </section>
     {/if}
 
@@ -541,6 +607,7 @@
   .tibetan-source{display:grid;gap:2px}
   .source-label{width:fit-content;text-underline-offset:2px}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
+  .cite{display:block;margin-block-start:2px;font-family:var(--ui-font-sans);font-size:var(--ui-text-xs);color:var(--ui-color-ink-muted)}
   .spelling{font-size:18px}
   .transcriptions{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;align-items:baseline}
   .transcriptions dt{color:var(--ui-color-ink-muted);font-size:var(--ui-text-sm)}
