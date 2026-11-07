@@ -60,8 +60,10 @@ Arakawa's 西夏語通韻字典 is a table, not prose: one row per syllable, wit
 characters that share the syllable, and the reconstruction in an IPA column. A page rendered at
 200 dpi comes apart cleanly enough for the model to be useful on the first three — the rhyme header
 `R. 19 平声19韻·上声16韻` is read, and so are the character cells — but the IPA column is beyond it
-(`mγ-ia` comes back as `mYa`, `tsh-ia` as `tha̱`). So the characters and their grouping are within
-reach of a parser, and the readings they share will need an eye. 149 pages.
+(`mγ-ia` comes back as `mYa`, `tsh-ia` as `tha̱`), at 300 dpi as at 200. So the characters, the rhyme
+number and the class header are within reach of a parser, and the readings they share will need an
+eye. `bun run ocr:table --model <clone> --page <png>` prints the header, the class it names, and one
+line per row of the class with its characters and whatever the reading cell yielded. 149 pages.
 
 ## Locators
 
