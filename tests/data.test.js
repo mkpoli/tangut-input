@@ -166,6 +166,12 @@ test('the attestation joins the edition, the twelve Wikisource texts, the Lausan
   expect(attestation.sources.slice(1).every(source => source.kind === 'transcription' && (source.revision || source.commit))).toBe(true)
 })
 
+test('the monthly ode links the printed study its page cites', () => {
+  const ode = attestation.sources.find(source => source.id === 'wikisource-monthly-pleasures')
+  expect(ode.study).toContain('西夏語『月々樂詩』の研究')
+  expect(ode.studyUrl).toBe('https://hdl.handle.net/2433/73030')
+})
+
 test('every place points at the character it attests', () => {
   const sources = new Set(attestation.sources.map(source => source.id))
   for (const [char, bySource] of Object.entries(attestation.rows)) {

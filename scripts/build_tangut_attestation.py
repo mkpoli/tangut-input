@@ -72,7 +72,9 @@ WIKISOURCE_TEXTS = [
     {'pageid': 287253, 'slug': 'dharani', 'shortTitle': 'Great Compassion Dharani'},
     {'pageid': 153976, 'slug': 'hymn-origin', 'shortTitle': 'Hymn of the Holy Origin'},
     {'pageid': 260266, 'slug': 'grains-of-gold', 'shortTitle': 'Grains of Gold'},
-    {'pageid': 260280, 'slug': 'monthly-pleasures', 'shortTitle': 'Monthly Pleasures'},
+    {'pageid': 260280, 'slug': 'monthly-pleasures', 'shortTitle': 'Monthly Pleasures',
+     'study': '西田龍雄（1986）「西夏語『月々樂詩』の研究」『京都大學文學部研究紀要』25, 1–116',
+     'studyUrl': 'https://hdl.handle.net/2433/73030'},
     {'pageid': 287220, 'slug': 'leilin', 'shortTitle': 'Forest of Categories'},
     {'pageid': 287280, 'slug': 'liangzhou-stele', 'shortTitle': 'Liangzhou Stele'},
     {'pageid': 347419, 'slug': 'dual-maxims', 'shortTitle': 'Precious Dual Maxims'},
@@ -453,6 +455,7 @@ def build_wikisource(rows):
             'retrieved': snapshot['retrieved'],
             'revision': root['revision'],
             'note': plain(header_field(header, 'notes')) or 'Wikisource transcription. The page names no printed edition.',
+            **({'study': entry['study'], 'studyUrl': entry['studyUrl']} if 'study' in entry else {}),
             'pages': page_records,
         })
 
