@@ -5,6 +5,7 @@
   // the next choice always leads somewhere.
   import { keepVariantsTogether } from '../lib/variants.js'
   import { db, ix, gloss, isTangut, codePoint, readingOf } from '../lib/db.svelte.js'
+  import Handwriting from '../ui/Handwriting.svelte'
   import G from '../ui/G.svelte'
   import PartInfo from '../ui/PartInfo.svelte'
   import { route, setQuery } from '../lib/route.svelte.js'
@@ -19,6 +20,8 @@
   import { t } from '../lib/i18n.svelte.js'
 
   let chosen = $state(/** @type {string[]} */ ([...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : directPartsIn(char))))
+  let handwritingOpen = $state(false)
+  let handwritingMounted = $state(false)
   let layout = $state('')
   let filter = $state('')
   let everything = $state(false)
@@ -162,6 +165,11 @@
       {/each}
     </div>
   </section>
+
+  <details class="ui-card" data-padding="sm" ontoggle={event => { handwritingOpen = event.currentTarget.open; if (handwritingOpen) handwritingMounted = true }}>
+    <summary>{t('parts.handwriting')}</summary>
+    {#if handwritingMounted}<div hidden={!handwritingOpen}><Handwriting componentsOnly onpick={add} /></div>{/if}
+  </details>
 
   <div class="work">
     <section class="palette pane ui-card" data-padding="sm" aria-label={t('parts.paletteLabel')}>
