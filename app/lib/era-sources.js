@@ -226,6 +226,13 @@ export const ERA_SOURCES = {
     note: 'The post is the image alone. It names no source and does not say whose eras these are. The characters were read from the image by comparing them with a font. Its 元 is 𗪟, as in the calendar\'s 元德, where the same author\'s list of Western Xia eras has 𗪘. 皇慶 is spelled as the Xia era 天慶 is, and 大德 as the Xia era 大德 is.',
     url: 'https://x.com/zoenshiueh_lieu/status/2068641365853139002',
   },
+  lizi2019: {
+    author: '西夏泉女——李子999',
+    title: '试译第十三枚西夏文钱币贞祐宝钱',
+    where: '新浪收藏, 2019-04-10',
+    note: 'Tentatively reads the inscription of a privately held decorative object as 贞祐宝钱 and acknowledges possible doubt. Its authenticity, date and official status are unestablished.',
+    url: 'https://collection.sina.com.cn/qbtd/2019-04-10/doc-ihvhiqax1350522.shtml',
+  },
   duan2024: {
     author: '段玉泉',
     title: '元朝建號前蒙古汗國時期的西夏文獻',
@@ -272,5 +279,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'lizi2019',
 ])
