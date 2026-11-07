@@ -3,6 +3,7 @@
   // input; this panel keeps only the input and the candidates, so two characters can be chosen
   // without leaving the spelling they belong to. A pick goes into the fanqie, never into the text.
   import { keepVariantsTogether } from '../lib/variants.js'
+  import { hanGloss } from '../lib/gloss.js'
   import { tick, onDestroy } from 'svelte'
   import { record } from '../lib/record.js'
   import { createDrawingCapture } from '../../src/core/drawing-capture.js'
@@ -20,6 +21,7 @@
   import { preview, ui } from '../lib/ui.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from './G.svelte'
+  import TileNote from './TileNote.svelte'
   import Icon from './Icon.svelte'
 
   /** @typedef {{ char: string, note: string, title?: string, sound?: string }} MiniHit */
@@ -561,12 +563,13 @@
             <div class="ui-tiles mini-tiles" style:--ui-tile-size="52px">
               {#each hits as hit, i (hit.char)}
                 {@const sound = hit.sound ?? readingOf(hit.char, ui.reading)}
-                <button type="button" class="ui-tile" aria-label={`${always ? hit.char : t('fanqie.picker.add', { char: hit.char })}${sound ? `, ${sound}` : ''}${hit.note ? `, ${hit.note}` : ''}`}
+                {@const han = hanGloss(ix.leilin.get(hit.char))}
+                <button type="button" class="ui-tile" aria-label={`${always ? hit.char : t('fanqie.picker.add', { char: hit.char })}${sound ? `, ${sound}` : ''}${han.text ? `, ${han.text}` : ''}${hit.note && hit.note !== han.text ? `, ${hit.note}` : ''}`}
                   title={hit.title || hit.note} onmouseenter={() => peek(hit.char)} onfocus={() => peek(hit.char)}
                   onclick={() => pick(hit, i)}>
                   <span class="ui-tile-glyph"><G char={hit.char} /></span>
                   {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
-                  {#if hit.note}<span class="ui-tile-note">{hit.note}</span>{/if}
+                  <TileNote char={hit.char} text={hit.note} />
                 </button>
               {/each}
             </div>
