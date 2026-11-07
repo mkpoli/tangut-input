@@ -77,6 +77,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-frequency.json.gz`: how often each character occurs in the corpus, built by
   `scripts/build_tangut_frequency.py`; the finders put the commoner characters first within each
   tier.
+- `app/data/tangut-script-forms.json` and `app/public/seal/shouling/`: the sixteen seal-script
+  characters of the 壽陵 title, cut from the front plate of 李范文《夏漢字典》 (1997), whose 2008
+  edition prints it at p. 90; `scripts/build_tangut_script_forms.py` cuts a 300 dpi render.
 - `app/data/tangut-shapes.bin.gz`: glyph pen lines for the drawing pad, rendered from Noto Serif
   Tangut 2.168 by `scripts/build_tangut_shapes.py`; `scripts/handwriting/score.mjs` measures the
   search on drawings made by hand and `scripts/eval_tangut_shapes.mjs` on drawings made from a font.

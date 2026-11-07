@@ -6,6 +6,7 @@
   import { tick } from 'svelte'
   import { db, ix, hex, readingOf } from '../lib/db.svelte.js'
   import { componentPositions } from '../lib/variants.js'
+  import { SCRIPT_FORMS, SCRIPT_SOURCES } from '../lib/script-forms.js'
   import { choose, ui } from '../lib/ui.svelte.js'
   import { route } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
@@ -149,6 +150,25 @@
       </table>
     </div>
   </section>
+
+  {#if SCRIPT_FORMS.length}
+    <section class="ui-section" id="scripts">
+      {@render heading('scripts-heading', t('variants.scripts'), SCRIPT_FORMS.length)}
+      <p class="ui-hint">{t('variants.scripts.hint')}</p>
+      <ul class="script-forms">
+        {#each SCRIPT_FORMS as form (form.char + form.source)}
+          <li class="script-form">
+            <span class="seal"><img src={form.image} width={form.width} height={form.height} alt={t('script.alt', { char: form.char })} loading="lazy" /></span>
+            {@render char(form.char)}
+          </li>
+        {/each}
+      </ul>
+      {#each SCRIPT_SOURCES as source (source.id)}
+        <p class="ui-hint">{source.author}《{source.book}》 · {source.title}</p>
+      {/each}
+    </section>
+  {/if}
+
 </article>
 
 <style>
@@ -169,4 +189,9 @@
   .family{display:grid;gap:var(--ui-space-xs);padding:var(--ui-space-sm) var(--ui-space-md);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface)}
   .linkrow{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
   .linktie{inline-size:12px;block-size:1px;background:var(--ui-color-border-strong)}
+  .script-forms{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:var(--ui-space-sm);margin:0;padding:0;list-style:none}
+  .script-form{display:grid;justify-items:center;gap:var(--ui-space-xs);padding:var(--ui-space-sm);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface)}
+  .seal{display:grid;place-items:center;inline-size:100%;block-size:72px;border-radius:var(--ui-radius-sm);background:var(--ui-color-surface-sunken);overflow:hidden}
+  .seal img{max-inline-size:100%;max-block-size:100%;inline-size:auto;block-size:auto}
+
 </style>
