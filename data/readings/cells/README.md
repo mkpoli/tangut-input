@@ -53,6 +53,16 @@ eye can scan. Three passes, in order:
 where it agrees with a shape already matched, the note records that it does, and where it disagrees,
 the note records that too.
 
+## Machine reading, so far
+
+`FlagRain/tangut-mixocr` (MIT, ONNX, 5.7M parameters, 6,144-character vocabulary) is the first thing
+that has read this print. It only reads horizontal lines, so a vertical column is cut into its four
+glyphs, laid side by side, and read as one line: that returns three of four signs on the columns
+tried, with noise characters to strip. Its PP-OCR detector also finds the columns themselves on the
+unrotated band, 25 boxes of 137–205 px by 555–608 px. Reading the glyphs one at a time is worse than
+reading them as a strip, and equal-width slicing cuts glyphs: slice on the column's ink quantiles.
+Nothing here replaces the eye yet, but it is the way to propose signs instead of searching for them.
+
 ## Adding a band
 
     bun run key:sheet <character> <initial> cache/zzz/<character>.png
