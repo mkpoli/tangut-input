@@ -144,11 +144,20 @@
   function shapeName(part) {
     return ix.names.find(row => row.char === part)?.name ?? ''
   }
+  /** How many characters hold a part, in the singular or the plural. @param {number} count */
+  function countText(count) {
+    return count === 1 ? t('parts.info.oneCharacter') : t('common.characters', { count })
+  }
   /** @param {{ part: string, uses: number, live: number }} p */
   function partLabel(p) {
     const code = ix.codes.get(p.part)?.[0] ?? ''
     const count = p.live >= 0 ? p.live : p.uses
-    return [[...p.part].length > 1 ? t('card.idsEditorial') : '', p.part, readingOf(p.part, ui.reading), shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : t('common.characters', { count })].filter(Boolean).join(' · ')
+    return [isDescriptionPart(p.part) ? t('card.idsEditorial') : '', p.part, readingOf(p.part, ui.reading), shapeName(p.part), code ? t('parts.componentTitle', { code, count }) : countText(count)].filter(Boolean).join(' · ')
+  }
+  /** A chosen part's name for an assistive technology, saying what a description key is.
+   *  @param {string} part */
+  function chosenLabel(part) {
+    return [isDescriptionPart(part) ? t('card.idsEditorial') : '', part, t('parts.remove')].filter(Boolean).join(' · ')
   }
 
   /** @param {KeyboardEvent} event */
@@ -169,7 +178,7 @@
     <div class="chosen">
       {#each chosen as part, i (i)}
         <div class="partwrap">
-          <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')} aria-label={`${part} · ${t('parts.remove')}`}><PartGlyph {part} /><span class="x" aria-hidden="true">×</span></button>
+          <button type="button" class="part" onclick={() => remove(i)} title={t('parts.remove')} aria-label={chosenLabel(part)}><PartGlyph {part} /><span class="x" aria-hidden="true">×</span></button>
           {#if directPartsIn(part).length}
             <button type="button" class="split" onclick={() => split(i)} title={t('parts.splitTitle', { part })} aria-label={t('parts.splitTitle', { part })}>⿱</button>
           {/if}

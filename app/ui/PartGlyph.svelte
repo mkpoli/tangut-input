@@ -4,7 +4,6 @@
   // arrangement itself (⿰ ⿱ ⿲ ⿳) can be drawn; an enclosure or an overlay is written instead.
   import { readDescription } from '../lib/composition.js'
   import G from './G.svelte'
-  import { t } from '../lib/i18n.svelte.js'
 
   /** @typedef {{ op: string, parts: Node[] } | string} Node */
   /** @type {{ part: string }} */
@@ -48,7 +47,7 @@
 {:else if written}
   <span class="ids-text" title={part}>{part}</span>
 {:else}
-  <span class="part-glyph" style:--leaf={size} aria-label={t('card.idsEditorial')} role="img">
+  <span class="part-glyph" style:--leaf={size} aria-label={part} role="img">
     {#each roots as root, i (i)}{@render draw(root)}{/each}
   </span>
 {/if}
