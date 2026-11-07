@@ -18,6 +18,11 @@ word on every pair. `scripts/key_zzz_readings.py` turns an export into rows of t
 per transcription character, and pairs each with the Tangut code point in the same column; `--write`
 merges them into the table, replacing the rows of that canvas.
 
+Naming the Tangut sign under a Chinese character is the slow part: the corpus has 6,144 signs. The
+Chinese character's initial rules out most of them before any ink is compared, and
+`bun run key:sheet <character> <initial> <output>` draws what survives, sorted by stroke count and
+paged, so the eye works through hundreds rather than thousands. It narrows; it never decides.
+
 ## Table
 
 `readings.tsv`, one row per printed value:
