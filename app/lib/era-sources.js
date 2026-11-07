@@ -237,7 +237,7 @@ export const ERA_SOURCES = {
     author: '西夏泉女——李子999',
     title: '试译第十三枚西夏文钱币贞祐宝钱',
     where: '新浪收藏, 2019-04-10',
-    note: 'Tentatively reads the inscription of a privately held decorative object as 贞祐宝钱 and gives the order top, left, bottom, right. It does not provide a Unicode transcription. Authenticity, date and official status are unestablished.',
+    note: 'Tentatively reads the inscription of a privately held decorative object as 贞祐宝钱 and gives the order counterclockwise from top to left, bottom and right. It does not provide a Unicode transcription. Authenticity, date and official status are unestablished.',
     url: 'https://collection.sina.com.cn/qbtd/2019-04-10/doc-ihvhiqax1350522.shtml',
   },
   mkpoli2026: {

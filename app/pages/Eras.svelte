@@ -261,9 +261,9 @@
             <tr>
               <th scope="row" lang="zh-Hant">{era.era}</th>
               <td class="years">{era.years.join('–')}</td>
-              <td class="forms title-form"><span class="form" role="group" aria-label={`${t('eras.contemporary.transcription')}: ${era.tangut}`}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span><span class="mark" title={t('eras.contemporary.transcription')} aria-label={t('eras.contemporary.transcription')}>?</span></td>
-              <td class="basis"><span class="tag" data-kind="reported">{t('eras.contemporary.transcription')}</span>{@render cites([era.proposalSource])}<p class="note">{t('eras.contemporary.note')}{@render cites([era.source])}</p><p class="note">{t('eras.contemporary.comparison')}{@render cites([era.proposalSource, era.source, ...era.dictionarySources])}</p></td>
+              <td class="forms title-form"><span class="form" role="group" aria-label={t('eras.contemporary.transcription')}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span><span class="mark" role="img" aria-label={t('eras.contemporary.uncertain')}>?</span></td>
+              <td class="basis"><span class="tag" data-kind="reported">{t('eras.contemporary.transcription')}</span>{@render cites([era.proposalSource])}<p class="note">{t('eras.contemporary.note')}{@render cites([era.source])}</p><p class="note">{t('eras.contemporary.comparison')}{@render cites([era.proposalSource, era.source])}</p><p class="note">{t('eras.contemporary.dictionary')}{@render cites(era.dictionarySources)}</p></td>
             </tr>
           {/each}
         </tbody>
@@ -412,6 +412,7 @@
   .coins details > .ui-hint{margin-block:var(--ui-space-sm)}
   .coin-characters td{font-variant-numeric:tabular-nums}
   .title-form{white-space:normal}
+  .contemporary-table .title-form{white-space:nowrap}
   .title-form .form{flex-wrap:wrap;vertical-align:middle}
   .chinese{min-inline-size:12em;font-size:var(--ui-text-sm)}
   .inferred{margin-inline-start:2px;color:var(--ui-color-ink-muted)}

@@ -26,7 +26,7 @@ test('乾定 cites the manuscript transcription', () => {
 })
 
 test('the contemporary Jin era is separate and its proposed transcription follows the photographed order', () => {
-  expect(CONTEMPORARY_ERAS).toEqual([{ era: '貞祐', years: [1213, 1217], tangut: '𗣼𘑨𘏨𘔭', source: 'lizi2019', proposalSource: 'mkpoli2026', dictionarySources: ['west2007', 'clauson2016', 'westClausonIndex'] }])
+  expect(CONTEMPORARY_ERAS).toEqual([{ era: '貞祐', years: [1213, 1217], tangut: '𗣼𘑨𘏨𘔭', source: 'lizi2019', proposalSource: 'mkpoli2026', dictionarySources: ['clauson2016', 'westClausonIndex'] }])
   expect(ERA_SOURCES.mkpoli2026.author).toBe('mkpoli')
   expect(ERA_SOURCES.mkpoli2026.where).toBe('Personal communication, 2026-11-07')
   expect(ERAS.some(row => row.era === '貞祐')).toBe(false)
@@ -44,7 +44,8 @@ test('dictionary citations identify a headword without confirming the photograph
   expect(ERA_SOURCES.westClausonIndex.note).toContain('entry 1530, f. 115, under 𘑨')
   expect(ERA_SOURCES.westClausonIndex.note).toContain('not the photographed character')
   const page = readFileSync(new URL('../app/pages/Eras.svelte', import.meta.url), 'utf8')
-  expect(page).toContain("t('eras.contemporary.comparison')}{@render cites([era.proposalSource, era.source, ...era.dictionarySources])")
+  expect(page).toContain("t('eras.contemporary.comparison')}{@render cites([era.proposalSource, era.source])")
+  expect(page).toContain("t('eras.contemporary.dictionary')}{@render cites(era.dictionarySources)")
 })
 
 test('the contemporary table retains its column headers on small screens', () => {
@@ -55,7 +56,7 @@ test('the contemporary table retains its column headers on small screens', () =>
 
 test('every locale describes the provisional transcription and its uncertainty', () => {
   for (const messages of [en, ja, ko, zhHans, zhHant]) {
-    for (const key of ['tab', 'title', 'inscription', 'transcription', 'note', 'comparison']) {
+    for (const key of ['tab', 'title', 'inscription', 'transcription', 'note', 'comparison', 'dictionary', 'uncertain']) {
       expect(messages[`eras.contemporary.${key}`]).toBeTruthy()
     }
   }
@@ -63,10 +64,13 @@ test('every locale describes the provisional transcription and its uncertainty',
   expect(page).toContain("t('eras.contemporary.inscription')")
   expect(page).toContain("t('eras.contemporary.transcription')}</span>{@render cites([era.proposalSource])}")
   expect(page).toContain("t('eras.contemporary.note')}{@render cites([era.source])}")
-  expect(page).toMatch(/aria-label=\{t\('eras\.contemporary\.transcription'\)\}>\?<\/span>/)
+  expect(page).toMatch(/role="img" aria-label=\{t\('eras\.contemporary\.uncertain'\)\}/)
+  expect(page).not.toContain("aria-label={`${t('eras.contemporary.transcription')}: ${era.tangut}`}")
   expect(page).toMatch(/\[\.\.\.era\.tangut\] as char/)
   expect(page).toContain('onclick={() => choose(char)}><G {char}/></button>')
-  expect(en['eras.contemporary.comparison']).toContain('top–left–bottom–right')
+  expect(en['eras.contemporary.comparison']).toContain('counterclockwise')
   expect(en['eras.contemporary.comparison']).toContain('all four forms appear irregular')
   expect(en['eras.contemporary.note']).toContain('authenticity, date and official status are uncertain')
+  expect(ja['eras.contemporary.note']).toContain('貞祐宝銭')
+  expect(ko['eras.contemporary.note']).toContain('貞祐寶錢')
 })
