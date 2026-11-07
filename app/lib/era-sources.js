@@ -9,6 +9,13 @@ export const ERA_SOURCES = {
     note: 'The dates of every era and most Tangut forms; no source is given for the forms.',
     url: 'https://www.babelstone.co.uk/Calendar/XixiaCalendar_txt.zip',
   },
+  ma2023: {
+    author: 'Ma Zhouyang',
+    title: 'Unveiling Gsang phu Madhyamaka Thought in Xixia: The Tangut Version of the Analysis of the Essence of Madhyamaka',
+    where: 'Acta Orientalia Hung. 76.2 (2023), p. 265',
+    note: 'Transcribes the colophon of Khara-Khoto manuscript 883, fragment 16, line 21, as 𗪚𗏴𘆽𗤒… and translates it as the horse year of 光定. Ma dates it to 1222. The facsimile was not consulted.',
+    url: 'https://real.mtak.hu/191670/1/062-article-p239.pdf#page=27',
+  },
   qianding1226: {
     author: '大白高国尼卒广播台',
     title: '乾定戌年四月八日卖驴契',
@@ -279,5 +286,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'qianding1226',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'qianding1226', 'ma2023',
 ])

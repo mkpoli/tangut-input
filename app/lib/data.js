@@ -6,7 +6,7 @@
  * @typedef {{ [char: string]: [number | null, number | null, string | null, string | null, string | null, string | null, string | null] }} RhymeChars */
 /** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
 /** @typedef {{ char: string, codepoint?: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
- *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_en?: string, wenhai_text_zh?: string }} Entry */
+ *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_zh?: string }} Entry */
 /** Normalized terms derived from CCAMC records, used only to answer a search: the readings of three
  * systems Wiktionary does not carry, and the English and Chinese glosses. Never rendered.
  * @typedef {{ format: string, note: string, readings: Record<string, Record<string, string>>,
@@ -26,6 +26,11 @@
 /** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sha256: string },
  *   counts: Record<string, number> }} Frequency */
 /** @typedef {{ source: string, entries: Record<string, { position: string, parts: [string, string | null][] }> }} WenhaiComposition */
+/** @typedef {{ char: string, block: 'supplement' | 'components', name: string, strokes?: number, radical?: string,
+ *   radicalStrokes?: string, source?: string, ids?: string, idsSource?: string, component?: number,
+ *   cangjie: string[], glyph: string }} SupplementCharacter */
+/** @typedef {{ format: string, unicode: string, built: string, sources: { id: string, name: string, url: string, sha256?: string, commit?: string }[],
+ *   counts: Record<string, number>, characters: SupplementCharacter[] }} Supplement */
 
 /**
  * Fetch a gzipped file. The dev server may hand it over already decoded, so the magic bytes decide
@@ -66,7 +71,7 @@ export const loadEntries = () => once('entries', async () => {
  * @returns {Entry[]}
  */
 function expandEntries(packed) {
-  return packed.rows.map(([char, composition, strokes, radical, en, ja, zh, readings, wenhaiEn, wenhaiZh]) => {
+  return packed.rows.map(([char, composition, strokes, radical, en, ja, zh, readings, wenhaiZh]) => {
     /** @type {Record<string, string>} */
     const pronunciations = {}
     packed.systems.forEach((key, i) => {
@@ -84,11 +89,15 @@ function expandEntries(packed) {
       radical: radical ?? undefined,
       definitions,
       pronunciations,
-      wenhai_text_en: wenhaiEn || undefined,
       wenhai_text_zh: wenhaiZh || undefined,
     }
   })
 }
+
+/**
+ * Where each keyed value of a character stands: the book and page. @returns {Promise<{ citations: Record<string, Record<string, { work: string, locator: string, note: string }[]>> }>}
+ */
+export const loadReadingSources = () => once('reading-sources', () => readJson(new URL('../data/tangut-reading-sources.json.gz', import.meta.url)))
 
 /** The derived CCAMC search terms. @returns {Promise<CcamcIndex>} */
 export const loadCcamcIndex = () => once('ccamc', () => readJson(new URL('../data/tangut-ccamc-index.json.gz', import.meta.url)))
@@ -101,6 +110,9 @@ export const loadTangutNames = () => once('tangut-names', async () => (await rea
 
 /** The same names compared across the languages that record one. @returns {Promise<{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] }>} */
 export const loadPartNames = () => once('part-names', () => readJson(new URL('../data/tangut-part-names.json', import.meta.url)))
+
+/** Editorial shape hints, not attested names. @returns {Promise<{ components: { char: string, named: boolean, candidates: { name: string, char: string, score: number, strokes: number | null, sameStrokes: boolean }[] }[] }>} */
+export const loadShapeHints = () => once('shape-hints', () => readJson(new URL('../data/tangut-component-shape-hints.json.gz', import.meta.url)))
 
 /** Four-corner codes as [character, six digits] pairs, from the rhyme-dictionary table. @returns {Promise<[string, string][]>} */
 export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/tangut-sijiao.json.gz', import.meta.url)))
@@ -117,7 +129,9 @@ export const loadTibetanRhymes = () => once('tibetanRhymes', () => readJson(new 
 export const loadGongRhymes = () => once('gongRhymes', () => readJson(new URL('../data/tangut-gong-rhymes.json', import.meta.url)))
 /** The Chinese characters transcribing Tangut, by rhyme: each is [character, final?]. @returns {Promise<{ rhymes: Record<string, [string, string?][]> } | null>} */
 export const loadChineseRhymes = () => once('chineseRhymes', () => readJson(new URL('../data/tangut-chinese-rhymes.json', import.meta.url)))
-/** Tibetan spellings by hand class, with counts, and Sanskrit, by character. @returns {Promise<{ chars: Record<string, { tibetan?: [string, string, number, string, string][], sanskrit?: string[] }> } | null>} */
+/** Tibetan spellings by hand class, with counts, and Sanskrit, by character. A Tibetan row is
+ * [hand, printed, count, script, Wylie, IPA]; a Sanskrit row is [printed IAST, Devanagari, IPA].
+ * @returns {Promise<{ chars: Record<string, { tibetan?: [string, string, number, string, string, string][], sanskrit?: [string, string, string][] }> } | null>} */
 export const loadTibetanHands = () => once('tibetanHands', () => readJson(new URL('../data/tangut-tibetan-hands.json', import.meta.url)))
 /** Alan Downes's English gloss for each character he records. @returns {Promise<{ glosses: Record<string, string> } | null>} */
 export const loadDownes = () => once('downes', () => readJson(new URL('../data/tangut-downes.json', import.meta.url)))
@@ -139,6 +153,10 @@ export const loadFrequency = () => once('frequency', () => readJson(new URL('../
 
 /** The 60 文海 constructions: each head character's page and its source/part pairs. @returns {Promise<WenhaiComposition>} */
 export const loadWenhaiComposition = () => once('wenhai-composition', () => readJson(new URL('../data/wenhai-composition.json', import.meta.url)))
+
+/** The characters in the two Tangut supplement blocks, with the fields each one has.
+ * @returns {Promise<Supplement>} */
+export const loadSupplement = () => once('supplement', () => readJson(new URL('../data/tangut-supplement.json.gz', import.meta.url)))
 
 /** The faces a drawing is compared with, best first: the shapes tabulated for each face. */
 export const SHAPE_FACES = /** @type {const} */ ([

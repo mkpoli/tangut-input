@@ -1,0 +1,147 @@
+# Works the keyed reading and meaning fields come from.
+#
+# status: acquired — on disk and checked; pending — the edition is recorded, no file obtained.
+# rights: what the edition's own terms allow; a work with none stated is keyed and cited, not
+# redistributed, unless the note says otherwise.
+# The file routes live in files.tsv: `libgen:<md5>` or `ipfs:<cid>`, resolved by
+# scripts/fetch_books.py, or a plain URL where a library publishes the scan itself.
+
+works:
+  - id: zhangzhongzhu
+    title: 番漢合時掌中珠
+    author: 骨勒茂才
+    year: 1190
+    gives: the Chinese character written for each Tangut character, and the Chinese gloss
+    script: Tangut, Chinese
+    status: acquired
+    rights: >-
+      the work is public domain. The Commons scans are PD-scan. The 貽安堂 photographs of the
+      NIJL copy (DOI 10.20730/100354804) are CC BY-NC 4.0, which governs the images and not the
+      keyed rows.
+    held_by: 清光山西巖寺, shelfmark 156/西巖297, via 国書データベース
+    witnesses:
+      - id: khara-khoto-jia
+        note: 甲本 manuscript leaves; keyed nowhere yet, used to check a damaged glyph
+      - id: khara-khoto-yi
+        note: 乙本 manuscript leaves; same use
+      - id: nijl-100354804
+        note: 貽安堂 經籍鋪 民國 printing, 絕域方言集 first item; the keying source
+    pages_keyed: 0
+    notes: >-
+      keyed in the site's zhangzhongzhu tables, not from these PDFs; the PDFs are for a second
+      witness and for the entry order within a band.
+
+  - id: xiahan-zidian
+    title: 夏漢字典
+    author: 李范文
+    publisher: 中國社會科學出版社
+    place: 北京
+    year: 1997
+    pages: 1361
+    isbn: 7-5004-2113-3
+    gives: Li Fanwen's reading with its fanqie and its 直音, and the Chinese meanings
+    script: Tangut, Chinese
+    status: acquired
+    rights: no licence stated; keyed and cited
+    notes: >-
+      entries are numbered by four-corner code and indexed by stroke order, so a headword is
+      matched through the code point and never from shape. Scan resolution is 70 ppi.
+
+  - id: wenhai-yanjiu
+    title: 文海研究
+    author: 史金波, 白濱, 黃振華
+    publisher: 中國社會科學出版社
+    place: 北京
+    year: 1983
+    pages: 877
+    gives: the 文海's entries, its fanqie and the accompanying commentary
+    script: Tangut, Chinese
+    status: acquired
+    rights: no licence stated; keyed and cited
+    notes: carries the 文海 itself with a transcription; the edition the site's 文海 texts should cite.
+
+  - id: nevsky-1960
+    title: Тангутская филология. Исследования и словарь
+    author: Н. А. Невский
+    publisher: Издательство восточной литературы
+    place: Москва
+    year: 1960
+    volumes: 2
+    gives: Nevsky's readings and Russian glosses, the field shown as 音（聂历山）
+    script: Tangut, Russian
+    status: acquired
+    rights: >-
+      scanned by the Institute of Oriental Manuscripts, RAS, which published both volumes as PDF
+      on its site; no licence stated there.
+    routes:
+      - volume: 1
+        url: https://www.orientalstudies.ru/rus/images/pdf/add1/b_nevsky_1960_1_tangutskaya_filologiya.pdf
+      - volume: 2
+        url: https://www.orientalstudies.ru/rus/images/pdf/add1/b_nevsky_1960_2_tangutskaya_filologiya.pdf
+    notes: >-
+      book 2 holds the dictionary. The Japanese translation 西夏語辞書 (1971–1973) would be the
+      reader-facing edition of the same entries; not fetched.
+
+  - id: nevsky-1971
+    title: 西夏語辞書
+    author: Н. А. Невский, translated by 西田龍雄
+    publisher: 座右宝刊行会
+    place: 東京
+    year: 1971
+    volumes: 3
+    gives: >-
+      Nevsky's dictionary in Japanese, with the Tangut index the Russian printing lacks
+    script: Tangut, Japanese
+    status: pending
+    rights: no licence stated; keyed and cited
+    notes: >-
+      the third volume is the index; 1973 is the year it completed. No copy on libgen and none in
+      the National Diet Library's open search; the Russian original carries the same entries, so
+      this is a convenience for a Japanese reader, not a new source of values.
+
+  - id: arakawa-tsuin
+    title: 西夏語通韻字典
+    author: 荒川慎太郎
+    year: 1999
+    pages: 149
+    gives: Arakawa's reconstruction for every syllable, grouped by the rhyme books' own classes
+    script: Tangut, Japanese, IPA
+    status: acquired
+    rights: no licence stated; keyed and cited
+    notes: >-
+      publisher not printed in the copy; 雄山閣出版 is the usual attribution and is unverified
+      here. The file carries a text layer.
+
+  - id: ghc-2002
+    title: 西夏語文研究論文集
+    author: 龔煌城
+    publisher: 中央研究院語言學研究所籌備處
+    place: 臺北
+    year: 2002
+    pages: 468
+    isbn: 957-671-863-2
+    gives: >-
+      Gong Hwang-cherng's reconstruction, in his English papers, several of which work through the
+      Tangut characters 掌中珠 sets over Chinese ones; the warrant a 直音 needs
+    script: Tangut, Chinese, English, IPA
+    status: acquired
+    rights: no licence stated; keyed and cited
+    notes: >-
+      393 ppi. The OCR layer is good on the English and poor on the Chinese. The IPFS copy answers
+      no provider; the file came from libgen's own get.php.
+
+  - id: ghc-2005
+    title: 西夏語言文字研究論集
+    author: 龔煌城
+    publisher: 民族出版社
+    place: 北京
+    year: 2005
+    pages: 644
+    isbn: 7-105-07198-2
+    gives: his Chinese papers, among them the 類林 Tangut–Chinese transcription study
+    script: Tangut, Chinese
+    status: acquired
+    rights: no licence stated; keyed and cited
+    notes: >-
+      143 ppi, bookmarked and with a contents list, so the Chinese article text is followed here
+      and a glyph checked in the 2002 copy.

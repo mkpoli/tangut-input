@@ -78,9 +78,10 @@ stacks it above the name.
 
 With an empty box, the page shows the nine finders as doors with one line each, and examples.
 
-**Texts** (`/texts`) lists the 34 texts behind the attested corpus, grouped as the edition,
-Wikisource and the Lausanne Corpus. Each row gives its passages and characters, links its source,
-and loads its first line into Transcribe. The counts come from the attestation, not from a separate
+**Texts** (`/texts`) lists the 36 texts behind the attested corpus, grouped as the edition,
+Wikisource, the Lausanne Corpus and MiCA. Each row gives its passages and characters, links its
+source, and loads its first line into Transcribe. Read opens the text passage by passage; every
+Tangut character there opens its card. The counts come from the attestation, not from a separate
 text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
@@ -176,8 +177,10 @@ loading the seven extra outlines only when asked. The mark is 𘅤 (U+18164), gl
 Open Tangut, drawn from the font into the favicon.
 
 Google Fonts' Noto Serif Tangut lacks the newest components (U+18AF3–18AFF, U+18D00–18D08), so a
-4 KB subset of the bundled version 2.168 covers those code points. Characters no font draws yet
-(U+187F8–187FF, U+18D80 onward) appear as their code point in a dashed box.
+4 KB subset of the bundled version 2.168 covers those code points. Tangut N4694 draws the other new
+characters, U+187F8–187FF and the supplement ideographs and components through U+18DF2, and a
+subset of its version 18 joins the stack for them. A character no bundled face draws still appears as its code
+point in a dashed box.
 
 ## Drawing search
 
