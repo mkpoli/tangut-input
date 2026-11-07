@@ -117,7 +117,9 @@ export const loadTibetanRhymes = () => once('tibetanRhymes', () => readJson(new 
 export const loadGongRhymes = () => once('gongRhymes', () => readJson(new URL('../data/tangut-gong-rhymes.json', import.meta.url)))
 /** The Chinese characters transcribing Tangut, by rhyme: each is [character, final?]. @returns {Promise<{ rhymes: Record<string, [string, string?][]> } | null>} */
 export const loadChineseRhymes = () => once('chineseRhymes', () => readJson(new URL('../data/tangut-chinese-rhymes.json', import.meta.url)))
-/** Tibetan spellings by hand class, with counts, and Sanskrit, by character. @returns {Promise<{ chars: Record<string, { tibetan?: [string, string, number, string, string][], sanskrit?: string[] }> } | null>} */
+/** Tibetan spellings by hand class, with counts, and Sanskrit, by character. A Tibetan row is
+ * [hand, printed, count, script, Wylie, IPA]; a Sanskrit row is [printed IAST, Devanagari, IPA].
+ * @returns {Promise<{ chars: Record<string, { tibetan?: [string, string, number, string, string, string][], sanskrit?: [string, string, string][] }> } | null>} */
 export const loadTibetanHands = () => once('tibetanHands', () => readJson(new URL('../data/tangut-tibetan-hands.json', import.meta.url)))
 /** Alan Downes's English gloss for each character he records. @returns {Promise<{ glosses: Record<string, string> } | null>} */
 export const loadDownes = () => once('downes', () => readJson(new URL('../data/tangut-downes.json', import.meta.url)))
