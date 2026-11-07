@@ -62,8 +62,11 @@ second reading. `uv run scripts/check_readings.py` holds the shape; it does not 
 
 A value stands alone only when the page prints it plainly. A damaged or doubtful glyph is
 `uncertain`, and gets a second witness — the other 掌中珠 copy, or the dictionary's own recap — before
-the status rises. An uncertain row is held back from the build until then, so the card never shows a
-reading nobody has confirmed; its `note` says what is doubtful. Nothing here is retyped from another site: every value is keyed from the edition, with its page.
+the status rises. A dictionary prints a character more than once, so two rows for one character and
+field are kept while they say the same thing; a page that disagrees with another is reported. An
+uncertain row is held back from the build until then, so the card never shows a reading nobody has
+confirmed; its `note` says what is doubtful. Nothing here is retyped from another site: every value is
+keyed from the edition, with its page.
 
 The non-commercial terms of the 掌中珠 photographs and the copyright in the other editions govern the
 images; the keyed rows are published with their citation.
