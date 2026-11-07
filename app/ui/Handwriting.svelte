@@ -109,12 +109,13 @@
     return [...best.values()].sort((a, b) => a.at - b.at).map(entry => entry.hit)
   }
 
-  const hits = $derived.by(() => {
+  const ranked = $derived.by(() => {
     void mask
     void faceGeneration
     if (status !== 'ready' || db.status !== 'ready' || !indexes.length || !strokes.length) return []
-    return filterHandwriting(rankEveryFace(mask), ix, { chosen, componentsOnly, includeComponents: components })
+    return rankEveryFace(mask)
   })
+  const hits = $derived(filterHandwriting(ranked, ix, { chosen, componentsOnly, includeComponents: components }))
   const items = $derived(hits.map(hit => ({ char: hit.char, sub: gloss(hit.char), title: `${ix.strokes.get(hit.char) ?? '?'} strokes` })))
 
   // The characters one component from the best match. A drawing that replaces a component with a
