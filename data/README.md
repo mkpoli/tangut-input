@@ -585,9 +585,10 @@ Single-component descriptions are also preserved.
 
 The palette adds 768 Tangut components (U+18800–U+18AFF), ordered by code point,
 with `kind: "t"` and usage counts from those records. Stroke counts and first-stroke
-classes are unknown. Components Supplement is accepted by the parser but is absent
-from this source edition and the palette. Both data builders include Tangut through
-`scripts/tangut.py`; the Han totals above describe the Han portion only.
+classes are unknown. Tangut Components Supplement is absent from this source edition;
+the parts page adds its 115 components from `app/data/tangut-supplement.json.gz`. Both
+data builders include Tangut through `scripts/tangut.py`; the Han totals above describe
+the Han portion only.
 
 ## `tangut-parts.json.gz`
 
@@ -599,7 +600,9 @@ The stroke count of every Tangut character in the list. The ideographs come from
 `TangutSources.txt`: `kTGT_RSUnicode` gives the radical number and the total stroke count, so
 `1.6` is six strokes, and 6,177 ideographs have one, from 4 to 22 strokes. The 768 Tangut components
 in U+18800–U+18AFF were counted from their glyphs and live in `tangut-component-strokes.tsv`, one
-`U+18800<TAB>1` line per component, 1 to 13 strokes. Each description's count is the sum of its
+`U+18800<TAB>1` line per component, 1 to 13 strokes. The 115 components of Tangut Components
+Supplement are not in this file; their counts come from Unicode 18.0.0's NamesList and live in
+`app/data/tangut-supplement.json.gz`. Each description's count is the sum of its
 parts', which covers the 6,107 descriptions in 4 to 22 strokes. Rebuild with
 `node scripts/build_tangut_strokes.mjs`, which pins the Unicode file's SHA-256
 (`ae440bd9bba89b2610cfe6b498ac462d2763dd32bfead8ac30d32988b5b67a27`). Unicode data is
@@ -641,7 +644,8 @@ character's glyph; edited descriptions use the composition engine's geometric la
 Mixed Han–Tangut descriptions also load the host's Han export. The shared layout
 constants in `src/composer/constants.json` come from han-compose at bd0829b (MIT),
 previously used by the composer's test fixture. Tangut Components Supplement glyphs
-are absent from this font version and report a missing glyph.
+are absent from this font version; the site draws them from a subset of Tangut N4694 (see
+`app/public/fonts/FONT-LICENCES.md`).
 
 ## Tangut entries
 
@@ -671,6 +675,38 @@ refreshed by `uv run scripts/fetch_tangut_wiktionary.py`, which makes five modul
 batches of fifty page titles. `data/gong-xun/ghc.json.gz` and `data/gong-xun/gx202411.json.gz` hold GHC and GX202411 from the
 2025-05-07 table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh them
 with `uv run scripts/fetch_tangut_gong_xun.py`.
+
+## Tangut supplement
+
+`app/data/tangut-supplement.json.gz` holds every character Unicode 18.0.0 assigns to the two
+supplement blocks: 33 ideographs at U+18D00–U+18D20 and 115 components at U+18D80–U+18DF2, 148 in
+all. The site's records stop at U+187FF, so this file is what a page reads to find the rest. Each
+record carries the character, its block, its Unicode name and:
+
+- the radical-stroke index and source reference from TangutSources.txt, for the ideographs;
+- the total stroke count: ideographs from TangutSources.txt, components from the stroke-group
+  headings and annotations of Unicode 18.0.0's NamesList.txt;
+- the description, from BabelStone's table for U+18D00–U+18D08 and from the WG2 proposals for
+  U+18D09–U+18D20: N5217R2 table 2, N5286 table 1, N5303 table 2 and N5314 table 3, transcribed in
+  `data/tangut-supplement-ids.tsv`;
+- the Cangjie codes from rime_tangutcjkk: 31 of the 33 ideographs and all 115 components. U+18D1F
+  and U+18D20 have none;
+- the face that draws it: Noto Serif Tangut 2.168 for U+18D00–U+18D08, Tangut N4694 version 18 for
+  the rest.
+
+No reading or meaning is recorded for any of the 148 in the sources the site uses. Nine ideographs,
+U+18D00–U+18D08, have a position in the rhyme books and a four-corner code. The card shows the code
+point, Cangjie codes, stroke count, structure and the rhyme record; the fields a source does not
+give are left out rather than guessed.
+
+Rebuild with `uv run scripts/build_tangut_supplement.py`, which reads the pinned Unicode 18.0.0
+files, fetches TangutSources.txt and NamesList.txt against their digests, checks every description
+against the parser and every glyph against Tangut N4694. The file records each source's URL and, where
+one is pinned, its digest or commit.
+
+`data/tangut-supplement-ids.tsv` transcribes the 24 descriptions from the four proposals, whose
+glyph columns are set in private-use fonts; the code points, characters and source document are
+written out.
 
 ## Bopomofo outlines
 

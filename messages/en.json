@@ -166,6 +166,7 @@
   "parts.fewestStrokes": "fewest strokes first",
   "parts.noMatch": "No recorded description holds all of these parts. Remove one to widen the search.",
   "parts.noMatchLayout": "No recorded description holds all of these parts in that layout. Remove one to widen the search.",
+  "parts.indexComponent": "This component indexes the dictionary; no recorded character is described with it. It can still be added to the text.",
   "parts.empty": "The characters built from the chosen parts appear here.",
   "parts.drawHint": "Draw a component and choose a similar shape.",
   "parts.handwriting": "Draw a component",
