@@ -56,7 +56,7 @@ export const firstSense = text => (text ?? '').split(/[;,；，、。]/)[0].trim
  * What a layer says about a character, and the fuller text for its hover.
  * @param {Layer} layer
  * @param {string} char
- * @param {{ entry?: { definitions?: { en?: string[], ja?: string[], zh?: string[] }, pronunciations?: Record<string, string> },
+ * @param {{ entry?: { definitions?: { en?: string[], ja?: string[], zh?: string[] }, pronunciations?: Record<string, string>, wiktionary_zh?: string[] },
  *   reading: string, downes?: string, rhyme?: [number | null, number | null, ...unknown[]],
  *   leilin?: [string, number][], hands?: { tibetan?: [string, string, number, string, ...string[]][] }, glosses?: [string, string, unknown][] }} data
  * @returns {{ text: string, title: string }}
@@ -72,8 +72,9 @@ export function layerValue(layer, char, data) {
       return { text: value, title: value }
     }
     case 'sinograph': {
-      const gloss = hanGloss(data.leilin, definitions.zh)
-      return { text: gloss.text, title: gloss.source === 'wiktionary' ? `Wiktionary: ${gloss.title}` : gloss.title }
+      const gloss = hanGloss(data.leilin, definitions.zh, data.entry?.wiktionary_zh)
+      const source = gloss.source === 'wiktionary' ? 'Wiktionary: ' : gloss.source === 'keyed' ? 'Chinese dictionary: ' : ''
+      return { text: gloss.text, title: `${source}${gloss.title}` }
     }
     case 'japanese': return sense(definitions.ja)
     case 'wiktionary': return sense(definitions.en)

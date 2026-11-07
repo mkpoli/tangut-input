@@ -9,31 +9,34 @@ const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
 test('the packed records keep every character, the five Wiktionary readings and the two Database readings', () => {
-  expect(entries.format).toBe('tangut-input/entries/3')
+  expect(entries.format).toBe('tangut-input/entries/5')
   expect(entries.rows.length).toBe(6144)
-  expect(entries.systems).toEqual(['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida'])
+  expect(entries.systems).toEqual([
+    'li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
+    'nishida', 'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'tibetan',
+  ])
   const first = entries.rows[0]
   expect(first[0]).toBe('𗀀')
-  expect(first[7]).toEqual(['do1', 'do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
+  expect(first[7].slice(0, 7)).toEqual(['do1', 'do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
   expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
   expect(first[5]).toEqual(['毒'])
-  expect(first[6]).toEqual(['毒', '下毒者', '毒死'])
-  expect(first[8]).toBe('Composed of the middle of 𘊓 "scorpion" and the right of "𗀋".')
-  expect(first[9]).toBe('蝎中蛇右。')
+  expect(first[6]).toEqual([])
+  expect(first[8]).toBe('蝎中蛇右。')
+  expect(first[9]).toEqual(['毒', '下毒者', '毒死'])
 })
 
-test('the 文海 text is kept for the entries it carries', () => {
-  expect(entries.rows.filter(row => row[8]).length).toBe(12)
-  expect(entries.rows.filter(row => row[9]).length).toBe(6)
+test('the 文海 Chinese text is kept for the entries it carries', () => {
+  expect(entries.rows.filter(row => row[8]).length).toBe(6)
 })
 
 test('the displayable meanings cover only the Wiktionary entries', () => {
   const count = column => entries.rows.filter(row => row[column]?.length).length
   expect(count(4)).toBe(457)
   expect(count(5)).toBe(278)
-  expect(count(6)).toBe(110)
+  expect(count(6)).toBe(0)
+  expect(count(9)).toBe(110)
   const snapshot = JSON.parse(gunzipSync(readFileSync(new URL('../data/wiktionary/definitions-zh.json.gz', import.meta.url))).toString())
-  for (const row of entries.rows) expect(row[6]).toEqual(snapshot.pages[row[0]]?.definitions ?? [])
+  for (const row of entries.rows) expect(row[9]).toEqual(snapshot.pages[row[0]]?.definitions ?? [])
 })
 
 test('every Tibetan spelling stands at a crossing the chart draws', () => {
@@ -278,4 +281,19 @@ test('the frequency table counts every place in the corpus', () => {
   expect(Object.keys(frequency.counts).length).toBe(3379)
   expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(105542)
   expect(frequency.counts['𗋕']).toBe(757)
+})
+
+test('every keyed row of the readings table is in the shipped records', () => {
+  const table = readFileSync(new URL('../data/readings/readings.tsv', import.meta.url), 'utf8')
+  const [head, ...lines] = table.trim().split('\n')
+  const columns = head.split('\t')
+  const citations = json('tangut-reading-sources.json.gz').citations
+  const rows = lines.map(line => Object.fromEntries(line.split('\t').map((cell, i) => [columns[i], cell])))
+  const keyed = rows.filter(row => row.status === 'keyed')
+  expect(keyed.length).toBeGreaterThan(0)
+  for (const row of keyed) {
+    const field = citations[row.char]?.[row.field] ?? []
+    expect({ row, cited: field.some(cite => cite.work === row.work && cite.locator === row.locator) })
+      .toEqual({ row, cited: true })
+  }
 })

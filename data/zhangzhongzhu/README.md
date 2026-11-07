@@ -49,6 +49,10 @@ re-photograph does not renumber the text. `canvas`, `side`, `band` and `seq` say
 not what it is: `seq` counts columns from the right edge of the band, because the bands read right to
 left. `gloss_status` is `ok`, `uncertain` or `illegible`.
 
+`x0` and `x1` are the column's left and right edge in native pixels, and they are the anchor a row is
+read back from: `seq` counts detected columns, and where the detector merges two columns the count
+drifts, so a row with both is checked against its pixels.
+
 `column_role` says what the keyed column is: `gloss`, `transcription`, `tangut` or `unknown`. A row
 may hold a single column while the entry it belongs to is still unestablished — the first rows do,
 and their `notes` say so. That is deliberate: a column can be read from the image, a grouping cannot
@@ -82,6 +86,10 @@ boundaries are a suggestion: the print rules the entry groups but not every colu
 to be confirmed by a reader who can tell the Tangut column from the Chinese ones. Record the
 confirmed boundary as a number, not as a description.
 
+`--grid` writes the two pages with a labelled grid every 100 pixels and no detected boxes. Read
+positions from that image: the bands are not ruled in this print, and the row profile starts each
+detected box partway down a row, so its boxes are a hint and not a boundary.
+
 Run it over the whole book when starting a review:
 
 ```sh
@@ -109,5 +117,6 @@ and so on, with `<canvas>-columns.tsv` holding the numbered ranges.
 uv run scripts/fetch_zhangzhongzhu.py --canvas 40                    # native canvas to cache/
 uv run scripts/fetch_zhangzhongzhu.py --canvas 40 --crop 14,18,14,13 --size 1600
 uv run scripts/segment_zhangzhongzhu.py --canvas 40 --pages          # page and band images
+uv run scripts/segment_zhangzhongzhu.py --canvas 40 --grid           # page with a 100 px grid
 uv run scripts/check_zhangzhongzhu.py                                # validate the tables
 ```

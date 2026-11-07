@@ -2,7 +2,7 @@
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { indexTibetan } from './tibetan.js'
 import { englishGloss } from './gloss.js'
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources } from './data.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
@@ -15,10 +15,13 @@ export { OPERATORS, isTangut }
 
 /** @param {string} char */
 export const isComponent = char => /^[\u{18800}-\u{18AFF}\u{18D80}-\u{18DFF}]$/u.test(char)
-/** Whether the bundled fonts draw the character (Noto Serif Tangut 2.168 stops at U+187F7 and U+18D08). @param {string} char */
+/** The ranges a bundled face draws: Noto Serif Tangut 2.168 through the old end of each block, and
+ *  the Tangut N4694 subset for what it lacks. @type {[number, number][]} */
+const GLYPH_RANGES = [[0x17000, 0x187FF], [0x18800, 0x18AFF], [0x18D00, 0x18D20], [0x18D80, 0x18DF2]]
+/** Whether the bundled faces draw the character. @param {string} char */
 export const hasGlyph = char => {
   const code = char.codePointAt(0) ?? 0
-  return (code >= 0x17000 && code <= 0x187F7) || (code >= 0x18800 && code <= 0x18AFF) || (code >= 0x18D00 && code <= 0x18D08)
+  return GLYPH_RANGES.some(([low, high]) => code >= low && code <= high)
 }
 /** @param {string} char */
 export const hex = char => (char.codePointAt(0) ?? 0).toString(16).toUpperCase()
@@ -71,18 +74,22 @@ export const ix = {
   /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
   /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
   /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
+  /** The components Tangut Components Supplement adds. @type {string[]} */ supplementComponents: [],
+  /** Editorial shape hints by component, not names. @type {Map<string, { name: string, char: string, score: number, strokes: number | null, sameStrokes: boolean }[]>} */ shapeHints: new Map(),
   /** Characters one component away, built on the first ask: a reader who means one shape and draws
    *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
   /** Whether the sibling index has been built. */ siblingsReady: false,
+  /** Where a keyed value stands: char → field → the books and pages it was read from. @type {Record<string, Record<string, { work: string, locator: string, note: string }[]>>} */ citations: {},
 }
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, frequency] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
       loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
-      loadPartNames().catch(() => null), loadFrequency().catch(() => null),
+      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
     ])
+    ix.citations = cited?.citations ?? {}
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
     ix.tibetanRhymes = tibetanRhymes?.cells ?? {}
     ix.gongRhymes = gongRhymes?.values ?? {}
@@ -91,6 +98,20 @@ export async function load() {
     ix.downes = new Map(Object.entries(downes?.glosses ?? {}))
     ix.leilin = new Map(Object.entries(leilin?.glosses ?? {}))
     ix.tibetanIndex = indexTibetan(ix.tibetan, ix.tibetanHands)
+    const recorded = supplement?.characters ?? []
+    ix.supplementComponents = recorded.filter(record => record.block === 'components').map(record => record.char)
+    const known = new Set(entries.map(entry => entry.char))
+    for (const record of recorded) {
+      if (record.block === 'components' || known.has(record.char)) continue
+      entries.push({
+        char: record.char,
+        composition: record.ids,
+        total_strokes: record.strokes,
+        radical: record.radical,
+        definitions: {},
+        pronunciations: {},
+      })
+    }
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
     ix.idsIndex = indexIdsDescriptions(entries)
@@ -101,6 +122,7 @@ export async function load() {
     ix.familyOf = familyIndex(ix.variantGroups)
     ix.names = names
     ix.partNames = partNames
+    ix.shapeHints = new Map((shapeHints?.components ?? []).map(row => [row.char, row.candidates]))
     for (const [char, code] of pairs) {
       const list = ix.codes.get(char)
       if (list) list.push(code)
@@ -113,6 +135,7 @@ export async function load() {
     ix.hiddenReadings = indexHiddenReadings(hidden)
     if (hidden) ix.ccamcMeanings = { meanings: hidden.meanings ?? {} }
     ix.strokes = new Map(Object.entries(strokes))
+    for (const record of recorded) if (record.strokes) ix.strokes.set(record.char, record.strokes)
     const index = buildPartIndex(entries)
     ix.partsOf = index.partsOf
     ix.usedBy = index.usedBy
@@ -134,7 +157,7 @@ export async function load() {
     }
     for (const [char, code] of sijiao) ix.sijiao.set(char, code)
     ix.sijiaoList = [...ix.sijiao].map(([char, code]) => /** @type {[string, string]} */ ([code, char])).sort((a, b) => a[0].localeCompare(b[0]) || (a[1].codePointAt(0) ?? 0) - (b[1].codePointAt(0) ?? 0))
-    ix.all = [...new Set([...ix.byChar.keys(), ...ix.codes.keys()])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
+    ix.all = [...new Set([...ix.byChar.keys(), ...ix.codes.keys(), ...recorded.map(record => record.char)])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
     db.status = 'ready'
   } catch (error) {
     console.error(error)
@@ -148,7 +171,7 @@ export async function load() {
 /** The first English sense, shortened for a tile or a list row. @param {string} char */
 export function gloss(char) {
   const entry = ix.byChar.get(char)
-  return englishGloss(entry?.definitions, ix.downes.get(char))
+  return englishGloss(entry?.definitions, ix.downes.get(char), entry?.wiktionary_zh)
 }
 
 /**

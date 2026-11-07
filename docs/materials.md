@@ -13,10 +13,12 @@ cannot copy it.
 | [Japanese Wiktionary](https://ja.wiktionary.org/) | Japanese definitions | CC BY-SA 4.0 | `scripts/fetch_tangut_wiktionary.py`, `scripts/build_tangut_entries.py` |
 | [Chinese Wiktionary, 2026-11-01 dump](https://dumps.wikimedia.org/zhwiktionary/20261101/) | 152 Chinese senses for 110 characters, with each page's revision, wikitext and contributor-history link; unchecked against the primary dictionaries, and some reference templates link to CCAMC | CC BY-SA 4.0; [copyright notice](https://zh.wiktionary.org/w/index.php?title=Wiktionary:%E7%89%88%E6%9D%83%E4%BF%A1%E6%81%AF&oldid=8368252) | `scripts/extract_tangut_chinese.py`, `scripts/build_tangut_entries.py`; [coverage](han-glosses.md) |
 | [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db), Xun Gong, DOI 10.25365/phaidra.654 | GHC and GX202411, 5,878 characters each in the 2025-05-07 table; GX2021 in the same file is not used | Limited Public Use: individual data points with attribution; bulk redistribution needs permission | `scripts/fetch_tangut_gong_xun.py`, `scripts/build_tangut_entries.py` |
-| 文海 (Sea of Writing), 12th century | the entry it carries for a character: its construction analysis, with an English rendering | public domain | `data/wenhai/entry-text.json.gz` |
+| 文海 (Sea of Writing), 12th century | the Chinese entry it carries for a character: its construction analysis | public domain | `data/wenhai/entry-text.json.gz` |
 | [Wikipedia: Tangut people](https://en.wikipedia.org/wiki/Tangut_people), [Tangut script](https://en.wikipedia.org/wiki/Tangut_script), [Tangut language](https://en.wikipedia.org/wiki/Tangut_language) | the introduction's narrative, paraphrased and cited to each article | CC BY-SA 4.0 | `app/lib/intro-sources.js` |
 | [BabelStone Tangut IDS](https://www.babelstone.co.uk/Tangut/TangutIDS.txt) | each character's description, built from components | public domain | `data/tangut-ids.tsv.gz` |
 | [rime_tangutcjkk](https://github.com/Hulenkius/rime_tangutcjkk) | Tangut Cangjie codes, several analyses per character | none stated | `scripts/build_tangut_cangjie.py` |
+| [Unicode 18.0.0 NamesList.txt](https://www.unicode.org/Public/18.0.0/ucd/NamesList.txt) | the Tangut Components Supplement stroke-group headings and per-component stroke annotations | Unicode Terms of Use | `scripts/build_tangut_supplement.py` |
+| [WG2 N5217R2 = L2/23-246](https://www.unicode.org/wg2/docs/n5217r2-Tangut-components-ideographs.pdf), [N5286](https://www.unicode.org/wg2/docs/n5286_TwoTangutIdeographs.pdf), [N5303 = L2/25-144](https://www.unicode.org/L2/L2025/25144-additional-tangut.pdf) and [N5314 = L2/25-165](https://www.unicode.org/L2/L2025/25165-wg2-n5314.pdf) | descriptions for U+18D09–U+18D20 and the source of each new ideograph; the glyph columns are set in private-use fonts and are transcribed in `data/tangut-supplement-ids.tsv` | Unicode documents, no separate licence stated | `scripts/build_tangut_supplement.py` |
 | [Tangut-rhyme-dictionaries-data](https://github.com/nkay0/Tangut-rhyme-dictionaries-data) | 文海 rhyme, tone, 同音 class, 小韻, fanqie; the 合編's fanqie; the dictionaries' own indexes | none stated | `scripts/build_tangut_rhymes.py`, `scripts/build_tangut_sijiao.py` |
 | [BabelStone 文海 skeleton](https://babelstone.co.uk/Tangut/Wenhai.html), Andrew West | a draft of the level-tone and mixed volumes after 史金波 et al., 文海研究 (1983): 3,063 head characters with their positions, written in the Private Use Area of the WHYJ scan fonts. Of those rows, 1,503 have a fanqie, 60 a construction and none a definition; the 60 constructions are shown on the card and measured in [wenhai-composition.md](wenhai-composition.md). The [radical index](https://www.babelstone.co.uk/Tangut/WHYJ_Index.html) ties each index-font glyph to a Li Fanwen 2008 number, which turns the fanqie into Unicode; `scripts/check_babelstone_wenhai.py` does so and compares them with Tangut-rhyme-dictionaries-data position by position. Of 3,063 head characters in BabelStone's [Unicode listing](https://www.babelstone.co.uk/Tangut/WenhaiUnicode.html), 3,046 agree with the table. Of 1,491 fanqie the table also has, 1,442 agree; 11 more agree if the index's 5150B and 2799A are read as the table's 5150 𗮐 and 2799 𗽍, or its glyph numbered both 1493 and 1505 as 1505 𗴩; 35 differ in one or both spellers, and nothing in the conversion explains them. In three more the table gives the head character as its own lower speller (1.05.143 𗩙, 1.10.152 𗩚, 1.35.131 𗷈), which no fanqie can do; BabelStone reads 𗒿, 𗪟 and 𘏋. The photographs on the lookup page are too coarse to settle these. | none stated | `scripts/eval_wenhai_composition.py` transcribes the constructions; `scripts/build_wenhai_composition.py` writes the card data; `scripts/check_babelstone_wenhai.py` compares the fanqie |
 | [孫伯君 2017, 論西夏對漢語音韻學的繼承與創新](https://www.ngiam.cn/tangut/papers/%E5%AD%AB%E4%BC%AF%E5%90%9B_2017_%E8%AB%96%E8%A5%BF%E5%A4%8F%E5%B0%8D%E6%BC%A2%E8%AA%9E%E9%9F%B3%E9%9F%BB%E5%AD%B8%E7%9A%84%E7%B9%BC%E6%89%BF%E8%88%87%E5%89%B5%E6%96%B0.pdf) | table 2: the 同音's Tangut titles for its nine initial classes, with their Chinese renderings. Published in 中華文史論叢 2017(2), as listed on [the author's page](http://iea.cssn.cn/jgry/yjbm/mzwzwxyjs/sbj/); page numbers not found. The host's TLS certificate had expired on 2026-11-03 | quoted as nine titles | `app/pages/Chart.svelte`, transcribed by hand from the table and checked glyph by glyph against the character records |
@@ -41,6 +43,30 @@ cannot copy it.
 | Alan Downes, [tangut.info](https://tangut.info/), via [C27Ezx/TangutTranslator](https://github.com/C27Ezx/TangutTranslator) | English glosses | the repository states MIT; the site returned HTTP 521 on 2026-11-05, so its own terms were not read, and the site uses them on the owner's decision | `scripts/build_tangut_downes.py` |
 | Guillaume Jacques, [Leilin database](https://www.academia.edu/25078937/Leilin_database), via [tinbreaker/tangut-text](https://github.com/tinbreaker/tangut-text) | the Chinese word for each character of the Tangut 類林, 1,703 characters | no licence stated; the site uses them on the owner's decision | `scripts/build_tangut_leilin.py` |
 | Tables of an unidentified study, scanned in [KwingiemChan's article on Zhihu](https://zhuanlan.zhihu.com/p/272058247) | Tibetan spellings by hand class A–E with counts, and Sanskrit, for 406 characters | a repost with no stated licence; the article does not name the study, so its author and terms are unknown | `app/data/tangut-tibetan-hands.json`; `scripts/tangut_tibetan_script.py` adds the Tibetan script, Wylie, Devanagari and IPA |
+
+## Books, keyed
+
+The editions the site's readings and meanings are keyed from, each row citing the edition and page. The
+scans are large and sit out of the build in `cache/books/`; `data/books/source.yaml` gives each work,
+what it supplies and its terms, and `scripts/fetch_books.py` fetches them again and checks the md5.
+
+| Work | Gives | Terms |
+| --- | --- | --- |
+| 番漢合時掌中珠, 骨勒茂才, 1190 | the Chinese character written for a Tangut character, and the Chinese gloss | public domain; the keying photographs (清光山西巖寺 copy, 貽安堂 printing, [DOI 10.20730/100354804](https://kokusho.nijl.ac.jp/biblio/100354804)) are CC BY-NC 4.0 |
+| 夏漢字典, 李范文, 中國社會科學出版社, 1997 | Li Fanwen's reading with its fanqie and 直音, and the Chinese meanings | none stated |
+| 文海研究, 史金波・白濱・黃振華, 中國社會科學出版社, 1983 | the 文海's entries and its fanqie | none stated |
+| Тангутская филология, Н. А. Невский, Издательство восточной литературы, 1960 | the 音（聂历山）column: Nevsky's readings | none stated by the Institute of Oriental Manuscripts, which scanned it |
+| 西夏語通韻字典, 荒川慎太郎, 1999 | Arakawa's reconstruction, syllable by syllable | none stated |
+| 西夏語文研究論文集, 龔煌城, 中研院語言學研究所籌備處, 2002 | Gong Hwang-cherng's reconstruction, and his study of the transcriptions in 掌中珠 | none stated |
+
+The Chinese 直音 follows 掌中珠 first, since it prints a character for a character; the fanqie the
+rhyme books spell the same character with are the second warrant, and 夏漢字典 and the other
+dictionaries print both beside their readings.
+
+Keyed values go into `data/readings/readings.tsv`, one printed value per row with the work and the
+page; `scripts/check_readings.py` holds the shape and `scripts/build_tangut_entries.py --readings`
+folds the rows into the records, carrying the citation to the card. Every value is keyed from the
+edition.
 
 ## Linked, not copied
 
@@ -72,6 +98,6 @@ cannot copy it.
 - **Kepping 1994.** The name of the Tangut empire, T'oung Pao 80.4–5, pp. 357–376, was seen only as a preview on DeepDyve. The state names rest on her 1995 and 2001 articles.
 - **李範文, 夏漢字典.** Not seen. It is reported here only through a Commons caption.
 - **The rest of 孫穎新's titles.** The book prints them in font codes. Working from those codes gives 惠宗 𗣼𗨄𗊪𗸮𘄡𗾟𗼕𘒹𗚉𗹑𘘂？𗭼𘜶𘓺𘋨, 崇宗母 𘄡𗠁𗟶𗾟𗚉？𗅲𗄭𗣼𗯿𘓺𗨺𘜹 and 崇宗 𗾈𘉐𗟶𗠁𗣼𘞂𘂀？𗸯𗑗𘓺𘋨. The codes marked ？, 参 in 惠宗 and 持 in the other two, occur only as ordinary Chinese characters in the 100 or more PDFs searched. In 崇宗, 佃 draws 𘞂 where the book's Chinese has 化, and the meaning fits only loosely, so that reading is uncertain. These readings are incomplete, so the page lists these titles in Chinese.
-- **番漢合時掌中珠 as data.** The 1190 glossary's three columns — Tangut character, Chinese transcription, Chinese gloss — exist in printed editions and in a study of its computer processing ([CiNii](https://cir.nii.ac.jp/crid/1040000781685614592)); no dataset is published, and Unicode's sources file does not index it. About a thousand entries would have to be transcribed from an edition, cited to that edition.
-- **藏文對音 beyond five manuscripts.** Tibetan transcriptions of Tangut survive in fragments and are discussed one article at a time. Only the five British Library fragments in BabelStone's index are tabulated; CCAMC has a field for them, empty on almost every page seen.
+- **番漢合時掌中珠 as data.** Keying has started in the site's `zhangzhongzhu` tables: the columns, their order and the section headings have to be settled band by band from the canvas images before a count exists. A reading of a damaged glyph waits for a second witness. Nothing on the page shows the tables yet.
+- **藏文對音 beyond five manuscripts.** Tibetan transcriptions of Tangut survive in fragments and are discussed one article at a time. Only the five British Library fragments in BabelStone's index are tabulated.
 - **Tangut seal and cursive forms.** Seal script is confined to the headings of a few steles and cursive to manuscripts; no face and no per-character table exists, so the site shows the regular script only.

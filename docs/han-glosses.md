@@ -1,6 +1,6 @@
 # 漢字 glosses
 
-Tiles and the reading tool show the first Chinese Wiktionary sense where one is available, followed by the commonest contextual word in 類林 as a fallback. The source and full set of senses appear on hover; the character card keeps the dictionary and 類林 records separate.
+Tiles and the reading tool show the first Chinese sense keyed from the editions, then the first Chinese Wiktionary sense, then the commonest contextual word in 類林. The source and full set of senses appear on hover; the character card gives the keyed dictionary, Wiktionary and 類林 records each their own row.
 
 ## Coverage
 
