@@ -1,0 +1,17 @@
+# Descriptions for the eight ideographs at the end of the Tangut block, from table 2 of WG2 N5217R2 =
+# L2/23-246, "Proposal to encode 2 Tangut components and 28 Tangut ideographs" (Andrew West,
+# 2023-10-02), pages 2–3.
+# https://www.unicode.org/wg2/docs/n5217r2-Tangut-components-ideographs.pdf
+#
+# The table prints the description with a private-use glyph font; the descriptions below are the
+# characters those glyphs stand for, checked to parse as complete description trees.
+#
+# Code point	Description
+187F8	⿱𘣍⿲𘠮𘫾𘦡
+187F9	⿰𘫽𘡦
+187FA	⿱𘡊⿰𘧤⿱𘡩𘤕
+187FB	⿰𘧩𘤘
+187FC	⿰𘡱𘤘
+187FD	⿱𘣘⿰𘢌𘥦
+187FE	⿰𘨆𘥾
+187FF	⿰𘫟⿱𘢸𘢱

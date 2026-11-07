@@ -62,6 +62,8 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   Tangut Supplement and Tangut Components Supplement, with their Unicode names, strokes,
   descriptions (BabelStone for U+18D00–U+18D08, the WG2 proposals for U+18D09–U+18D20), Cangjie codes and
   the face that draws each; built by `scripts/build_tangut_supplement.py`.
+- `app/data/tangut-newest-ids.json`: descriptions for U+187F8–U+187FF, which BabelStone's table does
+  not reach, from table 2 of WG2 N5217R2 and built by `scripts/build_tangut_newest_ids.py`.
 - `app/data/tangut-attestation.json.gz` and `app/public/facsimile/`: where each character stands in
   fourteen sources, built by `scripts/build_tangut_attestation.py`. One is the Glyph Atlas record of
   Solonin and Arakawa's *Bodhicaryāvatāra in Tangut Translation*, chapter 2 (CC BY 4.0), with its
