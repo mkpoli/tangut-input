@@ -1,0 +1,80 @@
+{
+  "source": "west2007",
+  "order": ["top", "right", "bottom", "left"],
+  "characters": [
+    {"char": "𗵐", "reading": "nej", "chinese": "安", "xhzd": "0139", "whyj": "2920"},
+    {"char": "𘅝", "reading": "ljwu", "chinese": "慶", "xhzd": "0305", "whyj": "3264"},
+    {"char": "𗘞", "reading": "lha", "chinese": "聖", "xhzd": "0480", "whyj": "1089"},
+    {"char": "𘓺", "reading": "ŋwər", "chinese": "天", "xhzd": "0510", "whyj": "4454"},
+    {"char": "𘑨", "reading": "ꞏwu", "chinese": "祐", "xhzd": "0645", "whyj": "4150"},
+    {"char": "𘇚", "reading": "mji̲", "chinese": "治", "xhzd": "0720", "whyj": "3194"},
+    {"char": "𘔭", "reading": "dzjɨj", "chinese": "錢", "xhzd": "1604", "whyj": "4429"},
+    {"char": "𗧯", "reading": "ꞏji̲j", "chinese": "稟 = 秉", "xhzd": "2135", "whyj": "2448"},
+    {"char": "𗼕", "reading": "ljo", "chinese": "福", "xhzd": "2342", "whyj": "3650"},
+    {"char": "𗼃", "reading": "śjɨj", "chinese": "聖", "xhzd": "2544", "whyj": "3628"},
+    {"char": "𗣼", "reading": "tśhja", "chinese": "德", "xhzd": "2748", "whyj": "2239"},
+    {"char": "𘀗", "reading": "tshjwu", "chinese": "乾", "xhzd": "3950", "whyj": "2781"},
+    {"char": "𘜶", "reading": "tha", "chinese": "大", "xhzd": "4457", "whyj": "4815"},
+    {"char": "𘝯", "reading": "bio̲", "chinese": "觀", "xhzd": "5593", "whyj": "4773"},
+    {"char": "𘏨", "reading": "ljɨ̣", "chinese": "寶", "xhzd": "5655", "whyj": "3824"}
+  ],
+  "coins": [
+    {
+      "id": "fusheng",
+      "era": "福聖承道",
+      "kind": "disputed",
+      "interpretations": [
+        {"name": "福聖寶錢", "tangut": "𗼃𗼕𘏨𘔭"},
+        {"name": "稟德寶錢", "tangut": "𗣼𗧯𘏨𘔭"}
+      ],
+      "example": {"label": "Zeno #16068", "url": "http://www.zeno.ru/showphoto.php?photo=16068"}
+    },
+    {
+      "id": "daan",
+      "era": "大安",
+      "kind": "clear",
+      "interpretations": [
+        {"name": "大安寶錢", "tangut": "𘜶𗵐𘏨𘔭"}
+      ],
+      "example": {"label": "Zeno #1084", "url": "http://www.zeno.ru/showphoto.php?photo=1084"}
+    },
+    {
+      "id": "zhenguan",
+      "era": "貞觀",
+      "kind": "disputed",
+      "interpretations": [
+        {"name": "貞觀寶錢", "tangut": "𗣼𘝯𘏨𘔭"},
+        {"name": "觀德寶錢", "tangut": "𗣼𘝯𘏨𘔭"}
+      ],
+      "example": {"label": "Zeno #78", "url": "http://www.zeno.ru/showphoto.php?photo=78"}
+    },
+    {
+      "id": "zhengde",
+      "era": "正德",
+      "kind": "disputed",
+      "interpretations": [
+        {"name": "正德寶錢", "tangut": "𗣼𘇚𘏨𘔭"},
+        {"name": "治德寶錢", "tangut": "𗣼𘇚𘏨𘔭"}
+      ],
+      "example": null
+    },
+    {
+      "id": "qianyou",
+      "era": "乾祐",
+      "kind": "clear",
+      "interpretations": [
+        {"name": "乾祐寶錢", "tangut": "𘀗𘑨𘏨𘔭"}
+      ],
+      "example": {"label": "Zeno #16071", "url": "http://www.zeno.ru/showphoto.php?photo=16071"}
+    },
+    {
+      "id": "tianqing",
+      "era": "天慶",
+      "kind": "clear",
+      "interpretations": [
+        {"name": "天慶寶錢", "tangut": "𘓺𘅝𘏨𘔭"}
+      ],
+      "example": {"label": "Zeno #1332", "url": "http://www.zeno.ru/showphoto.php?photo=1332"}
+    }
+  ]
+}

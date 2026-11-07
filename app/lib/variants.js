@@ -185,3 +185,82 @@ export function keepVariantsTogether(parts, groups = VARIANTS.groups.map(group =
   }
   return arranged
 }
+
+/**
+ * Groups of characters joined by a variant relation, however long the chain: a form of a form stands
+ * in the same group as the first. Each link keeps the ground it rests on, and a group its count.
+ * @typedef {{ one: string, other: string, kind: 'stated' | 'partial' | 'reported' | 'possible', ground: 'stated' | 'reported' | 'possible' }} FamilyLink
+ * @typedef {{ members: string[], links: FamilyLink[], grounds: { kind: 'stated' | 'reported' | 'possible', count: number }[] }} Family
+ * @param {PossiblePair[]} pairs
+ * @param {Stated} [stated]
+ * @returns {Family[]}
+ */
+export function variantFamilies(pairs, stated = VARIANTS) {
+  /** @type {FamilyLink[]} */
+  const links = [
+    ...stated.variants.map(([one, other]) => /** @type {FamilyLink} */ ({ one, other, kind: 'stated', ground: 'stated' })),
+    ...stated.partial.map(([one, other]) => /** @type {FamilyLink} */ ({ one, other, kind: 'partial', ground: 'stated' })),
+    ...stated.reported.map(([one, other]) => /** @type {FamilyLink} */ ({ one, other, kind: 'reported', ground: 'reported' })),
+    ...pairs.map(({ one, other }) => /** @type {FamilyLink} */ ({ one, other, kind: 'possible', ground: 'possible' })),
+  ]
+  /** @type {Map<string, string>} */
+  const parent = new Map()
+  /** @param {string} char */
+  const find = char => {
+    let root = parent.get(char) ?? char
+    while (root !== (parent.get(root) ?? root)) root = parent.get(root) ?? root
+    parent.set(char, root)
+    return root
+  }
+  for (const { one, other } of links) {
+    const a = find(one)
+    const b = find(other)
+    if (a !== b) parent.set(a, b)
+  }
+  /** @type {Map<string, string[]>} */
+  const members = new Map()
+  for (const { one, other } of links) {
+    for (const char of [one, other]) {
+      const root = find(char)
+      members.set(root, [...(members.get(root) ?? []), char])
+    }
+  }
+  const byCodePoint = (/** @type {string} */ a, /** @type {string} */ b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)
+  /** @type {Family[]} */
+  const families = []
+  for (const [root, list] of members) {
+    const unique = [...new Set(list)].sort(byCodePoint)
+    if (unique.length < 2) continue
+    const own = links.filter(link => find(link.one) === root)
+    /** @type {Record<string, number>} */
+    const counts = {}
+    for (const link of own) {
+      const kind = link.kind === 'partial' ? 'stated' : link.kind
+      counts[kind] = (counts[kind] ?? 0) + 1
+    }
+    const grounds = ['stated', 'reported', 'possible']
+      .filter(kind => counts[kind])
+      .map(kind => ({ kind: /** @type {'stated' | 'reported' | 'possible'} */ (kind), count: counts[kind] }))
+    families.push({ members: unique, links: own, grounds })
+  }
+  // What a reader cannot see from the pair lists comes first: a report, then a chain, then a
+  // Wiktionary pair, then a pair the site inferred.
+  const rank = (/** @type {Family} */ family) =>
+    family.grounds.some(ground => ground.kind === 'reported') ? 0
+      : family.links.length > 1 ? 1
+        : family.grounds.some(ground => ground.kind === 'stated') ? 2
+          : 3
+  return families.sort((a, b) => rank(a) - rank(b) || b.members.length - a.members.length || byCodePoint(a.members[0], b.members[0]))
+}
+
+/**
+ * The group each character stands in, for the card.
+ * @param {Family[]} families
+ * @returns {Map<string, Family>}
+ */
+export function familyIndex(families) {
+  /** @type {Map<string, Family>} */
+  const index = new Map()
+  for (const family of families) for (const member of family.members) index.set(member, family)
+  return index
+}

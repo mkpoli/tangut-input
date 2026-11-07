@@ -19,6 +19,7 @@
   import Attest from './Attest.svelte'
   import { loadWenhaiComposition } from '../lib/data.js'
   import Peek from './Peek.svelte'
+  import Spelling from './Spelling.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
 
@@ -38,6 +39,10 @@
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
   const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
+  // The group the character stands in, when a pair list would hide part of it: a chain of stated
+  // forms, or the pair someone reported.
+  const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
+  const linkedGroup = $derived(family && (family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) ? family : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
@@ -53,11 +58,14 @@
         : rhyme?.[1] === 4 ? 'card.tone.entering'
           : '',
   )
-  const spelling = $derived(
-    rhyme?.[3] || rhyme?.[4] ? [rhyme[3], rhyme[4]].filter(Boolean).join('')
-      : rhyme?.[5] || rhyme?.[6] ? [rhyme[5], rhyme[6]].filter(Boolean).join('')
-        : '',
-  )
+  const spelling = $derived.by(() => {
+    if (!rhyme) return ''
+    /** @param {string | null | undefined} value */
+    const cell = value => (value && value !== '?' ? value : '')
+    const upper = [cell(rhyme[3]), cell(rhyme[4])].filter(Boolean)
+    if (upper.length) return upper.join('')
+    return [cell(rhyme[5]), cell(rhyme[6])].filter(Boolean).join('')
+  })
 
   const same = $derived.by(() => {
     if (!entry?.composition) return []
@@ -260,11 +268,26 @@
             <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
+        {#if linkedGroup}
+          <p class="ui-hint">{t('card.family')}</p>
+          <div class="group">
+            {#each linkedGroup.links as link (link.one + link.other + link.kind)}
+              {@const one = readingOf(link.one, ui.reading)}
+              {@const other = readingOf(link.other, ui.reading)}
+              <span class="group-link">
+                <button class="ui-tile" type="button" aria-current={link.one === char ? 'true' : undefined} title={gloss(link.one)} onclick={() => choose(link.one)}><G char={link.one} />{#if one}<span class="ui-tile-sound">{one}</span>{/if}</button>
+                <span class="chain-tie" aria-hidden="true"></span>
+                <button class="ui-tile" type="button" aria-current={link.other === char ? 'true' : undefined} title={gloss(link.other)} onclick={() => choose(link.other)}><G char={link.other} />{#if other}<span class="ui-tile-sound">{other}</span>{/if}</button>
+                <span class="ui-tag">{t(`variants.link.${link.ground}`)}</span>
+              </span>
+            {/each}
+          </div>
+        {/if}
         <p class="more"><a href={link('variants', char)}><Icon name="arrow" size={13}/>{t('card.variantsAll')}</a></p>
       </section>
     {/if}
 
-    {#if readings.length}
+    {#if readings.length || rhymeClass}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
@@ -279,10 +302,18 @@
               <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="ui-script spelling">{spelling}</span></td></tr>
             {/if}
             {#if hands?.tibetan?.length}
-              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">{#each hands.tibetan as [hand, , count, script, wylie], index (index)}{index ? ' · ' : ''}<span class="ui-hint">{hand}</span> <span class="bo" lang="bo" title={wylie}>{script}</span>{count === 1 ? '' : ` ×${count || '?'}`}{/each}</td></tr>
+              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">
+                {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
+                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone />
+                {/each}
+              </td></tr>
             {/if}
             {#if hands?.sanskrit?.length}
-              <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
+              <tr><th scope="row">{t('card.sanskrit')}</th><td class="hands">
+                {#each hands.sanskrit as [printed, script, ipa] (printed)}
+                  <Spelling {script} transcription={printed} {ipa} lang="sa" />
+                {/each}
+              </td></tr>
             {/if}
           </tbody>
         </table>
@@ -297,11 +328,10 @@
       </section>
     {/if}
 
-    {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
+    {#if entry?.wenhai_text_zh}
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
-        {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
-        {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
+        <p lang="zh-Hant">{entry.wenhai_text_zh}</p>
       </section>
     {/if}
 
@@ -440,6 +470,10 @@
   .record section > .ui-label,.faces-head .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .more a{display:inline-flex;align-items:center;gap:3px}
   .faces{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:var(--ui-space-2xs)}
+  .group{display:grid;gap:var(--ui-space-xs);margin-block-end:var(--ui-space-sm)}
+  .group-link{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
+  .chain-tie{inline-size:12px;block-size:1px;background:var(--ui-color-border-strong)}
+  .group-link .ui-tile[aria-current='true']{background:var(--ui-color-accent-soft)}
   .face{display:grid;place-items:center;gap:2px;margin:0;padding:var(--ui-space-xs) 2px var(--ui-space-2xs);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-sm);background:var(--ui-color-surface-sunken);min-inline-size:0}
   .face-glyph{font-size:32px;line-height:1.15}
   .face figcaption{max-inline-size:100%;overflow:hidden;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);line-height:1.2;text-align:center;text-overflow:ellipsis;white-space:nowrap}
@@ -460,6 +494,7 @@
   .readings th{inline-size:46%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
+  .readings td.hands{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--ui-space-xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
   .spelling{font-size:18px}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
@@ -485,5 +520,4 @@
     .glyph-frame :global(.ui-script){font-size:72px}
     .gloss{font-size:var(--ui-text-lg)}
   }
-  .bo{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:1.1em}
 </style>

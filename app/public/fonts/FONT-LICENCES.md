@@ -23,7 +23,14 @@
   in `fonts/`). 2 KB, so a description can always be shown as its own text. Rebuild it with
   `pyftsubset fonts/GenZuiSans-Regular.woff2 --unicodes=U+2FF0-2FFF --flavor=woff2`.
 
-Rebuild the Noto supplement and the BabelStone complement with `bun run build:tangut-fonts`.
+Rebuild the Noto supplement, the BabelStone complement and the N4694 supplement with `bun run build:tangut-fonts`.
+
+- **Tangut N4694** (version 18), from the 古今文字集成 font page (ccamc.org/fonts_tangut.php),
+  copyright 2026 www.ccamc.org; the name table credits Jerry You. No licence text ships with the
+  archive; the font is served for this personal tool. `TangutN4694-supplement.woff2` is a subset
+  holding U+187F8–U+187FF, U+18D09–U+18D20 and U+18D80–U+18DF2, the newest ideographs and the
+  supplement characters the other faces lack, made with `bun run build:tangut-fonts`; its
+  `unicode-range` also covers the unassigned slots between them.
 
 - **New Tangut Std** (新西夏字體), from the 古今文字集成 font page (ccamc.org/fonts_tangut.php),
   where it is offered for download alongside Noto Serif Tangut; it is described there as built

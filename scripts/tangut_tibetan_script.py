@@ -2,11 +2,13 @@
 # requires-python = ">=3.11"
 # dependencies = []
 # ///
-"""Turn the transliteration in `app/data/tangut-tibetan-hands.json` into Tibetan script.
+"""Fill in the script, transcription and IPA of the spellings in `tangut-tibetan-hands.json`.
 
-The tables write a prefix with a hyphen (`g-yi`), འ as `v`, and k+h as `k.ha`. Checked against the
-script of the same spellings in BabelStone's index (268 of 268) and in 李範文's table (254 of 254).
-Run it to fill in the script and Wylie after the transliteration changes:
+The tables write a prefix with a hyphen (`g-yi`), འ as `v`, and k+h as `k.ha`. The Tibetan script is
+checked against BabelStone's index (268 of 268) and 李範文's table (254 of 254). The Sanskrit is
+printed in transliteration and is converted to Devanagari here. The IPA reads the letters one by one:
+the Tibetan letters with their Old Tibetan values, the Sanskrit in the usual Sanskrit pronunciation.
+It is the site's reading, not the source's. Run it after the transliteration changes:
 
     uv run scripts/tangut_tibetan_script.py
 """
@@ -69,20 +71,181 @@ def to_tibetan(s):
     return None if any(p is None for p in parts) else '་'.join(parts)
 
 
+# The script loses the source's parse in these spellings: to_wylie reads a root and a suffix as a
+# prefix and a root, or orders two vowel signs against the printed form. The table's printed form is
+# the source, so the Wylie follows it.
+WYLIE_AS_PRINTED = {
+    'gar': 'gar', 'mar': 'mar', 'dav': "da'",
+    'phuo': 'phuo', 'chui': 'chui', 'mue': 'mue',
+}
+
+
 def wylie_of(latin):
     """Wylie for a spelling; one with an unread letter keeps its printed form, ? and all."""
     if '?' in latin:
         return latin
+    if latin in WYLIE_AS_PRINTED:
+        return WYLIE_AS_PRINTED[latin]
     return ' '.join(to_wylie(part) for part in to_tibetan(latin).split('་'))
+
+
+# The IPA of the Tibetan letters, one letter at a time: prefixes are spoken, འ is a glottal stop,
+# and the long vowels are the ones Wylie writes A, I, U (or oo/ee).
+TIBETAN_UNITS = [
+    ('tsh', 'tsʰ'), ('ts', 'ts'), ('dz', 'dz'), ('kh', 'kʰ'), ('gh', 'ɡʱ'), ('ch', 'tɕʰ'),
+    ('jh', 'dʑʱ'), ('th', 'tʰ'), ('dh', 'dʱ'), ('ph', 'pʰ'), ('bh', 'bʱ'), ('ng', 'ŋ'),
+    ('ny', 'ɲ'), ('zh', 'ʑ'), ('sh', 'ɕ'), ('lh', 'l̥'), ('nh', 'nʱ'), ('aa', 'aː'), ('ii', 'iː'), ('uu', 'uː'), ('oo', 'oː'), ('ee', 'eː'),
+    ('k', 'k'), ('g', 'ɡ'), ('c', 'tɕ'), ('j', 'dʑ'), ('t', 't'), ('d', 'd'), ('n', 'n'),
+    ('p', 'p'), ('b', 'b'), ('m', 'm'), ('w', 'w'), ('z', 'z'), ('y', 'j'), ('r', 'r'),
+    ('l', 'l'), ('s', 's'), ('h', 'h'), ("'", 'ʔ'), ('v', 'ʔ'),
+    ('A', 'aː'), ('I', 'iː'), ('U', 'uː'), ('E', 'eː'), ('O', 'oː'),
+    ('a', 'a'), ('i', 'i'), ('u', 'u'), ('e', 'e'), ('o', 'o'),
+]
+TIBETAN_ASPIRATES = {
+    'k': 'kʰ', 'kʰ': 'kʰ', 'ɡ': 'ɡʱ', 'ɡʱ': 'ɡʱ', 'tɕ': 'tɕʰ', 'tɕʰ': 'tɕʰ',
+    'dʑ': 'dʑʱ', 'dʑʱ': 'dʑʱ', 't': 'tʰ', 'tʰ': 'tʰ', 'd': 'dʱ', 'dʱ': 'dʱ',
+    'p': 'pʰ', 'pʰ': 'pʰ', 'b': 'bʱ', 'bʱ': 'bʱ',
+}
+TIBETAN_UNITS.sort(key=lambda unit: -len(unit[0]))
+
+
+def tibetan_ipa(wylie):
+    """Read a printed spelling letter by letter, keeping ? where the source could not be read."""
+    units = []
+    i = 0
+    while i < len(wylie):
+        char = wylie[i]
+        if wylie.startswith(('+h', '.h'), i):
+            last = units[-1] if units else ''
+            if last in TIBETAN_ASPIRATES:
+                units[-1] = TIBETAN_ASPIRATES[last]
+            else:
+                units.append('h')
+            i += 2
+            continue
+        if char in ' .-':
+            if char == ' ':
+                units.append(' ')
+            i += 1
+            continue
+        if char in '?[]':
+            if char == '?':
+                units.append('?')
+            i += 1
+            continue
+        # A second h after an aspirated letter is the same aspiration: thha, khha.
+        if char == 'h' and units and units[-1].endswith(('ʰ', 'ʱ')):
+            i += 1
+            continue
+        for token, value in TIBETAN_UNITS:
+            if wylie.startswith(token, i):
+                units.append(value)
+                i += len(token)
+                break
+        else:
+            raise ValueError(f'no Tibetan reading for {char!r} in {wylie!r}')
+    return ''.join(units).strip()
+
+
+# Sanskrit, in IAST: the consonants, vowels and signs the tables use, with their usual IPA.
+SANSKRIT_IPA = {
+    'kh': 'kʰ', 'gh': 'ɡʱ', 'ch': 'tɕʰ', 'jh': 'dʑʱ', 'ṭh': 'ʈʰ', 'ḍh': 'ɖʱ', 'th': 't̪ʰ',
+    'dh': 'd̪ʱ', 'ph': 'pʰ', 'bh': 'bʱ', 'ai': 'ɐi̯', 'au': 'ɐu̯', 'ā': 'aː', 'ī': 'iː',
+    'ū': 'uː', 'ṝ': 'r̩ː', 'ḹ': 'l̩ː', 'ṛ': 'r̩', 'ḷ': 'l̩', 'k': 'k', 'g': 'ɡ', 'ṅ': 'ŋ',
+    'c': 'tɕ', 'j': 'dʑ', 'ñ': 'ɲ', 'ṭ': 'ʈ', 'ḍ': 'ɖ', 'ṇ': 'ɳ', 't': 't̪',
+    'd': 'd̪', 'n': 'n̪', 'p': 'p', 'b': 'b', 'm': 'm', 'y': 'j', 'r': 'r', 'l': 'l',
+    'v': 'ʋ', 'ś': 'ɕ', 'ṣ': 'ʂ', 's': 's', 'h': 'ɦ', 'ṃ': '̃', 'ḥ': 'h', 'a': 'ɐ',
+    'i': 'i', 'u': 'u', 'e': 'eː', 'o': 'oː',
+}
+SANSKRIT_TOKENS = sorted(SANSKRIT_IPA, key=len, reverse=True)
+SANSKRIT_VOWEL_SIGNS = {'ā': 'ा', 'i': 'ि', 'ī': 'ी', 'u': 'ु', 'ū': 'ू', 'ṛ': 'ृ', 'ṝ': 'ॄ',
+                        'ḷ': 'ॢ', 'ḹ': 'ॣ', 'e': 'े', 'ai': 'ै', 'o': 'ो', 'au': 'ौ'}
+SANSKRIT_INDEPENDENT = {'a': 'अ', 'ā': 'आ', 'i': 'इ', 'ī': 'ई', 'u': 'उ', 'ū': 'ऊ', 'ṛ': 'ऋ',
+                        'ṝ': 'ॠ', 'ḷ': 'ऌ', 'ḹ': 'ॡ', 'e': 'ए', 'ai': 'ऐ', 'o': 'ओ', 'au': 'औ'}
+SANSKRIT_LETTERS = {'k': 'क', 'kh': 'ख', 'g': 'ग', 'gh': 'घ', 'ṅ': 'ङ', 'c': 'च', 'ch': 'छ',
+                    'j': 'ज', 'jh': 'झ', 'ñ': 'ञ', 'ṭ': 'ट', 'ṭh': 'ठ', 'ḍ': 'ड', 'ḍh': 'ढ',
+                    'ṇ': 'ण', 't': 'त', 'th': 'थ', 'd': 'द', 'dh': 'ध', 'n': 'न', 'p': 'प',
+                    'ph': 'फ', 'b': 'ब', 'bh': 'भ', 'm': 'म', 'y': 'य', 'r': 'र', 'l': 'ल',
+                    'v': 'व', 'ś': 'श', 'ṣ': 'ष', 's': 'स', 'h': 'ह', 'ṃ': 'ं', 'ḥ': 'ः'}
+
+
+def sanskrit_tokens(iast):
+    """Split one IAST spelling into its letters and signs, or fail on a character it cannot read."""
+    tokens = []
+    i = 0
+    while i < len(iast):
+        for token in SANSKRIT_TOKENS:
+            if iast.startswith(token, i):
+                tokens.append(token)
+                i += len(token)
+                break
+        else:
+            raise ValueError(f'no Sanskrit reading for {iast[i]!r} in {iast!r}')
+    return tokens
+
+
+def to_devanagari(iast):
+    """Write an IAST spelling in Devanagari, with a virama on a consonant that ends it."""
+    out = []
+    consonant = False
+    for token in sanskrit_tokens(iast):
+        if token in ('ṃ', 'ḥ'):
+            out.append(SANSKRIT_LETTERS[token])
+            consonant = False
+        elif token in SANSKRIT_LETTERS:
+            if consonant:
+                out.append('्')
+            out.append(SANSKRIT_LETTERS[token])
+            consonant = True
+        elif token in SANSKRIT_VOWEL_SIGNS or token == 'a':
+            if consonant:
+                out.append(SANSKRIT_VOWEL_SIGNS.get(token, ''))
+                consonant = False
+            else:
+                out.append(SANSKRIT_INDEPENDENT[token])
+        else:
+            raise ValueError(f'no Devanagari letter for {token!r}')
+    if consonant:
+        out.append('्')
+    return ''.join(out)
+
+
+def sanskrit_ipa(iast):
+    """The usual Sanskrit pronunciation of an IAST spelling, letter by letter."""
+    return ''.join(SANSKRIT_IPA[unit] for unit in sanskrit_tokens(iast))
+
+
+def sanskrit_forms(value):
+    """The printed spellings of a row, whether the file still holds the strings or the triples."""
+    if isinstance(value, str):
+        printed = [value]
+    elif isinstance(value[0], str):
+        printed = value
+    else:
+        printed = [item[0] for item in value]
+    return [[part.strip(), to_devanagari(part.strip()), sanskrit_ipa(part.strip())] for item in printed for part in item.split(',')]
 
 
 def main():
     path = Path(__file__).resolve().parents[1] / 'app/data/tangut-tibetan-hands.json'
     record = json.loads(path.read_text(encoding='utf-8'))
+    record['note'] = ('Tibetan spellings of Tangut characters by hand class A–E, with counts, and Sanskrit, machine-read '
+                      'from reposted scans of a study the repost does not name. Each row’s 李範文 number was checked '
+                      'through kTGT_MergedSrc against the rhyme, tone and initial class in the rhyme data; rows that '
+                      'failed are left out unless a second source confirms them. 134 of the 151 characters also in '
+                      'BabelStone’s index share a spelling with it. The spellings themselves have not been checked '
+                      'against the scans one by one. Each Tibetan spelling is given in the tables’ transliteration, '
+                      'Tibetan script converted from it, Wylie, and IPA; each Sanskrit spelling in IAST, Devanagari '
+                      'converted from it, and IPA. The IPA reads the printed transliteration one letter at a time and '
+                      'is this site’s reading, not the source’s. Six Tibetan spellings keep the printed order in Wylie, '
+                      'where the script conversion loses it, and one Sanskrit form is read ñi where the machine gave '
+                      'the IPA letter ɲi. A count of 0 means none was read, and ? marks a letter that could not be read.')
     for entry in record['chars'].values():
-        entry['tibetan'] = [[hand, latin, count, to_tibetan(latin), wylie_of(latin)] for hand, latin, count, *_ in entry.get('tibetan', [])] or None
+        entry['tibetan'] = [[hand, latin, count, to_tibetan(latin), wylie_of(latin), tibetan_ipa(latin)] for hand, latin, count, *_ in entry.get('tibetan', [])] or None
         if not entry['tibetan']:
             del entry['tibetan']
+        if entry.get('sanskrit'):
+            entry['sanskrit'] = sanskrit_forms(entry['sanskrit'])
     path.write_text(json.dumps(record, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
 
 

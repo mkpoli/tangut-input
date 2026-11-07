@@ -444,7 +444,7 @@
   })
 </script>
 
-<svelte:window onpagehide={leave} />
+<svelte:window onpagehide={leave} onbeforeunload={leave} />
 <svelte:document onvisibilitychange={() => { if (document.hidden) leave() }} />
 
 <div class="mini-finder" onfocusout={focusOut}>
