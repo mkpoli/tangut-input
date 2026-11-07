@@ -51,6 +51,11 @@ def main():
             problems.append(f'entries.tsv:{line} column_role {row["column_role"]!r} is not one of {sorted(COLUMN_ROLES)}')
         if row['reviewed'] not in {'', '0', '1'}:
             problems.append(f'entries.tsv:{line} reviewed {row["reviewed"]!r} is not 0 or 1')
+        for edge in ('x0', 'x1'):
+            if row[edge].strip() and not row[edge].strip().isdigit():
+                problems.append(f'entries.tsv:{line} {edge} {row[edge]!r} is not a number')
+        if row['x0'].strip().isdigit() and row['x1'].strip().isdigit() and int(row['x0']) >= int(row['x1']):
+            problems.append(f'entries.tsv:{line} x0 is not left of x1')
 
     positions = {}
     for line, row in enumerate(rows('cells.tsv'), start=2):

@@ -95,6 +95,11 @@ function expandEntries(packed) {
   })
 }
 
+/**
+ * Where each keyed value of a character stands: the book and page. @returns {Promise<{ citations: Record<string, Record<string, { work: string, locator: string, note: string }[]>> }>}
+ */
+export const loadReadingSources = () => once('reading-sources', () => readJson(new URL('../data/tangut-reading-sources.json.gz', import.meta.url)))
+
 /** The derived CCAMC search terms. @returns {Promise<CcamcIndex>} */
 export const loadCcamcIndex = () => once('ccamc', () => readJson(new URL('../data/tangut-ccamc-index.json.gz', import.meta.url)))
 

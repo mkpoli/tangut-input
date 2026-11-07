@@ -1,0 +1,23 @@
+# canvas 41, band 3 (last band of the opening), 18 printed columns in 5 entry groups; right leaf x 1950-3741 holds 3 groups between printed rules at x 3145 and 2543, left leaf x 20-1692 holds 2 groups between rules at x 1096 and 494; left leaf ends raggedly, the last group carrying only its transcription and Tangut columns
+41	3	1	transcription	都勿		side=r; entry 1 of 5; x 3618-3698; two characters, no small annotations; certain
+41	3	2	tangut		U+1785E U+180AB	side=r; x 3463-3562; 都→𗡞 音都(底度切), its dictionary sense is "thousand" and matches the gloss 千, certain; 勿→𘂫 音帷(勿), ⿰[丿over㐅][hooked 乃] matches the print, certain; a small 三 is printed below the pair at x 3500-3550 y 416-473, recorded here not in the glyph field
+41	3	3	gloss	千變		side=r; certain
+41	3	4	spelling	𗣆	U+178C6	side=r; x 3185-3265; 千→𗣆 音千, ⿰[丿over㐅][夂] matches the print, certain; only one character is carved in this column, the slot facing 變 is blank in the print
+-
+41	3	5	transcription	辢		side=r; entry 2 of 5; x 3023-3123; one character, 束 left and 辛 right, so 辢 not 辞; a small circle is printed at its upper left; certain
+41	3	6	tangut		U+17051	side=r; x 2886-2970; 辢→𗁑 音勒(俗至切), ⿰[丿over moon-box][夂] matches the print and the crossing of the box leg with the 夂 stroke gives the X at lower left, probable, the reading is a 來母 entering-tone syllable rather than 辢 itself and 𘄳 U+18133, 𗒌 U+1748C share that reading but not the shape
+41	3	7	gloss	於迷有		side=r; certain
+41	3	8	spelling	𗘼𘛢𗰔	U+1763C U+186E2 U+17C14	side=r; x 2570-2680; 於→𗘼 音魚, top of 6144 by shape, certain; 迷→𘛢 音彌, 彌 and 迷 are homophones and the ⿰[hook over box][匕] form matches, certain; 有→𗰔 音酉, ⿰[乛over⺆][㐅over hook] is an exact match, certain
+-
+41	3	9	transcription	六力皮姑		side=r; entry 3 of 5; x 2429-2509; a small circle is printed beside 六; certain
+41	3	10	tangut		U+17C68 U+18784 U+177FB U+1732D	side=r; x 2261-2392; 六→𗱨 音六, ⿱[wide stroke][廿 beside 乚] matches, certain; 力→𘞄 音力(魯賊切), the X at upper left rules out 𘃦 U+180E6, certain; 皮→𗟻 音皮(普計切), certain; 姑→𗌭 音故(姑都切), ⿰[two stacked hooks][夂 over 开] matches and rules out 𗭱 U+17B71, certain
+41	3	11	gloss	令交獲則		side=r; certain
+41	3	12	spelling	𘍑𗁝𘌴𗂲	U+18351 U+1705D U+18334 U+170B2	side=r; x 1960-2071; 令→𘍑 音令(力成切), ⿰[丿over moon-box][匕] matches, certain; 交→𗁝 音驕, 驕 and 交 share the syllable, shape plausible, probable; 獲→𘌴 音懷(虎根切), ⿰[dot over 㐅][一 over 开] matches the print better than 𘛩 U+186E9 which scores higher on shape but reads kji, probable; 則→𗂲 賊清切, ⿰[爪-like verticals][乚] matches, probable, the dictionary 直音 is 靜
+-
+41	3	13	transcription	姪酥盈力		side=l; entry 4 of 5; x 1582-1664; certain
+41	3	14	tangut		U+17F45 U+17E12 U+18775 U+187A9	side=l; x 1428-1557; 姪→𗽅 音執(主乞切), ⿰㐅幸 matches, certain; 酥→𗸒 音蘇(西路切), top of 6144 by shape, certain; 盈→𘝵 音盈(夷根切), ⿱[二 with hook][夂 beside 爪] matches, certain; 力→𘞩 音綠(力菊切), ⿰[乛over㐅][卄] matches, probable, the 直音 is 綠 not 力
+41	3	15	gloss	爭如自悔		side=l; certain
+41	3	16	spelling	𗷃𗱖𗯓𗡩	U+17DC3 U+17C56 U+17BD3 U+17869	side=l; x 1125-1248; 爭→𗷃 音鄭(食令切), shape matches, probable; 如→𗱖 音如 音弱 音肉, probable, 𗴱 U+17D31 音褥 is all but shape-identical and scores slightly higher, the 直音 decided it; 自→𗯓 自搶切, ⿰[艹over川][乚] is a clean match, probable, the 直音 is 將 and only the fanqie upper character is 自; 悔→𗡩 音灰(虎遂切), ⿰[two stacked hooks][丿over川] matches, probable
+-
+41	3	17	transcription	名托勤		side=l; entry 5 of 5; x 996-1082; three characters, a small circle is printed below 勤; certain
+41	3	18	tangut		U+1714B U+17913	side=l; x 822-970; 名→𗅋 音彌(名)(沒乙切), ⿰[忄][乛over hooked stroke] matches, certain; 托→𗤓 音托(提多切), ⿰[two stacked hooks][乛over又] matches, certain; only two characters are carved, the slot facing 勤 is blank and the gloss and spelling columns of this group are blank, the band ending here

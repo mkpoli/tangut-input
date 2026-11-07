@@ -663,7 +663,8 @@ its Limited Public Use licence; the description is public domain; the radical an
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
 `data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
 `data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
-`data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
+`data/wenhai/entry-text.json.gz`, `data/readings/readings.tsv` and the files above. The keyed
+readings and their citations are the builder's own input and come from the editions.
 
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
 one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from
@@ -1317,3 +1318,21 @@ validates the tables; `scripts/fetch_zhangzhongzhu.py` pulls a canvas or a crop 
 Licence: the images are **CC BY-NC 4.0**, 清光山西巖寺 / 国文学研究資料館, and are not
 redistributed here or on the site. The keyed text is this workshop's own work over a public-domain
 text; its licence is not settled, and until it is the rows may be cited but not reused at scale.
+
+## `books/`
+
+The editions the site keys its readings and meanings from, one record per work in
+`source.yaml`, one row per file in `files.tsv` with its checksum, page count and resolution. The
+scans themselves are in `cache/books/`, which git does not carry; `scripts/fetch_books.py` fetches
+them and checks each against its md5. [The README](books/README.md) says which work gives what.
+
+Most of these editions are under copyright and their scans stay out of the build. The 掌中珠 scans
+in `cache/books/zhangzhongzhu/` are PD-scans of a public-domain original and may be reused; the
+貽安堂 photographs described above are CC BY-NC 4.0.
+
+## `readings/`
+
+The values keyed out of those books, one printed value per row with the page it stands on, and the
+citations the site shows beside a reading. `scripts/check_readings.py` holds the columns, the field
+names, the work each field may come from and the locator shape; a row's content is a reader's
+judgement. [The README](readings/README.md) gives the fields and how a locator is written.
