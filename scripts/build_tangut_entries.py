@@ -193,7 +193,8 @@ def main():
             readings['kychanov'].get(char, ''),
             readings['sofronov'].get(char, ''),
             readings['nishida'].get(char, ''),
-            *('；'.join(value[0] for value in keyed_fields.get(key, [])) for key in SYSTEMS[7:]),
+            *('；'.join(dict.fromkeys(value[0] for value in keyed_fields.get(key, [])))
+              for key in SYSTEMS[7:]),
         ]
         if keyed_fields:
             citations[char] = {

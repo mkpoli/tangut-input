@@ -92,7 +92,8 @@ def main() -> int:
         bad += 1
 
     seen: Counter[tuple[str, str, str]] = Counter()
-    where: dict[tuple[str, str, str], int] = {}
+    where: dict[tuple[str, str], int] = {}
+    said: dict[tuple[str, str], str] = {}
     today = date.today().isoformat()
     for number, fields in rows():
         if len(fields) != len(COLUMNS):
@@ -137,12 +138,14 @@ def main() -> int:
         else:
             if checked.isoformat() > today:
                 report(number, f"checked {row['checked']} is in the future")
-        key = (char, field, work)
-        if key in where:
-            print(f"readings.tsv:{number}: {char} repeats the {field} row at line {where[key]}")
+        # A dictionary prints a character more than once; the same place cannot say two things.
+        entry = (char, field)
+        if entry in where and said[entry] != value:
+            print(f"readings.tsv:{number}: {char} reads {value} here and {said[entry]} at line {where[entry]}")
             bad += 1
-        where.setdefault(key, number)
-        seen[key] += 1
+        where.setdefault(entry, number)
+        said.setdefault(entry, value)
+        seen[(char, field, work)] += 1
         if work == "-" and not row["note"].strip():
             report(number, "a row without a work names its source in note")
 
