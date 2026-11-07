@@ -11,6 +11,7 @@
   const names = $derived(ix.names.filter(row => row.char === part))
   const credits = $derived([...new Set(names.map(row => row.credit))])
   const compared = $derived(ix.partNames?.rows.find(row => row.char === part) ?? null)
+  const hint = $derived(names.length ? null : (ix.shapeHints.get(part)?.find(row => row.score >= 0.7 && row.sameStrokes) ?? null))
   const comparedLanguages = $derived.by(() => {
     const table = ix.partNames
     if (!table || !compared) return []
@@ -42,6 +43,10 @@
       {#if names.length}{names.map(row => row.name).join(' · ')}{:else}<span class="ui-hint">{t('parts.info.noName')}</span>{/if}
       {#if credits.length}<span class="credit">{credits.join(' · ')}</span>{/if}
     </dd>
+    {#if hint}
+      <dt>{t('parts.info.hint')}</dt>
+      <dd class="hint"><G char={hint.char} /> {hint.name} <span class="score">{hint.score.toFixed(2)}</span><span class="credit">{t('parts.info.hintNote')}</span></dd>
+    {/if}
     {#each comparedLanguages as language (language)}
       <dt>{t(`parts.names.${language}`)}</dt>
       <dd>{compared?.names[language]?.join(' · ')}</dd>
@@ -75,5 +80,7 @@
   dt{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
   dd{margin:0;font-size:var(--ui-text-xs);overflow-wrap:anywhere}
   .credit{display:block;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
+  .hint :global(.ui-script){font-size:16px;margin-inline-end:2px}
+  .score{margin-inline-start:4px;color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs)}
   .built{display:flex;flex-wrap:wrap;gap:2px;font-size:18px}
 </style>
