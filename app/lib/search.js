@@ -245,12 +245,12 @@ export function bySijiao(digits) {
 }
 
 /**
- * Characters whose recorded description begins with the typed or pasted text: the whole description
+ * Characters whose recorded or editorial description begins with the typed or pasted text: the whole description
  * names its character, a description cut after its opening part names the family that opens so.
  * @param {string} text
  * @returns {string[]}
  */
-export const byDescription = text => describedBy(ix.entries, text)
+export const byDescription = text => describedBy(ix.descriptions, text)
 
 /** The Tangut characters in a piece of text, each once, in order. @param {string} text */
 export function tangutIn(text) {
