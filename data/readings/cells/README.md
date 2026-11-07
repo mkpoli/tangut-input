@@ -55,14 +55,18 @@ the note records that too.
 
 ## Machine reading, so far
 
-`FlagRain/tangut-mixocr` (MIT, ONNX, 5.7M parameters, 6,144-character vocabulary) is the first thing
-that has read this print. It only reads horizontal lines, so a vertical column is cut into its four
-glyphs, laid side by side, and read as one line. Its PP-OCR detector also finds the columns on the
-unrotated band, 24 boxes of 137–205 px by 555–608 px, right to left in reading order, so the role of
-each box follows from its place in the entry. Measured against the 24 signs of canvas 40 band 1 that
-were already keyed by eye, equal four-way slicing of the column reaches 9 of 24; slicing on the ink
+`bun run ocr:band --model <clone> --image <band>` needs a clone of
+[FlagRain/tangut-mixocr](https://github.com/FlagRain/tangut-mixocr) (MIT, ONNX, 5.7M parameters,
+6,144-character vocabulary), the first thing that has read this print. It only reads horizontal
+lines, so a vertical column is cut into its four glyphs, laid side by side, and read as one line. Its
+PP-OCR detector also finds the columns on the unrotated band, 24 boxes of 137–205 px by 555–608 px,
+right to left in reading order, so the role of each box follows from its place in the entry.
+Measured against the 24 signs of canvas 40 band 1 that were already keyed by eye, equal four-way
+slicing of the column reaches 9 of 24; slicing on the ink
 quantiles does worse, 5 of 24, and padding each glyph helps neither. Two columns read three of four,
-two read two, and two are largely wrong, so the model proposes and the eye still decides.
+two read two, and two are largely wrong, so the model proposes and the eye still decides. A faint band
+benefits from `--contrast`; the lowest band of canvas 40 is bad enough that the detector merges columns
+and its proposals there are not worth having.
 
 ## Adding a band
 

@@ -97,7 +97,8 @@
     "check:books": "uv run scripts/fetch_books.py --check",
     "check:readings": "uv run scripts/check_readings.py",
     "check:cells": "uv run scripts/check_cells.py data/readings/cells/*.tsv",
-    "key:sheet": "uv run --with pillow scripts/key_sheet.py"
+    "key:sheet": "uv run --with pillow scripts/key_sheet.py",
+    "ocr:band": "uv run --with onnxruntime --with opencv-python-headless --with pillow --with pyclipper python scripts/ocr_band.py"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261102.1",
