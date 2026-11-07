@@ -1,0 +1,41 @@
+# Ideographic descriptions for the Tangut Supplement characters that BabelStone's TangutIDS.txt
+# does not cover, transcribed from table 2 of WG2 N5217R2 = L2/23-246, "Proposal to encode 2 Tangut
+# components and 28 Tangut ideographs" (Andrew West, 2023-10-02), pages 2–3.
+# https://www.unicode.org/wg2/docs/n5217r2-Tangut-components-ideographs.pdf
+#
+# The table prints the description with a private-use glyph font; the descriptions below are the
+# characters those glyphs stand for, checked to parse as complete description trees.
+#
+# The four latest ideographs come from their own proposals:
+# WG2 N5286 = L2/24-236, table 1, for U+18D1D and U+18D1E
+# https://www.unicode.org/wg2/docs/n5286_TwoTangutIdeographs.pdf
+# WG2 N5303 = L2/25-144, table 2, for U+18D1F
+# https://www.unicode.org/L2/L2025/25144-additional-tangut.pdf
+# WG2 N5314 = L2/25-165, table 3, for U+18D20
+# https://www.unicode.org/L2/L2025/25165-wg2-n5314.pdf
+#
+# Code point	Description	Source
+18D09	⿰𘩍𘧓	N5217
+18D0A	⿰⿰𘤊𘠨⿲𘢌𘠁𘤘	N5217
+18D0B	⿰𘤊𘤕	N5217
+18D0C	⿰𘪎𘤘	N5217
+18D0D	⿰𘧇𘪗	N5217
+18D0E	⿲𘤐𘠞𘠢	N5217
+18D0F	⿲𘫾𘠣𘢌	N5217
+18D10	⿱𘡩⿰𘡫𘤅	N5217
+18D11	⿱𘡊⿰𘡒𘠡	N5217
+18D12	⿰𘠐𘤻	N5217
+18D13	⿱𘡩⿲𘤩𘠁𘤻	N5217
+18D14	⿺𘢦⿰𘦢𘤃	N5217
+18D15	⿰𘧍𘫽	N5217
+18D16	⿰𘩂⿱𘡩𘣵	N5217
+18D17	⿰𘣑⿱𘡩𘡰	N5217
+18D18	⿰𘤕⿱𘠊⿰𘡤𘠢	N5217
+18D19	⿰𘢌⿱𘣍⿰𘥍𘤾	N5217
+18D1A	⿱𘡊⿰𘢉𘧓	N5217
+18D1B	⿰𘠣𘣴	N5217
+18D1C	⿰𘢌⿰𘠈⿰𘠁𘠨	N5217
+18D1D	⿱𘡩⿰𘤧𘢌	N5286
+18D1E	⿲𘩂𘠣𘫾	N5286
+18D1F	⿰𘣑⿱𘡊⿰𘠣𘡤	N5303
+18D20	⿰𘡫𘤳	N5314

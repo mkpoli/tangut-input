@@ -18,6 +18,13 @@ test('every cited source is in the numbered list', () => {
   expect(ERA_SOURCE_ORDER.toSorted()).toEqual(Object.keys(ERA_SOURCES).toSorted())
 })
 
+test('光定 cites the manuscript colophon transcription', () => {
+  const era = ERAS.find(row => row.era === '光定')
+  expect(era?.evidence).toContainEqual({ tangut: '𗪚𗏴', kind: 'text', source: 'ma2023' })
+  expect(ERA_SOURCE_ORDER).toContain('ma2023')
+  expect(ERA_SOURCES.ma2023.url).toBe('https://real.mtak.hu/191670/1/062-article-p239.pdf#page=27')
+})
+
 test('乾定 cites the manuscript transcription', () => {
   const era = ERAS.find(row => row.era === '乾定')
   expect(era?.evidence).toContainEqual({ tangut: '𘀗𗪚', kind: 'text', source: 'qianding1226' })

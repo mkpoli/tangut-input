@@ -43,6 +43,7 @@
     "empty-translation": "error"
   },
   "ignoreKeys": [
+    "core:card.tibetan",
     "core:card.variantForms",
     "core:card.variantFormsPartial",
     "core:card.variantOf",
