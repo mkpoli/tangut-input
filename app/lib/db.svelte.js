@@ -63,7 +63,7 @@ export const ix = {
   /** The Tibetan spellings at each crossing: `rhyme·tone`, then initial class. @type {Record<string, Record<string, [string, string][]>>} */ tibetanRhymes: {},
   /** 龔煌城's value for each rhyme. @type {Record<string, string>} */ gongRhymes: {},
   /** The Chinese characters transcribing each rhyme: [character, final?]. @type {Record<string, [string, string?][]>} */ chineseRhymes: {},
-  /** Tibetan spellings by hand class and Sanskrit, by character. @type {Record<string, { tibetan?: [string, string, number, string, string][], sanskrit?: string[] }>} */ tibetanHands: {},
+  /** Tibetan spellings by hand class and Sanskrit, by character. @type {Record<string, { tibetan?: [string, string, number, string, string, string][], sanskrit?: [string, string, string][] }>} */ tibetanHands: {},
   /** Every Tibetan spelling, keyed for search. @type {import('./tibetan.js').TibetanSpelling[]} */ tibetanIndex: [],
   /** Alan Downes's English gloss by character. @type {Map<string, string>} */ downes: new Map(),
   /** The Chinese words the Tangut 類林 uses for a character. @type {Map<string, [string, number][]>} */ leilin: new Map(),
