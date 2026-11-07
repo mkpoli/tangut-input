@@ -44,6 +44,14 @@ MICA = ROOT / 'data/mica'
 TANGUT = re.compile(r'^[\U00017000-\U00018AFF\U00018D00-\U00018DFF]$')
 CROP_HEIGHT = 128
 
+# The two Lausanne texts edited by Guillaume Jacques number the road word 0021, the elephant, which a
+# lookup by number renders 𗵚. Every affected place is the road word: the 類林 table gives it the road
+# rhyme 1.19 and the gloss 路 or 道, and Jacques's printed edition of the other text sets the road glyph
+# beside that number. The place counts pin the snapshot, so a text that gains a real elephant stops the
+# build instead of being rewritten. data/lcdtt/README.md records the check.
+JACQUES_TEXTS = {'leilin': 33, 'filial-piety': 9}
+ROAD_FIX = str.maketrans('\U00017D5A', '\U00017D58')
+
 # The edition, its rights, and the reading series the line links point to, as Glyph Atlas records them.
 SOLONIN = {
     'id': 'solonin-2024',
@@ -366,12 +374,23 @@ def build_lcdtt(rows):
         'licence': 'Used with permission',
         'retrieved': manifest['retrieved'],
         'commit': commit,
-        'note': 'The repository states no licence; the project owner granted permission on 2026-11-04. Each text cites the edition it was extracted from in data/lcdtt/README.md.',
+        'note': 'The repository states no licence; the project owner granted permission on 2026-11-04. Each text cites the edition it was extracted from in data/lcdtt/README.md. The road word in the two texts from Guillaume Jacques\'s editions is read 𗵘.',
     }
     lines = {}
+    slugs = {text['slug'] for text in manifest['texts']}
+    absent = set(JACQUES_TEXTS) - slugs
+    if absent:
+        raise SystemExit(f'the Lausanne manifest has no {sorted(absent)}; the road word there is not read as 𗵘')
     for text in manifest['texts']:
         slug, title = text['slug'], text['title']
         body = (LCDTT / text['file']).read_text(encoding='utf-8')
+        if slug in JACQUES_TEXTS:
+            expected = JACQUES_TEXTS[slug]
+            found = body.count('\U00017D5A')
+            if found != expected:
+                raise SystemExit(f'{text["file"]}: {found} elephant ideographs, expected {expected}; '
+                                 'check the road word against the edition before changing the count')
+            body = body.translate(ROAD_FIX)
         blocks = lcdtt_blocks(body, slug)
         for label, value in blocks:
             value = clean_tangut(value)

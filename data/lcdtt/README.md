@@ -36,3 +36,22 @@ the authority for the text, and the editions' own terms apply. The `tangut_lfw.j
 Used by `scripts/build_tangut_attestation.py` as one source, `lcdtt`. The two Bodhicaryāvatāra files
 come from Kirill Solonin and Shintaro Arakawa's edition, whose two ILCAA volumes are CC BY 4.0
 (volume 2: <https://hdl.handle.net/10108/0002001372>). The other texts are cited individually above.
+
+## The road word in the two Jacques texts
+
+`類林.txt` and `慈孝傳.txt` come from Guillaume Jacques's editions, and a lookup by his number puts the
+road word on dictionary entry 0021, the elephant 𗵚 (U+17D5A). The road entry is 0020, 𗵘 (U+17D58).
+[Babelstone's English index to Li Fanwen's 2008
+dictionary](https://www.babelstone.co.uk/Tangut/XHZD_EnglishIndex.html) lists 0021 under *elephant* and
+0020 under *road*, and [his index to the 1997
+dictionary](https://www.babelstone.co.uk/Tangut/XHZD_Index.html) gives 0020 as tśja 1.19 and 0021 as bju
+1.2. So a transcription made from the number carries the elephant wherever the text means 路 or 道.
+
+- The 33 rows of the 類林 table numbered 0021 carry the road word's own rhyme 1.19 and the gloss 路 or 道.
+- 韓小忙 2021, 《西夏文詞典・世俗文獻部分》 vol. 5, enters 《類林》16A3 借道 `tsja¹ mjir²` under 0020.
+- Jacques's *Textes tangoutes I* sets the road glyph beside number 21 at 2.2, 4.4, 5.4, 9.3, 14.3,
+  18.5, 25.2, 28.3, 29.1 and 31.6; the transcription has 𗵚 at that position in nine of them.
+
+`scripts/build_tangut_attestation.py` reads 𗵘 at those places. The files above stay as they were copied,
+and the number of places is pinned, so a snapshot that changes it stops the build. At 14.3 the
+transcription has a different character there (𗦰); that one place is not corrected.

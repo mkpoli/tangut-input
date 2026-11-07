@@ -127,7 +127,8 @@ export const loadChineseRhymes = () => once('chineseRhymes', () => readJson(new 
 export const loadTibetanHands = () => once('tibetanHands', () => readJson(new URL('../data/tangut-tibetan-hands.json', import.meta.url)))
 /** Alan Downes's English gloss for each character he records. @returns {Promise<{ glosses: Record<string, string> } | null>} */
 export const loadDownes = () => once('downes', () => readJson(new URL('../data/tangut-downes.json', import.meta.url)))
-/** The Chinese words the Tangut 類林 uses for a character, the commonest first. @returns {Promise<{ glosses: Record<string, [string, number][]> } | null>} */
+/** The Chinese words the Tangut 類林 uses for a character, the commonest first, and the character
+ *  corrections the builder applied. @returns {Promise<{ glosses: Record<string, [string, number][]>, corrections: { from: string, to: string, rows: number, key: Record<string, string>, basis: string }[] } | null>} */
 export const loadLeilin = () => once('leilin', () => readJson(new URL('../data/tangut-leilin.json', import.meta.url)))
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
 
