@@ -2,7 +2,7 @@
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { indexTibetan } from './tibetan.js'
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
-import { possiblePairs, variantIndex } from './variants.js'
+import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
 import { indexIdsDescriptions } from './ids-views.js'
@@ -39,6 +39,8 @@ export const ix = {
   /** Recorded and editorial descriptions, ordered for prefix search. @type {[string, string][]} */ descriptions: [],
   /** Variant forms, stated and possible. @type {Map<string, import('./variants.js').Variants>} */ variants: new Map(),
   /** @type {import('./variants.js').PossiblePair[]} */ variantPairs: [],
+  /** @type {import('./variants.js').Family[]} */ variantGroups: [],
+  /** The group each character stands in. @type {Map<string, import('./variants.js').Family>} */ familyOf: new Map(),
   /** Cangjie codes by character, shortest first. @type {Map<string, string[]>} */ codes: new Map(),
   /** Every [code, character] pair, ordered by code. @type {[string, string][]} */ codeList: [],
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
@@ -94,6 +96,8 @@ export async function load() {
     ix.descriptions = indexDescriptions(entries, ix.idsIndex)
     ix.variantPairs = possiblePairs(entries)
     ix.variants = variantIndex(ix.variantPairs)
+    ix.variantGroups = variantFamilies(ix.variantPairs)
+    ix.familyOf = familyIndex(ix.variantGroups)
     ix.names = names
     ix.partNames = partNames
     for (const [char, code] of pairs) {
