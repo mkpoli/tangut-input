@@ -479,6 +479,67 @@ await step('the app settings change the scheme, theme, face and language', async
 })
 await SETTINGS.close()
 
+const DESKTOP_APP = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: 'light' })
+const desktop = await DESKTOP_APP.newPage()
+await desktop.goto(`${APP}/cangjie`)
+await desktop.locator('main.finder').waitFor()
+await step('a wide-screen group opens its finders in a menu that closes on Escape', async () => {
+  const shape = desktop.getByRole('button', { name: 'From a shape', exact: true })
+  await shape.focus()
+  await desktop.keyboard.press('Enter')
+  const menu = desktop.locator('.nav-menu')
+  await menu.waitFor()
+  assert.equal(await shape.getAttribute('aria-expanded'), 'true', 'the button reports the menu open')
+  assert.equal(await menu.getByRole('link').count(), 4, 'the menu lists the group finders')
+  assert.equal(await menu.getByRole('link', { name: /^Cangjie/ }).getAttribute('aria-current'), 'page', 'the open finder is marked')
+  await desktop.keyboard.press('Tab')
+  assert.equal(await desktop.evaluate(() => document.activeElement?.textContent?.includes('Cangjie')), true, 'Tab enters the menu')
+  await desktop.keyboard.press('Escape')
+  await menu.waitFor({ state: 'hidden' })
+  assert.equal(await shape.evaluate(el => el === document.activeElement), true, 'Escape returns focus to the button')
+})
+await step('a wide-screen menu closes on an outside click and on the page it opens', async () => {
+  const shape = desktop.getByRole('button', { name: 'From a shape', exact: true })
+  await shape.click()
+  const menu = desktop.locator('.nav-menu')
+  await menu.waitFor()
+  await desktop.mouse.click(1200, 800)
+  await menu.waitFor({ state: 'hidden' })
+  await shape.click()
+  await menu.waitFor()
+  await menu.getByRole('link', { name: /^Draw/ }).click()
+  await desktop.waitForURL(/\/draw(\?|$)/)
+  assert.equal(await menu.count(), 0, 'the menu closes on the page it opens')
+  assert.equal(await shape.getAttribute('aria-current'), 'true', 'the group stays marked on a page inside it')
+})
+await step('More holds the introduction, the Gyalrongic note and Sources on a wide screen', async () => {
+  const more = desktop.getByRole('button', { name: 'More', exact: true })
+  await more.click()
+  const menu = desktop.locator('.nav-menu')
+  await menu.waitFor()
+  assert.deepEqual(await menu.getByRole('link').evaluateAll(links => links.map(link => link.querySelector('span')?.textContent)), ['Introduction', 'Gyalrongic literature', 'Sources'])
+  await menu.getByRole('link', { name: /^Introduction/ }).click()
+  await desktop.waitForURL(/\/intro$/)
+  assert.equal(await menu.count(), 0, 'the menu closes on the page it opens')
+  assert.equal(await more.getAttribute('aria-current'), 'true', 'More is marked on the introduction')
+})
+await step('the bar keeps one row at 1280 and two at 901', async () => {
+  await desktop.setViewportSize({ width: 1280, height: 1000 })
+  assert.ok(await desktop.locator('.top').evaluate(el => el.getBoundingClientRect().height) < 60, 'the bar is one row at 1280')
+  await desktop.setViewportSize({ width: 901, height: 1000 })
+  assert.equal(Math.round(await desktop.locator('.top').evaluate(el => el.getBoundingClientRect().height)), 96, 'the bar is two rows at 901')
+  await desktop.getByRole('button', { name: 'More', exact: true }).click()
+  const menu = desktop.locator('.nav-menu')
+  await menu.waitFor()
+  const bounds = await menu.evaluate(el => {
+    const box = el.getBoundingClientRect()
+    return { left: box.left, right: box.right, view: innerWidth }
+  })
+  assert.ok(bounds.left >= 0 && bounds.right <= bounds.view + 1, `the menu stays on screen (${Math.round(bounds.left)}–${Math.round(bounds.right)} in ${bounds.view})`)
+  assert.ok(await desktop.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'an open menu does not widen the page')
+})
+await DESKTOP_APP.close()
+
 await step('the input method takes the digits of a code and picks after letters', async () => {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
   const page = await context.newPage()
@@ -523,59 +584,6 @@ await step('the tablet bar has two rows and settings closes when the layout chan
 })
 await TABLET_SETTINGS.close()
 
-const DESKTOP_BAR = await browser.newContext({ viewport: { width: 1920, height: 900 }, colorScheme: 'light' })
-const desktopBar = await DESKTOP_BAR.newPage()
-await desktopBar.goto(`${APP}/`)
-await desktopBar.locator('main.finder').waitFor()
-await step('the introduction has its own place in the desktop bar', async () => {
-  const navIntro = desktopBar.locator('nav.finders a[href="/intro"]')
-  const headerIntro = desktopBar.locator('.intro-extra')
-  const layout = () => desktopBar.evaluate(() => {
-    const nav = document.querySelector('nav.finders')
-    const navLink = nav?.querySelector('a[href="/intro"]')
-    const extra = document.querySelector('.intro-extra')
-    const header = document.querySelector('.top')
-    const navRect = nav?.getBoundingClientRect()
-    const navLinkRect = navLink?.getBoundingClientRect()
-    const extraRect = extra?.getBoundingClientRect()
-    const headerRect = header?.getBoundingClientRect()
-    const shown = el => Boolean(el && el.getClientRects().length && getComputedStyle(el).display !== 'none')
-    return {
-      bar: Math.round(headerRect?.height ?? 0),
-      navShown: shown(navLink),
-      navFits: Boolean(shown(navLink) && navLinkRect && navRect && navLinkRect.right <= navRect.left + nav.clientWidth + 1),
-      extraShown: shown(extra),
-      extraFits: Boolean(shown(extra) && extraRect && headerRect && extraRect.right <= headerRect.right + 1),
-    }
-  })
-  await desktopBar.goto(`${APP}/`)
-  await desktopBar.locator('main.finder').waitFor()
-  assert.deepEqual(await layout(), { bar: 54, navShown: true, navFits: true, extraShown: false, extraFits: false }, 'the bar keeps one row at 1920')
-  await navIntro.click()
-  await desktopBar.waitForURL(/\/intro$/)
-  assert.equal(await navIntro.getAttribute('aria-current'), 'page', 'the introduction is marked as current')
-  assert.equal(await desktopBar.locator('footer.foot a[href="/intro"]').count(), 0, 'the footer holds sources only')
-  for (const [width, bar] of [[1719, 96], [1720, 54], [1440, 96], [1280, 96], [1279, 96], [1141, 96], [1140, 96], [1024, 96]]) {
-    await desktopBar.setViewportSize({ width, height: 900 })
-    await desktopBar.goto(`${APP}/`)
-    await desktopBar.locator('main.finder').waitFor()
-    const state = await layout()
-    assert.equal(state.bar, bar, `the bar height at ${width}`)
-    if (width >= 1280) {
-      assert.equal(state.navShown, true, `the finder row carries the introduction at ${width}`)
-      assert.equal(state.navFits, true, `the introduction fits the finder row at ${width}`)
-      assert.equal(state.extraShown, false, `the first row has no duplicate at ${width}`)
-    } else {
-      assert.equal(state.navShown, false, `the finder row leaves the introduction at ${width}`)
-      assert.equal(state.extraShown, true, `the first row carries the introduction at ${width}`)
-      assert.equal(state.extraFits, true, `the introduction fits the first row at ${width}`)
-    }
-  }
-  await desktopBar.goto(`${APP}/intro`)
-  await desktopBar.locator('main.finder').waitFor()
-  assert.equal(await headerIntro.getAttribute('aria-current'), 'page', 'the first-row introduction is marked as current')
-})
-await DESKTOP_BAR.close()
 
 await step('a choice in the card stays while a code is typed', async () => {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })

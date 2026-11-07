@@ -49,17 +49,26 @@ export const GROUPS = /** @type {const} */ ([
   },
 ])
 
-/** @typedef {typeof PRIMARY | typeof GROUPS[number]['pages'][number]} PageEntry */
+// The pages outside the finder groups: the introduction, the Gyalrongic note and the sources.
+export const MORE = /** @type {const} */ ([
+  { path: 'intro', label: 'nav.intro', icon: 'book', hint: 'nav.intro.hint' },
+  { path: 'gyalrongic', label: 'gyalrongic.title', icon: 'book', hint: 'gyalrongic.hint' },
+  { path: 'about', label: 'nav.sources', icon: 'sources', hint: 'nav.sources.hint' },
+])
+
+/** @typedef {typeof GROUPS[number]['pages'][number] | typeof MORE[number]} MenuEntry */
+
+/** @typedef {typeof PRIMARY | MenuEntry} PageEntry */
 
 /** @type {PageEntry[]} */
 export const PAGES = [PRIMARY, ...GROUPS.flatMap(group => /** @type {PageEntry[]} */ ([...group.pages]))]
 
-/** @typedef {PageEntry['path'] | 'about' | 'intro' | 'variants' | 'gyalrongic'} Page */
+/** @typedef {PageEntry['path'] | 'variants'} Page */
 
 /** @returns {{ page: Page, q: string, c: string }} */
 function read() {
   const path = location.pathname.replace(/^\/+|\/+$/g, '')
-  const page = /** @type {Page} */ ([...PAGES.map(p => p.path), 'about', 'intro', 'variants', 'gyalrongic'].includes(path) ? path : '')
+  const page = /** @type {Page} */ ([...PAGES, ...MORE].some(entry => entry.path === path) || path === 'variants' ? path : '')
   const params = new URLSearchParams(location.search)
   const code = params.get('c') ?? ''
   const c = /^[0-9a-f]{4,5}$/i.test(code) ? String.fromCodePoint(parseInt(code, 16)) : ''
