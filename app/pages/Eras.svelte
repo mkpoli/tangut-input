@@ -204,7 +204,7 @@
               <td class="years">{era.years.join('–')}</td>
               <td class="forms title-form">{#if era.tangut}<span class="form" role="group" aria-label={era.tangut}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
                 aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{:else}<span class="ui-hint">{t('eras.contemporary.unverified')}</span>{/if}</td>
-              <td class="basis"><span class="tag" data-kind="reported">{t('eras.contemporary.tentative')}</span>{@render cites([era.source])}<p class="note">{t('eras.contemporary.note')}</p></td>
+              <td class="basis"><span class="tag" data-kind="reported">{t('eras.contemporary.tentative')}</span>{@render cites([era.source])}<p class="note">{t('eras.contemporary.note')}</p><p class="note">{t('eras.contemporary.dictionary')}{@render cites(era.dictionarySources)}</p></td>
             </tr>
           {/each}
         </tbody>

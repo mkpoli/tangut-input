@@ -233,6 +233,20 @@ export const ERA_SOURCES = {
     note: 'Tentatively reads the inscription of a privately held decorative object as 贞祐宝钱 and acknowledges possible doubt. Its authenticity, date and official status are unestablished.',
     url: 'https://collection.sina.com.cn/qbtd/2019-04-10/doc-ihvhiqax1350522.shtml',
   },
+  clauson2016: {
+    author: 'Gerard Clauson',
+    title: 'Gerard Clauson’s Skeleton Tangut (Hsi Hsia) Dictionary',
+    where: 'Evertype, 2016, f. 115r, entry 1530; Internet Archive, borrowable scan',
+    note: 'The entry gives 祐 and 助, and “to protect or help”. Its headword does not establish the identity of the character in the photograph.',
+    url: 'https://archive.org/details/gerardclausonssk0001unse/page/233/mode/1up',
+  },
+  westClausonIndex: {
+    author: 'Andrew West',
+    title: 'Index to Gerard Clauson’s Skeleton Tangut (Hsi Hsia) Dictionary',
+    where: 'Corpus Textuum Tangutorum 1, electronic character index',
+    note: 'Indexes entry 1530, f. 115, under 𘑨 (L0645). This identifies the dictionary headword, not the photographed character.',
+    url: 'https://www.babelstone.co.uk/CTT/CTT01/CTT01-index.html',
+  },
   duan2024: {
     author: '段玉泉',
     title: '元朝建號前蒙古汗國時期的西夏文獻',
@@ -279,5 +293,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'lizi2019',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'lizi2019', 'clauson2016', 'westClausonIndex',
 ])
