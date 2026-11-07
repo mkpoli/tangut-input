@@ -343,6 +343,7 @@
   "card.tone.entering": "입성",
   "parts.splitTitle": "{part}을 이루는 부품으로 나누기",
   "parts.info.oneCharacter": "1자",
+  "parts.info.hint": "모양 추정",
   "parts.names.title": "부품 이름 비교",
   "parts.names.hint": "읽은 자료에 기록된 이름만 채웁니다. 줄표는 기록이 없는 칸입니다.",
   "parts.names.component": "부품",

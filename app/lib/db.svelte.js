@@ -1,7 +1,7 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { indexTibetan } from './tibetan.js'
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadFrequency, loadSupplement } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement } from './data.js'
 import { loadReadingSources } from './data.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
@@ -17,7 +17,7 @@ export { OPERATORS, isTangut }
 export const isComponent = char => /^[\u{18800}-\u{18AFF}\u{18D80}-\u{18DFF}]$/u.test(char)
 /** The ranges a bundled face draws: Noto Serif Tangut 2.168 through the old end of each block, and
  *  the Tangut N4694 subset for what it lacks. @type {[number, number][]} */
-const GLYPH_RANGES = [[0x17000, 0x187F7], [0x18800, 0x18AFF], [0x18D00, 0x18D20], [0x18D80, 0x18DF2]]
+const GLYPH_RANGES = [[0x17000, 0x187FF], [0x18800, 0x18AFF], [0x18D00, 0x18D20], [0x18D80, 0x18DF2]]
 /** Whether the bundled faces draw the character. @param {string} char */
 export const hasGlyph = char => {
   const code = char.codePointAt(0) ?? 0
@@ -75,6 +75,7 @@ export const ix = {
   /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
   /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
   /** The components Tangut Components Supplement adds. @type {string[]} */ supplementComponents: [],
+  /** Editorial shape hints by component, not names. @type {Map<string, { name: string, char: string, score: number, strokes: number | null, sameStrokes: boolean }[]>} */ shapeHints: new Map(),
   /** Characters one component away, built on the first ask: a reader who means one shape and draws
    *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
   /** Whether the sibling index has been built. */ siblingsReady: false,
@@ -83,10 +84,10 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, frequency, supplement, cited] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
       loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
-      loadPartNames().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
+      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
     ])
     ix.citations = cited?.citations ?? {}
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
@@ -121,6 +122,7 @@ export async function load() {
     ix.familyOf = familyIndex(ix.variantGroups)
     ix.names = names
     ix.partNames = partNames
+    ix.shapeHints = new Map((shapeHints?.components ?? []).map(row => [row.char, row.candidates]))
     for (const [char, code] of pairs) {
       const list = ix.codes.get(char)
       if (list) list.push(code)

@@ -343,6 +343,7 @@
   "card.tone.entering": "入声",
   "parts.splitTitle": "将{part}拆分为构成它的部件",
   "parts.info.oneCharacter": "1个字符",
+  "parts.info.hint": "形状推测",
   "parts.names.title": "不同语言中的部件名",
   "parts.names.hint": "只列出所查资料中记录的名称；短横线表示尚无记录。",
   "parts.names.component": "部件",

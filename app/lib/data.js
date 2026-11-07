@@ -111,6 +111,9 @@ export const loadTangutNames = () => once('tangut-names', async () => (await rea
 /** The same names compared across the languages that record one. @returns {Promise<{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] }>} */
 export const loadPartNames = () => once('part-names', () => readJson(new URL('../data/tangut-part-names.json', import.meta.url)))
 
+/** Editorial shape hints, not attested names. @returns {Promise<{ components: { char: string, named: boolean, candidates: { name: string, char: string, score: number, strokes: number | null, sameStrokes: boolean }[] }[] }>} */
+export const loadShapeHints = () => once('shape-hints', () => readJson(new URL('../data/tangut-component-shape-hints.json.gz', import.meta.url)))
+
 /** Four-corner codes as [character, six digits] pairs, from the rhyme-dictionary table. @returns {Promise<[string, string][]>} */
 export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/tangut-sijiao.json.gz', import.meta.url)))
 
