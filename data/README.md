@@ -52,6 +52,12 @@ record names its source, licence, line ids and the exact text; the thirteen famo
 `scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the Wikisource
 texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausanne Corpus.
 
+## Hanzi correspondences
+
+[`tangut-hanzi.json`](<../app/data/tangut-hanzi.json>) contains character glosses from Guillaume Jacques’s [Leilin database](<https://www.academia.edu/25078937/Leilin_database>) and whole-name pairs from the era, title, state-name and posthumous-name tables. Each pair carries its source, evidence type and available passage reference; the source records preserve attribution and caveats from the [Names bibliography](<../app/lib/era-sources.js>). The 類林 glosses retain their occurrence counts and the [pinned intermediary](<https://github.com/tinbreaker/tangut-text/tree/820fe592c8c0b1512867c70e5c84395a042667f3>); no licence is stated.
+
+Rebuild from the local source tables with `bun scripts/build_tangut_hanzi.mjs`. The [Hanzi library](<../app/lib/hanzi.js>) indexes character glosses separately from whole names: 大白高國 corresponds to 𗴂𗹭𗂧𘜶 as a phrase, whose word order differs from the Chinese. Search uses the recorded spelling, with every alternative and its evidence available in the result.
+
 ## `tangut-era-evidence.tsv`
 
 What each Tangut era form rests on, one row per form and source: the era and its first year as the
