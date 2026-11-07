@@ -45,7 +45,7 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Gong Hwang-cherng's
   and Gong Xun's readings from the
   [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db),
-  descriptions from BabelStone's Tangut IDS, and the 文海's own entry text where it carries one;
+  descriptions from BabelStone's Tangut IDS, and the 文海's Chinese entry text where it carries one;
   built by `scripts/build_tangut_entries.py` from `data/wiktionary/`, `data/gong-xun/` and
   `data/wenhai/`.
 - `app/data/tangut-ccamc-index.json.gz`: normalized terms from CCAMC's records, used only to answer

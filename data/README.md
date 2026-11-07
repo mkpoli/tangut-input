@@ -650,8 +650,8 @@ modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyak
 Sofronov 1968, Nishida 1966), Gong Hwang-cherng's GHC and Gong Xun's GX202411 from the Tangut
 Pronunciation Database, English
 meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
-BabelStone's IDS description, the 文海's entry text for the twelve characters it carries in this
-snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
+BabelStone's IDS description, the 文海's Chinese entry text for the six characters it carries in
+this snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
 meanings are CC BY-SA 4.0; GHC and GX202411 are cited from the Tangut Pronunciation Database under
 its Limited Public Use licence; the description is public domain; the radical and stroke data are
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
