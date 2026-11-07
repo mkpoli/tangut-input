@@ -5,12 +5,14 @@
 
   /** @type {{ char: string, text?: string }} */
   let { char, text = '' } = $props()
-  const han = $derived(hanGloss(db.status === 'ready' ? ix.leilin.get(char) : undefined))
+  const han = $derived(db.status === 'ready'
+    ? hanGloss(ix.leilin.get(char), ix.byChar.get(char)?.definitions?.zh)
+    : hanGloss(undefined))
 </script>
 
 {#if han.text || text}
   <span class="ui-tile-note tile-note">
-    {#if han.text}<span class="ui-tile-han" lang="zh-Hant" title={`${t('card.leilinTitle')}: ${han.title}`}>{han.text}</span>{/if}
+    {#if han.text}<span class="ui-tile-han" lang={han.source === 'wiktionary' ? 'zh' : 'zh-Hant'} title={`${t(han.source === 'wiktionary' ? 'card.chineseWiktionary' : 'card.leilinTitle')}: ${han.title}`}>{han.text}</span>{/if}
     {#if text && text !== han.text}<span class="ui-tile-note-text" title={text}>{text}</span>{/if}
   </span>
 {/if}

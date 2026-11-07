@@ -10,7 +10,8 @@ Displayable fields come from sources the site can republish:
   Xun Gong's reconstructions from the Tangut Pronunciation Database (Limited Public Use, cited per
   character);
 - the English definitions in Wiktionary's Tangut entries, through Kaikki's extract;
-- the Japanese definitions on ja.wiktionary (CC BY-SA 4.0);
+- the Japanese definitions on ja.wiktionary and Chinese definitions in the pinned zhwiktionary
+  snapshot (CC BY-SA 4.0);
 - BabelStone's Tangut IDS (public domain);
 - the 文海's own entry text (12th century, public domain);
 - Unicode's TangutSources radical and stroke data.
@@ -137,6 +138,7 @@ def main():
     ids = babelstone()
     en = kaikki()
     ja = gz(ROOT / 'data/wiktionary/definitions-ja.json.gz')['pages']
+    zh = gz(ROOT / 'data/wiktionary/definitions-zh.json.gz')['pages']
     readings = gz(ROOT / 'data/wiktionary/txg-readings.json.gz')['systems']
     gong_hwang = gz(ROOT / 'data/gong-xun/ghc.json.gz')['readings']
     gong_xun = gz(ROOT / 'data/gong-xun/gx202411.json.gz')['readings']
@@ -147,7 +149,7 @@ def main():
         char, composition, strokes, radical = row[0], row[1], row[2], row[3]
         definitions_en = en.get(char, [])
         definitions_ja = ja.get(char, {}).get('definitions') or []
-        definitions_zh = []
+        definitions_zh = zh.get(char, {}).get('definitions') or []
         pron = [
             readings['li_fanwen'].get(char, ''),
             gong_hwang.get(char, ''),

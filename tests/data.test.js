@@ -17,7 +17,7 @@ test('the packed records keep every character, the five Wiktionary readings and 
   expect(first[7]).toEqual(['do1', 'do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
   expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
   expect(first[5]).toEqual(['毒'])
-  expect(first[6]).toEqual([])
+  expect(first[6]).toEqual(['毒', '下毒者', '毒死'])
   expect(first[8]).toBe('Composed of the middle of 𘊓 "scorpion" and the right of "𗀋".')
   expect(first[9]).toBe('蝎中蛇右。')
 })
@@ -31,7 +31,9 @@ test('the displayable meanings cover only the Wiktionary entries', () => {
   const count = column => entries.rows.filter(row => row[column]?.length).length
   expect(count(4)).toBe(457)
   expect(count(5)).toBe(278)
-  expect(count(6)).toBe(0)
+  expect(count(6)).toBe(110)
+  const snapshot = JSON.parse(gunzipSync(readFileSync(new URL('../data/wiktionary/definitions-zh.json.gz', import.meta.url))).toString())
+  for (const row of entries.rows) expect(row[6]).toEqual(snapshot.pages[row[0]]?.definitions ?? [])
 })
 
 test('every Tibetan spelling stands at a crossing the chart draws', () => {

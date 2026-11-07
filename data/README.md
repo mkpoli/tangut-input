@@ -17,6 +17,26 @@ snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
 underlying editions are in `wikisource/README.md` and in the source records of the built file.
 
+## `wiktionary/definitions-zh.json.gz`
+
+Chinese Wiktionary's Tangut definitions from the [2026-11-01 dump](https://dumps.wikimedia.org/zhwiktionary/20261101/),
+SHA1 `bd139bae2c7c9f5fad6d6a347d07296bf9bcabdc`, checked against Wikimedia's
+[checksum list](https://dumps.wikimedia.org/zhwiktionary/20261101/zhwiktionary-20261101-sha1sums.txt).
+Each page retains its revision, timestamp, latest editor, contributor-history URL and original wikitext.
+The snapshot contains 152 displayable senses for 110 characters; unresolved markup and three
+identified source inconsistencies remain in its rejected records.
+
+Licence: **CC BY-SA 4.0**, Chinese Wiktionary contributors, under the
+[recorded copyright notice](https://zh.wiktionary.org/w/index.php?title=Wiktionary:%E7%89%88%E6%9D%83%E4%BF%A1%E6%81%AF&oldid=8368252).
+The latest editor is one contributor; the linked page history provides the others.
+The primary dictionaries were not checked, and some reference templates link to CCAMC.
+[Coverage and source limitations](../docs/han-glosses.md).
+
+```sh
+uv run scripts/extract_tangut_chinese.py --dump /path/to/zhwiktionary-20261101-pages-articles.xml.bz2 --retrieved 2026-11-07
+uv run scripts/build_tangut_entries.py
+```
+
 ## `mica/`
 
 Two texts the Mi Corpus Annotation Group transcribed itself: 華嚴經 juan 77, from the images in 荒川慎太郎

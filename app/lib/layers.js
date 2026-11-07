@@ -71,7 +71,10 @@ export function layerValue(layer, char, data) {
       const value = data.entry?.pronunciations?.[layer.system === CURRENT || !layer.system ? data.reading : layer.system]?.trim() ?? ''
       return { text: value, title: value }
     }
-    case 'sinograph': return hanGloss(data.leilin)
+    case 'sinograph': {
+      const gloss = hanGloss(data.leilin, definitions.zh)
+      return { text: gloss.text, title: gloss.source === 'wiktionary' ? `Wiktionary: ${gloss.title}` : gloss.title }
+    }
     case 'japanese': return sense(definitions.ja)
     case 'wiktionary': return sense(definitions.en)
     case 'downes': return { text: firstSense(data.downes), title: data.downes ?? '' }

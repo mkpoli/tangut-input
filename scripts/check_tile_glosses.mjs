@@ -10,6 +10,7 @@ import { chromium } from 'playwright-core'
 const root = new URL('..', import.meta.url).pathname
 const out = process.argv[2]
 const captureOnly = process.argv.includes('--capture-only')
+const query = process.env.TILE_QUERY ?? 'tiger'
 const origin = 'http://tangut.test'
 const cache = join(homedir(), '.cache/ms-playwright')
 const executablePath = readdirSync(cache).filter(name => name.startsWith('chromium-')).sort().reverse()
@@ -31,7 +32,7 @@ try {
         const page = await context.newPage()
         const errors = []
         page.on('pageerror', error => errors.push(error.message))
-        await page.goto(`${origin}/?q=tiger`)
+        await page.goto(`${origin}/?q=${encodeURIComponent(query)}`)
         await page.locator('.ui-tile-note').first().waitFor()
         await page.evaluate(() => document.fonts.ready)
         if (!captureOnly) {
@@ -47,6 +48,22 @@ try {
           assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'no horizontal page overflow')
         }
         if (out) await page.screenshot({ path: join(out, `find-${phone ? 'phone' : 'desktop'}-${colorScheme}.png`) })
+        if (!captureOnly && query === 'poison') {
+          const tile = page.locator('.ui-tile').filter({ has: page.locator('.ui-tile-han', { hasText: /^毒$/ }) }).first()
+          assert.match(await tile.locator('.ui-tile-han').getAttribute('title'), /Chinese Wiktionary: 毒；下毒者；毒死/)
+          await tile.click()
+          const meanings = page.locator('.means dd[lang="zh"]')
+          await meanings.waitFor({ state: 'visible' })
+          assert.equal(await meanings.innerText(), '毒；下毒者；毒死')
+          assert(await page.locator('.means a[href*="zh.wiktionary.org"]').count(), 'the Chinese source is linked on the card')
+          // Chinese terms imported into the records answer the visible meaning search.
+          await page.goto(`${origin}/?q=${encodeURIComponent('吸')}`)
+          await page.locator('.ui-tile-han', { hasText: /^吸$/ }).first().waitFor()
+          await page.goto(`${origin}/?q=bridge`)
+          const bridge = page.locator('.ui-tile').filter({ has: page.locator('.ui-tile-han', { hasText: /^橋$/ }) }).first()
+          await bridge.waitFor()
+          assert.equal(await bridge.locator('.ui-tile-note-text').innerText(), 'bridge', 'Downes English stays visible alongside the imported Chinese')
+        }
         // The shared Candidates grid used by the Parts and Draw pages.
         await page.goto(`${origin}/parts?q=${encodeURIComponent('𘠁')}`)
         await page.locator('.matches .ui-tile-note').first().waitFor()

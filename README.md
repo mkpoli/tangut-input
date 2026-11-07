@@ -29,19 +29,20 @@ it into your text. <https://tangut.mkpo.li/>
   part shows its code point, component number, strokes, uses, Cangjie codes and name. A collapsible
   table compares the names across the languages that record one.
 
-The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
+The card of a character shows its code point, Cangjie codes, meanings in English, Japanese and Chinese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
-further readings and meanings are linked to CCAMC's page for the character rather than copied.
-Character tiles carry a reconstruction above the glyph — the one chosen at the top bar, or the one
-a reading search matched — with the finder's own note below it. The text being written stays in the
+further readings and meanings are linked to CCAMC's page for the character.
+Character tiles show the chosen reconstruction above the glyph, then a Chinese gloss and the
+finder's note. Chinese glosses come from Wiktionary, with contextual words from 類林 where
+Wiktionary has none; [coverage and sources](docs/han-glosses.md). The text being written stays in the
 browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).
 
 ## Data
 
-- `app/data/tangut-entries.json.gz`: five readings and English and Japanese meanings from
+- `app/data/tangut-entries.json.gz`: five readings and English, Japanese and Chinese meanings from
   [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Gong Hwang-cherng's
   and Gong Xun's readings from the
   [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db),
