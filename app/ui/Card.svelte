@@ -5,6 +5,7 @@
   import { db, ix, codePoint, gloss, isComponent, readingOf } from '../lib/db.svelte.js'
   import { onMount } from 'svelte'
   import G from './G.svelte'
+  import TileNote from './TileNote.svelte'
   import Icon from './Icon.svelte'
   import { route, link } from '../lib/route.svelte.js'
   import { ui, put, choose } from '../lib/ui.svelte.js'
@@ -355,7 +356,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -370,7 +371,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -385,7 +386,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -463,7 +464,6 @@
   .wenhai-sep{color:var(--ui-color-ink-muted)}
   .wenhai-position{margin-inline-start:auto;font-size:var(--ui-text-2xs);letter-spacing:0}
   .rel{gap:3px}
-  .rel .ui-tile-note{font-size:var(--ui-text-2xs)}
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}
   .credit{border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg);font-size:var(--ui-text-2xs);line-height:1.6;margin-top:var(--ui-space-xl)}
