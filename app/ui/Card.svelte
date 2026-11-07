@@ -19,8 +19,10 @@
   import Attest from './Attest.svelte'
   import { loadWenhaiComposition } from '../lib/data.js'
   import Peek from './Peek.svelte'
+  import Spelling from './Spelling.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
+  import { bookTitle } from '../lib/books.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -38,8 +40,25 @@
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
   const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
+  // The group the character stands in, when a pair list would hide part of it: a chain of stated
+  // forms, or the pair someone reported.
+  const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
+  const linkedGroup = $derived(family && (family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) ? family : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
+  const READING_FIELDS = /** @type {readonly { key: string, name?: string, zh?: string, label?: string, lang: string }[]} */ ([
+    { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文', lang: 'zh-Hant' },
+    { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山', lang: 'zh-Hant' },
+    { key: 'tibetan', label: 'card.tibetan', lang: 'bo' },
+  ])
+  /** A transcribed field's label: a sound gloss names the scholar in the reader's script, a
+   * transcription its own script. @param {{ name?: string, zh?: string, label?: string }} field */
+  const fieldLabel = field => {
+    if (!field.name) return t(/** @type {string} */ (field.label))
+    const name = /^(ja|zh|ko)/.test(i18n.locale) && field.zh ? field.zh : field.name
+    return t('card.soundGloss', { name })
+  }
+
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
   // is read from. 文海 where it has one, 合編 where it does not.
@@ -53,16 +72,39 @@
         : rhyme?.[1] === 4 ? 'card.tone.entering'
           : '',
   )
-  const spelling = $derived(
-    rhyme?.[3] || rhyme?.[4] ? [rhyme[3], rhyme[4]].filter(Boolean).join('')
-      : rhyme?.[5] || rhyme?.[6] ? [rhyme[5], rhyme[6]].filter(Boolean).join('')
-        : '',
-  )
+  const spelling = $derived.by(() => {
+    if (!rhyme) return ''
+    /** @param {string | null | undefined} value */
+    const cell = value => (value && value !== '?' ? value : '')
+    const upper = [cell(rhyme[3]), cell(rhyme[4])].filter(Boolean)
+    if (upper.length) return upper.join('')
+    return [cell(rhyme[5]), cell(rhyme[6])].filter(Boolean).join('')
+  })
 
   const same = $derived.by(() => {
     if (!entry?.composition) return []
     return ix.entries.filter(other => other.char !== char && other.composition === entry.composition).map(other => other.char)
   })
+  /**
+   * The books and pages a keyed value stands on. @param {string} field
+   * @returns {{ work: string, locator: string, note: string }[]}
+   */
+  const cites = field => ix.citations[char]?.[field] ?? []
+
+  /**
+   * A locator as the reader sees it: a 掌中珠 column is canvas, band and column, the rest is the
+   * page as written. @param {string} locator
+   */
+  const place = locator => locator
+    .replace(/^canvas (\d+) band (\d+) c(\d+)$/, (_, canvas, band, column) => `${canvas}·${band}·${column}`)
+    .replace(/^canvas (\d+) c(\d+)$/, (_, canvas, column) => `${canvas}·${column}`)
+
+  // The readings keyed from the editions — 音（李范文）, 音（聂历山）, the 藏文對音 — each with the
+  // page it stands on. They stand in the readings table like every other reading.
+  const keyed = $derived(READING_FIELDS
+    .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cites: cites(field.key) }))
+    .filter(field => field.value))
+
   const homophones = $derived.by(() => {
     const li = entry?.pronunciations?.li_fanwen?.trim()
     if (!li) return []
@@ -230,7 +272,15 @@
         <dl class="means">
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
-          {#if meanings.zh?.length}<dt>zh</dt><dd lang="zh-Hant">{meanings.zh.join('；')}</dd>{/if}
+          {#if meanings.zh?.length}
+            <dt>zh</dt>
+            <dd lang="zh-Hant">
+              {meanings.zh.join('；')}
+              {#each cites('gloss_zh') as cite (cite.locator)}
+                <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+              {/each}
+            </dd>
+          {/if}
           {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}
           {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
         </dl>
@@ -260,17 +310,51 @@
             <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
+        {#if linkedGroup}
+          <p class="ui-hint">{t('card.family')}</p>
+          <div class="group">
+            {#each linkedGroup.links as link (link.one + link.other + link.kind)}
+              {@const one = readingOf(link.one, ui.reading)}
+              {@const other = readingOf(link.other, ui.reading)}
+              <span class="group-link">
+                <button class="ui-tile" type="button" aria-current={link.one === char ? 'true' : undefined} title={gloss(link.one)} onclick={() => choose(link.one)}><G char={link.one} />{#if one}<span class="ui-tile-sound">{one}</span>{/if}</button>
+                <span class="chain-tie" aria-hidden="true"></span>
+                <button class="ui-tile" type="button" aria-current={link.other === char ? 'true' : undefined} title={gloss(link.other)} onclick={() => choose(link.other)}><G char={link.other} />{#if other}<span class="ui-tile-sound">{other}</span>{/if}</button>
+                <span class="ui-tag">{t(`variants.link.${link.ground}`)}</span>
+              </span>
+            {/each}
+          </div>
+        {/if}
         <p class="more"><a href={link('variants', char)}><Icon name="arrow" size={13}/>{t('card.variantsAll')}</a></p>
       </section>
     {/if}
 
-    {#if readings.length}
+    {#if readings.length || keyed.length || rhymeClass}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
           <tbody>
             {#each readings as reading (reading.key)}
-              <tr><th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th><td>{reading.value}</td></tr>
+              <tr>
+                <th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th>
+                <td>
+                  {reading.value}
+                  {#each cites(reading.key) as cite (cite.locator)}
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+                  {/each}
+                </td>
+              </tr>
+            {/each}
+            {#each keyed as field (field.key)}
+              <tr>
+                <th scope="row" title={field.name ? `${field.name} · ${field.zh}` : fieldLabel(field)}>{fieldLabel(field)}</th>
+                <td class:cjk={field.lang !== 'bo'}>
+                  <span class:bo={field.lang === 'bo'} lang={field.lang}>{field.value}</span>
+                  {#each field.cites as cite (cite.locator)}
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+                  {/each}
+                </td>
+              </tr>
             {/each}
             {#if rhymeClass}
               <tr><th scope="row">{t('card.rhyme')}</th><td>{rhymeClass}{#if toneName}<span class="ui-hint"> · {t(toneName)}</span>{/if}</td></tr>
@@ -279,10 +363,18 @@
               <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="ui-script spelling">{spelling}</span></td></tr>
             {/if}
             {#if hands?.tibetan?.length}
-              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">{#each hands.tibetan as [hand, , count, script, wylie], index (index)}{index ? ' · ' : ''}<span class="ui-hint">{hand}</span> <span class="bo" lang="bo" title={wylie}>{script}</span>{count === 1 ? '' : ` ×${count || '?'}`}{/each}</td></tr>
+              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">
+                {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
+                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone />
+                {/each}
+              </td></tr>
             {/if}
             {#if hands?.sanskrit?.length}
-              <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
+              <tr><th scope="row">{t('card.sanskrit')}</th><td class="hands">
+                {#each hands.sanskrit as [printed, script, ipa] (printed)}
+                  <Spelling {script} transcription={printed} {ipa} lang="sa" />
+                {/each}
+              </td></tr>
             {/if}
           </tbody>
         </table>
@@ -297,11 +389,15 @@
       </section>
     {/if}
 
-    {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
+    {#if entry?.wenhai_text_zh}
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
-        {#if entry.wenhai_text_zh}<p lang="zh-Hant">{entry.wenhai_text_zh}</p>{/if}
-        {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
+        <p lang="zh-Hant">
+          {entry.wenhai_text_zh}
+          {#each cites('wenhai_zh') as cite (cite.locator)}
+            <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+          {/each}
+        </p>
       </section>
     {/if}
 
@@ -440,6 +536,10 @@
   .record section > .ui-label,.faces-head .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .more a{display:inline-flex;align-items:center;gap:3px}
   .faces{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:var(--ui-space-2xs)}
+  .group{display:grid;gap:var(--ui-space-xs);margin-block-end:var(--ui-space-sm)}
+  .group-link{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
+  .chain-tie{inline-size:12px;block-size:1px;background:var(--ui-color-border-strong)}
+  .group-link .ui-tile[aria-current='true']{background:var(--ui-color-accent-soft)}
   .face{display:grid;place-items:center;gap:2px;margin:0;padding:var(--ui-space-xs) 2px var(--ui-space-2xs);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-sm);background:var(--ui-color-surface-sunken);min-inline-size:0}
   .face-glyph{font-size:32px;line-height:1.15}
   .face figcaption{max-inline-size:100%;overflow:hidden;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);line-height:1.2;text-align:center;text-overflow:ellipsis;white-space:nowrap}
@@ -460,7 +560,9 @@
   .readings th{inline-size:46%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
+  .readings td.hands{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--ui-space-xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
+  .cite{display:block;margin-block-start:2px;font-family:var(--ui-font-sans);font-size:var(--ui-text-xs);color:var(--ui-color-ink-muted)}
   .spelling{font-size:18px}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
@@ -485,5 +587,4 @@
     .glyph-frame :global(.ui-script){font-size:72px}
     .gloss{font-size:var(--ui-text-lg)}
   }
-  .bo{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:1.1em}
 </style>

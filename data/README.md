@@ -467,7 +467,9 @@ are kept with a cosine score and whether the stroke count agrees. 16 KB gzipped,
 The score says the ink resembles an attested component's ink; it does not say the two are the same
 component or that the name applies. The method cannot separate くノ from ノメ, which score about
 0.98 against each other. Use the file to find candidates for review, never to fill
-`data/tangut-component-names.tsv`.
+`data/tangut-component-names.tsv`. `app/data/tangut-component-shape-hints.json.gz` is the copy the
+part card reads; it shows the first candidate only when the component has no attested name, the
+score is at least 0.70 and the stroke count agrees, labelled Shape hint.
 
 Format: `format`, `version`, `editorial`, `note`, `method` (font, size, metric, limitation), `counts`,
 `exemplars` and `components`, one row per component with `char`, `codepoint`, `strokes`, `named` and
@@ -585,9 +587,10 @@ Single-component descriptions are also preserved.
 
 The palette adds 768 Tangut components (U+18800–U+18AFF), ordered by code point,
 with `kind: "t"` and usage counts from those records. Stroke counts and first-stroke
-classes are unknown. Components Supplement is accepted by the parser but is absent
-from this source edition and the palette. Both data builders include Tangut through
-`scripts/tangut.py`; the Han totals above describe the Han portion only.
+classes are unknown. Tangut Components Supplement is absent from this source edition;
+the parts page adds its 115 components from `app/data/tangut-supplement.json.gz`. Both
+data builders include Tangut through `scripts/tangut.py`; the Han totals above describe
+the Han portion only.
 
 ## `tangut-parts.json.gz`
 
@@ -599,7 +602,9 @@ The stroke count of every Tangut character in the list. The ideographs come from
 `TangutSources.txt`: `kTGT_RSUnicode` gives the radical number and the total stroke count, so
 `1.6` is six strokes, and 6,177 ideographs have one, from 4 to 22 strokes. The 768 Tangut components
 in U+18800–U+18AFF were counted from their glyphs and live in `tangut-component-strokes.tsv`, one
-`U+18800<TAB>1` line per component, 1 to 13 strokes. Each description's count is the sum of its
+`U+18800<TAB>1` line per component, 1 to 13 strokes. The 115 components of Tangut Components
+Supplement are not in this file; their counts come from Unicode 18.0.0's NamesList and live in
+`app/data/tangut-supplement.json.gz`. Each description's count is the sum of its
 parts', which covers the 6,107 descriptions in 4 to 22 strokes. Rebuild with
 `node scripts/build_tangut_strokes.mjs`, which pins the Unicode file's SHA-256
 (`ae440bd9bba89b2610cfe6b498ac462d2763dd32bfead8ac30d32988b5b67a27`). Unicode data is
@@ -640,8 +645,9 @@ Tangut previews load these outlines locally. Exact descriptions use the correspo
 character's glyph; edited descriptions use the composition engine's geometric layout.
 Mixed Han–Tangut descriptions also load the host's Han export. The shared layout
 constants in `src/composer/constants.json` come from han-compose at bd0829b (MIT),
-previously used by the composer's test fixture. Tangut Components Supplement glyphs
-are absent from this font version and report a missing glyph.
+previously used by the composer's test fixture. The newest ideographs (U+187F8–187FF) and the
+Tangut Components Supplement glyphs are absent from this font version; the site draws them from a
+subset of Tangut N4694 (see `app/public/fonts/FONT-LICENCES.md`).
 
 ## Tangut entries
 
@@ -650,14 +656,15 @@ modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyak
 Sofronov 1968, Nishida 1966), Gong Hwang-cherng's GHC and Gong Xun's GX202411 from the Tangut
 Pronunciation Database, English
 meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
-BabelStone's IDS description, the 文海's entry text for the twelve characters it carries in this
-snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
+BabelStone's IDS description, the 文海's Chinese entry text for the six characters it carries in
+this snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
 meanings are CC BY-SA 4.0; GHC and GX202411 are cited from the Tangut Pronunciation Database under
 its Limited Public Use licence; the description is public domain; the radical and stroke data are
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
 `data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
 `data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
-`data/wenhai/entry-text.json.gz` and the files above. The builder records no CCAMC value.
+`data/wenhai/entry-text.json.gz`, `data/readings/readings.tsv` and the files above. The keyed
+readings and their citations are the builder's own input and come from the editions.
 
 The parts finder indexes complete subtrees of these IDS descriptions as selectable shapes. Where a
 subtree matches a single character's complete description, the editorial form can use that
@@ -686,6 +693,38 @@ refreshed by `uv run scripts/fetch_tangut_wiktionary.py`, which makes five modul
 batches of fifty page titles. `data/gong-xun/ghc.json.gz` and `data/gong-xun/gx202411.json.gz` hold GHC and GX202411 from the
 2025-05-07 table, with the table's SHA-256, DOI and Limited Public Use attribution; refresh them
 with `uv run scripts/fetch_tangut_gong_xun.py`.
+
+## Tangut supplement
+
+`app/data/tangut-supplement.json.gz` holds every character Unicode 18.0.0 assigns to the two
+supplement blocks: 33 ideographs at U+18D00–U+18D20 and 115 components at U+18D80–U+18DF2, 148 in
+all. The site's records stop at U+187FF, so this file is what a page reads to find the rest. Each
+record carries the character, its block, its Unicode name and:
+
+- the radical-stroke index and source reference from TangutSources.txt, for the ideographs;
+- the total stroke count: ideographs from TangutSources.txt, components from the stroke-group
+  headings and annotations of Unicode 18.0.0's NamesList.txt;
+- the description, from BabelStone's table for U+18D00–U+18D08 and from the WG2 proposals for
+  U+18D09–U+18D20: N5217R2 table 2, N5286 table 1, N5303 table 2 and N5314 table 3, transcribed in
+  `data/tangut-supplement-ids.tsv`;
+- the Cangjie codes from rime_tangutcjkk: 31 of the 33 ideographs and all 115 components. U+18D1F
+  and U+18D20 have none;
+- the face that draws it: Noto Serif Tangut 2.168 for U+18D00–U+18D08, Tangut N4694 version 18 for
+  the rest.
+
+No reading or meaning is recorded for any of the 148 in the sources the site uses. Nine ideographs,
+U+18D00–U+18D08, have a position in the rhyme books and a four-corner code. The card shows the code
+point, Cangjie codes, stroke count, structure and the rhyme record; the fields a source does not
+give are left out rather than guessed.
+
+Rebuild with `uv run scripts/build_tangut_supplement.py`, which reads the pinned Unicode 18.0.0
+files, fetches TangutSources.txt and NamesList.txt against their digests, checks every description
+against the parser and every glyph against Tangut N4694. The file records each source's URL and, where
+one is pinned, its digest or commit.
+
+`data/tangut-supplement-ids.tsv` transcribes the 24 descriptions from the four proposals, whose
+glyph columns are set in private-use fonts; the code points, characters and source document are
+written out.
 
 ## Bopomofo outlines
 
@@ -1282,3 +1321,21 @@ validates the tables; `scripts/fetch_zhangzhongzhu.py` pulls a canvas or a crop 
 Licence: the images are **CC BY-NC 4.0**, 清光山西巖寺 / 国文学研究資料館, and are not
 redistributed here or on the site. The keyed text is this workshop's own work over a public-domain
 text; its licence is not settled, and until it is the rows may be cited but not reused at scale.
+
+## `books/`
+
+The editions the site keys its readings and meanings from, one record per work in
+`source.yaml`, one row per file in `files.tsv` with its checksum, page count and resolution. The
+scans themselves are in `cache/books/`, which git does not carry; `scripts/fetch_books.py` fetches
+them and checks each against its md5. [The README](books/README.md) says which work gives what.
+
+Most of these editions are under copyright and their scans stay out of the build. The 掌中珠 scans
+in `cache/books/zhangzhongzhu/` are PD-scans of a public-domain original and may be reused; the
+貽安堂 photographs described above are CC BY-NC 4.0.
+
+## `readings/`
+
+The values keyed out of those books, one printed value per row with the page it stands on, and the
+citations the site shows beside a reading. `scripts/check_readings.py` holds the columns, the field
+names, the work each field may come from and the locator shape; a row's content is a reader's
+judgement. [The README](readings/README.md) gives the fields and how a locator is written.

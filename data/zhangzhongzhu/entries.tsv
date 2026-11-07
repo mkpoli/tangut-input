@@ -1,5 +1,5 @@
-entry_id	witness_id	canvas	side	band	seq	section	column_role	gloss	gloss_norm	gloss_status	reviewed	notes
-zzz:nijl-100354804:0001	nijl-100354804	40	l	1	6		gloss	十地菩薩		uncertain	0	one column only; the band reads right to left, so seq 6 is the sixth column from the right edge; role is the Chinese gloss, its transcription column and Tangut headword are not paired yet
-zzz:nijl-100354804:0002	nijl-100354804	40	l	1	7		transcription	盈為嚷他		uncertain	0	one column only; seq 7; reads as nonsense Chinese, so a transcription rather than a gloss; the characters are legible, the reading of 嚷 is not certain
-zzz:nijl-100354804:0003	nijl-100354804	40	l	1	8		gloss	自受用佛		uncertain	0	one column only; seq 8; role is the Chinese gloss, 自受用 and 他受用 being the two aspects of the 報身
-zzz:nijl-100354804:0004	nijl-100354804	40	l	2			gloss	四向四果		uncertain	0	one column only; the band is short and the column sits at about x=1400-1520 in the native image, which is how it is anchored for now; the column reads 四/向/四/果 downwards, so the page sets entries in vertical columns
+entry_id	witness_id	canvas	side	band	seq	x0	x1	section	column_role	gloss	gloss_norm	gloss_status	reviewed	notes
+zzz:nijl-100354804:0001	nijl-100354804	40	l	1		1650	1850		gloss	十地菩薩		uncertain	0	one column; x from the native image, where the column was checked by cropping; the Tangut headword and transcription columns are not paired with it yet
+zzz:nijl-100354804:0002	nijl-100354804	40	l	1		1350	1520		transcription	盈為嚷他		uncertain	0	one column; x from the native image; reads as nonsense Chinese, so a transcription; the reading of 嚷 is not certain
+zzz:nijl-100354804:0003	nijl-100354804	40	l	1		1050	1200		gloss	自受用佛		uncertain	0	one column; x from the native image; 自受用 and 他受用 are the two aspects of the 報身
+zzz:nijl-100354804:0004	nijl-100354804	40	l	2		2250	2360		gloss	四向四果		uncertain	0	one column; x from the native image

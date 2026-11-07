@@ -7,7 +7,9 @@
 `NotoSerifTangut-supplement.woff2` holds the characters Google Fonts' Noto Serif Tangut lacks,
 taken from the bundled 2.168. `BabelStoneTangut-complement.woff2` holds the characters BabelStone
 Tangut Wenhai draws that Noto does not. `NewTangutStd-complement.woff2` holds what the kai
-structure face, new Tangut Std, lacks.
+structure face, new Tangut Std, lacks. `TangutN4694-supplement.woff2` holds the newest Tangut
+ideographs, U+187F8–U+187FF, and the supplement ideographs and components, which only Tangut N4694
+draws.
 """
 from pathlib import Path
 
@@ -20,6 +22,7 @@ TANGUT = (0x17000, 0x18DFF)
 # Where the bundled copies come from: the data directory of the repository the outlines were built
 # from, and the open-tangut download recorded in data/README.md.
 NOTO = ROOT / 'app/public/fonts/.cache/NotoSerifTangut-2.168.ttf'
+N4694 = FONTS / 'TangutN4694.ttf'
 
 
 def points(path: Path) -> set[int]:
@@ -52,6 +55,10 @@ def main() -> None:
     write_subset(FONTS / 'BabelStoneTangutWenhai.ttf', sorted(noto - wenhai), FONTS / 'BabelStoneTangut-complement.woff2')
     std = points(FONTS / 'NewTangutStd.ttf')
     write_subset(NOTO, sorted(noto - std), FONTS / 'NewTangutStd-complement.woff2')
+    # The newest ideographs and the supplement ideographs and components Noto 2.168 stops short of,
+    # drawn by N4694 alone.
+    newest = [*range(0x187F8, 0x18800), *range(0x18D09, 0x18E00)]
+    write_subset(N4694, newest, FONTS / 'TangutN4694-supplement.woff2')
 
 
 if __name__ == '__main__':
