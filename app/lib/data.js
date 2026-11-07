@@ -6,7 +6,7 @@
  * @typedef {{ [char: string]: [number | null, number | null, string | null, string | null, string | null, string | null, string | null] }} RhymeChars */
 /** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
 /** @typedef {{ char: string, codepoint?: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
- *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_en?: string, wenhai_text_zh?: string }} Entry */
+ *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_zh?: string }} Entry */
 /** Normalized terms derived from CCAMC records, used only to answer a search: the readings of three
  * systems Wiktionary does not carry, and the English and Chinese glosses. Never rendered.
  * @typedef {{ format: string, note: string, readings: Record<string, Record<string, string>>,
@@ -71,7 +71,7 @@ export const loadEntries = () => once('entries', async () => {
  * @returns {Entry[]}
  */
 function expandEntries(packed) {
-  return packed.rows.map(([char, composition, strokes, radical, en, ja, zh, readings, wenhaiEn, wenhaiZh]) => {
+  return packed.rows.map(([char, composition, strokes, radical, en, ja, zh, readings, wenhaiZh]) => {
     /** @type {Record<string, string>} */
     const pronunciations = {}
     packed.systems.forEach((key, i) => {
@@ -89,7 +89,6 @@ function expandEntries(packed) {
       radical: radical ?? undefined,
       definitions,
       pronunciations,
-      wenhai_text_en: wenhaiEn || undefined,
       wenhai_text_zh: wenhaiZh || undefined,
     }
   })

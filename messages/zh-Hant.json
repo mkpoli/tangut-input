@@ -637,7 +637,7 @@
   "about.readingsSource": "維基詞典的擬音取自顯示它的模組，連同版本ID記錄在<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>。龔煌城的GHC與龔勳的GX202411取自西夏文擬音資料庫2025-05-07版，附摘要、DOI與歸屬說明存於<span class=\"ui-mono\">data/gong-xun/ghc.json.gz</span>與<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>。CCAMC的一種系統與中釋義只以正規化詞條存於<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>供搜尋，任何頁面都不顯示。",
   "card.wenhai": "文海",
   "about.wenhaiTitle": "《文海》原文",
-  "about.wenhai": "《文海》（12世紀）在條目中分析字形。其原文屬公有領域；《文海》收有該字時，卡片顯示原文並附英譯。",
+  "about.wenhai": "《文海》（12世紀）在條目中分析字形。其漢文屬公有領域；《文海》收有該字時，卡片顯示漢文原文。",
   "intro.fig.golden": "西夏文《金光明經》書頁局部，紺紙金字。11—13世紀。",
   "intro.fig.tombs": "銀川附近賀蘭山麓的西夏陵。",
   "intro.fig.manuscript": "西夏文佛教偈頌寫本，發現於賀蘭山，寧夏博物館藏。",
