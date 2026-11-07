@@ -602,8 +602,6 @@
   "common.ccamc": "在CCAMC打开",
   "reading.ccamc": "CCAMC的其他系统",
   "reading.ccamcNote": "此读音记录于CCAMC，具体数值见其页面。",
-  "meaning.viaCcamc": "此释义记录于CCAMC",
-  "find.viaCcamc": "CCAMC有记录",
   "about.wiktionary": "七种拟音中的五种与英、日释义取自<a href=\"https://en.wiktionary.org/wiki/Module:txg/data\">维基词典</a>（CC BY-SA 4.0）：拟音来自其西夏语读音模板所调用的Lua模块，英释义来自Kaikki对英语维基词典的提取，日释义来自日语维基词典。第六、第七种龚煌城与龚勋2024-11取自<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">西夏文拟音数据库</a>（DOI 10.25365/phaidra.654），逐字引用。6,144字中，457字有英释义，278字有日释义。CCAMC另收一种拟音与大部分中释义；本站只将其规范化形式用于搜索，卡片则链接到CCAMC。异体字据英文和中文维基词典。",
   "about.readingsTitle": "读音与释义",
   "about.readingsSource": "维基词典的拟音取自显示它的模块，连同版本ID记录在<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>。龚煌城的GHC与龚勋的GX202411取自西夏文拟音数据库2025-05-07版，附摘要、DOI与归属说明存于<span class=\"ui-mono\">data/gong-xun/ghc.json.gz</span>与<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>。CCAMC的一种系统与中释义只以规范化词条存于<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>供搜索，任何页面都不显示。",
