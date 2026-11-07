@@ -255,15 +255,15 @@
     <h2 class="heading">{t('eras.contemporary.title')}<span class="ui-count">{CONTEMPORARY_ERAS.length}</span></h2>
     <div class="ui-table-wrap">
       <table class="ui-table list contemporary-table">
-        <thead><tr><th scope="col">{t('eras.era')}</th><th scope="col">{t('eras.years')}</th><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
+        <thead><tr><th scope="col">{t('eras.era')}</th><th scope="col">{t('eras.years')}</th><th scope="col">{t('eras.contemporary.inscription')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
         <tbody>
           {#each CONTEMPORARY_ERAS as era (era.era)}
             <tr>
               <th scope="row" lang="zh-Hant">{era.era}</th>
               <td class="years">{era.years.join('–')}</td>
-              <td class="forms title-form">{#if era.tangut}<span class="form" role="group" aria-label={era.tangut}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
-                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{:else}<span class="ui-hint">{t('eras.contemporary.unverified')}</span>{/if}</td>
-              <td class="basis"><span class="tag" data-kind="reported">{t('eras.contemporary.tentative')}</span>{@render cites([era.source])}<p class="note">{t('eras.contemporary.note')}</p><p class="note">{t('eras.contemporary.dictionary')}{@render cites(era.dictionarySources)}</p></td>
+              <td class="forms title-form"><span class="form" role="group" aria-label={`${t('eras.contemporary.transcription')}: ${era.tangut}`}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span><span class="mark" title={t('eras.contemporary.transcription')} aria-label={t('eras.contemporary.transcription')}>?</span></td>
+              <td class="basis"><span class="tag" data-kind="reported">{t('eras.contemporary.transcription')}</span>{@render cites([era.proposalSource])}<p class="note">{t('eras.contemporary.note')}{@render cites([era.source])}</p><p class="note">{t('eras.contemporary.comparison')}{@render cites([era.proposalSource, era.source, ...era.dictionarySources])}</p></td>
             </tr>
           {/each}
         </tbody>

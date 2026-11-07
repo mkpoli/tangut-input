@@ -14,7 +14,7 @@ import zhHant from '../messages/zh-Hant.json' with { type: 'json' }
 
 test('every cited source is in the numbered list', () => {
   const cited = [...TITLES, ...STATE_NAMES].flatMap(row => [...row.tangutSources, ...row.chineseSources, ...(row.noteSources ?? [])])
-  for (const key of [...cited, ...CONTEMPORARY_ERAS.flatMap(row => [row.source, ...row.dictionarySources])]) expect(ERA_SOURCE_ORDER).toContain(key)
+  for (const key of [...cited, ...CONTEMPORARY_ERAS.flatMap(row => [row.source, row.proposalSource, ...row.dictionarySources])]) expect(ERA_SOURCE_ORDER).toContain(key)
   expect(ERA_SOURCE_ORDER.toSorted()).toEqual(Object.keys(ERA_SOURCES).toSorted())
 })
 
@@ -25,8 +25,10 @@ test('乾定 cites the manuscript transcription', () => {
   expect(ERA_SOURCES.qianding1226.url).toBe('https://weibo.com/6008710471/KbTyK101X')
 })
 
-test('the contemporary Jin era is separate and its Tangut form remains unverified', () => {
-  expect(CONTEMPORARY_ERAS).toEqual([{ era: '貞祐', years: [1213, 1217], tangut: null, source: 'lizi2019', dictionarySources: ['clauson2016', 'westClausonIndex'] }])
+test('the contemporary Jin era is separate and its proposed transcription follows the photographed order', () => {
+  expect(CONTEMPORARY_ERAS).toEqual([{ era: '貞祐', years: [1213, 1217], tangut: '𗣼𘑨𘏨𘔭', source: 'lizi2019', proposalSource: 'mkpoli2026', dictionarySources: ['west2007', 'clauson2016', 'westClausonIndex'] }])
+  expect(ERA_SOURCES.mkpoli2026.author).toBe('mkpoli')
+  expect(ERA_SOURCES.mkpoli2026.where).toBe('Personal communication, 2026-11-07')
   expect(ERAS.some(row => row.era === '貞祐')).toBe(false)
   expect(LATER_ERAS.some(row => row.era === '貞祐')).toBe(false)
   expect(ERA_SOURCES.lizi2019.url).toBe('https://collection.sina.com.cn/qbtd/2019-04-10/doc-ihvhiqax1350522.shtml')
@@ -42,7 +44,7 @@ test('dictionary citations identify a headword without confirming the photograph
   expect(ERA_SOURCES.westClausonIndex.note).toContain('entry 1530, f. 115, under 𘑨')
   expect(ERA_SOURCES.westClausonIndex.note).toContain('not the photographed character')
   const page = readFileSync(new URL('../app/pages/Eras.svelte', import.meta.url), 'utf8')
-  expect(page).toContain("t('eras.contemporary.dictionary')}{@render cites(era.dictionarySources)")
+  expect(page).toContain("t('eras.contemporary.comparison')}{@render cites([era.proposalSource, era.source, ...era.dictionarySources])")
 })
 
 test('the contemporary table retains its column headers on small screens', () => {
@@ -51,10 +53,20 @@ test('the contemporary table retains its column headers on small screens', () =>
   expect(page).toMatch(/\.contemporary-table thead\{display:table-header-group;[^}]*clip-path:inset\(50%\)/)
 })
 
-test('every locale describes the contemporary entry and its uncertainty', () => {
+test('every locale describes the provisional transcription and its uncertainty', () => {
   for (const messages of [en, ja, ko, zhHans, zhHant]) {
-    for (const key of ['tab', 'title', 'unverified', 'tentative', 'note', 'dictionary']) {
+    for (const key of ['tab', 'title', 'inscription', 'transcription', 'note', 'comparison']) {
       expect(messages[`eras.contemporary.${key}`]).toBeTruthy()
     }
   }
+  const page = readFileSync(new URL('../app/pages/Eras.svelte', import.meta.url), 'utf8')
+  expect(page).toContain("t('eras.contemporary.inscription')")
+  expect(page).toContain("t('eras.contemporary.transcription')}</span>{@render cites([era.proposalSource])}")
+  expect(page).toContain("t('eras.contemporary.note')}{@render cites([era.source])}")
+  expect(page).toMatch(/aria-label=\{t\('eras\.contemporary\.transcription'\)\}>\?<\/span>/)
+  expect(page).toMatch(/\[\.\.\.era\.tangut\] as char/)
+  expect(page).toContain('onclick={() => choose(char)}><G {char}/></button>')
+  expect(en['eras.contemporary.comparison']).toContain('top–left–bottom–right')
+  expect(en['eras.contemporary.comparison']).toContain('all four forms appear irregular')
+  expect(en['eras.contemporary.note']).toContain('authenticity, date and official status are uncertain')
 })

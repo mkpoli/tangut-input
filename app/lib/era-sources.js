@@ -237,8 +237,15 @@ export const ERA_SOURCES = {
     author: '西夏泉女——李子999',
     title: '试译第十三枚西夏文钱币贞祐宝钱',
     where: '新浪收藏, 2019-04-10',
-    note: 'Tentatively reads the inscription of a privately held decorative object as 贞祐宝钱 and acknowledges possible doubt. Its authenticity, date and official status are unestablished.',
+    note: 'Tentatively reads the inscription of a privately held decorative object as 贞祐宝钱 and gives the order top, left, bottom, right. It does not provide a Unicode transcription. Authenticity, date and official status are unestablished.',
     url: 'https://collection.sina.com.cn/qbtd/2019-04-10/doc-ihvhiqax1350522.shtml',
+  },
+  mkpoli2026: {
+    author: 'mkpoli',
+    title: 'Tentative Unicode transcription of the photographed inscription',
+    where: 'Personal communication, 2026-11-07',
+    note: 'Proposes 𗣼𘑨𘏨𘔭 in the reported top–left–bottom–right order. All four signs appear irregular; the identification is uncertain.',
+    url: '',
   },
   clauson2016: {
     author: 'Gerard Clauson',
@@ -300,5 +307,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'qianding1226', 'lizi2019', 'clauson2016', 'westClausonIndex',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'qianding1226', 'lizi2019', 'clauson2016', 'westClausonIndex', 'mkpoli2026',
 ])
