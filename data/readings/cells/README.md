@@ -57,11 +57,12 @@ the note records that too.
 
 `FlagRain/tangut-mixocr` (MIT, ONNX, 5.7M parameters, 6,144-character vocabulary) is the first thing
 that has read this print. It only reads horizontal lines, so a vertical column is cut into its four
-glyphs, laid side by side, and read as one line: that returns three of four signs on the columns
-tried, with noise characters to strip. Its PP-OCR detector also finds the columns themselves on the
-unrotated band, 25 boxes of 137–205 px by 555–608 px. Reading the glyphs one at a time is worse than
-reading them as a strip, and equal-width slicing cuts glyphs: slice on the column's ink quantiles.
-Nothing here replaces the eye yet, but it is the way to propose signs instead of searching for them.
+glyphs, laid side by side, and read as one line. Its PP-OCR detector also finds the columns on the
+unrotated band, 24 boxes of 137–205 px by 555–608 px, right to left in reading order, so the role of
+each box follows from its place in the entry. Measured against the 24 signs of canvas 40 band 1 that
+were already keyed by eye, equal four-way slicing of the column reaches 9 of 24; slicing on the ink
+quantiles does worse, 5 of 24, and padding each glyph helps neither. Two columns read three of four,
+two read two, and two are largely wrong, so the model proposes and the eye still decides.
 
 ## Adding a band
 
