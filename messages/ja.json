@@ -342,6 +342,7 @@
   "card.tone.entering": "入声",
   "parts.splitTitle": "{part}を構成部品に分解する",
   "parts.info.oneCharacter": "1字",
+  "parts.info.hint": "形の推定",
   "parts.names.title": "部品名を言語別に見る",
   "parts.names.hint": "参照した資料に記録された名だけを示します。ダッシュは記録がない箇所です。",
   "parts.names.component": "部品",

@@ -27,7 +27,8 @@ it into your text. <https://tangut.mkpo.li/>
   narrow the candidates.
 - **Parts**: choose parts, components or character-sized, from the palette or by drawing them;
   each choice narrows the characters and the remaining parts. The filter takes a Cangjie code or a Japanese shape name, and hovering a
-  part shows its code point, component number, strokes, uses, Cangjie codes and name. A collapsible
+  part shows its code point, component number, strokes, uses, Cangjie codes and name; a part with no
+  recorded name shows an unconfirmed shape hint when one is close. A collapsible
   table compares the names across the languages that record one.
 
 The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
@@ -85,8 +86,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 The Tangut script can be set in four faces in Settings: Noto Serif
 Tangut (the default, from Google Fonts), Tangut Yinchuan (景永時's design, completed by Andrew West),
 BabelStone Tangut Wenhai, and New Tangut Std (新西夏字體, the 楷書-structured face). Yinchuan and the Wenhai complement are served from the site; their
-terms are in `app/public/fonts/FONT-LICENCES.md`. The ideographs and components of both supplement
-blocks, which none of the four draws, come from a subset of Tangut N4694 in the same stack. `bun run build:tangut-fonts` rebuilds the small subsets.
+terms are in `app/public/fonts/FONT-LICENCES.md`. The newest ideographs, U+187F8–187FF, and the
+characters of both supplement blocks, which none of the four draws, come from a subset of Tangut
+N4694 in the same stack. `bun run build:tangut-fonts` rebuilds the small subsets.
 
 ## Handwriting data
 
