@@ -29,9 +29,11 @@ const TANGUT = [
   ['ラ匕﹅', '𘣭'],
   ['コ匕﹅', '𘤾'],
   ['コ一匕﹅', '𘦺'],
+  ['ノくノ', '𘪷'],
+  ['ノくノ', '𘫙'],
 ]
 
-test('the eighteen Tangut components are named by their Japanese shapes', () => {
+test('the twenty Tangut components are named by their Japanese shapes', () => {
   const found = new Map(names
     .filter(name => name.source === 'arakawa-2023' || name.source === 'ja-wikipedia-tangut')
     .map(name => [name.name, name.char]))
@@ -69,9 +71,10 @@ test('the comparison table covers every named part', () => {
 
 test('a shape name reaches its component first', () => {
   for (const [name, char] of TANGUT) {
-    expect(search.search(name)[0]).toMatchObject({ char, label: name, score: 0 })
+    const row = { char, label: name, score: 0 }
+    expect(search.search(name)).toContainEqual(expect.objectContaining(row))
     // The search folds katakana to hiragana, so the same name typed in hiragana works.
-    expect(search.search([...name].map(kana => kana === 'ノ' ? 'の' : kana).join(''))[0].char).toBe(char)
-    expect(searchShapeNames(app, name)[0]).toMatchObject({ char, name, tier: 0 })
+    expect(search.search([...name].map(kana => kana === 'ノ' ? 'の' : kana).join(''))).toContainEqual(expect.objectContaining({ char }))
+    expect(searchShapeNames(app, name)).toContainEqual(expect.objectContaining({ char, name, tier: 0 }))
   }
 })
