@@ -167,6 +167,8 @@
   "parts.noMatch": "No recorded description holds all of these parts. Remove one to widen the search.",
   "parts.noMatchLayout": "No recorded description holds all of these parts in that layout. Remove one to widen the search.",
   "parts.empty": "The characters built from the chosen parts appear here.",
+  "parts.drawHint": "Draw a component and choose a similar shape.",
+  "parts.handwriting": "Draw a component",
   "parts.paletteLabel": "Parts",
   "parts.stillOccur": "Parts that still occur",
   "parts.allComponents": "All parts",

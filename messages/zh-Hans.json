@@ -167,6 +167,8 @@
   "parts.noMatch": "没有记录在案的构字描述同时包含这些部件。请移除一个部件以放宽条件。",
   "parts.noMatchLayout": "没有记录在案的构字描述在该结构下同时包含这些部件。请移除一项以放宽条件。",
   "parts.empty": "由所选部件组成的字会显示在此处。",
+  "parts.drawHint": "画出部件，选择字形相近的候选。",
+  "parts.handwriting": "手写部件识别",
   "parts.paletteLabel": "部件表",
   "parts.stillOccur": "仍可共现的部件",
   "parts.allComponents": "全部部件",
