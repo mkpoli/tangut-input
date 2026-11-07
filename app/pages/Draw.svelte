@@ -12,6 +12,14 @@
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
   import { t } from '../lib/i18n.svelte.js'
+  import { record } from '../lib/record.js'
+  import { createDrawingCapture } from '../../src/core/drawing-capture.js'
+  const capture = createDrawingCapture(record)
+  function snapshot() {
+    const box = canvas?.getBoundingClientRect()
+    if (!box || !box.width || !box.height) return
+    capture.update({ origin: 'draw', strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / box.width).toFixed(4), +(y / box.height).toFixed(4)])), width: Math.round(box.width), height: Math.round(box.height) })
+  }
 
   /** @type {HTMLCanvasElement | null} */
   let canvas = $state(null)
@@ -54,17 +62,8 @@
       }
     })()
     resize()
-    // A character picked from these results is recorded with the drawing that produced it.
-    attachPad(() => {
-      const box = canvas?.getBoundingClientRect()
-      if (!box || !strokes.length) return null
-      return {
-        strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / box.width).toFixed(4), +(y / box.height).toFixed(4)])),
-        width: Math.round(box.width),
-        height: Math.round(box.height),
-      }
-    })
-    onDestroy(() => attachPad(null))
+    attachPad((picked, place) => { up(); return capture.capture({ picked, place }) })
+    onDestroy(() => { up(); capture.clear(); attachPad(null) })
   })
 
   const strokeCount = $derived(strokes.length)
@@ -146,7 +145,7 @@
 
   /** @param {PointerEvent} event */
   function down(event) {
-    if (event.button !== 0) return
+    if (event.button !== 0 || !event.isPrimary || current) return
     canvas?.setPointerCapture(event.pointerId)
     current = [point(event)]
     paint()
@@ -164,6 +163,7 @@
     if (!current) return
     strokes = [...strokes, current]
     current = null
+    snapshot()
     update()
   }
 
@@ -172,8 +172,9 @@
     active = -1
     paint()
   }
-  function undo() { strokes = strokes.slice(0, -1); update() }
-  function clear() { strokes = []; update() }
+  function undo() { up(); capture.capture(); strokes = strokes.slice(0, -1); snapshot(); update() }
+  function clear() { up(); capture.clear(); strokes = []; update() }
+  function leave() { up(); capture.capture() }
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
@@ -187,7 +188,8 @@
   }
 </script>
 
-<svelte:window onresize={resize} onkeydown={keys} />
+<svelte:window onresize={resize} onkeydown={keys} onpagehide={leave} />
+<svelte:document onvisibilitychange={() => { if (document.hidden) leave() }} />
 
 <div class="ui-page draw" data-width="wide">
   <section class="pad-column" aria-label={t('draw.padLabel')}>
@@ -197,7 +199,7 @@
     </header>
     <div class="pad">
       <canvas bind:this={canvas} aria-label={t('draw.canvas')}
-        onpointerdown={down} onpointermove={moveTo} onpointerup={up} onpointercancel={up}></canvas>
+        onpointerdown={down} onpointermove={moveTo} onpointerup={up} onpointercancel={up} onlostpointercapture={up}></canvas>
       {#if !strokes.length}<p class="hint" aria-hidden="true">{t('draw.here')}</p>{/if}
     </div>
     <div class="tools">

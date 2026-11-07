@@ -10,7 +10,7 @@
 // The app screenshots are made with `shapes` (the drawing pad), so a formal test uses the same
 // pad as the site. The capture page here differs in two ways: it never shows the answer, and it
 // exports the strokes as JSON.
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { parseShapes, indexShapes, distanceField, SIZE } from '../../app/lib/shape.js'
 import page from './page.html' with { type: 'text' }
@@ -176,6 +176,15 @@ async function uploadDrawing(record) {
 }
 mkdirSync(out, { recursive: true })
 
+const prompts = new Map()
+function promptId(item) {
+  if (!item.id) {
+    item.id = crypto.randomUUID()
+    prompts.set(item.id, item)
+    writeFileSync(`${out}/prompt-${item.id}.json`, JSON.stringify(item))
+  }
+  return item.id
+}
 let current = null
 /** The prompt fetched ahead with `/api/peek`, shown by the next `/api/next`. */
 let pending = null
@@ -204,7 +213,7 @@ const server = Bun.serve({
       if (!current) return Response.json({ done: true })
       // The answer never reaches the page: it gets the picture to copy and nothing that names it.
       const image = current.kind === 'lookalike' ? current.images[current.options.indexOf(current.char)] : current.image
-      return Response.json({ kind: current.kind, index: session.items.length, total: rounds, image: image ?? null })
+      return Response.json({ prompt: promptId(current), kind: current.kind, index: session.items.length, total: rounds, image: image ?? null })
     }
     if (url.pathname === '/api/peek') {
       // The prompt after the current one, so the page can fetch it while the reader draws.
@@ -214,7 +223,7 @@ const server = Bun.serve({
       const image = ahead.kind === 'lookalike' ? ahead.images[ahead.options.indexOf(ahead.char)] : ahead.image
       // The answer stays on the server.
       return Response.json({
-        index: session.items.length, total: rounds, kind: ahead.kind, image: image ?? null,
+        prompt: promptId(ahead), index: session.items.length, total: rounds, kind: ahead.kind, image: image ?? null,
       })
     }
     if (url.pathname === '/api/claim' && request.method === 'POST') {
@@ -223,6 +232,21 @@ const server = Bun.serve({
       if (pending) current = pending
       pending = null
       return Response.json({ ok: true, has: Boolean(current) })
+    }
+    if (url.pathname === '/api/capture' && request.method === 'POST') {
+      const body = await request.json()
+      const stored = typeof body.prompt === 'string' && /^[0-9a-f-]{36}$/.test(body.prompt) ? `${out}/prompt-${body.prompt}.json` : null
+      const prompt = prompts.get(body.prompt) ?? (stored && existsSync(stored) ? JSON.parse(readFileSync(stored, 'utf8')) : null)
+      if (!prompt || !Array.isArray(body.strokes) || !body.strokes.length) return Response.json({ error: 'no drawing' }, { status: 400 })
+      const record = { ...body, char: prompt.char, kind: prompt.kind, lookalikes: prompt.options ?? null, at: new Date().toISOString() }
+      if (typeof body.captureId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.captureId)) return Response.json({ error: 'bad id' }, { status: 400 })
+      const name = `capture-${body.captureId}.json`
+      if (!existsSync(`${out}/${name}`)) {
+        writeFileSync(`${out}/${name}`, JSON.stringify(record))
+        void uploadDrawing(record)
+        try { buildDataset() } catch (error) { console.warn(`dataset: ${error}`) }
+      }
+      return Response.json({ saved: name })
     }
     if (url.pathname === '/api/save' && request.method === 'POST') {
       const body = await request.json()

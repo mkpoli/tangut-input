@@ -54,7 +54,7 @@ function meta(dir) {
 /** The drawings of one session, in the order they were made. @param {string} dir */
 function drawings(dir) {
   return readdirSync(new URL(`${dir}/`, ROOT))
-    .filter(name => /^\d{3}-.*\.json$/.test(name))
+    .filter(name => /^(?:\d{3}-.*|capture-[\w-]+)\.json$/.test(name))
     .sort()
     .map(name => ({ name, record: JSON.parse(readFileSync(new URL(`${dir}/${name}`, ROOT), 'utf8')) }))
 }
@@ -89,7 +89,7 @@ export function build({ write = true } = {}) {
         continue
       }
       const entry = {
-        id: `${dir}/${name.slice(0, 3)}`,
+        id: `${dir}/${name.startsWith('capture-') ? name.slice(0, -5) : name.slice(0, 3)}`,
         char: record.char,
         code: `U+${record.char.codePointAt(0).toString(16).toUpperCase()}`,
         kind: record.kind,

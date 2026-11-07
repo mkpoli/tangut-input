@@ -78,7 +78,9 @@ function row(event, at) {
     const strokes = event.strokes
     if (!Array.isArray(strokes) || !strokes.length || strokes.length > MAX_STROKES) return null
     if (!strokes.every(points)) return null
-    const picked = event.picked ? character(event.picked) : null
+    const picked = event.origin === 'sketch'
+      ? (typeof event.picked === 'string' && event.picked.length <= 256 && !/[\u0000-\u001f\u007f]/u.test(event.picked) ? event.picked : null)
+      : event.picked ? character(event.picked) : null
     return {
       table: 'drawings',
       values: [

@@ -5,6 +5,7 @@
   // sequence, the character it encodes, its code points, export). File and Edit menus lead the toolbar;
   // the toolbar holds undo, redo, examples, sharing, the language, settings and sources.
   import { tick, untrack } from 'svelte'
+  import { record } from '../app/lib/record.js'
   import { IdsCharacterInfo, IdsOperators, IdsPartTools, IdsPicker, IdsPreview, IdsSearch, IdsStructuralSearch, IdsSequence, IdsTree, IdsTreeList, OperatorIcon, createEditor, shortcut, translator } from '../src/svelte/index.js'
   import { babelStoneAdapter } from '../src/adapter/index.js'
   import { APPROXIMATE } from '../src/composer/compose.js'
@@ -1155,7 +1156,7 @@
           {:else if editor.pending}<p class="status" role="status">{wholeComponentLookup ? t('ids.search.emptyHint') : editor.pending}</p>{/if}
         </div>
         <div class="block"><IdsOperators {editor} {keyHints} /></div>
-        <div class="block grow"><IdsPicker {editor} pickers={['parts', 'templates', 'find']} bind:fromText={fromText_} title={false} /></div>
+        <div class="block grow"><IdsPicker {editor} pickers={['parts', 'templates', 'find']} bind:fromText={fromText_} title={false} onrecord={record} collectionNotice={editor.t('draw.note')} /></div>
       </section>
 
       <div class="column-gap input-gap">
