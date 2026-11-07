@@ -643,9 +643,9 @@ Tangut previews load these outlines locally. Exact descriptions use the correspo
 character's glyph; edited descriptions use the composition engine's geometric layout.
 Mixed Han–Tangut descriptions also load the host's Han export. The shared layout
 constants in `src/composer/constants.json` come from han-compose at bd0829b (MIT),
-previously used by the composer's test fixture. Tangut Components Supplement glyphs
-are absent from this font version; the site draws them from a subset of Tangut N4694 (see
-`app/public/fonts/FONT-LICENCES.md`).
+previously used by the composer's test fixture. The newest ideographs (U+187F8–187FF) and the
+Tangut Components Supplement glyphs are absent from this font version; the site draws them from a
+subset of Tangut N4694 (see `app/public/fonts/FONT-LICENCES.md`).
 
 ## Tangut entries
 

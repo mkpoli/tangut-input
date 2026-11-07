@@ -178,8 +178,8 @@ Open Tangut, drawn from the font into the favicon.
 
 Google Fonts' Noto Serif Tangut lacks the newest components (U+18AF3–18AFF, U+18D00–18D08), so a
 4 KB subset of the bundled version 2.168 covers those code points. Tangut N4694 draws the other new
-characters — the supplement ideographs and components through U+18DF2 — and a subset of its
-version 18 joins the stack for them. A character no bundled face draws still appears as its code
+characters, U+187F8–187FF and the supplement ideographs and components through U+18DF2, and a
+subset of its version 18 joins the stack for them. A character no bundled face draws still appears as its code
 point in a dashed box.
 
 ## Drawing search

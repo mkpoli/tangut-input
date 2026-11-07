@@ -16,7 +16,7 @@ export { OPERATORS, isTangut }
 export const isComponent = char => /^[\u{18800}-\u{18AFF}\u{18D80}-\u{18DFF}]$/u.test(char)
 /** The ranges a bundled face draws: Noto Serif Tangut 2.168 through the old end of each block, and
  *  the Tangut N4694 subset for what it lacks. @type {[number, number][]} */
-const GLYPH_RANGES = [[0x17000, 0x187F7], [0x18800, 0x18AFF], [0x18D00, 0x18D20], [0x18D80, 0x18DF2]]
+const GLYPH_RANGES = [[0x17000, 0x187FF], [0x18800, 0x18AFF], [0x18D00, 0x18D20], [0x18D80, 0x18DF2]]
 /** Whether the bundled faces draw the character. @param {string} char */
 export const hasGlyph = char => {
   const code = char.codePointAt(0) ?? 0
