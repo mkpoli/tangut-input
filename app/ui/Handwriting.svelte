@@ -251,7 +251,7 @@
         </div>
         <input class="ui-input" bind:value={filter} placeholder={t('parts.filterPlaceholder')} aria-label={t('parts.filterLabel')} />
         <div class="ui-tiles" style:--ui-tile-size="38px">
-          {#each (showAllParts ? palette : palette.slice(0, 48)) as part (part)}<button type="button" class="ui-tile" onclick={() => { chosen = [...chosen, part]; active = -1 }} title={(ix.codes.get(part) ?? []).join(', ')}><G char={part}/></button>{/each}
+          {#each (showAllParts ? palette : palette.slice(0, 48)) as part (part)}<button type="button" class="ui-tile" onclick={() => { chosen = [...chosen, part]; active = -1 }} title={(ix.codes.get(part) ?? []).join(', ')}><span class="ui-tile-glyph"><G char={part}/></span></button>{/each}
         </div>
         {#if !showAllParts && palette.length > 48}<button type="button" class="ui-button" data-size="sm" onclick={() => { showAllParts = true }}>{t('parts.showAll')}</button>{/if}
       </details>
@@ -267,7 +267,7 @@
     {#if items.length}
       {#if componentsOnly}
         <div class="ui-tiles" style:--ui-tile-size="52px">
-          {#each items as item (item.char)}<button type="button" class="ui-tile" onclick={() => { onpick?.(item.char); clear() }} title={item.sub}><G char={item.char}/></button>{/each}
+          {#each items as item (item.char)}<button type="button" class="ui-tile" onclick={() => { onpick?.(item.char); clear() }} title={item.sub}><span class="ui-tile-glyph"><G char={item.char}/></span></button>{/each}
         </div>
       {:else}
         <Candidates bind:this={grid} {items} bind:active size={70} label={t('draw.results')} />
