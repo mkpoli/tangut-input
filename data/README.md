@@ -99,6 +99,16 @@ they stand in the same ones. `kind_source` says who says so: NGWU YOH for 𘠣�
 for the rest. The parts palette keeps them together and the variants page lists them. `uv run scripts/build_tangut_variants.py` writes
 `app/data/tangut-variants.json`, which `app/lib/variants.js` reads.
 
+
+## `shouling/`
+
+The sixteen characters of the 壽陵 title in seal script, after 李範文《夏漢字典》 p. 90. The strip was
+uploaded to Wikimedia Commons by 唐吉訶德的侍從 under **CC BY-SA 4.0** (read 2026-11-07);
+`seal-title.jpg` is the unmodified file, and `README.md` here names the file and its order.
+`uv run scripts/build_tangut_script_forms.py` cuts it at the blank columns and writes
+`app/public/seal/shouling/<code point>.png` and `app/data/tangut-script-forms.json`. The crops are
+derivatives under the same licence.
+
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or

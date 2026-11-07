@@ -1,0 +1,180 @@
+{
+  "format": "tangut-script-forms/1",
+  "built": "2026-11-07",
+  "sources": [
+    {
+      "id": "shouling",
+      "title": "壽陵碑額",
+      "titleZh": "大白高國護城聖德至懿皇帝壽陵誌銘",
+      "author": "唐吉訶德的侍從",
+      "url": "https://commons.wikimedia.org/wiki/File:%E8%A5%BF%E5%A4%8F%E6%96%87_%E5%A4%A7%E7%99%BD%E9%AB%98%E5%9C%8B%E8%AD%B7%E5%9F%8E%E8%81%96%E5%BE%B7%E8%87%B3%E6%87%BF%E7%9A%87%E5%B8%9D%E5%A3%BD%E9%99%B5%E8%AA%8C%E9%8A%98.jpg",
+      "licence": "CC BY-SA 4.0",
+      "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "basedOn": "李範文《夏漢字典》 p. 90",
+      "retrieved": "2026-11-07",
+      "note": "The sixteen characters in the order the file lists them."
+    }
+  ],
+  "forms": [
+    {
+      "char": "𗴂",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17D02.png",
+      "position": 0,
+      "index": "1572",
+      "width": 38,
+      "height": 49
+    },
+    {
+      "char": "𗹭",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17E6D.png",
+      "position": 1,
+      "index": "1890",
+      "width": 33,
+      "height": 49
+    },
+    {
+      "char": "𗂧",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/170A7.png",
+      "position": 2,
+      "index": "2937",
+      "width": 38,
+      "height": 49
+    },
+    {
+      "char": "𘜶",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/18736.png",
+      "position": 3,
+      "index": "4457",
+      "width": 40,
+      "height": 49
+    },
+    {
+      "char": "𗓑",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/174D1.png",
+      "position": 4,
+      "index": "4976",
+      "width": 35,
+      "height": 49
+    },
+    {
+      "char": "𗍁",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17341.png",
+      "position": 5,
+      "index": "0289",
+      "width": 40,
+      "height": 49
+    },
+    {
+      "char": "𗼈",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17F08.png",
+      "position": 6,
+      "index": "2546",
+      "width": 38,
+      "height": 49
+    },
+    {
+      "char": "𗣼",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/178FC.png",
+      "position": 7,
+      "index": "2748",
+      "width": 39,
+      "height": 49
+    },
+    {
+      "char": "𗫡",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17AE1.png",
+      "position": 8,
+      "index": "2679",
+      "width": 40,
+      "height": 49
+    },
+    {
+      "char": "𗤓",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17913.png",
+      "position": 9,
+      "index": "3228",
+      "width": 38,
+      "height": 49
+    },
+    {
+      "char": "𘓺",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/184FA.png",
+      "position": 10,
+      "index": "0510",
+      "width": 39,
+      "height": 49
+    },
+    {
+      "char": "𘋨",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/182E8.png",
+      "position": 11,
+      "index": "5306",
+      "width": 37,
+      "height": 49
+    },
+    {
+      "char": "𘗽",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/185FD.png",
+      "position": 12,
+      "index": "0590",
+      "width": 39,
+      "height": 49
+    },
+    {
+      "char": "𗳇",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17CC7.png",
+      "position": 13,
+      "index": "0466",
+      "width": 40,
+      "height": 49
+    },
+    {
+      "char": "𘋼",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/182FC.png",
+      "position": 14,
+      "index": "5545",
+      "width": 38,
+      "height": 49
+    },
+    {
+      "char": "𘝞",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/1875E.png",
+      "position": 15,
+      "index": "4797",
+      "width": 40,
+      "height": 49
+    }
+  ]
+}
