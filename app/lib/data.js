@@ -26,6 +26,11 @@
 /** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sha256: string },
  *   counts: Record<string, number> }} Frequency */
 /** @typedef {{ source: string, entries: Record<string, { position: string, parts: [string, string | null][] }> }} WenhaiComposition */
+/** @typedef {{ char: string, block: 'supplement' | 'components', name: string, strokes?: number, radical?: string,
+ *   radicalStrokes?: string, source?: string, ids?: string, idsSource?: string, component?: number,
+ *   cangjie: string[], glyph: string }} SupplementCharacter */
+/** @typedef {{ format: string, unicode: string, built: string, sources: { id: string, name: string, url: string, sha256?: string, commit?: string }[],
+ *   counts: Record<string, number>, characters: SupplementCharacter[] }} Supplement */
 
 /**
  * Fetch a gzipped file. The dev server may hand it over already decoded, so the magic bytes decide
@@ -149,6 +154,10 @@ export const loadFrequency = () => once('frequency', () => readJson(new URL('../
 
 /** The 60 文海 constructions: each head character's page and its source/part pairs. @returns {Promise<WenhaiComposition>} */
 export const loadWenhaiComposition = () => once('wenhai-composition', () => readJson(new URL('../data/wenhai-composition.json', import.meta.url)))
+
+/** The characters in the two Tangut supplement blocks, with the fields each one has.
+ * @returns {Promise<Supplement>} */
+export const loadSupplement = () => once('supplement', () => readJson(new URL('../data/tangut-supplement.json.gz', import.meta.url)))
 
 /** The faces a drawing is compared with, best first: the shapes tabulated for each face. */
 export const SHAPE_FACES = /** @type {const} */ ([
