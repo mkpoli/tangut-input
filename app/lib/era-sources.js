@@ -9,11 +9,18 @@ export const ERA_SOURCES = {
     note: 'The dates of every era and most Tangut forms; no source is given for the forms.',
     url: 'https://www.babelstone.co.uk/Calendar/XixiaCalendar_txt.zip',
   },
+  qianding1226: {
+    author: '大白高国尼卒广播台',
+    title: '乾定戌年四月八日卖驴契',
+    where: 'Weibo, 21 April 2021',
+    note: 'Photograph and transcription of Wuwei Museum manuscript 6726, dated 乾定戌年. The post quotes 于光建, 西夏文《乾定戌年罨斡善典驴契约草稿》初探; his article was not seen. Its transcription numbers the two characters 3950 and 2865; the Unicode forms are matched via Andrew West, Index to Gerard Clauson\'s Skeleton Tangut Dictionary (https://babelstone.co.uk/CTT/CTT01/CTT01-index.html).',
+    url: 'https://weibo.com/6008710471/KbTyK101X',
+  },
   west2007: {
     author: 'Andrew West',
     title: 'Tangut Coins',
-    where: 'BabelStone Blog, 2007',
-    note: 'Readings of the coins, with the earlier readings of Luo Fuchang, Chen Bingying and Zhao Quanzhi.',
+    where: 'BabelStone Blog, 29 January 2007; addendum 17 March 2007; Unicode update 1 January 2017',
+    note: 'West’s readings, with earlier interpretations by Luo Fuchang, Chen Bingying and Zhao Quanzhi, and Bai Bin’s identification of 正德. Worn specimens and forgeries limit the evidence; the 福聖/稟德 reading and the 貞觀 and 正德 attributions are disputed. Reconstructions and dictionary numbers are quoted through West from 李範文, 夏漢字典 (1997), and 文海研究 (1983); the books were not consulted. One sentence prints 𗧯 for 德, where his tables give 𗣼. The addendum credits S. W. Bushell’s 1895–1896 article with deciphering the 大安 legend. No reuse licence is stated.',
     url: 'https://babelstone.co.uk/Blog/2007/01/tangut-coins.html',
   },
   west2020: {
@@ -272,5 +279,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'qianding1226',
 ])

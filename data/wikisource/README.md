@@ -29,6 +29,20 @@ reference lines. The running text is whatever the page puts inside `{{Tangut|…
 refs and `small` markup removed. A page's section comments (`Question 1`, `Mantra for…`) become line
 sections.
 
+## Ode on Monthly Pleasures
+
+The page says each verse twice and marks the months and the pairs in comments, so its lines read
+`1st month, ritual language`, `1st month, common language` and so on. "Ritual" and "common" are the
+page's terms, and it credits "ritual language" to Kepping; Nishida calls the two 「難しい言葉」 and 「易しい言葉」. The two verses before
+the first month are labelled `Opening`, from his 前置きの二句: 西田龍雄（1986）「西夏語『月々樂詩』の研究」
+『京都大學文學部研究紀要』25, 1–116, <https://hdl.handle.net/2433/73030>, which the page's bibliography also
+cites. NGWU YOH pointed to this page in a chat message on 2026-11-06.
+
+`line N` counts the lines of the page. For the 1st month it agrees with Nishida (pp. 31–32): his six
+phrases of form I, then six of form II, make 53 characters each, as lines 6 and 7 do. The opening
+differs: the page has I₁ II₁ I₂ II₂ (lines 2–5, since its first revision, 845606), and Nishida (p. 25)
+gives the print's order as I₁ I₂ II₁ II₂. Neither has been checked against a facsimile.
+
 ## Rights
 
 Wikisource text is [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The attribution

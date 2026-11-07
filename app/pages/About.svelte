@@ -60,6 +60,7 @@
               </p>
               {#if source.manuscript}<p class="corpus-note">{source.manuscript}.</p>{/if}
               {#if source.note}<p class="corpus-note">{source.note}</p>{/if}
+              {#if source.study}<p class="corpus-note" lang="ja"><a href={source.studyUrl}>{source.study}</a></p>{/if}
               {#if source.facsimileCredit}<p class="corpus-note">{source.facsimileCredit}</p>{/if}
               {#if source.reading}<p class="corpus-note">{t('attest.lineReadings')} <a href={source.readingUrl}>{source.reading}</a></p>{/if}
             </li>

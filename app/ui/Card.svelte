@@ -5,18 +5,21 @@
   import { db, ix, codePoint, gloss, isComponent, readingOf } from '../lib/db.svelte.js'
   import { onMount } from 'svelte'
   import G from './G.svelte'
+  import TileNote from './TileNote.svelte'
   import Icon from './Icon.svelte'
   import { route, link } from '../lib/route.svelte.js'
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
-  import { byDescription, partsIn } from '../lib/search.js'
+  import { byDescription } from '../lib/search.js'
+  import { idsViews } from '../lib/ids-views.js'
   import { openingOf } from '../lib/description.js'
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
   import Attest from './Attest.svelte'
   import { loadWenhaiComposition } from '../lib/data.js'
   import Peek from './Peek.svelte'
+  import Spelling from './Spelling.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
   import { tibetanShown, tibetanWhere } from '../lib/tibetan.js'
@@ -38,6 +41,10 @@
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
   const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
+  // The group the character stands in, when a pair list would hide part of it: a chain of stated
+  // forms, or the pair someone reported.
+  const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
+  const linkedGroup = $derived(family && (family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) ? family : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
   const wordClass = $derived(partsOfSpeech(meanings.zh))
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
@@ -72,7 +79,7 @@
   const users = $derived(ready && char ? [...(ix.usedBy.get(char) ?? [])] : [])
   // The characters whose own spelling is read from this one, either as its upper or its lower.
   const spells = $derived(ready && char ? [...(ix.fanqieUsedBy.get(char) ?? [])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)) : [])
-  const parts = $derived(ready && char ? partsIn(char) : [])
+  const views = $derived(char && entry?.composition ? idsViews(char, entry.composition, ix.idsIndex) : null)
   // The description's opening, which Find reads as a prefix: the family of characters built from it.
   const opening = $derived(openingOf(entry?.composition))
   const openingCount = $derived(ready && opening ? byDescription(opening).length : 0)
@@ -261,6 +268,21 @@
             <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
+        {#if linkedGroup}
+          <p class="ui-hint">{t('card.family')}</p>
+          <div class="group">
+            {#each linkedGroup.links as link (link.one + link.other + link.kind)}
+              {@const one = readingOf(link.one, ui.reading)}
+              {@const other = readingOf(link.other, ui.reading)}
+              <span class="group-link">
+                <button class="ui-tile" type="button" aria-current={link.one === char ? 'true' : undefined} title={gloss(link.one)} onclick={() => choose(link.one)}><G char={link.one} />{#if one}<span class="ui-tile-sound">{one}</span>{/if}</button>
+                <span class="chain-tie" aria-hidden="true"></span>
+                <button class="ui-tile" type="button" aria-current={link.other === char ? 'true' : undefined} title={gloss(link.other)} onclick={() => choose(link.other)}><G char={link.other} />{#if other}<span class="ui-tile-sound">{other}</span>{/if}</button>
+                <span class="ui-tag">{t(`variants.link.${link.ground}`)}</span>
+              </span>
+            {/each}
+          </div>
+        {/if}
         <p class="more"><a href={link('variants', char)}><Icon name="arrow" size={13}/>{t('card.variantsAll')}</a></p>
       </section>
     {/if}
@@ -280,10 +302,18 @@
               <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="ui-script spelling">{spelling}</span></td></tr>
             {/if}
             {#if hands?.tibetan?.length}
-              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">{#each hands.tibetan as [hand, , count, script, wylie], index (index)}{index ? ' · ' : ''}<span class="ui-hint">{hand}</span> <span class="bo" lang="bo" title={wylie}>{script}</span>{count === 1 ? '' : ` ×${count || '?'}`}{/each}</td></tr>
+              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">
+                {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
+                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone />
+                {/each}
+              </td></tr>
             {/if}
             {#if hands?.sanskrit?.length}
-              <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
+              <tr><th scope="row">{t('card.sanskrit')}</th><td class="hands">
+                {#each hands.sanskrit as [printed, script, ipa] (printed)}
+                  <Spelling {script} transcription={printed} {ipa} lang="sa" />
+                {/each}
+              </td></tr>
             {/if}
             {#if tibetanGlosses.length}
               <tr>
@@ -350,14 +380,23 @@
 
     <section>
       <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.builtFrom')}</h3>
-      {#if entry?.composition}
-        <Ids composition={entry.composition} />
-        <p class="ids">
-          <span class="ui-formula" title={entry.composition}>{entry.composition}</span>
-          <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
-          {#if parts.length}<a class="ids-link" href={link('parts', char, parts.join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
-          {#if openingCount > 1}<a class="ids-link" href={link('', char, opening)}><Icon name="find" size={13}/>{t('card.sameOpening')}</a>{/if}
-        </p>
+      {#if views}
+        {#each [
+          ...(views.showEditorial ? [{ label: t('card.idsEditorial'), recorded: false, text: views.editorial, parts: views.editorialParts }] : []),
+          { label: t('card.idsRecorded'), recorded: true, text: views.recorded, parts: views.recordedParts },
+        ] as view (view.recorded)}
+          <div class="ids-view">
+            <h4 class="ui-hint">{view.label}</h4>
+            <Ids composition={view.text} />
+            <p class="ids">
+              <span class="ui-formula" title={view.text}>{view.text}</span>
+              <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} aria-label={`${t('common.copy')} · ${t(view.label)}`} onclick={() => copy(view.text, t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
+              {#if view.parts.length}<a class="ids-link" aria-label={`${t('card.withTheseParts')} · ${t(view.label)}`} href={link('parts', char, view.parts.join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
+              {#if view.recorded && openingCount > 1}<a class="ids-link" href={link('', char, opening)}><Icon name="find" size={13}/>{t('card.sameOpening')}</a>{/if}
+            </p>
+          </div>
+        {/each}
+        <p class="ui-hint">{t('card.idsSource')} <a href="https://www.babelstone.co.uk/Tangut/TangutIDS.txt" target="_blank" rel="noopener noreferrer">Andrew West, Tangut IDS ↗</a>.{#if views.showEditorial}{' '}{t('card.idsMethod')}{/if}</p>
       {:else if isComponent(char)}
         <p class="ui-hint">{t('card.isComponent')}</p>
       {:else}
@@ -388,7 +427,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -403,7 +442,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -418,7 +457,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -462,6 +501,10 @@
   .record section > .ui-label,.faces-head .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .more a{display:inline-flex;align-items:center;gap:3px}
   .faces{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:var(--ui-space-2xs)}
+  .group{display:grid;gap:var(--ui-space-xs);margin-block-end:var(--ui-space-sm)}
+  .group-link{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
+  .chain-tie{inline-size:12px;block-size:1px;background:var(--ui-color-border-strong)}
+  .group-link .ui-tile[aria-current='true']{background:var(--ui-color-accent-soft)}
   .face{display:grid;place-items:center;gap:2px;margin:0;padding:var(--ui-space-xs) 2px var(--ui-space-2xs);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-sm);background:var(--ui-color-surface-sunken);min-inline-size:0}
   .face-glyph{font-size:32px;line-height:1.15}
   .face figcaption{max-inline-size:100%;overflow:hidden;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);line-height:1.2;text-align:center;text-overflow:ellipsis;white-space:nowrap}
@@ -482,6 +525,7 @@
   .readings th{inline-size:46%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
+  .readings td.hands{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--ui-space-xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
   .spelling{font-size:18px}
   .transcriptions{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;align-items:baseline}
@@ -500,6 +544,7 @@
   .source-note{display:block;margin-top:2px;font-size:var(--ui-text-2xs);line-height:1.35}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
+  .ids-view{display:grid;gap:var(--ui-space-xs);min-inline-size:0}
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm)}
   .ids .ui-formula{font-size:20px}
   .ids-link{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}
@@ -510,7 +555,6 @@
   .wenhai-sep{color:var(--ui-color-ink-muted)}
   .wenhai-position{margin-inline-start:auto;font-size:var(--ui-text-2xs);letter-spacing:0}
   .rel{gap:3px}
-  .rel .ui-tile-note{font-size:var(--ui-text-2xs)}
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}
   .credit{border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg);font-size:var(--ui-text-2xs);line-height:1.6;margin-top:var(--ui-space-xl)}
@@ -521,5 +565,4 @@
     .glyph-frame :global(.ui-script){font-size:72px}
     .gloss{font-size:var(--ui-text-lg)}
   }
-  .bo{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:1.1em}
 </style>

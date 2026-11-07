@@ -121,10 +121,13 @@
       </section>
     {/each}
   {/if}
+  <p class="related"><a class="ui-more-link" href="/gyalrongic">{t('gyalrongic.more')}</a></p>
 </div>
 
 <style>
   .texts{gap:var(--ui-space-3xl)}
+  .related{margin:0}
+  .related .ui-more-link{display:inline-flex;align-items:center;min-block-size:24px}
   .load-failed{display:flex;align-items:center;gap:var(--ui-space-md);flex-wrap:wrap}
   .section-title{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold)}
   .texts-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--ui-space-md)}

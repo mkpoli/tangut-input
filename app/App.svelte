@@ -3,7 +3,7 @@
   // card of the open character beside it (a sheet over it on a phone).
   import { tick } from 'svelte'
   import { db, load } from './lib/db.svelte.js'
-  import { route, go, PAGES, GROUPS, PRIMARY } from './lib/route.svelte.js'
+  import { route, go, PAGES, GROUPS, MORE, PRIMARY } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, setReading } from './lib/ui.svelte.js'
   import { SYSTEMS, systemBaseName, systemTitle } from './lib/reading.js'
   import { toast } from './lib/clip.svelte.js'
@@ -30,6 +30,7 @@
   import Parts from './pages/Parts.svelte'
   import About from './pages/About.svelte'
   import Intro from './pages/Intro.svelte'
+  import Gyalrongic from './pages/Gyalrongic.svelte'
 
   load()
   applyTheme()
@@ -49,13 +50,15 @@
   let settingsSheetOpen = $state(false)
   /** @type {HTMLDialogElement | null} */
   let settingsDialog = $state(null)
-  /** @type {null | { kind: 'more' } | { kind: 'group', label: string }} The phone's sheet. */
+  /** @type {null | { kind: 'more' } | { kind: 'group', label: string }} The open menu: a popover on a wide screen, a sheet on a phone. */
   let menu = $state(null)
+  /** Whether the bar is in its wide layout. @type {boolean} */
+  let wide = $state(matchMedia('(min-width: 901px)').matches)
   /** @type {HTMLDialogElement | null} */
   let sheet = $state(null)
-  /** The tab that opened the sheet, so closing it puts the keyboard back there. @type {HTMLElement | null} */
+  /** The control that opened the menu, so closing it puts the keyboard back there. @type {HTMLElement | null} */
   let menuTrigger = $state(null)
-  /** Whether closing the sheet should return focus to its tab; a link that opens a page keeps the page's focus. */
+  /** Whether closing the menu should return focus to its button; a link that opens a page keeps the page's focus. */
   let returnFocus = true
 
   $effect(() => {
@@ -64,12 +67,15 @@
   })
 
   // The phone sheet is a real dialog: the browser traps focus in it, closes it on Escape and
-  // returns focus to the button that opened it.
+  // returns focus to the button that opened it. A wide screen uses a popover instead.
   $effect(() => {
     if (!sheet) return
-    if (menu && !sheet.open) sheet.showModal()
-    if (!menu && sheet.open) sheet.close()
+    if (menu && !wide && !sheet.open) sheet.showModal()
+    if ((!menu || wide) && sheet.open) sheet.close()
   })
+
+  // The pages that are read, full width and without the character card.
+  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic'])
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page @returns {boolean} whether the page changes */
   function nav(event, page) {
@@ -87,10 +93,11 @@
     menu = next
   }
 
-  /** @param {boolean} [restore] whether to put the keyboard back on the tab */
+  /** @param {boolean} [restore] whether to put the keyboard back on the button */
   function closeMenu(restore = true) {
     returnFocus = restore
     menu = null
+    if (restore && wide) menuTrigger?.focus()
   }
 
   /** @param {string} label */
@@ -105,7 +112,8 @@
       if (input) { event.preventDefault(); input.focus() }
     }
     if (event.key === 'Escape') {
-      if (ui.sheet && !menu) ui.sheet = false
+      if (menu) closeMenu()
+      else if (ui.sheet) ui.sheet = false
       if (settingsOpen) closeSettings()
     }
   }
@@ -164,20 +172,37 @@
 
   const readingSystem = $derived(SYSTEMS.find(system => system.key === ui.reading) ?? SYSTEMS[0])
 
-  // Back or forward closes the sheet without pulling focus off the page that just opened.
+  // Back or forward closes the menu without pulling focus off the page that just opened.
   $effect(() => {
     const close = () => closeMenu(false)
     addEventListener('popstate', close)
     return () => removeEventListener('popstate', close)
   })
 
-  // The sheet belongs to the phone's bar: a window that grows past it takes the sheet with it.
+  // A menu belongs to the layout it was opened in: a breakpoint change takes it with it.
   $effect(() => {
-    const wide = matchMedia('(min-width: 901px)')
-    const close = () => { if (wide.matches) closeMenu(false) }
-    wide.addEventListener('change', close)
-    return () => wide.removeEventListener('change', close)
+    const query = matchMedia('(min-width: 901px)')
+    const sync = () => { wide = query.matches; menu = null }
+    query.addEventListener('change', sync)
+    return () => query.removeEventListener('change', sync)
   })
+
+  // A wide-screen menu closes when the pointer goes elsewhere or the keyboard leaves it.
+  $effect(() => {
+    if (!menu || !wide) return
+    const outside = (/** @type {PointerEvent} */ event) => {
+      const target = /** @type {HTMLElement} */ (event.target)
+      if (!target.closest('.nav-item')) closeMenu(false)
+    }
+    addEventListener('pointerdown', outside)
+    return () => removeEventListener('pointerdown', outside)
+  })
+
+  /** @param {FocusEvent} event */
+  function menuBlur(event) {
+    const next = /** @type {Node | null} */ (event.relatedTarget)
+    if (next && !(/** @type {HTMLElement} */ (event.currentTarget)).contains(next)) closeMenu(false)
+  }
 
   /** @param {null | { kind: 'more' } | { kind: 'group', label: string }} state */
   function groupOf(state) {
@@ -186,14 +211,14 @@
     return GROUPS.find(group => group.label === label)
   }
   const menuGroup = $derived(groupOf(menu))
+  const menuPages = $derived(menuGroup ? menuGroup.pages : MORE)
   const menuTitle = $derived(menuGroup ? t(menuGroup.label) : t('nav.more'))
 </script>
 
 <svelte:window onkeydown={keys} />
 
-{#snippet introLink(/** @type {string} */ className)}
-  <a class={className} href="/intro" class:on={route.page === 'intro'} aria-current={route.page === 'intro' ? 'page' : undefined}
-    title={t('nav.intro.hint')} onclick={event => nav(event, 'intro')}><Icon name="book" size={14} stroke={1.6}/><span>{t('nav.intro')}</span></a>
+{#snippet caret()}
+  <svg class="caret" viewBox="0 0 10 10" width="8" height="8" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
 {/snippet}
 
 <div class="shell">
@@ -206,20 +231,46 @@
         </span>
       </SiteSelect>
     </div>
-    {@render introLink('intro-extra')}
     <nav class="finders" aria-label={t('nav.label')}>
       <a href="/" class="primary" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
         title={t(PRIMARY.hint)} onclick={event => nav(event, '')}><Icon name={PRIMARY.icon} size={14} stroke={1.6}/><span>{t(PRIMARY.label)}</span></a>
-      {#each GROUPS as group (group.label)}
-        <div class="group" role="group" aria-label={t(group.label)}>
-          {#each group.pages as page (page.path)}
-            <a href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
-              title={t(page.hint)} onclick={event => nav(event, page.path)}><Icon name={page.icon} size={14} stroke={1.6}/><span>{t(page.label)}</span></a>
-          {/each}
+      {#each GROUPS as group, index (group.label)}
+        <div class="nav-item" onfocusout={menuBlur}>
+          <button type="button" class="nav-group" class:on={group.pages.some(page => page.path === route.page)}
+            aria-current={group.pages.some(page => page.path === route.page) ? 'true' : undefined}
+            aria-expanded={groupOpen(group.label)} aria-controls={`nav-menu-${index}`}
+            onclick={event => groupOpen(group.label) ? closeMenu() : openMenu(event, { kind: 'group', label: group.label })}>
+            <Icon name={group.icon} size={14} stroke={1.6}/><span>{t(group.label)}</span>{@render caret()}
+          </button>
+          {#if groupOpen(group.label)}
+            <div class="nav-menu ui-menu" id={`nav-menu-${index}`} role="group" aria-label={t(group.label)}>
+              {#each group.pages as page (page.path)}
+                <a class="ui-menu-item" href="/{page.path}"
+                  aria-current={route.page === page.path ? 'page' : undefined}
+                  onclick={event => closeMenu(!nav(event, page.path))}><Icon name={page.icon} size={16}/>
+                  <span>{t(page.label)}</span><span class="ui-hint">{t(page.hint)}</span></a>
+              {/each}
+            </div>
+          {/if}
         </div>
       {/each}
-      <div class="group intro">
-        {@render introLink('intro-link')}
+      <div class="nav-item" onfocusout={menuBlur}>
+        <button type="button" class="nav-group" class:on={MORE.some(page => page.path === route.page)}
+          aria-current={MORE.some(page => page.path === route.page) ? 'true' : undefined}
+          aria-expanded={menu?.kind === 'more'} aria-controls="nav-menu-more"
+          onclick={event => menu?.kind === 'more' ? closeMenu() : openMenu(event, { kind: 'more' })}>
+          <Icon name="more" size={14} stroke={1.6}/><span>{t('nav.more')}</span>{@render caret()}
+        </button>
+        {#if menu?.kind === 'more'}
+          <div class="nav-menu ui-menu" id="nav-menu-more" role="group" aria-label={t('nav.more')}>
+            {#each MORE as page (page.path)}
+              <a class="ui-menu-item" href="/{page.path}"
+                aria-current={route.page === page.path ? 'page' : undefined}
+                onclick={event => closeMenu(!nav(event, page.path))}><Icon name={page.icon} size={16}/>
+                <span>{t(page.label)}</span><span class="ui-hint">{t(page.hint)}</span></a>
+            {/each}
+          </div>
+        {/if}
       </div>
     </nav>
     <div class="aside">
@@ -266,8 +317,8 @@
   {#if db.status === 'failed'}
     <p class="fault">{t('app.failed')}</p>
   {:else}
-    <div class="body" class:full={route.page === 'about' || route.page === 'intro'}>
-      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'variants' ? 'card.variants' : route.page === 'intro' ? 'intro.title' : 'nav.sources'))}>
+    <div class="body" class:full={READING_PAGES.includes(route.page)}>
+      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'variants' ? 'card.variants' : route.page === 'intro' ? 'intro.title' : route.page === 'gyalrongic' ? 'gyalrongic.title' : 'nav.sources'))}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'meaning'}<Meaning />
         {:else if route.page === 'cangjie'}<Cangjie />
@@ -282,6 +333,7 @@
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
         {:else if route.page === 'intro'}<Intro />
+        {:else if route.page === 'gyalrongic'}<Gyalrongic />
         {:else}<About />{/if}
         {#if route.page !== 'about'}
           <footer class="foot ui-hint">
@@ -290,7 +342,7 @@
           </footer>
         {/if}
       </main>
-      {#if route.page !== 'about' && route.page !== 'intro'}
+      {#if !READING_PAGES.includes(route.page)}
         {#if ui.sheet}<button type="button" class="scrim" tabindex="-1" aria-hidden="true" onclick={() => { ui.sheet = false }}></button>{/if}
         <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
           <Card />
@@ -308,26 +360,26 @@
         aria-haspopup="dialog" aria-expanded={groupOpen(group.label)}
         onclick={event => openMenu(event, { kind: 'group', label: group.label })}>
         <Icon name={group.icon} size={18}/>
-        <span>{t(group.tab)}<svg class="caret" viewBox="0 0 10 10" width="8" height="8" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span>{t(group.tab)}{@render caret()}</span>
       </button>
     {/each}
-    <button class="tab" type="button" class:on={route.page === 'about' || route.page === 'intro'}
-      aria-current={route.page === 'about' || route.page === 'intro' ? 'true' : undefined}
+    <button class="tab" type="button" class:on={MORE.some(page => page.path === route.page)}
+      aria-current={MORE.some(page => page.path === route.page) ? 'true' : undefined}
       aria-haspopup="dialog" aria-expanded={menu?.kind === 'more'}
       onclick={event => openMenu(event, { kind: 'more' })}><Icon name="more" size={18}/><span>{t('nav.more')}</span></button>
   </nav>
 
-  <dialog class="sheet" bind:this={sheet} aria-label={menuTitle}
-    onclose={() => { menu = null; if (returnFocus) menuTrigger?.focus(); returnFocus = true }}
-    onclick={(/** @type {MouseEvent} */ event) => { if (event.target === sheet) closeMenu() }}>
-    <div class="sheet-head">
-      <p class="ui-label">{menuTitle}</p>
-      <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('nav.menuClose')}
-        onclick={() => closeMenu()}><Icon name="close" size={16}/></button>
-    </div>
-    {#if menuGroup}
+  {#if !wide}
+    <dialog class="sheet" bind:this={sheet} aria-label={menuTitle}
+      onclose={() => { menu = null; if (returnFocus) menuTrigger?.focus(); returnFocus = true }}
+      onclick={(/** @type {MouseEvent} */ event) => { if (event.target === sheet) closeMenu() }}>
+      <div class="sheet-head">
+        <p class="ui-label">{menuTitle}</p>
+        <button class="ui-button" data-variant="quiet" data-size="icon-sm" type="button" aria-label={t('nav.menuClose')}
+          onclick={() => closeMenu()}><Icon name="close" size={16}/></button>
+      </div>
       <div class="sheet-links">
-        {#each menuGroup.pages as page (page.path)}
+        {#each menuPages as page (page.path)}
           <a class="sheet-link" href="/{page.path}" class:on={route.page === page.path} aria-current={route.page === page.path ? 'page' : undefined}
             onclick={event => closeMenu(!nav(event, page.path))}>
             <Icon name={page.icon} size={18}/>
@@ -335,21 +387,8 @@
           </a>
         {/each}
       </div>
-    {:else}
-      <div class="sheet-links">
-        <a class="sheet-link" href="/intro" class:on={route.page === 'intro'} aria-current={route.page === 'intro' ? 'page' : undefined}
-          onclick={event => closeMenu(!nav(event, 'intro'))}>
-          <Icon name="book" size={18}/>
-          <span class="sheet-name">{t('nav.intro')}</span><span class="ui-hint">{t('nav.intro.hint')}</span>
-        </a>
-        <a class="sheet-link" href="/about" class:on={route.page === 'about'} aria-current={route.page === 'about' ? 'page' : undefined}
-          onclick={event => closeMenu(!nav(event, 'about'))}>
-          <Icon name="sources" size={18}/>
-          <span class="sheet-name">{t('nav.sources')}</span><span class="ui-hint">{t('nav.sources.hint')}</span>
-        </a>
-      </div>
-    {/if}
-  </dialog>
+    </dialog>
+  {/if}
 
   <dialog class="sheet settings-sheet" bind:this={settingsDialog} aria-label={t('settings.label')}
     onclose={() => { settingsSheetOpen = false; settingsTrigger?.focus() }}
@@ -374,28 +413,23 @@
   .mark{display:flex;align-items:center;gap:var(--ui-space-sm)}
   .badge{display:grid;place-items:center;inline-size:30px;block-size:30px;border-radius:var(--ui-radius-sm);background:var(--ui-color-accent);color:var(--ui-color-on-accent);font-size:21px}
   .name{font-family:var(--ui-font-serif);font-size:17px;font-weight:var(--ui-weight-semibold);letter-spacing:.005em;white-space:nowrap}
-  .intro-extra{display:none;align-items:center;gap:4px;block-size:55px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
-  .intro-extra:hover{color:var(--ui-color-ink)}
-  .intro-extra.on{color:var(--ui-color-accent-ink)}
-  .finders{align-self:stretch;display:flex;align-items:stretch;gap:2px;min-inline-size:0;overflow-x:auto;scrollbar-width:none}
-  .finders::-webkit-scrollbar{display:none}
-  .finders a{position:relative;display:flex;align-items:center;gap:4px;padding:0 7px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
-  .finders a:hover{color:var(--ui-color-ink);background:var(--ui-color-surface-hover)}
-  .finders a.on{color:var(--ui-color-ink);font-weight:var(--ui-weight-semibold)}
-  .finders a.on::after{content:'';position:absolute;inset-inline:var(--ui-space-sm);bottom:0;block-size:2px;background:var(--ui-color-accent)}
-  .finders .group{display:flex;align-items:stretch;gap:2px}
+  .finders{align-self:stretch;display:flex;align-items:stretch;gap:2px;min-inline-size:0}
+  .finders .primary,.finders .nav-group{position:relative;display:flex;align-items:center;gap:4px;padding:0 7px;border:0;background:none;color:var(--ui-color-ink-soft);text-decoration:none;font-family:inherit;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap;cursor:pointer}
+  .finders .primary:hover,.finders .nav-group:hover,.finders .nav-group[aria-expanded="true"]{color:var(--ui-color-ink);background:var(--ui-color-surface-hover)}
+  .finders .primary.on,.finders .nav-group.on{color:var(--ui-color-ink);font-weight:var(--ui-weight-semibold)}
+  .finders .primary.on::after,.finders .nav-group.on::after{content:'';position:absolute;inset-inline:var(--ui-space-sm);bottom:0;block-size:2px;background:var(--ui-color-accent)}
   .finders .primary{font-weight:var(--ui-weight-semibold)}
-  .finders .group + .group, .finders .primary + .group{margin-inline-start:var(--ui-space-xs);padding-inline-start:var(--ui-space-xs);border-inline-start:1px solid var(--ui-color-border)}
-  /* The finder row cannot hold the introduction below 1280px; it moves up beside the mark. */
-  @media (min-width:901px) and (max-width:1279px){
-    .intro-extra{display:flex}
-    .finders .intro{display:none}
-  }
+  /* A group opens its finders in a small menu under the bar. */
+  .nav-item{position:relative;display:flex;align-items:stretch}
+  .nav-menu{position:absolute;inset-block-start:calc(100% + var(--ui-space-2xs));inset-inline-start:0;z-index:var(--ui-z-menu);inline-size:25rem}
+  .nav-menu .ui-menu-item{align-items:center;padding:var(--ui-space-sm)}
+  .nav-menu .ui-menu-item .ui-hint{margin-inline-start:auto;text-align:end}
+  .caret{flex:none;opacity:.55}
   .aside{margin-inline-start:auto;display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .reading{display:flex;align-items:center;gap:var(--ui-space-xs)}
   .reading-label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);white-space:nowrap}
   .reading-icon{display:grid;place-items:center;color:var(--ui-color-ink-muted)}
-  /* The finder row needs the label's space until the bar is wide enough for the intro, the
+  /* The finder row needs the label's space until the bar is wide enough for the
      reconstruction and the sponsor together. */
   @media (max-width:1799px){.reading-label{display:none}}
   .reading :global(.ui-select){inline-size:172px}
@@ -445,20 +479,21 @@
 
   @media (max-width:1180px){
     .top{gap:var(--ui-space-md);padding-inline:var(--ui-space-xl)}
-    .finders a{padding-inline:var(--ui-space-xs);font-size:var(--ui-text-xs)}
-    .finders a.on::after{inset-inline:var(--ui-space-xs)}
+    .finders .primary,.finders .nav-group{padding-inline:var(--ui-space-xs);font-size:var(--ui-text-xs)}
+    .finders .primary.on::after,.finders .nav-group.on::after{inset-inline:var(--ui-space-xs)}
     .reading :global(.ui-select){inline-size:172px}
   }
-  /* The finders keep a row of their own until the bar is wide enough for all of them, the
-     introduction included, beside the reconstruction and the sponsor. The threshold holds the
-     longest labels (English); the sticky chrome below follows the taller bar. */
-  @media (min-width:901px) and (max-width:1719px){
+  /* A tablet keeps every group: the bar takes a second row, and its rule runs the width of the
+     page like the row above. The sticky chrome below it follows the new height. */
+  @media (min-width:901px) and (max-width:1279px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
     .site,.aside{block-size:55px}
     .finders{order:3;flex:0 0 100%;block-size:40px;border-top:1px solid var(--ui-color-border)}
-    .finders a{padding-inline:var(--ui-space-sm);font-size:var(--ui-text-sm)}
-    .finders a.on::after{inset-inline:var(--ui-space-sm)}
+    .finders .primary,.finders .nav-group{padding-inline:var(--ui-space-sm);font-size:var(--ui-text-sm)}
+    .finders .primary.on::after,.finders .nav-group.on::after{inset-inline:var(--ui-space-sm)}
+    /* More is the last control on the row: its menu grows to the left so it stays on screen. */
+    #nav-menu-more{inset-inline-start:auto;inset-inline-end:0}
   }
   @media (max-width:900px){
     .shell{--topbar-h:54px}
@@ -477,7 +512,6 @@
     .tabs .tab{flex:1 1 0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:7px 3px;border:0;border-radius:var(--ui-radius-sm);color:var(--ui-color-ink-soft);background:none;text-decoration:none;font-family:inherit;font-size:var(--ui-text-xs);font-weight:var(--ui-weight-medium);white-space:nowrap;cursor:pointer}
     .tabs .tab span{display:inline-flex;align-items:center;gap:1px;line-height:1.15}
     .tabs .tab.on{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
-    .caret{flex:none;opacity:.55}
     .toast{bottom:calc(76px + env(safe-area-inset-bottom))}
   }
   @media (prefers-reduced-motion:reduce){.card{transition:none}}

@@ -68,6 +68,10 @@ export const PAGE_SEO = {
     title: 'Tangut: people, script, language and texts — Tangut Input',
     description: 'A short introduction to the Tanguts (党項), the Western Xia state, the Tangut script and language, the surviving texts, and how the script is used today.',
   },
+  gyalrongic: {
+    title: 'Gyalrongic literature — Tangut Input',
+    description: 'Grammars, dictionaries, data and studies of rGyalrong, Khroskyabs and Horpa, with the work that compares them with Tangut.',
+  },
   about: {
     title: 'Sources — Tangut Input',
     description: 'Where every record on Tangut Input comes from — Wiktionary, BabelStone, the Tangut Cangjie table, Unicode, an edition with facsimile, twelve Wikisource texts and the Lausanne Corpus — and what the site keeps.',

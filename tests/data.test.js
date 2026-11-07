@@ -71,18 +71,58 @@ test('the Tibetan spellings by hand class belong to known characters', () => {
   const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
   expect(Object.keys(chars).filter(char => !rhymes.chars[char])).toEqual([])
   for (const { tibetan = [] } of Object.values(chars)) {
-    for (const [hand, spelt, count, script, wylie] of tibetan) {
+    for (const [hand, spelt, count, script, wylie, ipa] of tibetan) {
       expect(wylie.length).toBeGreaterThan(0)
       expect('ABCDE').toContain(hand)
       expect(spelt.length).toBeGreaterThan(0)
       expect(count).toBeGreaterThanOrEqual(0)
       expect(script).toMatch(/^[\u0f00-\u0fff?]+$/)
+      expect(ipa).toMatch(/^[\p{L}\p{M}ːʔ? ]+$/u)
     }
   }
-  expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1, 'ངུ', 'ngu']])
-  expect(chars['𘘣'].tibetan[0]).toEqual(['B', 'g-yi', 13, 'གཡི', 'g.yi'])
+  expect(chars['𗀄'].tibetan).toEqual([['B', 'ngu', 1, 'ངུ', 'ngu', 'ŋu']])
+  expect(chars['𘘣'].tibetan[0]).toEqual(['B', 'g-yi', 13, 'གཡི', 'g.yi', 'ɡji'])
   // A doubled vowel is the long-vowel mark.
-  expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང', 'bAng'])
+  expect(chars['𗬠'].tibetan[0]).toEqual(['B', 'baang', 2, 'བཱང', 'bAng', 'baːŋ'])
+  // A prefix is part of the reading, and འ is a glottal stop.
+  expect(chars['𗖵'].tibetan[0]).toEqual(['A', 'v-bu', 3, 'འབུ', "'bu", 'ʔbu'])
+  // ལྷ is one letter, a voiceless l; ནྷ is an aspirated n.
+  expect(chars['𗇘'].tibetan[0]).toEqual(['A', 'lhi', 1, 'ལྷི', 'lhi', 'l̥i'])
+  expect(chars['𘟃'].tibetan[0]).toEqual(['B', 'nho', 1, 'ནྷོ', 'nho', 'nʱo'])
+  // The printed parse holds where the script round-trip loses it.
+  expect(chars['𗈜'].tibetan[0]).toEqual(['A', 'gar', 1, 'གར', 'gar', 'ɡar'])
+  expect(chars['𗖈'].tibetan[0]).toEqual(['A', 'dav', 1, 'དའ', "da'", 'daʔ'])
+  expect(chars['𗨁'].tibetan[4]).toEqual(['B', 'phuo', 1, 'ཕོུ', 'phuo', 'pʰuo'])
+  expect(chars['𗫏'].tibetan[3]).toEqual(['A', 'chui', 1, 'ཆིུ', 'chui', 'tɕʰui'])
+  expect(chars['𘖑'].tibetan[0]).toEqual(['A', 'mar', 1, 'མར', 'mar', 'mar'])
+  expect(chars['𘖑'].tibetan[1]).toEqual(['B', 'mue', 1, 'མེུ', 'mue', 'mue'])
+  // A second h after an aspirated letter is the same aspiration.
+  expect(chars['𗢳'].tibetan[1]).toEqual(['A', 'thha', 2, 'ཐྷ', 'thha', 'tʰa'])
+})
+
+test('the Sanskrit spellings are printed, written in Devanagari and read as IPA', () => {
+  const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
+  const rows = Object.values(chars).filter(row => row.sanskrit)
+  expect(rows.length).toBe(23)
+  expect(rows.flatMap(row => row.sanskrit).length).toBe(36)
+  expect(chars['𗄈'].sanskrit).toEqual([['śo', 'शो', 'ɕoː']])
+  expect(chars['𗫂'].sanskrit).toEqual([['ta', 'त', 't̪ɐ'], ['ṭa', 'ट', 'ʈɐ']])
+  expect(chars['𗐱'].sanskrit).toEqual([['ni', 'नि', 'n̪i'], ['ñi', 'ञि', 'ɲi'], ['nai', 'नै', 'n̪ɐi̯']])
+  for (const row of rows) for (const [printed, script, ipa] of row.sanskrit) {
+    expect(printed.length).toBeGreaterThan(0)
+    expect(script).toMatch(/^[\u0900-\u097f]+$/)
+    expect(ipa).toMatch(/^[\p{L}\p{M}]+$/u)
+  }
+})
+
+test('the spellings on one card have distinct render keys', () => {
+  const { chars } = JSON.parse(readFileSync(new URL('../app/data/tangut-tibetan-hands.json', import.meta.url), 'utf8'))
+  for (const row of Object.values(chars)) {
+    const tibetan = (row.tibetan ?? []).map(([hand, , count, script, wylie]) => `${hand}${script}${count}${wylie}`)
+    expect(new Set(tibetan).size).toBe(tibetan.length)
+    const sanskrit = (row.sanskrit ?? []).map(([printed]) => printed)
+    expect(new Set(sanskrit).size).toBe(sanskrit.length)
+  }
 })
 
 test('Downes\'s glosses belong to known characters and none is empty', () => {
@@ -166,6 +206,12 @@ test('the attestation joins the edition, the twelve Wikisource texts, the Lausan
   expect(attestation.sources.slice(1).every(source => source.kind === 'transcription' && (source.revision || source.commit))).toBe(true)
 })
 
+test('the monthly ode links the printed study its page cites', () => {
+  const ode = attestation.sources.find(source => source.id === 'wikisource-monthly-pleasures')
+  expect(ode.study).toContain('西夏語『月々樂詩』の研究')
+  expect(ode.studyUrl).toBe('https://hdl.handle.net/2433/73030')
+})
+
 test('every place points at the character it attests', () => {
   const sources = new Set(attestation.sources.map(source => source.id))
   for (const [char, bySource] of Object.entries(attestation.rows)) {
@@ -178,6 +224,31 @@ test('every place points at the character it attests', () => {
       }
     }
   }
+})
+
+test('each verse of the monthly ode names its month and language form', () => {
+  const ode = Object.entries(attestation.lines).filter(([id]) => id.startsWith('wikisource-monthly-pleasures:')).map(([, line]) => line)
+  const months = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th'].map(month => `${month} month`)
+  // The common-language name of each month, ending in 𗼑 'month'. Nishida 1986: numeral + month, except the 1st and 12th.
+  const common = ['𗩭', '𗍫', '𘕕', '𗥃', '𗏁', '𗤁', '𗒹', '𘉋', '𗢭', '𗰗', '𗰗𘈩', '𗎊'].map(name => `${name}𗼑`)
+  months.forEach((month, index) => {
+    expect([...ode.find(line => line.section === `${month}, ritual language`).text].slice(2, 4).join('')).toBe('𘘞𗳝')
+    expect(ode.find(line => line.section === `${month}, common language`).text.startsWith(common[index])).toBe(true)
+  })
+  expect(ode.map(line => line.section)).toEqual([
+    undefined,
+    'Opening, ritual language', 'Opening, common language', 'Opening, ritual language', 'Opening, common language',
+    ...months.flatMap(month => [`${month}, ritual language`, `${month}, common language`]),
+    undefined, 'End title', 'Colophon',
+  ])
+})
+
+test('an end title comment names its line, and a dated colophon keeps its section', () => {
+  for (const source of ['wikisource-monthly-pleasures', 'wikisource-grains-of-gold']) {
+    expect(attestation.lines[`${source}:end`]).toMatchObject({ label: 'End title', section: 'End title' })
+  }
+  const grains = Object.entries(attestation.lines).filter(([id]) => id.startsWith('wikisource-grains-of-gold:')).map(([, line]) => line.section)
+  expect(grains).toContain('Colophon dated the 4th day of the 1st month')
 })
 
 const samples = JSON.parse(readFileSync(new URL('../app/data/tangut-samples.json', import.meta.url)).toString())

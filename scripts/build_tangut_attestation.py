@@ -72,7 +72,9 @@ WIKISOURCE_TEXTS = [
     {'pageid': 287253, 'slug': 'dharani', 'shortTitle': 'Great Compassion Dharani'},
     {'pageid': 153976, 'slug': 'hymn-origin', 'shortTitle': 'Hymn of the Holy Origin'},
     {'pageid': 260266, 'slug': 'grains-of-gold', 'shortTitle': 'Grains of Gold'},
-    {'pageid': 260280, 'slug': 'monthly-pleasures', 'shortTitle': 'Monthly Pleasures'},
+    {'pageid': 260280, 'slug': 'monthly-pleasures', 'shortTitle': 'Monthly Pleasures',
+     'study': '西田龍雄（1986）「西夏語『月々樂詩』の研究」『京都大學文學部研究紀要』25, 1–116',
+     'studyUrl': 'https://hdl.handle.net/2433/73030'},
     {'pageid': 287220, 'slug': 'leilin', 'shortTitle': 'Forest of Categories'},
     {'pageid': 287280, 'slug': 'liangzhou-stele', 'shortTitle': 'Liangzhou Stele'},
     {'pageid': 347419, 'slug': 'dual-maxims', 'shortTitle': 'Precious Dual Maxims'},
@@ -261,8 +263,20 @@ def clean_tangut(text):
     return re.sub(r'[ \t\r\n]+', ' ', kept).strip()
 
 
+# The markup of a page that says each verse twice: a comment names the month, the next one announces
+# the pair, and the two templates after it are the pair. Verses before the first month open the ode.
+MONTH = re.compile(r'\d+(?:st|nd|rd|th) month')
+PAIR = 'Ritual language version of the text followed by common language version'
+FORMS = ('ritual language', 'common language')
+
+
 def section_from_comment(note):
     note = note.strip()
+    if note == 'End title':
+        return note
+    # The ode's page spells it `Colphon` and runs the date on after a colon.
+    if re.match(r'Colo?phon:', note):
+        return 'Colophon'
     match = re.match(r'(Question\s+\d+)', note, re.I)
     if match:
         return 'Question ' + match.group(1).split()[-1]
@@ -279,6 +293,8 @@ def page_lines(content):
     content = remove_links(content)
     events = []
     section = ''
+    month = 'Opening'
+    forms = []
     i = 0
     while i < len(content):
         comment = content.find('<!--', i)
@@ -289,9 +305,15 @@ def page_lines(content):
             end = content.find('-->', comment + 4)
             if end < 0:
                 break
-            found = section_from_comment(content[comment + 4:end])
-            if found is not None:
-                section = found
+            note = content[comment + 4:end].strip()
+            if MONTH.fullmatch(note):
+                month = note
+            elif note.startswith(PAIR):
+                forms = list(FORMS)
+            else:
+                found = section_from_comment(note)
+                if found is not None:
+                    section = found
             i = end + 3
             continue
         end = None
@@ -316,7 +338,7 @@ def page_lines(content):
         if name == 'Tangut':
             text = clean_tangut(inner.split('|', 1)[1] if '|' in inner else '')
             if text:
-                events.append((section, text))
+                events.append((f'{month}, {forms.pop(0)}' if forms else section, text))
         i = end
     return events
 
@@ -433,6 +455,7 @@ def build_wikisource(rows):
             'retrieved': snapshot['retrieved'],
             'revision': root['revision'],
             'note': plain(header_field(header, 'notes')) or 'Wikisource transcription. The page names no printed edition.',
+            **({'study': entry['study'], 'studyUrl': entry['studyUrl']} if 'study' in entry else {}),
             'pages': page_records,
         })
 
@@ -443,7 +466,7 @@ def build_wikisource(rows):
                 if is_heading(text):
                     continue
                 number += 1
-                if section.startswith('Question ') and text.startswith('《') and text.endswith('𘃪。'):
+                if section == 'End title' or (section.startswith('Question ') and text.startswith('《') and text.endswith('𘃪。')):
                     label = 'End title'
                     section = 'End title'
                     key = 'end'

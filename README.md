@@ -22,10 +22,10 @@ it into your text. <https://tangut.mkpo.li/>
 - **Fanqie**: type the two characters a rhyme book spells a character with, or pick each from a
   compact panel beside the field that offers Find, Meaning, Cangjie, Four-corner, Reading, Draw and
   Parts in miniature.
-- **Draw**: a drawing pad ranked by glyph shape against Noto Serif Tangut. It is rough, and the
-  page says how rough.
-- **Parts**: choose parts, components or character-sized; each choice narrows the characters and
-  the remaining parts. The filter takes a Cangjie code or a Japanese shape name, and hovering a
+- **Draw**: a drawing pad ranked by glyph shape against bundled Tangut faces. Choose parts to
+  narrow the candidates.
+- **Parts**: choose parts, components or character-sized, from the palette or by drawing them;
+  each choice narrows the characters and the remaining parts. The filter takes a Cangjie code or a Japanese shape name, and hovering a
   part shows its code point, component number, strokes, uses, Cangjie codes and name. A collapsible
   table compares the names across the languages that record one.
 

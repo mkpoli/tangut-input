@@ -11,8 +11,8 @@
 // rows land in D1 (`migrations/0001_records.sql`); `bun run records` reads them back.
 import { seoOf } from './lib/seo.js'
 
-// The paths that answer with a head of their own: `PAGES` in `app/lib/route.svelte.js`, About, the introduction and the variants page.
-const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'chart', 'eras', 'transcribe', 'draw', 'parts', 'variants', 'intro', 'about'])
+// The paths that answer with a head of their own: `PAGES` in `app/lib/route.svelte.js`, About, the introduction, the variants page and the Gyalrongic reading list.
+const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'chart', 'eras', 'transcribe', 'draw', 'parts', 'variants', 'intro', 'gyalrongic', 'about'])
 
 // A drawing of a few hundred points is a few kilobytes; anything past this is not a reader's pen.
 const LIMIT = 60_000
@@ -78,7 +78,9 @@ function row(event, at) {
     const strokes = event.strokes
     if (!Array.isArray(strokes) || !strokes.length || strokes.length > MAX_STROKES) return null
     if (!strokes.every(points)) return null
-    const picked = event.picked ? character(event.picked) : null
+    const picked = event.origin === 'sketch'
+      ? (typeof event.picked === 'string' && event.picked.length <= 256 && !/[\u0000-\u001f\u007f]/u.test(event.picked) ? event.picked : null)
+      : event.picked ? character(event.picked) : null
     return {
       table: 'drawings',
       values: [

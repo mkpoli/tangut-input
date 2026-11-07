@@ -8,6 +8,7 @@
   // `app/data/tangut-later-eras.json`.
   import { onMount } from 'svelte'
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
+  import COINS from '../data/tangut-coins.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
   import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
   import STATE_NAMES from '../data/tangut-state-names.json' with { type: 'json' }
@@ -59,9 +60,22 @@
     disputed: rows.filter(row => row.tags.some(tag => tag.kind === 'disputed')).length,
   }
 
+  const coinCharacters = new Map(COINS.characters.map(row => [row.char, row]))
+  /** @param {string} inscription */
+  const coinReading = inscription => [...inscription].map(char => coinCharacters.get(char)?.reading).join(' ')
+
+  /** Group names that label the same inscription. @param {typeof COINS.coins[number]} coin */
+  function legends(coin) {
+    return [...new Set(coin.interpretations.map(row => row.tangut))].map(tangut => ({
+      tangut,
+      names: coin.interpretations.filter(row => row.tangut === tangut).map(row => row.name).join(' / '),
+    }))
+  }
+
   /** The parts of the page the tab bar moves between, in their order down the page. */
   const tabs = [
     { id: 'eras', key: 'eras.tab.eras', count: rows.length },
+    { id: 'coins', key: 'eras.coins.title', count: COINS.coins.length },
     { id: 'titles', key: 'eras.tab.titles', count: TITLES.length },
     { id: 'posthumous', key: 'eras.tab.posthumous', count: POSTHUMOUS.length },
     { id: 'states', key: 'eras.tab.states', count: STATE_NAMES.length },
@@ -190,6 +204,51 @@
     {#if doubtSources.length}<p class="ui-hint">? {t('eras.doubt')}{@render cites(doubtSources)}</p>{/if}
   </section>
 
+  <section class="ui-section coins" id="coins">
+    <h2 class="heading">{t('eras.coins.title')}<span class="ui-count">{COINS.coins.length}</span>{@render cites([COINS.source])}</h2>
+    <p class="ui-hint">{t('eras.coins.intro')} {t('eras.coins.readings')}</p>
+    <div class="ui-table-wrap">
+      <table class="ui-table coin-table">
+        <thead><tr><th scope="col">{t('eras.coins.era')}</th><th scope="col">{t('eras.coins.inscription')}</th><th scope="col">{t('eras.coins.interpretation')}</th></tr></thead>
+        <tbody>
+          {#each COINS.coins as coin (coin.id)}
+            <tr>
+              <th scope="row"><span lang="zh-Hant">{coin.era}</span>{#if coin.example}<a class="coin-example" href={coin.example.url}>{coin.example.label}</a>{/if}</th>
+              <td>
+                {#each legends(coin) as legend (legend.tangut)}
+                  <div class="coin-legend">
+                    <span class="coin-names" lang="zh-Hant">{legend.names}</span>
+                    <span class="form" role="group" aria-label={legend.tangut}>{#each [...legend.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                      aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>
+                    <span class="coin-reading">{coinReading(legend.tangut)}</span>
+                  </div>
+                {/each}
+              </td>
+              <td class="coin-note"><span class="tag" data-kind={coin.kind}>{t(coin.kind === 'clear' ? 'eras.clear' : 'eras.disputed')}</span>{#if coin.kind === 'disputed'}<p class="note">{t(`eras.coins.note.${coin.id}`)}</p>{/if}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+    <details>
+      <summary>{t('eras.coins.characters')}<span class="ui-count">{COINS.characters.length}</span></summary>
+      <p class="ui-hint">{t('eras.coins.references')}</p>
+      <div class="ui-table-wrap">
+        <table class="ui-table coin-characters">
+          <thead><tr><th scope="col">{t('eras.tangut')}</th><th scope="col">{t('eras.coins.reading')}</th><th scope="col">{t('eras.titles.chinese')}</th><th scope="col">XHZD</th><th scope="col">WHYJ</th></tr></thead>
+          <tbody>
+            {#each COINS.characters as entry (entry.char)}
+              <tr>
+                <th scope="row"><button type="button" class="char" aria-current={route.c === entry.char ? 'true' : undefined} aria-label={t('eras.open', { char: entry.char, code: hex(entry.char) })} onclick={() => choose(entry.char)}><G char={entry.char}/></button></th>
+                <td class="coin-reading">{entry.reading}</td><td lang="zh-Hant">{entry.chinese}</td><td>{entry.xhzd}</td><td>{entry.whyj}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
   <section class="ui-section titles" id="titles">
     <h2 class="heading">{t('eras.titles')}<span class="ui-count">{TITLES.length}</span></h2>
     <p class="ui-hint">{t('eras.titles.intro')}</p>
@@ -316,7 +375,20 @@
   .cite{margin-inline-start:2px;font-size:.72em;line-height:0;vertical-align:super}
   .cite a{padding-inline:1px;color:var(--ui-color-accent);text-decoration:none}
   .cite a:hover{text-decoration:underline}
-  .titles{gap:var(--ui-space-sm)}
+  .coins,.titles{gap:var(--ui-space-sm)}
+  .coin-table th[scope='row']{width:18%;font-weight:var(--ui-weight-medium);white-space:nowrap}
+  .coin-table td:nth-child(2){width:38%}
+  .coin-example{display:block;margin-top:var(--ui-space-xs);font-size:var(--ui-text-xs);font-weight:var(--ui-weight-regular);color:var(--ui-color-ink-soft);text-underline-offset:2px}
+  .coin-legend{display:flex;flex-direction:column;align-items:start;gap:2px}
+  .coin-legend + .coin-legend{margin-top:var(--ui-space-sm)}
+  .coin-names{font-size:var(--ui-text-xs);color:var(--ui-color-ink-soft)}
+  .coin-reading{font-family:var(--ui-font-serif);font-size:var(--ui-text-sm);white-space:nowrap}
+  .coin-note .note{max-width:36em;line-height:1.6}
+  .coins summary{display:flex;align-items:baseline;gap:var(--ui-space-sm);cursor:pointer;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium)}
+  .coins summary::before{content:'▸';color:var(--ui-color-ink-muted)}
+  .coins details[open] summary::before{content:'▾'}
+  .coins details > .ui-hint{margin-block:var(--ui-space-sm)}
+  .coin-characters td{font-variant-numeric:tabular-nums}
   .title-form{white-space:normal}
   .title-form .form{flex-wrap:wrap;vertical-align:middle}
   .chinese{min-inline-size:12em;font-size:var(--ui-text-sm)}
@@ -337,6 +409,14 @@
   .source-list li:target{color:var(--ui-color-ink)}
   .source-list a{color:inherit;text-underline-offset:2px}
   @media (max-width:900px){
+    .coin-table thead{position:absolute;inline-size:1px;block-size:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+    .coin-table tr{display:grid;gap:var(--ui-space-sm);padding:var(--ui-space-md) var(--ui-space-sm);border-bottom:1px solid var(--ui-color-border)}
+    .coin-table tr:last-child{border-bottom:0}
+    .coin-table th[scope='row'],.coin-table td:nth-child(2){width:auto}
+    .coin-table th[scope='row'],.coin-table td{padding:0;border:0}
+    .coin-table th[scope='row']{display:flex;align-items:baseline;justify-content:space-between;gap:var(--ui-space-sm)}
+    .coin-example{margin:0}
+    .coin-characters th,.coin-characters td{padding-inline:var(--ui-space-xs)}
     .plain th,.plain td{padding-inline:var(--ui-space-sm)}
     .plain thead th{white-space:normal}
     .posthumous-form{display:flex;margin-inline-start:0}

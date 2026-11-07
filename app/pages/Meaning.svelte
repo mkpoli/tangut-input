@@ -1,8 +1,7 @@
 <script>
-  // Meaning: search the glosses alone. Wiktionary's English and Japanese glosses are shown, and
-  // CCAMC's English and Chinese glosses answer the same box; a hit that only CCAMC answers says so
-  // and links there instead of printing the gloss.
-  import { db, gloss } from '../lib/db.svelte.js'
+  // Meaning: search Wiktionary, Downes and CCAMC's normalized terms.
+  // CCAMC-only matches display Downes's English gloss when available.
+  import { db, ix, gloss } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
   import { byMeaning, MEANING_LANGUAGES } from '../lib/search.js'
@@ -94,11 +93,13 @@
             onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char, { place: i })}>
             <G char={hit.char} />
             {#if hit.via === 'ccamc'}
-              <span class="sense"><span class="ui-tag" aria-hidden="true">{hit.lang}</span><span class="ui-tag">CCAMC</span><span class="ccamc-note">{t('meaning.viaCcamc')}</span></span>
+              {@const downes = ix.downes.get(hit.char)}
+              {@const sense = downes ?? ix.byChar.get(hit.char)?.definitions?.en?.[0]}
+              <span class="sense" lang={sense ? 'en' : undefined}>{#if sense}<span class="ui-tag" aria-hidden="true">en</span><span class="ui-tag">{downes ? 'Downes' : 'Wiktionary'}</span>{sense}{:else}—{/if}</span>
             {:else}
               <span class="sense" lang={hit.lang}><span class="ui-tag" aria-hidden="true">{hit.lang}</span>{hit.sense}</span>
             {/if}
-            <span class="ui-row-gloss">{gloss(hit.char)}</span>
+            {#if hit.via !== 'ccamc'}<span class="ui-row-gloss">{gloss(hit.char)}</span>{/if}
           </button>
           <button type="button" class="ui-row-action ui-button" data-variant="quiet" data-size="icon-sm"
             aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
@@ -119,7 +120,6 @@
   .meaning-row{grid-template-columns:38px minmax(0,1.2fr) minmax(0,1fr)}
   .meaning-row :global(.ui-script){font-size:28px;text-align:center}
   .sense{display:flex;align-items:center;gap:var(--ui-space-2xs);overflow:hidden;color:var(--ui-color-ink);font-size:var(--ui-text-md);text-overflow:ellipsis;white-space:nowrap}
-  .ccamc-note{color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs);overflow:hidden;text-overflow:ellipsis}
   .meaning-row .ui-row-gloss{text-align:end}
   @media (max-width:900px){
     .filter-row > .ui-label{inline-size:100%}

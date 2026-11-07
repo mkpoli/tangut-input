@@ -44,6 +44,22 @@ const indexes = FACES.map(face => ({ face: face.key, index: indexShapes(parseSha
  * the measuring set makes every model look worse than it is.
  * @returns {Set<string>}
  */
+/**
+ * The drawings a reviewer called fair. Measuring on those says what the search does for a real
+ * attempt, without the scribbles that no model could answer.
+ * @returns {Set<string> | null}
+ */
+function goodOnly() {
+  if (!args.has('good')) return null
+  const file = new URL('../data/handwriting/annotations.json', import.meta.url)
+  if (!existsSync(file)) return null
+  try {
+    const saved = JSON.parse(readFileSync(file).toString())
+    return new Set(Object.entries(saved.notes ?? {}).filter(([, note]) => note.verdict === 'good').map(([id]) => id))
+  } catch { return null }
+}
+const only = goodOnly()
+
 function excluded() {
   const file = new URL('../data/handwriting/annotations.json', import.meta.url)
   if (!existsSync(file)) return new Set()
@@ -64,6 +80,7 @@ for (const session of readdirSync(DATA).sort()) {
     const record = JSON.parse(readFileSync(new URL(name, dir)).toString())
     if (!record.char || !record.strokes?.length) continue
     if (skip.has(`${session}/${name}`)) continue
+    if (only && !only.has(`${session}/${name}`)) continue
     drawings.push({ session, name, char: record.char, strokes: record.strokes })
   }
 }
