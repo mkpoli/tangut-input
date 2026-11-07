@@ -57,7 +57,7 @@
     const spelled = byTibetan(text).filter(hit => hit.tier === 0 || /[\u0f40-\u0fbc]/.test(text))
     if (spelled.length) out.push({ key: 'tibetan', title: t('find.group.tibetan'), total: spelled.length, items: spelled.slice(0, 24).map(hit => ({ char: hit.char, sub: gloss(hit.char), sound: hit.shown, tibetan: true })) })
     const meanings = byMeaning(text)
-    if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: hit.via === 'ccamc' ? t('find.viaCcamc') : gloss(hit.char), extra: hit.via === 'ccamc' ? 'CCAMC' : undefined })) })
+    if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: gloss(hit.char) })) })
     return out
   })
   /** The Li Fanwen reading, or the first system that has one, marked with its system. @param {string} char */

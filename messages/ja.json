@@ -603,8 +603,6 @@
   "common.ccamc": "CCAMCで開く",
   "reading.ccamc": "CCAMCの他の方式",
   "reading.ccamcNote": "この読みはCCAMCに記録されています。値はCCAMCのページにあります。",
-  "meaning.viaCcamc": "この意味はCCAMCに記録されています",
-  "find.viaCcamc": "CCAMCに記録",
   "about.wiktionary": "七つのうち五つの再構音と英・日の意味は<a href=\"https://en.wiktionary.org/wiki/Module:txg/data\">ウィクショナリー</a>（CC BY-SA 4.0）から取得しています。再構音は西夏語の発音テンプレートが読み込むLuaモジュール、英語の意味はKaikkiによる英語版ウィクショナリーの抽出、日本語の意味は日本語版ウィクショナリーからです。第六・第七の龔煌城と龔勛2024-11は<a href=\"https://github.com/semakosa/tangut-pronunciation-db\">西夏文擬音データベース</a>（DOI 10.25365/phaidra.654）から一字ずつ引用しています。6,144字のうち、英語の意味があるのは457字、日本語の意味があるのは278字です。CCAMCにはさらに一つの再構音と中国語の意味の大半があり、正規化した形だけを検索に使い、カードでは値を出さずにCCAMCへリンクします。異体字は英語版と中国語版のウィクショナリーによります。",
   "about.readingsTitle": "読みと意味",
   "about.readingsSource": "ウィクショナリーの再構音は、それを表示するモジュールから版IDとともに取得し、<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>に記録しています。龔煌城のGHCと龔勛のGX202411は、西夏文擬音データベースの2025-05-07版から、ダイジェスト・DOI・帰属表示を添えて<span class=\"ui-mono\">data/gong-xun/ghc.json.gz</span>と<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>に保存しています。CCAMCの一方式と中国語の釈義は、検索用に正規化した語だけを<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>に置き、どのページにも表示しません。",

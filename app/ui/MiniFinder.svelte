@@ -4,7 +4,15 @@
   // without leaving the spelling they belong to. A pick goes into the fanqie, never into the text.
   import { keepVariantsTogether } from '../lib/variants.js'
   import { hanGloss } from '../lib/gloss.js'
-  import { tick } from 'svelte'
+  import { tick, onDestroy } from 'svelte'
+  import { record } from '../lib/record.js'
+  import { createDrawingCapture } from '../../src/core/drawing-capture.js'
+  const capture = createDrawingCapture(record)
+  function snapshot() {
+    capture.update({ origin: 'mini', strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / CANVAS).toFixed(4), +(y / CANVAS).toFixed(4)])), width: CANVAS, height: CANVAS })
+  }
+  function leave() { up(); capture.capture() }
+  onDestroy(() => { leave(); capture.clear() })
   import { db, ix, gloss, codePoint, isTangut, isComponent, readingOf } from '../lib/db.svelte.js'
   import { byCode, byMeaning, byCodePoint, bySijiao, byParts, byTibetan, partsAmong, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
@@ -203,7 +211,7 @@
 
   /** @param {string} key */
   async function setMode(key) {
-    if (key !== 'draw') current = null
+    if (key !== 'draw') leave()
     mode = key
     if (key === 'draw') loadDrawShapes()
     await tick()
@@ -233,8 +241,7 @@
   function close(restore = true) {
     if (!open) return
     open = false
-    // A stroke cut off by closing is dropped, not left half-drawn for the next opening.
-    current = null
+    leave()
     if (restore) trigger?.focus()
   }
 
@@ -275,6 +282,7 @@
 
   /** @param {MiniHit} hit @param {number} place */
   function pick(hit, place) {
+    if (mode === 'draw') { up(); capture.capture({ picked: hit.char, place }) }
     // A pick made from a drawing carries the strokes: whoever asked may keep them as a sample.
     const drawn = mode === 'draw' ? strokes.map(stroke => stroke.map(([x, y]) => /** @type {[number, number]} */ ([x, y]))) : undefined
     if (onpick(hit.char, place, drawn)) always ? reset() : close()
@@ -339,7 +347,7 @@
 
   /** @param {PointerEvent} event */
   function down(event) {
-    if (event.button !== 0) return
+    if (event.button !== 0 || !event.isPrimary || current) return
     canvas?.setPointerCapture(event.pointerId)
     current = [point(event)]
     paint()
@@ -359,17 +367,22 @@
     if (!current) return
     strokes = [...strokes, current]
     current = null
+    snapshot()
     mask = rasterize(strokes)
     paint()
   }
 
   function undoDraw() {
+    leave()
     strokes = strokes.slice(0, -1)
+    snapshot()
     mask = rasterize(strokes)
     paint()
   }
 
   function clearDraw() {
+    up()
+    capture.clear()
     strokes = []
     mask = new Uint8Array(SIZE * SIZE)
     paint()
@@ -430,6 +443,9 @@
     }
   })
 </script>
+
+<svelte:window onpagehide={leave} />
+<svelte:document onvisibilitychange={() => { if (document.hidden) leave() }} />
 
 <div class="mini-finder" onfocusout={focusOut}>
   {#if !always}
@@ -507,7 +523,7 @@
           <div class="draw-row">
             <div class="pad">
               <canvas bind:this={canvas} width={CANVAS} height={CANVAS} aria-label={t('draw.canvas')}
-                onpointerdown={down} onpointermove={moveTo} onpointerup={up} onpointercancel={up}></canvas>
+                onpointerdown={down} onpointermove={moveTo} onpointerup={up} onpointercancel={up} onlostpointercapture={up}></canvas>
               {#if !strokes.length}<span class="draw-hint" aria-hidden="true">{t('draw.here')}</span>{/if}
             </div>
             <div class="draw-tools">
@@ -517,6 +533,7 @@
               {#if shapeStatus === 'loading'}<span class="ui-hint">{t('draw.loading')}</span>{:else}<span class="ui-hint">{t('fanqie.picker.drawNote')}</span>{/if}
             </div>
           </div>
+          <p class="ui-notice">{t('draw.note')}</p>
         {:else if mode === 'parts'}
           <div class="part-chosen">
             {#if parts.length}
