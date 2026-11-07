@@ -104,7 +104,7 @@ export function buildPartIndex(entries) {
     const regroup = node => {
       if (typeof node === 'string') return node
       // A truncated node is no character's description, but the operands it kept may be.
-      if (node.cut) return { ...node, parts: node.parts }
+      if (node.cut) return { ...node, parts: node.parts.map(regroup) }
       // A node that spells a character is that character's base; its own cut is the character's.
       if (charactersFor(writeDescription(node)).length) return { ...node, parts: node.parts }
       const parts = node.parts.map(regroup)

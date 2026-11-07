@@ -79,6 +79,15 @@ test('the outermost operator is the editorial one, for the layout filter', () =>
   expect(index.layoutOf.get('𗁋')).toBe('⿲')
 })
 
+test('a complete subtree under a truncated node is regrouped too', () => {
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: '⿱𘠂𘠄' },
+    { char: '𗀂', composition: '⿲𘠃⿳𘠁𘠂𘠄' },
+  ])
+  // The outer ⿲ is short of an operand, but the ⿳ it kept reads as 𘠁 and 𗀁.
+  expect(synthetic.directPartsOf.get('𗀂')).toEqual(['𘠃', '⿱𘠁𗀁'])
+})
+
 test('three operands stay three when both pairs spell characters or neither does', () => {
   const synthetic = buildPartIndex([
     { char: '𗀁', composition: '⿰𘠀𘠁' },
