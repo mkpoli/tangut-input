@@ -45,7 +45,7 @@
     </dd>
     {#if hint}
       <dt>{t('parts.info.hint')}</dt>
-      <dd class="hint"><G char={hint.char} /> {hint.name} <span class="score">{hint.score.toFixed(2)}</span><span class="credit">{t('parts.info.hintNote')}</span></dd>
+      <dd class="hint"><G char={hint.char} /> {hint.name} <span class="score">{hint.score.toFixed(2)}</span></dd>
     {/if}
     {#each comparedLanguages as language (language)}
       <dt>{t(`parts.names.${language}`)}</dt>

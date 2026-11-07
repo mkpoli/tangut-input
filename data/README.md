@@ -469,7 +469,7 @@ component or that the name applies. The method cannot separate くノ from ノ�
 0.98 against each other. Use the file to find candidates for review, never to fill
 `data/tangut-component-names.tsv`. `app/data/tangut-component-shape-hints.json.gz` is the copy the
 part card reads; it shows the first candidate only when the component has no attested name, the
-score is at least 0.70 and the stroke count agrees, labelled unconfirmed.
+score is at least 0.70 and the stroke count agrees, labelled Shape hint.
 
 Format: `format`, `version`, `editorial`, `note`, `method` (font, size, metric, limitation), `counts`,
 `exemplars` and `components`, one row per component with `char`, `codepoint`, `strokes`, `named` and

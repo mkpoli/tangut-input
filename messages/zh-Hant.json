@@ -343,7 +343,6 @@
   "parts.splitTitle": "將{part}拆分為構成它的部件",
   "parts.info.oneCharacter": "1個字元",
   "parts.info.hint": "形狀推測",
-  "parts.info.hintNote": "未經確認；分數是字形相似度，不是已記錄的名稱。",
   "parts.names.title": "不同語言中的部件名",
   "parts.names.hint": "只列出所查資料中記錄的名稱；短橫線表示尚無記錄。",
   "parts.names.component": "部件",

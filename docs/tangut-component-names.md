@@ -47,7 +47,7 @@ is recorded here because the sources read for this note do not assign it to indi
 names for each of the 768 components, by ink similarity, with scores. It is not a name list. The
 method cannot separate くノ from ノメ; use the hints to find rows worth checking against a source.
 The part card shows the first hint at 0.70 or above with an agreeing stroke count for a component
-with no attested name, labelled unconfirmed.
+with no attested name, labelled Shape hint.
 
 ## Sources
 
