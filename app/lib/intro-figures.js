@@ -2,6 +2,16 @@
 // Commons; the credit under it names the author and licence and links to the original, as the
 // licences require. Captions are message keys, `intro.fig.<id>`.
 export const FIGURES = {
+  map: {
+    src: '/intro/map.webp',
+    srcset: '/intro/map-560.webp 560w, /intro/map.webp 900w',
+    width: 900,
+    height: 636,
+    author: 'Qiushufang',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+    page: 'https://commons.wikimedia.org/wiki/File:Western_Xia_expansion.png',
+  },
   golden: {
     src: '/intro/golden-light.webp',
     srcset: '/intro/golden-light-560.webp 560w, /intro/golden-light.webp 900w',
