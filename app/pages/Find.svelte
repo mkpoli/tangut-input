@@ -21,7 +21,7 @@
     if (!ready || !text) return []
     /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string, sound?: string, tibetan?: boolean }[] }[]} */
     const out = []
-    // A description, whole or cut after its opening part, is read against the records' own.
+    // A whole description or its opening is read against both recorded and editorial forms.
     const described = byDescription(text)
     if (described.length) {
       out.push({ key: 'description', title: t('find.group.description'), total: described.length,

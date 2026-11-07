@@ -10,7 +10,8 @@
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
-  import { byDescription, partsIn } from '../lib/search.js'
+  import { byDescription } from '../lib/search.js'
+  import { idsViews } from '../lib/ids-views.js'
   import { openingOf } from '../lib/description.js'
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
@@ -69,7 +70,7 @@
   const users = $derived(ready && char ? [...(ix.usedBy.get(char) ?? [])] : [])
   // The characters whose own spelling is read from this one, either as its upper or its lower.
   const spells = $derived(ready && char ? [...(ix.fanqieUsedBy.get(char) ?? [])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)) : [])
-  const parts = $derived(ready && char ? partsIn(char) : [])
+  const views = $derived(char && entry?.composition ? idsViews(char, entry.composition, ix.idsIndex) : null)
   // The description's opening, which Find reads as a prefix: the family of characters built from it.
   const opening = $derived(openingOf(entry?.composition))
   const openingCount = $derived(ready && opening ? byDescription(opening).length : 0)
@@ -317,14 +318,23 @@
 
     <section>
       <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.builtFrom')}</h3>
-      {#if entry?.composition}
-        <Ids composition={entry.composition} />
-        <p class="ids">
-          <span class="ui-formula" title={entry.composition}>{entry.composition}</span>
-          <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
-          {#if parts.length}<a class="ids-link" href={link('parts', char, parts.join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
-          {#if openingCount > 1}<a class="ids-link" href={link('', char, opening)}><Icon name="find" size={13}/>{t('card.sameOpening')}</a>{/if}
-        </p>
+      {#if views}
+        {#each [
+          ...(views.showEditorial ? [{ label: t('card.idsEditorial'), recorded: false, text: views.editorial, parts: views.editorialParts }] : []),
+          { label: t('card.idsRecorded'), recorded: true, text: views.recorded, parts: views.recordedParts },
+        ] as view (view.recorded)}
+          <div class="ids-view">
+            <h4 class="ui-hint">{view.label}</h4>
+            <Ids composition={view.text} />
+            <p class="ids">
+              <span class="ui-formula" title={view.text}>{view.text}</span>
+              <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} aria-label={`${t('common.copy')} · ${t(view.label)}`} onclick={() => copy(view.text, t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
+              {#if view.parts.length}<a class="ids-link" aria-label={`${t('card.withTheseParts')} · ${t(view.label)}`} href={link('parts', char, view.parts.join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
+              {#if view.recorded && openingCount > 1}<a class="ids-link" href={link('', char, opening)}><Icon name="find" size={13}/>{t('card.sameOpening')}</a>{/if}
+            </p>
+          </div>
+        {/each}
+        <p class="ui-hint">{t('card.idsSource')} <a href="https://www.babelstone.co.uk/Tangut/TangutIDS.txt" target="_blank" rel="noopener noreferrer">Andrew West, Tangut IDS ↗</a>.{#if views.showEditorial}{' '}{t('card.idsMethod')}{/if}</p>
       {:else if isComponent(char)}
         <p class="ui-hint">{t('card.isComponent')}</p>
       {:else}
@@ -453,6 +463,7 @@
   .spelling{font-size:18px}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
+  .ids-view{display:grid;gap:var(--ui-space-xs);min-inline-size:0}
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm)}
   .ids .ui-formula{font-size:20px}
   .ids-link{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}

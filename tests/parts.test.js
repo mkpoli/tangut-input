@@ -4,6 +4,7 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { buildPartIndex, isTangut, matchByParts, readDescription } from '../app/lib/composition.js'
+import { idsViews, indexIdsDescriptions } from '../app/lib/ids-views.js'
 
 const data = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-entries.json.gz', import.meta.url))).toString())
 /** @type {{ char: string, composition?: string }[]} */
@@ -63,6 +64,97 @@ test('a character whose description is one component keeps that component as its
   expect(byChar.get('𗢨')?.composition).toBe('𘢌')
   expect(index.partsOf.get('𗢨')?.get('𘢌')).toBe(1)
   expect(index.usedBy.get('𘢌')?.has('𗢨')).toBe(true)
+})
+
+test('alternative readings coexist only across different places', () => {
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: '⿰𘠀𘠁' },
+    { char: '𗀂', composition: '⿰𘠀𘠁' },
+    { char: '𗀃', composition: '⿱⿰𘠀𘠁𘠂' },
+    { char: '𗀄', composition: '⿱⿰𘠀𘠁⿰𘠀𘠁' },
+    { char: '𗀅', composition: '⿱⿰𘠀𘠁𘠀' },
+  ])
+  expect(matchByParts(synthetic, ['𗀁'])).toContain('𗀃')
+  expect(matchByParts(synthetic, ['𗀂'])).toContain('𗀃')
+  expect(matchByParts(synthetic, ['𗀁', '𗀂'])).not.toContain('𗀃')
+  expect(matchByParts(synthetic, ['𗀁', '𘠀', '𘠁'])).toContain('𗀃')
+  expect(matchByParts(synthetic, ['𗀁', '𗀂'])).toContain('𗀄')
+  expect(matchByParts(synthetic, ['𗀁', '𗀁'])).toContain('𗀄')
+  expect(matchByParts(synthetic, ['𗀁', '𗀁', '𗀂'])).not.toContain('𗀄')
+  expect(matchByParts(synthetic, ['𗀁', '𘠀', '𘠀'])).toContain('𗀅')
+})
+
+test('repeated ambiguous places share equivalent search states', () => {
+  const subtree = '⿰𘠀𘠁'
+  const tree = Array(20).fill(subtree).reduce((left, right) => left ? `⿱${left}${right}` : right, '')
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: subtree },
+    { char: '𗀂', composition: subtree },
+    { char: '𗀃', composition: tree },
+  ])
+  expect(matchByParts(synthetic, [...Array(20).fill('𗀁'), ...Array(20).fill('𗀂')])).not.toContain('𗀃')
+})
+
+test('written leaves remain searchable with derived characters', () => {
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: '𘠀' },
+    { char: '𗀂', composition: '𘠀' },
+    { char: '𗀃', composition: '𘠁' },
+    { char: '𗀄', composition: '⿰𘠀𘠁' },
+  ])
+  expect(matchByParts(synthetic, ['𘠀', '𗀁', '𗀃'])).toContain('𗀄')
+  expect(matchByParts(synthetic, ['𗀁', '𗀂'])).not.toContain('𗀄')
+  expect(matchByParts(synthetic, ['𘠁', '𗀃'])).toContain('𗀄')
+  expect(synthetic.usedBy.get('𗀄')?.has('𗀄')).not.toBe(true)
+})
+
+test('cycles stop before counting an ancestor and allow independent occurrences', () => {
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: '⿰𗀂𘠀' },
+    { char: '𗀂', composition: '⿰𗀁𘠁' },
+    { char: '𗀃', composition: '⿰𗀁𗀁' },
+  ])
+  expect(synthetic.partsOf.get('𗀁')?.has('𗀁')).toBe(false)
+  expect(synthetic.usedBy.get('𗀁')?.has('𗀁')).not.toBe(true)
+  expect(matchByParts(synthetic, ['𗀁'])).not.toContain('𗀁')
+  expect(matchByParts(synthetic, ['𗀂', '𘠁'])).toContain('𗀁')
+  expect(matchByParts(synthetic, ['𗀁', '𗀁', '𗀂', '𗀂'])).toContain('𗀃')
+})
+
+test('ambiguous subtrees retain their written leaves when a branch cycles', () => {
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: '⿰𘠀𘠁' },
+    { char: '𗀂', composition: '⿰𘠀𘠁' },
+    { char: '𗀃', composition: '⿱⿰𘠀𘠁𘠂' },
+    { char: '𘠀', composition: '𗀃' },
+  ])
+  expect(matchByParts(synthetic, ['𗀁', '𘠀', '𘠁', '𘠂'])).toContain('𗀃')
+  expect(matchByParts(synthetic, ['𗀁', '𗀂'])).not.toContain('𗀃')
+  expect(synthetic.partsOf.get('𗀃')?.has('𗀃')).toBe(false)
+})
+
+test('recorded and editorial view parts find their source characters', () => {
+  const descriptions = indexIdsDescriptions(entries)
+  // A singleton, a duplicate leaf, a malformed source, and a nested character.
+  for (const char of ['𗢨', '𗀌', '𗆽', '𗁼']) {
+    const view = idsViews(char, byChar.get(char)?.composition ?? '', descriptions)
+    expect(matchByParts(index, view.recordedParts)).toContain(char)
+    expect(matchByParts(index, view.editorialParts)).toContain(char)
+  }
+})
+
+test('duplicate records do not create ambiguous derived characters', () => {
+  const entries = [
+    { char: '𗀁', composition: '⿰𘠀𘠁' },
+    { char: '𗀁', composition: '⿰𘠀𘠁' },
+    { char: '𗀂', composition: '⿱⿰𘠀𘠁𘠂' },
+  ]
+  const synthetic = buildPartIndex(entries)
+  const view = idsViews('𗀂', entries[2].composition, indexIdsDescriptions(entries))
+  expect(view.editorialParts).toContain('𗀁')
+  expect(synthetic.directPartsOf.get('𗀂')).toContain('𗀁')
+  expect(matchByParts(synthetic, view.recordedParts)).toContain('𗀂')
+  expect(matchByParts(synthetic, view.editorialParts)).toContain('𗀂')
 })
 
 test('matching reaches a part at every layer, and counts a repeated choice', () => {
