@@ -284,7 +284,7 @@
     : looked && strokes.length ? t('ids.draw.none') : '')
 </script>
 
-<svelte:window onpagehide={leave} />
+<svelte:window onpagehide={leave} onbeforeunload={leave} />
 <svelte:document onvisibilitychange={() => { if (document.hidden) leave() }} />
 
 <div class="ids-sketch" bind:this={host} role="group" aria-label={t('ids.draw.label')} onkeydowncapture={key}>
