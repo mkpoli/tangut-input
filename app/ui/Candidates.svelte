@@ -3,6 +3,7 @@
   // highlighted one, adds it to the text. The page's own input drives the highlight through move().
   import { route } from '../lib/route.svelte.js'
   import G from './G.svelte'
+  import TileNote from './TileNote.svelte'
   import { readingOf } from '../lib/db.svelte.js'
   import { choose, preview, put, ui } from '../lib/ui.svelte.js'
 
@@ -44,7 +45,7 @@
       <button class="ui-tile" type="button" role="option" aria-selected={i === active || (active < 0 && route.c === item.char)}
         title={item.title ?? item.sub ?? ''}
         onclick={() => { active = i; choose(item.char) }} ondblclick={() => put(item.char, { place: i })}>
-        <span class="ui-tile-glyph"><G char={item.char} /></span>{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}{#if item.sub}<span class="ui-tile-note">{item.sub}</span>{/if}
+        <span class="ui-tile-glyph"><G char={item.char} /></span>{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={item.char} text={item.sub} />
       </button>
     {/each}
   </div>
