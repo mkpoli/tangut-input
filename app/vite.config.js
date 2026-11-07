@@ -12,6 +12,9 @@ export default defineConfig({
     outDir: '../dist',
     emptyOutDir: true,
     target: 'es2022',
+    // Gzipped data files are fetched on their own and cached; inlining the small ones as data URLs
+    // makes the same file arrive by two different paths depending on its size.
+    assetsInlineLimit: file => (file.endsWith('.gz') ? false : undefined),
     rollupOptions: {
       input: {
         main: resolve(import.meta.dirname, 'index.html'),

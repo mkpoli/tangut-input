@@ -2,16 +2,26 @@
   // Every text behind the attested corpus, grouped by the collection it came from. A text's first
   // passage can be loaded into the writing strip and opened in Transcribe.
   import { db, isTangut } from '../lib/db.svelte.js'
+  import { choose } from '../lib/ui.svelte.js'
   import { setText } from '../lib/text.svelte.js'
-  import { go, setQuery } from '../lib/route.svelte.js'
+  import { route, go, setQuery } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import Icon from '../ui/Icon.svelte'
 
   const COLLECTIONS = /** @type {const} */ ([
-    { key: 'edition', label: 'texts.edition' },
-    { key: 'wikisource', label: 'texts.wikisource' },
-    { key: 'lausanne', label: 'texts.lausanne' },
+    { key: 'edition' },
+    { key: 'wikisource' },
+    { key: 'lausanne' },
+    { key: 'mica' },
   ])
+
+  /** @param {string} key */
+  const collectionTitle = key => key === 'edition' ? t('texts.edition')
+    : key === 'lausanne' ? t('texts.lausanne')
+    : key === 'mica' ? t('texts.mica')
+    : t('texts.wikisource')
+
+  /** @typedef {{ label: string, text: string }} Passage */
 
   /**
    * One entry per text: a Wikisource page or edition is one text; the Lausanne source is split by
@@ -22,14 +32,18 @@
     if (!found) return []
     const sources = new Map(found.sources.map(source => [source.id, source]))
     /** @type {Map<string, { key: string, title: string, collectionKey: string,
-     *   passages: number, characters: number, licence: string, url: string, first: string }>} */
+     *   passages: number, characters: number, licence: string, url: string, first: string, lines: Passage[] }>} */
     const entries = new Map()
     for (const [lineId, line] of Object.entries(found.lines)) {
       const source = sources.get(lineId.slice(0, lineId.indexOf(':')))
       if (!source) continue
-      const collectionKey = source.id === 'lcdtt' ? 'lausanne' : source.id === 'solonin-2024' ? 'edition' : 'wikisource'
-      const title = source.id === 'lcdtt' ? (line.section ?? source.shortTitle ?? source.title) : (source.shortTitle ?? source.title)
-      const key = source.id === 'lcdtt' ? `${source.id}:${title}` : source.id
+      const collectionKey = source.id === 'solonin-2024' ? 'edition'
+        : source.id === 'lcdtt' ? 'lausanne'
+        : source.id === 'mica' ? 'mica'
+        : 'wikisource'
+      const split = source.id === 'lcdtt' || source.id === 'mica'
+      const title = split ? (line.section ?? source.shortTitle ?? source.title) : (source.shortTitle ?? source.title)
+      const key = split ? `${source.id}:${title}` : source.id
       let entry = entries.get(key)
       if (!entry) {
         entry = {
@@ -41,13 +55,22 @@
           licence: source.licence ?? '',
           url: (source.id === 'lcdtt' ? line.url : source.url) ?? source.url,
           first: line.text,
+          lines: [],
         }
         entries.set(key, entry)
       }
       entry.passages += 1
+      entry.lines.push({ label: line.label, text: line.text })
       for (const char of line.text) if (isTangut(char)) entry.characters += 1
     }
     return [...entries.values()]
+  })
+
+  const selected = $derived(texts.find(text => text.key === route.q))
+  let shown = $state(12)
+  $effect(() => {
+    route.q
+    shown = 12
   })
 
   const sections = $derived.by(() => {
@@ -56,8 +79,7 @@
     for (const entry of texts) {
       let section = groups.get(entry.collectionKey)
       if (!section) {
-        const collection = COLLECTIONS.find(item => item.key === entry.collectionKey)
-        section = { key: entry.collectionKey, title: t(collection?.label ?? 'texts.wikisource'), passages: 0, texts: [] }
+        section = { key: entry.collectionKey, title: collectionTitle(entry.collectionKey), passages: 0, texts: [] }
         groups.set(entry.collectionKey, section)
       }
       section.texts.push(entry)
@@ -81,45 +103,87 @@
     go('transcribe')
     setQuery(value)
   }
+
+  /** @param {string} key */
+  function select(key) {
+    setQuery(key)
+    scrollTo(0, 0)
+  }
+
+  function back() {
+    setQuery('')
+    scrollTo(0, 0)
+  }
 </script>
 
 <div class="ui-page texts" data-width="wide">
-  <header class="ui-page-head">
-    <h1 class="ui-page-title"><Icon name="book" size={22}/><span>{t('nav.texts')}</span></h1>
-    <p class="ui-page-intro">{t('texts.intro', { texts: texts.length.toLocaleString(), passages: (db.attestation?.corpus.lines ?? 0).toLocaleString() })}</p>
-  </header>
-
-  {#if db.attestationFailed}
-    <div class="load-failed">
-      <p class="ui-hint">{t('texts.failed')}</p>
-      <button class="ui-button" data-size="sm" type="button" onclick={() => location.reload()}>{t('texts.reload')}</button>
-    </div>
-  {:else if !db.attestation}
-    <p class="ui-hint">{t('attest.loading')}</p>
+  {#if selected}
+    <button class="ui-button back" data-variant="quiet" data-size="sm" type="button" onclick={back}>
+      <Icon name="back" size={14}/>{t('texts.back')}
+    </button>
+    <header class="ui-page-head">
+      <h1 class="ui-page-title"><Icon name="book" size={22}/><span>{selected.title}</span></h1>
+      <p class="ui-page-intro">{t(selected.passages === 1 ? 'texts.countOne' : 'texts.count', { passages: selected.passages.toLocaleString(), characters: selected.characters.toLocaleString() })} · {selected.licence} · <a class="source ui-more-link" href={selected.url} target="_blank" rel="noreferrer">{t('texts.source')}</a></p>
+    </header>
+    <ol class="passages">
+      {#each selected.lines.slice(0, shown) as passage, index (index)}
+        <li class="passage">
+          <div class="passage-head">
+            <span class="label">{passage.label}</span>
+            <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => start(passage.text)}>{t('texts.transcribeLine')}</button>
+          </div>
+          <p class="line ui-script" lang="txg">
+            {#each [...passage.text] as char}
+              {#if isTangut(char)}<button class="char" type="button" onclick={() => choose(char)}>{char}</button>{:else}<span>{char}</span>{/if}
+            {/each}
+          </p>
+        </li>
+      {/each}
+    </ol>
+    {#if shown < selected.lines.length}
+      <div class="more">
+        <button class="ui-button" data-size="sm" type="button" onclick={() => shown += 12}>{t('texts.more', { count: Math.min(12, selected.lines.length - shown).toLocaleString() })}</button>
+      </div>
+    {/if}
   {:else}
-    {#each sections as section (section.key)}
-      <section class="ui-section">
-        <div class="ui-section-head">
-          <h2 class="section-title">{section.title}</h2>
-          <span class="ui-count">{t(section.passages === 1 ? 'texts.passage' : 'texts.passages', { count: section.passages.toLocaleString() })}</span>
-        </div>
-        <ul class="texts-grid">
-          {#each section.texts as text (text.key)}
-            <li class="text-card">
-              <div class="text-head">
-                <h3><a href={text.url} target="_blank" rel="noreferrer">{text.title}</a></h3>
-                <p class="meta">{t(text.passages === 1 ? 'texts.countOne' : 'texts.count', { passages: text.passages.toLocaleString(), characters: text.characters.toLocaleString() })} · {text.licence}</p>
-              </div>
-              <p class="preview ui-script" lang="txg">{preview(text.first)}</p>
-              <div class="actions">
-                <button class="ui-button" data-size="sm" type="button" onclick={() => start(text.first)}>{t('texts.transcribe')}</button>
-                <a class="ui-more-link" href={text.url} target="_blank" rel="noreferrer">{t('texts.source')}</a>
-              </div>
-            </li>
-          {/each}
-        </ul>
-      </section>
-    {/each}
+    <header class="ui-page-head">
+      <h1 class="ui-page-title"><Icon name="book" size={22}/><span>{t('nav.texts')}</span></h1>
+      <p class="ui-page-intro">{t('texts.intro', { texts: texts.length.toLocaleString(), passages: (db.attestation?.corpus.lines ?? 0).toLocaleString() })}</p>
+    </header>
+
+    {#if db.attestationFailed}
+      <div class="load-failed">
+        <p class="ui-hint">{t('texts.failed')}</p>
+        <button class="ui-button" data-size="sm" type="button" onclick={() => location.reload()}>{t('texts.reload')}</button>
+      </div>
+    {:else if !db.attestation}
+      <p class="ui-hint">{t('attest.loading')}</p>
+    {:else}
+      {#each sections as section (section.key)}
+        <section class="ui-section">
+          <div class="ui-section-head">
+            <h2 class="section-title">{section.title}</h2>
+            <span class="ui-count">{t(section.passages === 1 ? 'texts.passage' : 'texts.passages', { count: section.passages.toLocaleString() })}</span>
+          </div>
+          <ul class="texts-grid">
+            {#each section.texts as text (text.key)}
+              <li class="text-card">
+                <div class="text-head">
+                  <h3><button class="title-link" type="button" title={t('texts.read')} onclick={() => select(text.key)}>{text.title}</button></h3>
+                  <p class="meta">{t(text.passages === 1 ? 'texts.countOne' : 'texts.count', { passages: text.passages.toLocaleString(), characters: text.characters.toLocaleString() })} · {text.licence}</p>
+                </div>
+                <p class="preview ui-script" lang="txg">{preview(text.first)}</p>
+                <div class="actions">
+                  <button class="ui-button" data-size="sm" type="button" onclick={() => select(text.key)}>{t('texts.read')}</button>
+                  <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => start(text.first)}>{t('texts.transcribe')}</button>
+                  <a class="ui-more-link" href={text.url} target="_blank" rel="noreferrer">{t('texts.source')}</a>
+                </div>
+              </li>
+            {/each}
+          </ul>
+        </section>
+      {/each}
+    {/if}
   {/if}
   <p class="related"><a class="ui-more-link" href="/gyalrongic">{t('gyalrongic.more')}</a></p>
 </div>
@@ -134,13 +198,24 @@
   .text-card{display:flex;flex-direction:column;gap:var(--ui-space-sm);min-inline-size:0;padding:var(--ui-space-lg);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-lg);background:var(--ui-color-surface-sunken)}
   .text-head{display:grid;gap:var(--ui-space-2xs)}
   .text-head h3{font-family:var(--ui-font-serif);font-size:var(--ui-text-md);font-weight:var(--ui-weight-semibold);line-height:1.35}
-  .text-head h3 a{color:inherit;text-decoration:none}
-  .text-head h3 a:hover{text-decoration:underline}
+  .title-link{display:block;min-block-size:24px;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:start;cursor:pointer}
+  .title-link:hover{text-decoration:underline}
   .meta{margin:0;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);line-height:1.5}
   .preview{margin:0;overflow:hidden;color:var(--ui-color-ink-soft);font-size:20px;line-height:1.4;text-overflow:ellipsis;white-space:nowrap}
   .actions{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm);margin-top:auto;padding-top:var(--ui-space-xs);border-top:1px solid var(--ui-color-border)}
   .actions .ui-more-link{display:inline-flex;align-items:center;min-block-size:24px}
+  .back{align-self:flex-start}
+  .source{display:inline-flex;align-items:center;min-block-size:24px}
+  .passages{list-style:none;margin:0;padding:0;display:grid;gap:var(--ui-space-lg)}
+  .passage{display:grid;gap:var(--ui-space-xs);padding-block:var(--ui-space-md);border-top:1px solid var(--ui-color-border)}
+  .passage-head{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm)}
+  .label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);font-variant-numeric:tabular-nums}
+  .line{margin:0;font-size:22px;line-height:1.8;overflow-wrap:anywhere}
+  .char{display:inline-flex;align-items:center;justify-content:center;min-inline-size:24px;min-block-size:24px;padding:0 1px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font:inherit;line-height:1.4;cursor:pointer}
+  .char:hover{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
+  .more{display:flex;justify-content:center}
   @media (max-width:760px){
+    .line{font-size:20px}
     .texts-grid{grid-template-columns:1fr}
     .text-card{padding:var(--ui-space-md)}
   }

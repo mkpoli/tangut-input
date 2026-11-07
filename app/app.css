@@ -14,7 +14,7 @@
 
 /* The reader picks one face; the others are fallbacks for what it lacks. */
 :root {
-  --tg-font: 'Noto Serif Tangut', 'Tangut Supplement', 'Tangut Yinchuan', serif;
+  --tg-font: 'Noto Serif Tangut', 'Tangut Supplement', 'Tangut N4694 Supplement', 'Tangut Yinchuan', serif;
   --tg-ids: 'IDS Operators', var(--tg-font);
   --ui-font-script: var(--tg-font);
   --ui-font-ids: var(--tg-ids);
@@ -24,13 +24,13 @@
 }
 
 :root[data-tangut='yinchuan'] {
-  --tg-font: 'Tangut Yinchuan', 'Tangut Supplement', 'Noto Serif Tangut', serif;
+  --tg-font: 'Tangut Yinchuan', 'Tangut Supplement', 'Tangut N4694 Supplement', 'Noto Serif Tangut', serif;
 }
 
 :root[data-tangut='wenhai'] {
-  --tg-font: 'BabelStone Wenhai', 'BabelStone Complement', 'Tangut Supplement', serif;
+  --tg-font: 'BabelStone Wenhai', 'BabelStone Complement', 'Tangut Supplement', 'Tangut N4694 Supplement', serif;
 }
 
 :root[data-tangut='kai'] {
-  --tg-font: 'New Tangut Std', 'New Tangut Std Complement', 'Tangut Supplement', serif;
+  --tg-font: 'New Tangut Std', 'New Tangut Std Complement', 'Tangut Supplement', 'Tangut N4694 Supplement', serif;
 }
