@@ -12,9 +12,11 @@ Chinese and Latin script and are typed, not OCR'd.
 An image model reads one 掌中珠 band off the scan and writes an export: a row per glyph, with the
 canvas, the band, the column, the role, the glyph and its code point, and a note naming the pair it
 reads and how sure it is. The exports are kept in `cells/`, named `<canvas>b<band>[r].tsv` (`r` for
-one side of the opening only). `scripts/key_zzz_readings.py` turns an export into rows of the table
-below, one per transcription character, and pairs each with the Tangut code point in the same column;
-`--write` merges them into the table, replacing the rows of that canvas.
+one side of the opening only), and `bun run check:cells` holds their shape: four columns to a group,
+the Tangut column the same length as its transcription, every sign in the corpus, and a certainty
+word on every pair. `scripts/key_zzz_readings.py` turns an export into rows of the table below, one
+per transcription character, and pairs each with the Tangut code point in the same column; `--write`
+merges them into the table, replacing the rows of that canvas.
 
 ## Table
 
