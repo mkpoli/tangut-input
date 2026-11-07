@@ -11,10 +11,13 @@ const rhymes = json('tangut-rhymes.json.gz')
 test('the packed records keep every character, the five Wiktionary readings and the two Database readings', () => {
   expect(entries.format).toBe('tangut-input/entries/3')
   expect(entries.rows.length).toBe(6144)
-  expect(entries.systems).toEqual(['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida'])
+  expect(entries.systems).toEqual([
+    'li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
+    'nishida', 'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'tibetan',
+  ])
   const first = entries.rows[0]
   expect(first[0]).toBe('𗀀')
-  expect(first[7]).toEqual(['do1', 'do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
+  expect(first[7].slice(0, 7)).toEqual(['do1', 'do1', 'do̱1', 'do1', 'ndo1', 'ndo1', 'ndɔɦ1'])
   expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
   expect(first[5]).toEqual(['毒'])
   expect(first[6]).toEqual([])
@@ -236,4 +239,19 @@ test('the frequency table counts every place in the corpus', () => {
   expect(Object.keys(frequency.counts).length).toBe(3379)
   expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(105542)
   expect(frequency.counts['𗋕']).toBe(757)
+})
+
+test('every keyed row of the readings table is in the shipped records', () => {
+  const table = readFileSync(new URL('../data/readings/readings.tsv', import.meta.url), 'utf8')
+  const [head, ...lines] = table.trim().split('\n')
+  const columns = head.split('\t')
+  const citations = json('tangut-reading-sources.json.gz').citations
+  const rows = lines.map(line => Object.fromEntries(line.split('\t').map((cell, i) => [columns[i], cell])))
+  const keyed = rows.filter(row => row.status === 'keyed')
+  expect(keyed.length).toBeGreaterThan(0)
+  for (const row of keyed) {
+    const field = citations[row.char]?.[row.field] ?? []
+    expect({ row, cited: field.some(cite => cite.work === row.work && cite.locator === row.locator) })
+      .toEqual({ row, cited: true })
+  }
 })
