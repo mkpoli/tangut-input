@@ -54,12 +54,12 @@ export const GROUPS = /** @type {const} */ ([
 /** @type {PageEntry[]} */
 export const PAGES = [PRIMARY, ...GROUPS.flatMap(group => /** @type {PageEntry[]} */ ([...group.pages]))]
 
-/** @typedef {PageEntry['path'] | 'about' | 'intro'} Page */
+/** @typedef {PageEntry['path'] | 'about' | 'intro' | 'variants' | 'gyalrongic'} Page */
 
 /** @returns {{ page: Page, q: string, c: string }} */
 function read() {
   const path = location.pathname.replace(/^\/+|\/+$/g, '')
-  const page = /** @type {Page} */ ([...PAGES.map(p => p.path), 'about', 'intro'].includes(path) ? path : '')
+  const page = /** @type {Page} */ ([...PAGES.map(p => p.path), 'about', 'intro', 'variants', 'gyalrongic'].includes(path) ? path : '')
   const params = new URLSearchParams(location.search)
   const code = params.get('c') ?? ''
   const c = /^[0-9a-f]{4,5}$/i.test(code) ? String.fromCodePoint(parseInt(code, 16)) : ''

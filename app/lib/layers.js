@@ -1,6 +1,7 @@
 // The reading tool's layers: what stands in each row under a line of Tangut, top to bottom. A layer
 // is plain data so a reader's arrangement can be stored, and any kind can appear more than once.
 import { SYSTEMS } from './reading.js'
+import { hanGloss } from './gloss.js'
 
 /** The reconstruction a layer follows when it keeps to the reader's chosen system. */
 export const CURRENT = 'current'
@@ -70,7 +71,7 @@ export function layerValue(layer, char, data) {
       const value = data.entry?.pronunciations?.[layer.system === CURRENT || !layer.system ? data.reading : layer.system]?.trim() ?? ''
       return { text: value, title: value }
     }
-    case 'sinograph': return { text: data.leilin?.[0]?.[0] ?? '', title: (data.leilin ?? []).map(([word]) => word).join('、') }
+    case 'sinograph': return hanGloss(data.leilin)
     case 'japanese': return sense(definitions.ja)
     case 'wiktionary': return sense(definitions.en)
     case 'downes': return { text: firstSense(data.downes), title: data.downes ?? '' }

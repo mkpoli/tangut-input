@@ -3,9 +3,11 @@
 import { indexTibetan } from './tibetan.js'
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadFrequency } from './data.js'
 import { loadReadingSources } from './data.js'
-import { variantIndex } from './variants.js'
+import { possiblePairs, variantIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
+import { indexIdsDescriptions } from './ids-views.js'
+import { indexDescriptions } from './description.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
 
@@ -34,7 +36,10 @@ export const db = $state({
 export const ix = {
   /** @type {Entry[]} */ entries: [],
   /** @type {Map<string, Entry>} */ byChar: new Map(),
+  /** Complete recorded descriptions, used to render editorial views. @type {Map<string, Set<string>>} */ idsIndex: new Map(),
+  /** Recorded and editorial descriptions, ordered for prefix search. @type {[string, string][]} */ descriptions: [],
   /** Variant forms, stated and possible. @type {Map<string, import('./variants.js').Variants>} */ variants: new Map(),
+  /** @type {import('./variants.js').PossiblePair[]} */ variantPairs: [],
   /** Cangjie codes by character, shortest first. @type {Map<string, string[]>} */ codes: new Map(),
   /** Every [code, character] pair, ordered by code. @type {[string, string][]} */ codeList: [],
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
@@ -43,8 +48,9 @@ export const ix = {
   /** CCAMC glosses as normalized terms, used by the meaning search and never shown.
    *  @type {{ meanings: Record<string, Record<string, string[]>> }} */ ccamcMeanings: { meanings: {} },
   /** @type {Map<string, number>} */ strokes: new Map(),
-  /** The parts of each description at every layer, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
+  /** The maximum count of each part across possible trees. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
   /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
+  /** Alternative character readings at each place in a description. @type {ReturnType<typeof buildPartIndex>['partGroups']} */ partGroups: new Map(),
   /** The parts each description names directly, character parts included. @type {Map<string, string[]>} */ directPartsOf: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
@@ -87,7 +93,10 @@ export async function load() {
     ix.tibetanIndex = indexTibetan(ix.tibetan, ix.tibetanHands)
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
-    ix.variants = variantIndex(entries)
+    ix.idsIndex = indexIdsDescriptions(entries)
+    ix.descriptions = indexDescriptions(entries, ix.idsIndex)
+    ix.variantPairs = possiblePairs(entries)
+    ix.variants = variantIndex(ix.variantPairs)
     ix.names = names
     ix.partNames = partNames
     for (const [char, code] of pairs) {
@@ -105,6 +114,7 @@ export async function load() {
     const index = buildPartIndex(entries)
     ix.partsOf = index.partsOf
     ix.usedBy = index.usedBy
+    ix.partGroups = index.partGroups
     ix.directPartsOf = index.directPartsOf
     if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
     if (rhymes) {

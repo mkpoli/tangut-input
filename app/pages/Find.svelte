@@ -5,6 +5,7 @@
   // code point opens its range; Chinese or Japanese is read as a meaning.
   import { db, ix, gloss, codePoint, readingOf } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
+  import TileNote from '../ui/TileNote.svelte'
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
@@ -21,7 +22,7 @@
     if (!ready || !text) return []
     /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string, sound?: string, tibetan?: boolean }[] }[]} */
     const out = []
-    // A description, whole or cut after its opening part, is read against the records' own.
+    // A whole description or its opening is read against both recorded and editorial forms.
     const described = byDescription(text)
     if (described.length) {
       out.push({ key: 'description', title: t('find.group.description'), total: described.length,
@@ -174,7 +175,7 @@
               {@const sound = item.sound ?? readingOf(item.char, ui.reading)}
               <button type="button" role="option" class="ui-tile" data-index={offset + i} aria-selected={offset + i === active || (active < 0 && route.c === item.char)}
                 title={gloss(item.char)} onclick={() => { active = offset + i; choose(item.char) }} ondblclick={() => put(item.char, { place: offset + i })}>
-                <G char={item.char} />{#if sound}<span class="ui-tile-sound" lang={item.tibetan ? 'bo' : undefined}>{sound}</span>{/if}<span class="ui-tile-note">{item.sub}</span>
+                <G char={item.char} />{#if sound}<span class="ui-tile-sound" lang={item.tibetan ? 'bo' : undefined}>{sound}</span>{/if}<TileNote char={item.char} text={item.sub} />
               </button>
             {/each}
           </div>

@@ -14,6 +14,7 @@
   import Card from './ui/Card.svelte'
   import SponsorDialog from './ui/SponsorDialog.svelte'
   import Icon from './ui/Icon.svelte'
+  import SiteSelect from './ui/SiteSelect.svelte'
   import Find from './pages/Find.svelte'
   import Cangjie from './pages/Cangjie.svelte'
   import Sijiao from './pages/Sijiao.svelte'
@@ -22,12 +23,14 @@
   import Fanqie from './pages/Fanqie.svelte'
   import Chart from './pages/Chart.svelte'
   import Eras from './pages/Eras.svelte'
+  import Variants from './pages/Variants.svelte'
   import Texts from './pages/Texts.svelte'
   import Transcribe from './pages/Transcribe.svelte'
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
   import About from './pages/About.svelte'
   import Intro from './pages/Intro.svelte'
+  import Gyalrongic from './pages/Gyalrongic.svelte'
 
   load()
   applyTheme()
@@ -35,7 +38,7 @@
   // gives, on arrival. A finder's preview also puts a character in the address, and a reload keeps
   // whatever the reader had closed.
   const reloaded = /** @type {PerformanceNavigationTiming | undefined} */ (performance.getEntriesByType('navigation')[0])?.type === 'reload'
-  if (route.c && route.page === '' && !route.q && !reloaded && matchMedia('(max-width: 900px)').matches) ui.sheet = true
+  if (route.c && (route.page === '' || route.page === 'variants') && !route.q && !reloaded && matchMedia('(max-width: 900px)').matches) ui.sheet = true
   applyTangut()
 
   /** @type {HTMLElement | null} */
@@ -68,6 +71,9 @@
     if (menu && !sheet.open) sheet.showModal()
     if (!menu && sheet.open) sheet.close()
   })
+
+  // The pages that are read, full width and without the character card.
+  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic'])
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page @returns {boolean} whether the page changes */
   function nav(event, page) {
@@ -196,10 +202,14 @@
 
 <div class="shell">
   <header class="top">
-    <a class="mark" href="/" onclick={event => nav(event, '')} aria-label={t('app.home')}>
-      <span class="badge ui-script" aria-hidden="true">𘅤</span>
-      <span class="name">{t('app.name')}</span>
-    </a>
+    <div class="site">
+      <SiteSelect home={event => nav(event, '')}>
+        <span class="mark">
+          <span class="badge ui-script" aria-hidden="true">𘅤</span>
+          <span class="name">{t('app.name')}</span>
+        </span>
+      </SiteSelect>
+    </div>
     {@render introLink('intro-extra')}
     <nav class="finders" aria-label={t('nav.label')}>
       <a href="/" class="primary" class:on={route.page === ''} aria-current={route.page === '' ? 'page' : undefined}
@@ -260,8 +270,8 @@
   {#if db.status === 'failed'}
     <p class="fault">{t('app.failed')}</p>
   {:else}
-    <div class="body" class:full={route.page === 'about' || route.page === 'intro'}>
-      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'intro' ? 'intro.title' : 'nav.sources'))}>
+    <div class="body" class:full={READING_PAGES.includes(route.page)}>
+      <main class="finder" aria-label={t(PAGES.find(p => p.path === route.page)?.label ?? (route.page === 'variants' ? 'card.variants' : route.page === 'intro' ? 'intro.title' : route.page === 'gyalrongic' ? 'gyalrongic.title' : 'nav.sources'))}>
         {#if route.page === ''}<Find />
         {:else if route.page === 'meaning'}<Meaning />
         {:else if route.page === 'cangjie'}<Cangjie />
@@ -270,11 +280,13 @@
         {:else if route.page === 'fanqie'}<Fanqie />
         {:else if route.page === 'chart'}<Chart />
         {:else if route.page === 'eras'}<Eras />
+        {:else if route.page === 'variants'}<Variants />
         {:else if route.page === 'texts'}<Texts />
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
         {:else if route.page === 'intro'}<Intro />
+        {:else if route.page === 'gyalrongic'}<Gyalrongic />
         {:else}<About />{/if}
         {#if route.page !== 'about'}
           <footer class="foot ui-hint">
@@ -283,7 +295,7 @@
           </footer>
         {/if}
       </main>
-      {#if route.page !== 'about' && route.page !== 'intro'}
+      {#if !READING_PAGES.includes(route.page)}
         {#if ui.sheet}<button type="button" class="scrim" tabindex="-1" aria-hidden="true" onclick={() => { ui.sheet = false }}></button>{/if}
         <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
           <Card />
@@ -304,8 +316,8 @@
         <span>{t(group.tab)}<svg class="caret" viewBox="0 0 10 10" width="8" height="8" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </button>
     {/each}
-    <button class="tab" type="button" class:on={route.page === 'about' || route.page === 'intro'}
-      aria-current={route.page === 'about' || route.page === 'intro' ? 'true' : undefined}
+    <button class="tab" type="button" class:on={READING_PAGES.includes(route.page)}
+      aria-current={READING_PAGES.includes(route.page) ? 'true' : undefined}
       aria-haspopup="dialog" aria-expanded={menu?.kind === 'more'}
       onclick={event => openMenu(event, { kind: 'more' })}><Icon name="more" size={18}/><span>{t('nav.more')}</span></button>
   </nav>
@@ -335,6 +347,11 @@
           <Icon name="book" size={18}/>
           <span class="sheet-name">{t('nav.intro')}</span><span class="ui-hint">{t('nav.intro.hint')}</span>
         </a>
+        <a class="sheet-link" href="/gyalrongic" class:on={route.page === 'gyalrongic'} aria-current={route.page === 'gyalrongic' ? 'page' : undefined}
+          onclick={event => closeMenu(!nav(event, 'gyalrongic'))}>
+          <Icon name="book" size={18}/>
+          <span class="sheet-name">{t('gyalrongic.title')}</span><span class="ui-hint">{t('gyalrongic.hint')}</span>
+        </a>
         <a class="sheet-link" href="/about" class:on={route.page === 'about'} aria-current={route.page === 'about' ? 'page' : undefined}
           onclick={event => closeMenu(!nav(event, 'about'))}>
           <Icon name="sources" size={18}/>
@@ -363,7 +380,8 @@
 <style>
   .shell{min-block-size:100dvh;display:flex;flex-direction:column}
   .top{position:sticky;top:0;z-index:var(--ui-z-chrome);display:flex;align-items:center;gap:var(--ui-space-xl);block-size:var(--topbar-h);padding-inline:var(--ui-space-2xl);background:var(--ui-color-surface);border-bottom:1px solid var(--ui-color-border)}
-  .mark{display:flex;align-items:center;gap:var(--ui-space-sm);color:var(--ui-color-ink);text-decoration:none}
+  .site{align-self:stretch}
+  .mark{display:flex;align-items:center;gap:var(--ui-space-sm)}
   .badge{display:grid;place-items:center;inline-size:30px;block-size:30px;border-radius:var(--ui-radius-sm);background:var(--ui-color-accent);color:var(--ui-color-on-accent);font-size:21px}
   .name{font-family:var(--ui-font-serif);font-size:17px;font-weight:var(--ui-weight-semibold);letter-spacing:.005em;white-space:nowrap}
   .intro-extra{display:none;align-items:center;gap:4px;block-size:55px;color:var(--ui-color-ink-soft);text-decoration:none;font-size:var(--ui-text-sm);font-weight:var(--ui-weight-medium);white-space:nowrap}
@@ -447,7 +465,7 @@
   @media (min-width:901px) and (max-width:1719px){
     .shell{--topbar-h:96px}
     .top{flex-wrap:wrap;gap:0 var(--ui-space-xl);padding-inline:var(--ui-space-xl);block-size:var(--topbar-h)}
-    .mark,.aside{block-size:55px}
+    .site,.aside{block-size:55px}
     .finders{order:3;flex:0 0 100%;block-size:40px;border-top:1px solid var(--ui-color-border)}
     .finders a{padding-inline:var(--ui-space-sm);font-size:var(--ui-text-sm)}
     .finders a.on::after{inset-inline:var(--ui-space-sm)}

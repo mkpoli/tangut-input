@@ -5,12 +5,14 @@
   import { db, ix, codePoint, gloss, isComponent, readingOf } from '../lib/db.svelte.js'
   import { onMount } from 'svelte'
   import G from './G.svelte'
+  import TileNote from './TileNote.svelte'
   import Icon from './Icon.svelte'
   import { route, link } from '../lib/route.svelte.js'
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
-  import { byDescription, partsIn } from '../lib/search.js'
+  import { byDescription } from '../lib/search.js'
+  import { idsViews } from '../lib/ids-views.js'
   import { openingOf } from '../lib/description.js'
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
@@ -103,7 +105,7 @@
   const users = $derived(ready && char ? [...(ix.usedBy.get(char) ?? [])] : [])
   // The characters whose own spelling is read from this one, either as its upper or its lower.
   const spells = $derived(ready && char ? [...(ix.fanqieUsedBy.get(char) ?? [])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)) : [])
-  const parts = $derived(ready && char ? partsIn(char) : [])
+  const views = $derived(char && entry?.composition ? idsViews(char, entry.composition, ix.idsIndex) : null)
   // The description's opening, which Find reads as a prefix: the family of characters built from it.
   const opening = $derived(openingOf(entry?.composition))
   const openingCount = $derived(ready && opening ? byDescription(opening).length : 0)
@@ -300,6 +302,7 @@
             <p class="ui-hint">{t(block.source)}</p>
           {/if}
         {/each}
+        <p class="more"><a href={link('variants', char)}><Icon name="arrow" size={13}/>{t('card.variantsAll')}</a></p>
       </section>
     {/if}
 
@@ -384,14 +387,23 @@
 
     <section>
       <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.builtFrom')}</h3>
-      {#if entry?.composition}
-        <Ids composition={entry.composition} />
-        <p class="ids">
-          <span class="ui-formula" title={entry.composition}>{entry.composition}</span>
-          <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} onclick={() => copy(/** @type {string} */ (entry?.composition), t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
-          {#if parts.length}<a class="ids-link" href={link('parts', char, parts.join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
-          {#if openingCount > 1}<a class="ids-link" href={link('', char, opening)}><Icon name="find" size={13}/>{t('card.sameOpening')}</a>{/if}
-        </p>
+      {#if views}
+        {#each [
+          ...(views.showEditorial ? [{ label: t('card.idsEditorial'), recorded: false, text: views.editorial, parts: views.editorialParts }] : []),
+          { label: t('card.idsRecorded'), recorded: true, text: views.recorded, parts: views.recordedParts },
+        ] as view (view.recorded)}
+          <div class="ids-view">
+            <h4 class="ui-hint">{view.label}</h4>
+            <Ids composition={view.text} />
+            <p class="ids">
+              <span class="ui-formula" title={view.text}>{view.text}</span>
+              <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} aria-label={`${t('common.copy')} · ${t(view.label)}`} onclick={() => copy(view.text, t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
+              {#if view.parts.length}<a class="ids-link" aria-label={`${t('card.withTheseParts')} · ${t(view.label)}`} href={link('parts', char, view.parts.join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
+              {#if view.recorded && openingCount > 1}<a class="ids-link" href={link('', char, opening)}><Icon name="find" size={13}/>{t('card.sameOpening')}</a>{/if}
+            </p>
+          </div>
+        {/each}
+        <p class="ui-hint">{t('card.idsSource')} <a href="https://www.babelstone.co.uk/Tangut/TangutIDS.txt" target="_blank" rel="noopener noreferrer">Andrew West, Tangut IDS ↗</a>.{#if views.showEditorial}{' '}{t('card.idsMethod')}{/if}</p>
       {:else if isComponent(char)}
         <p class="ui-hint">{t('card.isComponent')}</p>
       {:else}
@@ -422,7 +434,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -437,7 +449,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -452,7 +464,7 @@
             {@const sound = readingOf(other, ui.reading)}
             <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}
               onmouseenter={event => peekAt(event, other)} onmouseleave={() => { peek = null }} onfocus={event => peekAt(event, other)} onblur={() => { peek = null }}>
-              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<span class="ui-tile-note">{gloss(other)}</span>
+              <G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}<TileNote char={other} text={gloss(other)} />
             </button>
           {/each}
         </div>
@@ -521,6 +533,7 @@
   .spelling{font-size:18px}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
+  .ids-view{display:grid;gap:var(--ui-space-xs);min-inline-size:0}
   .ids{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm)}
   .ids .ui-formula{font-size:20px}
   .ids-link{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}
@@ -531,7 +544,6 @@
   .wenhai-sep{color:var(--ui-color-ink-muted)}
   .wenhai-position{margin-inline-start:auto;font-size:var(--ui-text-2xs);letter-spacing:0}
   .rel{gap:3px}
-  .rel .ui-tile-note{font-size:var(--ui-text-2xs)}
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}
   .credit{border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg);font-size:var(--ui-text-2xs);line-height:1.6;margin-top:var(--ui-space-xl)}
