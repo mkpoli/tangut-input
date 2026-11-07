@@ -53,11 +53,14 @@
         : rhyme?.[1] === 4 ? 'card.tone.entering'
           : '',
   )
-  const spelling = $derived(
-    rhyme?.[3] || rhyme?.[4] ? [rhyme[3], rhyme[4]].filter(Boolean).join('')
-      : rhyme?.[5] || rhyme?.[6] ? [rhyme[5], rhyme[6]].filter(Boolean).join('')
-        : '',
-  )
+  const spelling = $derived.by(() => {
+    if (!rhyme) return ''
+    /** @param {string | null | undefined} value */
+    const cell = value => (value && value !== '?' ? value : '')
+    const upper = [cell(rhyme[3]), cell(rhyme[4])].filter(Boolean)
+    if (upper.length) return upper.join('')
+    return [cell(rhyme[5]), cell(rhyme[6])].filter(Boolean).join('')
+  })
 
   const same = $derived.by(() => {
     if (!entry?.composition) return []
@@ -264,7 +267,7 @@
       </section>
     {/if}
 
-    {#if readings.length}
+    {#if readings.length || rhymeClass}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">

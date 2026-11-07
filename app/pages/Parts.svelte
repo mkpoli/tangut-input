@@ -19,7 +19,14 @@
   import Icon from '../ui/Icon.svelte'
   import { t } from '../lib/i18n.svelte.js'
 
-  let chosen = $state(/** @type {string[]} */ ([...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : directPartsIn(char))))
+  /** A part from the address: one a description uses, or a supplement component the palette lists.
+   * @param {string} char @returns {string[]} */
+  function fromAddress(char) {
+    if (!isTangut(char)) return []
+    return ix.usedBy.has(char) || ix.supplementComponents.includes(char) ? [char] : directPartsIn(char)
+  }
+
+  let chosen = $state(/** @type {string[]} */ ([...route.q].flatMap(fromAddress)))
   let handwritingOpen = $state(false)
   let handwritingMounted = $state(false)
   let layout = $state('')
@@ -36,7 +43,7 @@
   const ready = $derived(db.status === 'ready')
   // A part from the address waits for the records before it can be checked.
   $effect(() => {
-    if (ready && !chosen.length && route.q) chosen = [...route.q].filter(isTangut).flatMap(char => ix.usedBy.has(char) ? [char] : directPartsIn(char))
+    if (ready && !chosen.length && route.q) chosen = [...route.q].flatMap(fromAddress)
   })
 
   const hits = $derived(ready ? byParts(chosen, layout) : [])
@@ -57,7 +64,8 @@
     const shape = foldShapeName(query)
     /** @type {Set<string>} */
     const named = shape ? new Set(ix.names.filter(row => foldShapeName(row.name).includes(shape)).map(row => row.char)) : new Set()
-    let parts = [...ix.usedBy.keys()].map(part => ({ part, uses: ix.usedBy.get(part)?.size ?? 0, strokes: ix.strokes.get(part) ?? 0, live: among ? among.get(part) ?? 0 : -1 }))
+    const listed = new Set([...ix.usedBy.keys(), ...ix.supplementComponents])
+    let parts = [...listed].map(part => ({ part, uses: ix.usedBy.get(part)?.size ?? 0, strokes: ix.strokes.get(part) ?? 0, live: among ? among.get(part) ?? 0 : -1 }))
     if (query) parts = parts.filter(p => named.has(p.part) || (ix.codes.get(p.part) ?? []).some(code => code.startsWith(codes) || code.startsWith(`p${codes}`)))
     if (among && !everything) parts = parts.filter(p => p.live > 0)
     return keepVariantsTogether(parts.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses))
@@ -211,6 +219,8 @@
         {#if chosen.length || layout}
           {#if hits.length}
             <div role="presentation" onkeydown={keys}><Candidates bind:this={grid} {items} bind:active size={64} label={t('parts.matchesLabel')} limit={240} /></div>
+          {:else if chosen.some(part => ix.supplementComponents.includes(part))}
+            <p class="ui-empty">{t('parts.indexComponent')}</p>
           {:else}
             <p class="ui-empty">{layout ? t('parts.noMatchLayout') : t('parts.noMatch')}</p>
           {/if}
