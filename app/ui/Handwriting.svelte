@@ -12,6 +12,14 @@
   import { filterHandwriting } from '../lib/handwriting-filter.js'
   import { foldShapeName } from '../lib/names.js'
   import { t } from '../lib/i18n.svelte.js'
+  import { record } from '../lib/record.js'
+  import { createDrawingCapture } from '../../src/core/drawing-capture.js'
+  const capture = createDrawingCapture(record)
+  function snapshot() {
+    const box = canvas?.getBoundingClientRect()
+    if (!box || !box.width || !box.height) return
+    capture.update({ origin: 'draw', strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / box.width).toFixed(4), +(y / box.height).toFixed(4)])), width: Math.round(box.width), height: Math.round(box.height) })
+  }
 
   /** @type {{ componentsOnly?: boolean, onpick?: (part: string) => void }} */
   let { componentsOnly = false, onpick } = $props()
@@ -75,17 +83,8 @@
       }
     })()
     resize()
-    // A character picked from these results is recorded with the drawing that produced it.
-    if (!componentsOnly) attachPad(() => {
-      const box = canvas?.getBoundingClientRect()
-      if (!box || !strokes.length) return null
-      return {
-        strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / box.width).toFixed(4), +(y / box.height).toFixed(4)])),
-        width: Math.round(box.width),
-        height: Math.round(box.height),
-      }
-    })
-    onDestroy(() => { alive = false; observer.disconnect(); if (!componentsOnly) attachPad(null) })
+    if (!componentsOnly) attachPad((picked, place) => { up(); return capture.capture({ picked, place }) })
+    onDestroy(() => { up(); capture.clear(); alive = false; observer.disconnect(); if (!componentsOnly) attachPad(null) })
   })
 
   const strokeCount = $derived(strokes.length)
@@ -169,7 +168,7 @@
 
   /** @param {PointerEvent} event */
   function down(event) {
-    if (event.button !== 0) return
+    if (event.button !== 0 || !event.isPrimary || current) return
     canvas?.setPointerCapture(event.pointerId)
     current = [point(event)]
     paint()
@@ -187,6 +186,7 @@
     if (!current) return
     strokes = [...strokes, current]
     current = null
+    snapshot()
     update()
   }
 
@@ -195,8 +195,11 @@
     active = -1
     paint()
   }
-  function undo() { strokes = strokes.slice(0, -1); update() }
-  function clear() { strokes = []; update() }
+  function undo() { up(); capture.capture(); strokes = strokes.slice(0, -1); snapshot(); update() }
+  function clear() { up(); capture.clear(); strokes = []; update() }
+  function leave() { up(); capture.capture() }
+  /** @param {string} part */
+  function pickPart(part) { up(); capture.capture({ picked: part }); onpick?.(part); clear() }
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
@@ -218,7 +221,8 @@
   }
 </script>
 
-<svelte:window onresize={resize} onkeydown={keys} />
+<svelte:window onresize={resize} onkeydown={keys} onpagehide={leave} />
+<svelte:document onvisibilitychange={() => { if (document.hidden) leave() }} />
 
 <div class="ui-page draw" class:component-mode={componentsOnly} data-width="wide">
   <section class="pad-column" aria-label={t('draw.padLabel')}>
@@ -228,7 +232,7 @@
     </header>
     <div class="pad">
       <canvas bind:this={canvas} aria-label={t('draw.canvas')}
-        onpointerdown={down} onpointermove={moveTo} onpointerup={up} onpointercancel={up}></canvas>
+        onpointerdown={down} onpointermove={moveTo} onpointerup={up} onpointercancel={up} onlostpointercapture={up}></canvas>
       {#if !strokes.length}<p class="hint" aria-hidden="true">{t('draw.here')}</p>{/if}
     </div>
     <div class="tools">
@@ -257,7 +261,7 @@
         {#if !showAllParts && palette.length > 48}<button type="button" class="ui-button" data-size="sm" onclick={() => { showAllParts = true }}>{t('parts.showAll')}</button>{/if}
       </details>
     {/if}
-    {#if !componentsOnly}<p class="ui-notice">{@html t('draw.note')}</p>{/if}
+    <p class="ui-notice">{@html t('draw.note')}</p>
   </section>
 
   <section class="results" aria-label={t('draw.resultsLabel')}>
@@ -268,7 +272,7 @@
     {#if items.length}
       {#if componentsOnly}
         <div class="ui-tiles" style:--ui-tile-size="52px">
-          {#each items as item (item.char)}<button type="button" class="ui-tile" onclick={() => { onpick?.(item.char); clear() }} title={item.sub}><span class="ui-tile-glyph"><G char={item.char}/></span></button>{/each}
+          {#each items as item (item.char)}<button type="button" class="ui-tile" onclick={() => pickPart(item.char)} title={item.sub}><span class="ui-tile-glyph"><G char={item.char}/></span></button>{/each}
         </div>
       {:else}
         <Candidates bind:this={grid} {items} bind:active size={70} label={t('draw.results')} />

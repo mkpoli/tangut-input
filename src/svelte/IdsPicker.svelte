@@ -13,8 +13,8 @@
   import { loadStrokes } from './strokes.js'
 
   /** @typedef {'find' | 'parts' | 'from' | 'templates'} Tab */
-  /** @type {{ editor: import('./editor.svelte.js').Editor, pickers?: Tab[], recentKey?: string | null, tab?: Tab | null, fromText?: string, title?: boolean }} */
-  let { editor, pickers = ['find', 'parts', 'from', 'templates'], recentKey = 'ids-input.recentParts', tab = $bindable(null), fromText = $bindable(''), title = true } = $props()
+  /** @type {{ editor: import('./editor.svelte.js').Editor, pickers?: Tab[], recentKey?: string | null, tab?: Tab | null, fromText?: string, title?: boolean, onrecord?: (event: any) => void, collectionNotice?: string }} */
+  let { editor, pickers = ['find', 'parts', 'from', 'templates'], recentKey = 'ids-input.recentParts', tab = $bindable(null), fromText = $bindable(''), title = true, onrecord, collectionNotice } = $props()
   const t = $derived(editor.t)
   const adapter = $derived(editor.adapter)
   const uid = $props.id()
@@ -95,7 +95,7 @@
           {#if name === 'find'}
             <div class="ids-find">
               {#if drawing}
-                <IdsSketch {adapter} disabled={editor.disabled} messages={editor.messages} locale={editor.locale}
+                <IdsSketch {adapter} {onrecord} {collectionNotice} disabled={editor.disabled} messages={editor.messages} locale={editor.locale}
                   onpick={part => editor.take(part, undefined, { loose: isMarks(part) })} onclose={type} />
               {:else}
                 <div class="ids-find-row">
