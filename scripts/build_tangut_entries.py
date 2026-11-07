@@ -12,7 +12,7 @@ Displayable fields come from sources the site can republish:
 - the English definitions in Wiktionary's Tangut entries, through Kaikki's extract;
 - the Japanese definitions on ja.wiktionary (CC BY-SA 4.0);
 - BabelStone's Tangut IDS (public domain);
-- the 文海's own entry text (12th century, public domain);
+- the 文海's Chinese entry text (12th century, public domain);
 - Unicode's TangutSources radical and stroke data.
 
 CCAMC's readings, glosses and 文海 text are not copied into the records. What the site keeps is a
@@ -42,7 +42,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ENTRIES = ROOT / 'app/data/tangut-entries.json.gz'
 INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
 SOURCES = ROOT / 'app/data/tangut-reading-sources.json.gz'
-FORMAT = 'tangut-input/entries/3'
+FORMAT = 'tangut-input/entries/4'
 SYSTEMS = ['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
            'nishida', 'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'tibetan']
 READINGS = ROOT / 'data/readings/readings.tsv'
@@ -213,7 +213,6 @@ def main():
             definitions_ja,
             definitions_zh,
             pron,
-            text.get('en', ''),
             text.get('zh', ''),
         ])
 

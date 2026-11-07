@@ -638,7 +638,7 @@
   "about.readingsSource": "ウィクショナリーの再構音は、それを表示するモジュールから版IDとともに取得し、<span class=\"ui-mono\">data/wiktionary/txg-readings.json.gz</span>に記録しています。龔煌城のGHCと龔勛のGX202411は、西夏文擬音データベースの2025-05-07版から、ダイジェスト・DOI・帰属表示を添えて<span class=\"ui-mono\">data/gong-xun/ghc.json.gz</span>と<span class=\"ui-mono\">data/gong-xun/gx202411.json.gz</span>に保存しています。CCAMCの一方式と中国語の釈義は、検索用に正規化した語だけを<span class=\"ui-mono\">app/data/tangut-ccamc-index.json.gz</span>に置き、どのページにも表示しません。",
   "card.wenhai": "文海",
   "about.wenhaiTitle": "『文海』の本文",
-  "about.wenhai": "『文海』（12世紀）は各項目で字形を分析しています。本文はパブリックドメインで、『文海』に項目がある字では英語の訳を添えて表示します。",
+  "about.wenhai": "『文海』（12世紀）は各項目で字形を分析しています。その漢文はパブリックドメインで、『文海』に項目がある字では漢文のまま表示します。",
   "intro.fig.golden": "西夏文『金光明経』の一葉（部分）。紺紙に金字で書かれている。11〜13世紀。",
   "intro.fig.tombs": "銀川近郊、賀蘭山の麓にある西夏陵。",
   "intro.fig.manuscript": "賀蘭山で発見された西夏文の仏教偈頌の写本。寧夏博物館蔵。",

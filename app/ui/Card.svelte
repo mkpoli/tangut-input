@@ -389,18 +389,15 @@
       </section>
     {/if}
 
-    {#if entry?.wenhai_text_en || entry?.wenhai_text_zh}
+    {#if entry?.wenhai_text_zh}
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
-        {#if entry.wenhai_text_zh}
-          <p lang="zh-Hant">
-            {entry.wenhai_text_zh}
-            {#each cites('wenhai_zh') as cite (cite.locator)}
-              <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
-            {/each}
-          </p>
-        {/if}
-        {#if entry.wenhai_text_en}<p>{entry.wenhai_text_en}</p>{/if}
+        <p lang="zh-Hant">
+          {entry.wenhai_text_zh}
+          {#each cites('wenhai_zh') as cite (cite.locator)}
+            <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+          {/each}
+        </p>
       </section>
     {/if}
 

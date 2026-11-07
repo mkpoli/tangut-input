@@ -120,7 +120,8 @@ export function byMeaning(query, options = {}) {
     }
     // The 文海's own entry text can answer even when the gloss does not use the word.
     if (tier > 2) for (const key of languages) {
-      const value = key === 'en' ? entry.wenhai_text_en : key === 'zh' ? entry.wenhai_text_zh : ''
+      if (key !== 'zh') continue
+      const value = entry.wenhai_text_zh
       if (typeof value !== 'string') continue
       const t = rank(value)
       if (t + 3 < tier) { tier = t + 3; sense = value; lang = key }

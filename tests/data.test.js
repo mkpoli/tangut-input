@@ -9,7 +9,7 @@ const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
 test('the packed records keep every character, the five Wiktionary readings and the two Database readings', () => {
-  expect(entries.format).toBe('tangut-input/entries/3')
+  expect(entries.format).toBe('tangut-input/entries/4')
   expect(entries.rows.length).toBe(6144)
   expect(entries.systems).toEqual([
     'li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
@@ -21,13 +21,11 @@ test('the packed records keep every character, the five Wiktionary readings and 
   expect(first[4]).toEqual(['poison; venom; toxin', 'poisonous; venomous; noxious'])
   expect(first[5]).toEqual(['毒'])
   expect(first[6]).toEqual([])
-  expect(first[8]).toBe('Composed of the middle of 𘊓 "scorpion" and the right of "𗀋".')
-  expect(first[9]).toBe('蝎中蛇右。')
+  expect(first[8]).toBe('蝎中蛇右。')
 })
 
-test('the 文海 text is kept for the entries it carries', () => {
-  expect(entries.rows.filter(row => row[8]).length).toBe(12)
-  expect(entries.rows.filter(row => row[9]).length).toBe(6)
+test('the 文海 Chinese text is kept for the entries it carries', () => {
+  expect(entries.rows.filter(row => row[8]).length).toBe(6)
 })
 
 test('the displayable meanings cover only the Wiktionary entries', () => {
