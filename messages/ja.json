@@ -254,7 +254,7 @@
   "card.variantsSource": "ウィクショナリーの記述によります。ここに載るのはごく一部です。",
   "card.variantsPossibleSource": "読み（李範文）が同じで、ウィクショナリーの語義が重なるか、異体の部品一つだけが異なる字です。異体字とする資料は確認できていません。",
   "card.readings": "字音",
-  "card.keyedReadings": "典拠のある読み",
+  "card.soundGloss": "音注・{name}",
   "card.wenhaiConstruction": "文海の字形構成",
   "card.builtFrom": "構成",
   "card.copyDescription": "構成記述をコピー",

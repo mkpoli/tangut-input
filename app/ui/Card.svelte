@@ -44,11 +44,13 @@
     { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山', lang: 'zh-Hant' },
     { key: 'tibetan', label: 'card.tibetan', lang: 'bo' },
   ])
-  /** A keyed field's label: a scholar's name in the reader's script, or a localized script name.
-   * @param {{ name?: string, zh?: string, label?: string }} field */
-  const fieldLabel = field => field.name
-    ? (/^(ja|zh|ko)/.test(i18n.locale) ? field.zh : field.name)
-    : t(/** @type {string} */ (field.label))
+  /** A transcribed field's label: a sound gloss names the scholar in the reader's script, a
+   * transcription its own script. @param {{ name?: string, zh?: string, label?: string }} field */
+  const fieldLabel = field => {
+    if (!field.name) return t(/** @type {string} */ (field.label))
+    const name = /^(ja|zh|ko)/.test(i18n.locale) && field.zh ? field.zh : field.name
+    return t('card.soundGloss', { name })
+  }
 
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
@@ -88,8 +90,8 @@
     .replace(/^canvas (\d+) c(\d+)$/, (_, canvas, column) => `${canvas}·${column}`)
 
   // The readings keyed from the editions — 音（李范文）, 音（聂历山）, the 藏文對音 — each with the
-  // page it stands on.
-  const fanqie = $derived(READING_FIELDS
+  // page it stands on. They stand in the readings table like every other reading.
+  const keyed = $derived(READING_FIELDS
     .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cites: cites(field.key) }))
     .filter(field => field.value))
 
@@ -301,7 +303,7 @@
       </section>
     {/if}
 
-    {#if readings.length}
+    {#if readings.length || keyed.length}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
@@ -312,6 +314,17 @@
                 <td>
                   {reading.value}
                   {#each cites(reading.key) as cite (cite.locator)}
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+                  {/each}
+                </td>
+              </tr>
+            {/each}
+            {#each keyed as field (field.key)}
+              <tr>
+                <th scope="row" title={field.name ? `${field.name} · ${field.zh}` : fieldLabel(field)}>{fieldLabel(field)}</th>
+                <td class:cjk={field.lang !== 'bo'}>
+                  <span class:bo={field.lang === 'bo'} lang={field.lang}>{field.value}</span>
+                  {#each field.cites as cite (cite.locator)}
                     <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
                   {/each}
                 </td>
@@ -329,27 +342,6 @@
             {#if hands?.sanskrit?.length}
               <tr><th scope="row">{t('card.sanskrit')}</th><td>{hands.sanskrit.join(' · ')}</td></tr>
             {/if}
-          </tbody>
-        </table>
-      </section>
-    {/if}
-
-    {#if fanqie.length}
-      <section>
-        <h3 class="ui-label"><Icon name="fanqie" size={15}/>{t('card.keyedReadings')}</h3>
-        <table class="readings keyed">
-          <tbody>
-            {#each fanqie as field (field.key)}
-              <tr>
-                <th scope="row" title={field.name ? `${field.name} · ${field.zh}` : fieldLabel(field)} lang={field.lang}>{fieldLabel(field)}</th>
-                <td class:cjk={field.lang !== 'bo'}>
-                  <span lang={field.lang}>{field.value}</span>
-                  {#each field.cites as cite (cite.locator)}
-                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
-                  {/each}
-                </td>
-              </tr>
-            {/each}
           </tbody>
         </table>
       </section>
@@ -534,7 +526,6 @@
   .ids-link{display:inline-flex;align-items:center;gap:3px;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs)}
   .wenhai-construction{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs) var(--ui-space-md);margin:0;font-size:var(--ui-text-lg)}
   .wenhai-part{display:inline-flex;align-items:center;gap:5px}
-  .readings.keyed [lang='bo']{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:var(--ui-text-base);line-height:1.7}
   .wenhai-part :global(.ui-script){font-size:22px;line-height:1}
   .wenhai-term{color:var(--ui-color-ink-muted);font-family:var(--ui-font-serif);font-size:var(--ui-text-sm)}
   .wenhai-sep{color:var(--ui-color-ink-muted)}

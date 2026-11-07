@@ -254,7 +254,7 @@
   "card.variantsSource": "As Wiktionary states them. Only a few are recorded here.",
   "card.variantsPossibleSource": "Same reading (Li Fanwen), with a shared meaning in Wiktionary or a difference of one variant component. No source seen says these are variants.",
   "card.readings": "Readings",
-  "card.keyedReadings": "Keyed readings",
+  "card.soundGloss": "Sound gloss, {name}",
   "card.wenhaiConstruction": "Wenhai 文海 construction",
   "card.builtFrom": "Built from",
   "card.copyDescription": "Copy the description",

@@ -254,7 +254,7 @@
   "card.variantsSource": "據維基詞典所述，此處所收僅為少數。",
   "card.variantsPossibleSource": "讀音（李範文）相同，且維基詞典的釋義有重合，或只差一個異體部件。未見資料稱其為異體。",
   "card.readings": "讀音",
-  "card.keyedReadings": "書證讀音",
+  "card.soundGloss": "音注·{name}",
   "card.wenhaiConstruction": "文海字形構造",
   "card.builtFrom": "字形結構",
   "card.copyDescription": "複製構字描述",
