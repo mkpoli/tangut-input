@@ -79,6 +79,7 @@
                   {#if place.text.url}
                     · <a href={place.text.url} target="_blank" rel="noreferrer">{place.source.kind === 'facsimile' ? (place.text.read ? t('attest.reading') : t('attest.unread')) : t('attest.open')}</a>
                   {/if}
+                  · <a href={`/texts?p=${encodeURIComponent(place.line)}`}>{t('attest.readText')}</a>
                 </p>
               </div>
             </li>

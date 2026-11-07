@@ -665,5 +665,7 @@
   "gyalrongic.kind.dictionary": "Dictionary",
   "gyalrongic.kind.grammar": "Grammar",
   "gyalrongic.kind.preprint": "Preprint",
-  "gyalrongic.kind.thesis": "Thesis"
+  "gyalrongic.kind.thesis": "Thesis",
+  "attest.readText": "Read in the texts",
+  "texts.earlier": "Earlier passages"
 }

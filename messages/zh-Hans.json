@@ -665,5 +665,7 @@
   "gyalrongic.kind.dictionary": "词典",
   "gyalrongic.kind.grammar": "语法专著",
   "gyalrongic.kind.preprint": "预印本",
-  "gyalrongic.kind.thesis": "学位论文"
+  "gyalrongic.kind.thesis": "学位论文",
+  "attest.readText": "在文献中阅读",
+  "texts.earlier": "前面的段落"
 }
