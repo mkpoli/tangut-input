@@ -138,13 +138,16 @@ def main() -> int:
         else:
             if checked.isoformat() > today:
                 report(number, f"checked {row['checked']} is in the future")
-        # A dictionary prints a character more than once; the same place cannot say two things.
+        # A dictionary prints a character more than once; two pages that disagree are reported, but a
+        # row held back as uncertain asserts nothing and cannot contradict one that does.
         entry = (char, field)
-        if entry in where and said[entry] != value:
+        asserted = row["status"] == "keyed"
+        if asserted and entry in where and said[entry] != value:
             print(f"readings.tsv:{number}: {char} reads {value} here and {said[entry]} at line {where[entry]}")
             bad += 1
-        where.setdefault(entry, number)
-        said.setdefault(entry, value)
+        if asserted:
+            where.setdefault(entry, number)
+            said.setdefault(entry, value)
         seen[(char, field, work)] += 1
         if work == "-" and not row["note"].strip():
             report(number, "a row without a work names its source in note")
