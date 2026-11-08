@@ -129,6 +129,16 @@ West warns about wear and forgeries and leaves three types disputed: 福聖/稟�
 questioned era attribution. No reuse licence is stated; photographs remain linked at the source.
 The citation key `west2007` resolves in `app/lib/era-sources.js`.
 
+Each coin also lists the images West prints, shown when a reader hovers the row or opens its
+images button. `kind` is `photograph` for a photograph of one specimen or `drawing` for his
+reconstruction of the inscription as he reads it; `label` is the specimen number or the
+interpretation the drawing sets. Four types have a photograph (福聖, 貞觀, 正德 and 天慶), all six a
+drawing, and 福聖 two drawings for its two readings. The files stay on BabelStone’s server: the
+preview loads them from there and does not copy them. Zeno, the source of two photographs, grants
+reuse with a link to the image number ([terms](https://www.zeno.ru/rules.php)); the 貞觀 and 正德
+photographs come from a [archived coin forum thread](http://web.archive.org/web/20251007194858/http://www.hqcoin.com/bbs/TopicOther.asp?t=5&BoardID=356&id=26449) (the live host no longer answers)
+linked by West, and BabelStone states no terms of its own.
+
 ## `tangut-posthumous.tsv`
 
 Posthumous, temple and tomb names, one row per emperor or empress: `kind`, the names, an empress's `relation` to a ruler, Tangut with its
