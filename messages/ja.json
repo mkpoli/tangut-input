@@ -478,6 +478,7 @@
   "texts.read": "読む",
   "texts.back": "文献一覧",
   "texts.transcribeLine": "この一節を転写",
+  "texts.glosses": "語釈",
   "texts.more": "さらに{count}箇所表示",
   "texts.transcribe": "転写",
   "texts.source": "出典",

@@ -2,11 +2,11 @@
   // Every text behind the attested corpus, grouped by the collection it came from. A text's first
   // passage can be loaded into the writing strip and opened in Transcribe.
   import { db, isTangut } from '../lib/db.svelte.js'
-  import { choose } from '../lib/ui.svelte.js'
   import { setText } from '../lib/text.svelte.js'
   import { route, go, setQuery } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import Icon from '../ui/Icon.svelte'
+  import GlossedLine from '../ui/GlossedLine.svelte'
 
   const COLLECTIONS = /** @type {const} */ ([
     { key: 'edition' },
@@ -67,6 +67,14 @@
   })
 
   const selected = $derived(texts.find(text => text.key === route.q))
+  const GLOSSES = 'tangut-input:texts-glosses'
+  const kept = typeof localStorage !== 'undefined' ? localStorage.getItem(GLOSSES) : null
+  let glosses = $state(kept !== 'off')
+  /** @param {boolean} next */
+  function setGlosses(next) {
+    glosses = next
+    try { localStorage.setItem(GLOSSES, next ? 'on' : 'off') } catch { /* a blocked store only loses the choice */ }
+  }
   let shown = $state(12)
   $effect(() => {
     route.q
@@ -118,9 +126,12 @@
 
 <div class="ui-page texts" data-width="wide">
   {#if selected}
-    <button class="ui-button back" data-variant="quiet" data-size="sm" type="button" onclick={back}>
-      <Icon name="back" size={14}/>{t('texts.back')}
-    </button>
+    <div class="view-tools">
+      <button class="ui-button back" data-variant="quiet" data-size="sm" type="button" onclick={back}>
+        <Icon name="back" size={14}/>{t('texts.back')}
+      </button>
+      <button class="ui-chip" type="button" aria-pressed={glosses} onclick={() => setGlosses(!glosses)}>{t('texts.glosses')}</button>
+    </div>
     <header class="ui-page-head">
       <h1 class="ui-page-title"><Icon name="book" size={22}/><span>{selected.title}</span></h1>
       <p class="ui-page-intro">{t(selected.passages === 1 ? 'texts.countOne' : 'texts.count', { passages: selected.passages.toLocaleString(), characters: selected.characters.toLocaleString() })} · {selected.licence} · <a class="source ui-more-link" href={selected.url} target="_blank" rel="noreferrer">{t('texts.source')}</a></p>
@@ -132,11 +143,7 @@
             <span class="label">{passage.label}</span>
             <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => start(passage.text)}>{t('texts.transcribeLine')}</button>
           </div>
-          <p class="line ui-script" lang="txg">
-            {#each [...passage.text] as char}
-              {#if isTangut(char)}<button class="char" type="button" onclick={() => choose(char)}>{char}</button>{:else}<span>{char}</span>{/if}
-            {/each}
-          </p>
+          <GlossedLine text={passage.text} {glosses} />
           {#if passage.chinese}
             <p class="translation" lang="zh-Hant">{passage.chinese}{#if passage.chineseUrl} <a class="translation-source" href={passage.chineseUrl} target="_blank" rel="noreferrer" title={passage.chineseCredit ?? 'BabelStone'}>BabelStone</a>{/if}</p>
           {/if}
@@ -207,20 +214,17 @@
   .preview{margin:0;overflow:hidden;color:var(--ui-color-ink-soft);font-size:20px;line-height:1.4;text-overflow:ellipsis;white-space:nowrap}
   .actions{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm);margin-top:auto;padding-top:var(--ui-space-xs);border-top:1px solid var(--ui-color-border)}
   .actions .ui-more-link{display:inline-flex;align-items:center;min-block-size:24px}
+  .view-tools{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm)}
   .back{align-self:flex-start}
   .source{display:inline-flex;align-items:center;min-block-size:24px}
   .passages{list-style:none;margin:0;padding:0;display:grid;gap:var(--ui-space-lg)}
   .passage{display:grid;gap:var(--ui-space-xs);padding-block:var(--ui-space-md);border-top:1px solid var(--ui-color-border)}
   .passage-head{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm)}
   .label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);font-variant-numeric:tabular-nums}
-  .line{margin:0;font-size:22px;line-height:1.8;overflow-wrap:anywhere}
   .translation{margin:0;font-family:var(--ui-font-serif);font-size:15px;line-height:1.75;color:var(--ui-color-ink-soft);overflow-wrap:anywhere}
   .translation-source{margin-inline-start:var(--ui-space-2xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted);white-space:nowrap}
-  .char{display:inline-flex;align-items:center;justify-content:center;min-inline-size:24px;min-block-size:24px;padding:0 1px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font:inherit;line-height:1.4;cursor:pointer}
-  .char:hover{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
   .more{display:flex;justify-content:center}
   @media (max-width:760px){
-    .line{font-size:20px}
     .texts-grid{grid-template-columns:1fr}
     .text-card{padding:var(--ui-space-md)}
   }
