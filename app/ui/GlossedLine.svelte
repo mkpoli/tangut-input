@@ -86,7 +86,6 @@
   .line{margin:0;font-size:22px;line-height:1.8;overflow-wrap:anywhere}
   .glossed{display:flex;flex-wrap:wrap;align-items:flex-start;row-gap:0.45em}
   .cell{display:inline-flex;flex:0 0 auto;flex-direction:column;align-items:center;min-inline-size:1.2em;max-inline-size:8em}
-  .cell:not(.plain){margin-inline:1.5px}
   .glyph{display:inline-flex;align-items:center}
   .punct{white-space:pre;line-height:1.4}
   .cell.plain{min-inline-size:0;max-inline-size:none}
@@ -94,7 +93,7 @@
   .char:hover{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
   .cell.plain .char{white-space:pre;cursor:default}
   .cell.plain .char:hover{background:none;color:inherit}
-  .gloss{font-family:var(--ui-font-serif);font-size:13px;line-height:1.35;color:var(--ui-color-ink-muted);text-align:center;min-block-size:1.35em;max-inline-size:8em;overflow-wrap:anywhere}
+  .gloss{font-family:var(--ui-font-serif);font-size:13px;line-height:1.35;color:var(--ui-color-ink-muted);text-align:center;min-block-size:1.35em;max-inline-size:8em;padding-inline:1.5px;overflow-wrap:anywhere}
   .gloss.en{font-family:var(--ui-font-sans);font-size:12px}
   @media (max-width:760px){.line{font-size:20px}}
 </style>
