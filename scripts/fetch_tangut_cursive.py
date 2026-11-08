@@ -67,8 +67,8 @@ TARGET_PIXELS = 760
 BASE_OVERRIDES = {
     '174DA': {
         'image': 'U_174DA_F056_2_4.jpg',
-        'reason': 'The first crop is a mass in which the glyph and the character beside it join; '
-                  'the second crop separates them.',
+        'reason': 'The first crop joins the glyph to the character beside it; the second keeps the '
+                  'glyph clearer.',
     },
     '17943': {
         'image': 'U_17943_Tang_334_248.png',
