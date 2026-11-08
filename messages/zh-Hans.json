@@ -297,7 +297,7 @@
   "card.idsEditorial": "以整字表示的IDS・编辑推定",
   "card.idsRecorded": "部件级IDS・来源",
   "card.idsSource": "IDS来源：",
-  "card.idsMethod": "整字表示中，完整的部分结构若与另一字的记录IDS相同，且符合的字只有一个，就替换为该字。",
+  "card.idsMethod": "整字表示中，完整的部分结构若与某字的记录IDS相同且只有该字符合，就换成该字；三段描述若相邻两段能合成一字，则读作两段。",
   "card.copyDescription": "复制构字描述",
   "card.description": "构字描述",
   "card.withTheseParts": "含这些部件的字",
