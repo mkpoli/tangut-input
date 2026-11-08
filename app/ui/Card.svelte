@@ -45,7 +45,7 @@
   const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
   const linkedGroup = $derived(family && (family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) ? family : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
-  const wordClass = $derived(partsOfSpeech(meanings.zh))
+  const wordClass = $derived(partsOfSpeech([...(meanings.zh ?? []), ...(entry?.wiktionary_zh ?? [])]))
   const READING_FIELDS = /** @type {readonly { key: string, name?: string, zh?: string, label?: string, lang: string }[]} */ ([
     { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文', lang: 'zh-Hant' },
     { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山', lang: 'zh-Hant' },
@@ -261,7 +261,7 @@
       </section>
     {/if}
 
-    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes || leilin?.length}
+    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || entry?.wiktionary_zh?.length || downes || leilin?.length}
       <section>
         <h3 class="ui-label"><Icon name="meaning" size={15}/>{t('card.meaning')}</h3>
         {#if wordClass.length}
@@ -280,6 +280,10 @@
                 <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
               {/each}
             </dd>
+          {/if}
+          {#if entry?.wiktionary_zh?.length}
+            <dt><a href={entry.wiktionary_zh_url ?? `https://zh.wiktionary.org/wiki/${encodeURIComponent(char)}`} target="_blank" rel="noopener noreferrer" title={t('card.chineseWiktionary')}>zh</a></dt>
+            <dd lang="zh">{entry.wiktionary_zh.join('；')}</dd>
           {/if}
           {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}
           {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
