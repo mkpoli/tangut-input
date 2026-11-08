@@ -27,6 +27,7 @@
 /** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sha256: string },
  *   counts: Record<string, number> }} Frequency */
 /** @typedef {{ source: string, entries: Record<string, { position: string, parts: [string, string | null][] }> }} WenhaiComposition */
+/** @typedef {{ format: string, source: { name: string, author: string, date: string, url: string }, characters: Record<string, string> }} NewestIds */
 /** @typedef {{ char: string, block: 'supplement' | 'components', name: string, strokes?: number, radical?: string,
  *   radicalStrokes?: string, source?: string, ids?: string, idsSource?: string, component?: number,
  *   cangjie: string[], glyph: string }} SupplementCharacter */
@@ -172,6 +173,10 @@ export const loadWenhaiComposition = () => once('wenhai-composition', () => read
 /** The characters in the two Tangut supplement blocks, with the fields each one has.
  * @returns {Promise<Supplement>} */
 export const loadSupplement = () => once('supplement', () => readJson(new URL('../data/tangut-supplement.json.gz', import.meta.url)))
+
+/** Descriptions for U+187F8–U+187FF, from WG2 N5217R2.
+ * @returns {Promise<NewestIds>} */
+export const loadNewestIds = () => once('newest-ids', () => readJson(new URL('../data/tangut-newest-ids.json', import.meta.url)))
 
 /** The faces a drawing is compared with, best first: the shapes tabulated for each face. */
 export const SHAPE_FACES = /** @type {const} */ ([

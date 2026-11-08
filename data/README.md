@@ -813,6 +813,18 @@ one is pinned, its digest or commit.
 glyph columns are set in private-use fonts; the code points, characters and source document are
 written out.
 
+## Newest ideograph descriptions
+
+`app/data/tangut-newest-ids.json` holds the description of each ideograph at U+187F8–U+187FF. Their
+entries come from Wiktionary and carry no description, because BabelStone's Tangut IDS stops at
+U+187F7. Table 2 of WG2 N5217R2 assigns each of the eight a description; `data/tangut-newest-ids.tsv`
+transcribes it, and the builder checks that every description reads as complete trees of assigned
+Tangut characters. A page merges the description into the entry when the entry has none, so the
+card, the part search and the parts palette see the structure.
+
+Format: `format`, `source` (name, author, date, URL) and `characters` (character to description).
+Rebuild with `uv run scripts/build_tangut_newest_ids.py`.
+
 ## Bopomofo outlines
 
 `bopomofo-outlines.json.gz` holds U+3105–U+312F and U+31A0–U+31BF (75 letters).
