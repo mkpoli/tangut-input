@@ -432,10 +432,10 @@ def attach_dragon_king(lines):
     for row in DRAGON_KING.read_text(encoding='utf-8').splitlines():
         if not row or row.startswith('#'):
             continue
-        tangut, chinese = row.split('\t', 1)
-        if not tangut or not chinese:
+        parts = row.split('\t', 1)
+        if len(parts) != 2 or not parts[0] or not parts[1]:
             raise SystemExit(f'malformed row in {DRAGON_KING.relative_to(ROOT)}: {row!r}')
-        pairs.append((tangut, chinese))
+        pairs.append((parts[0], parts[1]))
 
     title = [tangut for tangut, chinese in pairs if is_heading(tangut)]
     end = [(tangut, chinese) for tangut, chinese in pairs if tangut.endswith('\u3000𘃪')]
