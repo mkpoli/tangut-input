@@ -39,6 +39,21 @@ It covers all 768 original Tangut components. Rebuild with
 Its outlines are also exported by `scripts/build_tangut_outlines.py` for composition
 and SVG/PNG export, under the same font licence.
 
+## Cursive Tangut
+
+`CursiveTangut-Regular.woff2` (187 KB) and `CursiveTangut-Regular.ttf` set the cursive forms of 108
+Tangut characters, traced from [BabelStone's Cursive
+Tangut](https://www.babelstone.co.uk/Tangut/CursiveTangut.html) examples. The face puts one form at
+each code point and the page's other forms behind the stylistic sets `ss01`–`ss07`; `fonts.css`
+names it `Cursive Tangut`. It covers those 108 characters only.
+
+The source page states no licence for the images, and the outlines are offered for study and
+citation; the repository's MIT licence does not cover them. The sources and their terms are in
+[`data/cursive/README.md`](../data/cursive/README.md), with a specimen of all 108 base forms at
+[`docs/cursive-specimen.png`](../docs/cursive-specimen.png). Rebuild the face from the record with
+`uv run scripts/build_tangut_cursive_font.py`; refresh the record with
+`uv run scripts/fetch_tangut_cursive.py`.
+
 ## IDS Seal
 
 `IDSSeal-Regular.woff2` is a 1,383-glyph derivative of

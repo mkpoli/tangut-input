@@ -37,6 +37,12 @@ uv run scripts/extract_tangut_chinese.py --dump /path/to/zhwiktionary-20261101-p
 uv run scripts/build_tangut_entries.py
 ```
 
+## `cursive/`
+
+The 108 characters on [BabelStone's Cursive Tangut](https://www.babelstone.co.uk/Tangut/CursiveTangut.html)
+page, its 210 crops and the outlines traced from them. [`cursive/README.md`](cursive/README.md) gives
+the fields, the sources and their terms.
+
 ## `mica/`
 
 Two texts the Mi Corpus Annotation Group transcribed itself: 華嚴經 juan 77, from the images in 荒川慎太郎
