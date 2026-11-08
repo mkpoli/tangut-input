@@ -102,10 +102,15 @@
     for (const face of indexes) {
       rankShapes(face, mask, { limit: face.chars.length, strokes, strokeCounts: ix.strokes }).forEach((hit, at) => {
         const known = best.get(hit.char)
-        if (!known || at < known.at) best.set(hit.char, { hit, at })
+        if (!known) best.set(hit.char, { hit, at, votes: at < 3 ? 1 : 0 })
+        else {
+          if (at < known.at) known.at = at
+          if (at < 3) known.votes++
+        }
       })
     }
-    return [...best.values()].sort((a, b) => a.at - b.at).map(entry => entry.hit)
+    // Best rank first; among characters a face ranks equally, the one more faces put near the top.
+    return [...best.values()].sort((a, b) => a.at - b.at || b.votes - a.votes).map(entry => entry.hit)
   }
 
   const ranked = $derived.by(() => {
