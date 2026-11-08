@@ -42,6 +42,7 @@ export const ix = {
   /** @type {Entry[]} */ entries: [],
   /** @type {Map<string, Entry>} */ byChar: new Map(),
   /** Complete recorded descriptions, used to render editorial views. @type {Map<string, Set<string>>} */ idsIndex: new Map(),
+  /** The characters recorded under each description. @type {Map<string, string[]>} */ byDescription: new Map(),
   /** Recorded and editorial descriptions, ordered for prefix search. @type {[string, string][]} */ descriptions: [],
   /** Variant forms, stated and possible. @type {Map<string, import('./variants.js').Variants>} */ variants: new Map(),
   /** @type {import('./variants.js').PossiblePair[]} */ variantPairs: [],
@@ -129,6 +130,12 @@ export async function load() {
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
     ix.idsIndex = indexIdsDescriptions(entries)
     ix.descriptions = indexDescriptions(entries, ix.idsIndex)
+    for (const entry of entries) {
+      if (!entry.composition) continue
+      const chars = ix.byDescription.get(entry.composition)
+      if (chars) chars.push(entry.char)
+      else ix.byDescription.set(entry.composition, [entry.char])
+    }
     ix.variantPairs = possiblePairs(entries)
     ix.variants = variantIndex(ix.variantPairs)
     ix.variantGroups = variantFamilies(ix.variantPairs)

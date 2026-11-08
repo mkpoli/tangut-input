@@ -291,6 +291,8 @@
   "card.family": "The whole group",
   "card.variantReportedSource": "Source: NGWU YOH.",
   "card.variantPossible": "Possibly the same character",
+  "card.variantDerived": "Derived forms",
+  "card.variantDerivedSource": "A variant component substituted in this character's description; no recorded character carries this description.",
   "card.variantsSource": "As Wiktionary states them. Only a few are recorded here.",
   "card.variantsPossibleSource": "Same reading (Li Fanwen), with a shared meaning in Wiktionary or a difference of one variant component. No source seen says these are variants.",
   "card.readings": "Readings",

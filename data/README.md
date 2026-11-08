@@ -175,7 +175,8 @@ for the rest. The build marks a pair `surrounding` when one member stands only f
 descriptions and the other never stands there: the app then reads ⿰ beside that member as ⿺ with the hooked
 form, and the other way. `uv run scripts/build_tangut_variants.py` writes
 `app/data/tangut-variants.json`, which `app/lib/variants.js` reads. The parts palette keeps the groups together
-and the variants page lists them.
+and the variants page lists them. A component substitution whose description no recorded character carries is
+written out on the card as a derived form; it names no character and no reading.
 
 ## `tangut-titles.tsv`
 
