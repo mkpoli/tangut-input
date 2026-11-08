@@ -35,6 +35,7 @@ ROAD_RHYME = '1.19'
 
 
 def main():
+    """Read the pinned table and write one line of glosses per character."""
     raw = urllib.request.urlopen(URL, timeout=60).read()
     digest = hashlib.sha256(raw).hexdigest()
     if digest != SHA256:

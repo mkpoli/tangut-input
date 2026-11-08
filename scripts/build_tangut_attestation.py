@@ -633,6 +633,7 @@ def build_mica(rows):
 
 
 def main():
+    """Merge every source and write the corpus, the index and the facsimile crops."""
     rows = {}
     sources = []
     lines = {}
