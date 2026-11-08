@@ -4,14 +4,12 @@
 # ///
 """Build `app/data/tangut-attestation.json.gz` and the facsimile crops under `app/public/facsimile/`.
 
-Two kinds of source are merged:
-
-- the Glyph Atlas record of chapter 2 of the Tangut Bodhicaryāvatāra, with the edition's English
-  translation, the link to ぶんぽ's reading of each line, and one box per character on the
-  edition's facsimile;
-- the Wikisource Tangut texts, whose pages carry the running text only. The category snapshot is
-  pinned by revision in `data/wikisource/pages.json`; this script reads that file, never the
-  network.
+The corpus merges four sources: the Glyph Atlas record of chapter 2 of the Tangut Bodhicaryāvatāra
+(with the edition's English translation, the link to ぶんぽ's reading of each line, and one box per
+character on the edition's facsimile), the Wikisource Tangut texts pinned by revision in
+`data/wikisource/pages.json`, the Lausanne corpus and the MiCA corpus. BabelStone's parallel Chinese
+of the Dragon King sutra is then attached to the two transcriptions of T599 in `data/babelstone/`.
+The script reads the pinned files, never the network.
 
 For every character the output keeps the places that attest it. A character missing from it has no
 attestation yet, and the page says so. Each facsimile box is cut from its strip as a small greyscale
@@ -41,6 +39,8 @@ STRIPS = ATLAS / 'work/tangut/facsimile'
 WIKISOURCE = ROOT / 'data/wikisource/pages.json'
 LCDTT = ROOT / 'data/lcdtt'
 MICA = ROOT / 'data/mica'
+DRAGON_KING = ROOT / 'data/babelstone/dragon-king.tsv'
+DRAGON_KING_URL = 'https://www.babelstone.co.uk/Tangut/DragonKing.html'
 TANGUT = re.compile(r'^[\U00017000-\U00018AFF\U00018D00-\U00018DFF]$')
 CROP_HEIGHT = 128
 
@@ -419,6 +419,63 @@ def lcdtt_blocks(body, slug):
         yield f'line {number}', line.strip()
 
 
+def attach_dragon_king(lines):
+    """Add BabelStone's Chinese to the two transcriptions of the Dragon King text.
+
+    The page prints the Tangut and Chinese of T599 line by line, and the Lausanne corpus holds the
+    same Tangut transcription with the same line division. Each Chinese line follows the LCDTT line
+    whose Tangut it prints. The Wikisource page holds the same Tangut as one line, so it takes the
+    Chinese of all the content lines joined; both mappings are checked against the text they attach
+    to, and a changed table stops the build instead of shifting the translation.
+    """
+    pairs = []
+    for row in DRAGON_KING.read_text(encoding='utf-8').splitlines():
+        if not row or row.startswith('#'):
+            continue
+        parts = row.split('\t', 1)
+        if len(parts) != 2 or not parts[0] or not parts[1]:
+            raise SystemExit(f'malformed row in {DRAGON_KING.relative_to(ROOT)}: {row!r}')
+        pairs.append((parts[0], parts[1]))
+
+    title = [tangut for tangut, chinese in pairs if is_heading(tangut)]
+    end = [(tangut, chinese) for tangut, chinese in pairs if tangut.endswith('\u3000𘃪')]
+    if len(title) != 1 or len(end) != 1:
+        raise SystemExit('the BabelStone table needs one title and one end title')
+    title_tangut = title[0]
+    end_tangut, end_chinese = end[0]
+    content = [(tangut, chinese) for tangut, chinese in pairs if tangut != title_tangut and tangut != end_tangut]
+
+    def attach(line, chinese):
+        line.update({
+            'chinese': chinese,
+            'chineseUrl': DRAGON_KING_URL,
+            'chineseCredit': 'Andrew West, BabelStone',
+        })
+
+    targets = {line['text']: line_id for line_id, line in lines.items() if line_id.startswith('lcdtt:dragon-king:')}
+    for tangut, chinese in content + [(end_tangut, end_chinese)]:
+        line_id = targets.pop(tangut, None)
+        if line_id is None:
+            raise SystemExit(f'no LCDTT Dragon King line reads {tangut!r}')
+        attach(lines[line_id], chinese)
+    if targets:
+        raise SystemExit(f'{len(targets)} LCDTT Dragon King lines have no Chinese line: {next(iter(targets))!r}')
+
+    wikisource = {line['text']: line_id for line_id, line in lines.items() if line_id.startswith('wikisource-dragon-king:')}
+    body = ''.join(tangut for tangut, chinese in content)
+    line_id = wikisource.pop(body, None)
+    if line_id is None:
+        raise SystemExit('the Wikisource Dragon King line does not read the page’s content lines joined')
+    attach(lines[line_id], ''.join(chinese for tangut, chinese in content))
+    line_id = wikisource.pop(end_tangut, None)
+    if line_id is None:
+        raise SystemExit('the Wikisource Dragon King end title does not read the page’s end title')
+    attach(lines[line_id], end_chinese)
+    if wikisource:
+        raise SystemExit(f'Wikisource Dragon King lines left without Chinese: {wikisource!r}')
+    print(f'{len(content)} Dragon King lines and the end title carry BabelStone’s Chinese')
+
+
 def build_wikisource(rows):
     snapshot = json.loads(WIKISOURCE.read_text(encoding='utf-8'))
     pages = snapshot['pages']
@@ -572,6 +629,7 @@ def main():
     lcdtt_source, lcdtt_lines = build_lcdtt(rows)
     sources.append(lcdtt_source)
     lines.update(lcdtt_lines)
+    attach_dragon_king(lines)
 
     mica_source, mica_lines = build_mica(rows)
     sources.append(mica_source)

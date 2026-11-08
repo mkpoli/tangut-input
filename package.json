@@ -99,7 +99,8 @@
     "check:cells": "uv run scripts/check_cells.py data/readings/cells/*.tsv",
     "key:sheet": "uv run --with pillow scripts/key_sheet.py",
     "ocr:band": "uv run --with onnxruntime --with opencv-python-headless --with pillow --with pyclipper python scripts/ocr_band.py",
-    "ocr:table": "uv run --with onnxruntime --with opencv-python-headless --with pillow --with pyclipper python scripts/ocr_table.py"
+    "ocr:table": "uv run --with onnxruntime --with opencv-python-headless --with pillow --with pyclipper python scripts/ocr_table.py",
+    "dataset:export": "bun scripts/export_handwriting_dataset.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261102.1",
