@@ -606,7 +606,7 @@
     .coin-table th[scope='row']{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:var(--ui-space-2xs) var(--ui-space-sm)}
     .coin-table th[scope='row'] > span:first-child{grid-area:1 / 1;align-self:center}
     .coin-table th[scope='row'] .coin-preview-trigger{grid-area:1 / 2;justify-self:end;margin:0}
-    .coin-table th[scope='row'] .coin-example{grid-area:2 / 1 / -1 / -1;justify-self:start;margin:0}
+    .coin-table th[scope='row'] .coin-example{grid-row:2;grid-column:1 / -1;justify-self:start;margin:0}
     .coin-characters th,.coin-characters td{padding-inline:var(--ui-space-xs)}
     .plain th,.plain td{padding-inline:var(--ui-space-sm)}
     .plain thead th{white-space:normal}
