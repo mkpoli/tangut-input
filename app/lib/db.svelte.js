@@ -1,7 +1,10 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { indexTibetan } from './tibetan.js'
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement } from './data.js'
+import { indexTibetan, foldScript } from './tibetan.js'
+import { indexTibetanSeta } from './seta.js'
+import { indexIdentifiers } from './identifiers.js'
+import { englishGloss } from './gloss.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta } from './data.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
@@ -52,10 +55,14 @@ export const ix = {
   /** CCAMC glosses as normalized terms, used by the meaning search and never shown.
    *  @type {{ meanings: Record<string, Record<string, string[]>> }} */ ccamcMeanings: { meanings: {} },
   /** @type {Map<string, number>} */ strokes: new Map(),
+  /** Numbers and legacy code points by character. @type {Map<string, import('./identifiers.js').Row[]>} */ identifiers: new Map(),
+  /** Every identifier key, to the characters it names. @type {Map<string, string[]>} */ identifierIndex: new Map(),
+  /** Where each identifier system comes from. @type {Record<string, { name: string, url: string, note?: string, licence?: string }>} */ identifierSources: {},
   /** The maximum count of each part across possible trees. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
   /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
   /** Alternative character readings at each place in a description. @type {ReturnType<typeof buildPartIndex>['partGroups']} */ partGroups: new Map(),
   /** The parts each description names directly, character parts included. @type {Map<string, string[]>} */ directPartsOf: new Map(),
+  /** The outermost operator of each character's editorial description. @type {Map<string, string>} */ layoutOf: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
@@ -68,6 +75,8 @@ export const ix = {
   /** The Chinese characters transcribing each rhyme: [character, final?]. @type {Record<string, [string, string?][]>} */ chineseRhymes: {},
   /** Tibetan spellings by hand class and Sanskrit, by character. @type {Record<string, { tibetan?: [string, string, number, string, string, string][], sanskrit?: [string, string, string][] }>} */ tibetanHands: {},
   /** Every Tibetan spelling, keyed for search. @type {import('./tibetan.js').TibetanSpelling[]} */ tibetanIndex: [],
+  /** Tibetan Extension-A codes, keyed by the folded Unicode sequence. @type {Map<string, string>} */ seta: new Map(),
+  /** Characters whose Tibetan spelling has each Set A code. @type {Map<string, Map<string, string>>} */ setaIndex: new Map(),
   /** Alan Downes's English gloss by character. @type {Map<string, string>} */ downes: new Map(),
   /** The Chinese words the Tangut 類林 uses for a character. @type {Map<string, [string, number][]>} */ leilin: new Map(),
   /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
@@ -78,15 +87,20 @@ export const ix = {
   /** Characters one component away, built on the first ask: a reader who means one shape and draws
    *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
   /** Whether the sibling index has been built. */ siblingsReady: false,
+  /** Where a keyed value stands: char → field → the books and pages it was read from. @type {Record<string, Record<string, { work: string, locator: string, note: string }[]>>} */ citations: {},
 }
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement] = await Promise.all([
-      loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
+    const [entries, pairs, strokes, identifiers, seta, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
+      loadEntries(), loadCodes(), loadStrokes(), loadIdentifiers().catch(() => null), loadTibetanSeta().catch(() => null), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
       loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
-      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null),
+      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
     ])
+    ix.citations = cited?.citations ?? {}
+    ix.identifiers = new Map(Object.entries(identifiers?.chars ?? {}))
+    ix.identifierSources = identifiers?.sources ?? {}
+    ix.identifierIndex = indexIdentifiers(identifiers?.chars ?? {})
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
     ix.tibetanRhymes = tibetanRhymes?.cells ?? {}
     ix.gongRhymes = gongRhymes?.values ?? {}
@@ -95,6 +109,8 @@ export async function load() {
     ix.downes = new Map(Object.entries(downes?.glosses ?? {}))
     ix.leilin = new Map(Object.entries(leilin?.glosses ?? {}))
     ix.tibetanIndex = indexTibetan(ix.tibetan, ix.tibetanHands)
+    ix.seta = new Map((seta?.map ?? []).map(([code, script]) => [foldScript(script), code]))
+    ix.setaIndex = indexTibetanSeta(ix.seta, ix.tibetan, ix.tibetanHands)
     const recorded = supplement?.characters ?? []
     ix.supplementComponents = recorded.filter(record => record.block === 'components').map(record => record.char)
     const known = new Set(entries.map(entry => entry.char))
@@ -138,6 +154,7 @@ export async function load() {
     ix.usedBy = index.usedBy
     ix.partGroups = index.partGroups
     ix.directPartsOf = index.directPartsOf
+    ix.layoutOf = index.layoutOf
     if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))
@@ -168,8 +185,7 @@ export async function load() {
 /** The first English sense, shortened for a tile or a list row. @param {string} char */
 export function gloss(char) {
   const entry = ix.byChar.get(char)
-  const first = entry?.definitions?.en?.[0] ?? entry?.definitions?.zh?.[0] ?? ix.downes.get(char) ?? ''
-  return first.split(/[;,]/)[0].trim()
+  return englishGloss(entry?.definitions, ix.downes.get(char), entry?.wiktionary_zh)
 }
 
 /**
