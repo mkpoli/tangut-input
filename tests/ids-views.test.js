@@ -62,4 +62,11 @@ test('source data keeps the recorded ternary tree and reads the editorial cut as
   expect(result.editorialParts).toEqual(['𘠀', '𘙌', '𘠢'])
   // The recorded view still names 𘨷 twice, which the editorial view reads as 𘘤.
   expect(result.recordedParts.filter(part => part === '𘨷')).toHaveLength(2)
+
+  // The cut can stand at the root as well as under one.
+  const rootCharacter = source.find((entry) => entry.char === '𗆫')
+  const rootResult = idsViews(rootCharacter.char, rootCharacter.composition, sourceIndex)
+  expect(rootResult.recorded).toBe('⿲𘠐𘧘𘣩')
+  expect(rootResult.editorial).toBe('⿰𘠐𘓔')
+  expect(rootResult.editorialParts).toEqual(['𘠐', '𘓔'])
 })
