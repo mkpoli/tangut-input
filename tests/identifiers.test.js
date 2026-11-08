@@ -21,6 +21,7 @@ test('an identifier is read in the forms each source prints', () => {
   expect(parseIdentifier('LFW 9')).toMatchObject({ scheme: 'lfw', value: 'L0009' })
   expect(parseIdentifier('L2008-2941A')).toMatchObject({ scheme: 'lfw', value: 'L2941A' })
   expect(parseIdentifier('L0042/4537')).toMatchObject({ scheme: 'lfw', value: 'L0042/4537' })
+  expect(parseIdentifier('L2008-0042-4537')).toMatchObject({ scheme: 'lfw', value: 'L0042/4537' })
   expect(parseIdentifier('L62.221')).toMatchObject({ scheme: 'wenhai', value: 'L62.221' })
   expect(parseIdentifier('m10.131')).toMatchObject({ scheme: 'wenhai', value: 'M10.131' })
   expect(parseIdentifier('M202-84B2')).toMatchObject({ scheme: 'mojikyo', value: 'U+84B2', edition: '4.50' })
