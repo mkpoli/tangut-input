@@ -13,3 +13,7 @@ data/handwriting/
 app/public/fonts/.cache/
 docs/handwriting-annotate.html
 docs/handwriting-gallery.html
+model.pt
+model.onnx
+app/public/dataset
+app/public/dataset
