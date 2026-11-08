@@ -268,6 +268,13 @@ export const ERA_SOURCES = {
     note: 'Indexes entry 1530, f. 115, under 𘑨 (L0645). This identifies the dictionary headword, not the photographed character.',
     url: 'https://www.babelstone.co.uk/CTT/CTT01/CTT01-index.html',
   },
+  xhzd1997: {
+    author: '李範文',
+    title: '夏漢字典',
+    where: '中國社會科學出版社, 1997, entry #0645; quoted through West 2007',
+    note: 'Gives 𘑨 for 祐. The dictionary itself was not consulted.',
+    url: '',
+  },
   duan2024: {
     author: '段玉泉',
     title: '元朝建號前蒙古汗國時期的西夏文獻',
@@ -314,5 +321,5 @@ export const ERA_SOURCES = {
 
 /** The order the list at the foot numbers them in. */
 export const ERA_SOURCE_ORDER = /** @type {(keyof typeof ERA_SOURCES)[]} */ ([
-  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'qianding1226', 'lizi2019', 'clauson2016', 'westClausonIndex', 'mkpoli2026', 'ma2023',
+  'calendar', 'west2007', 'west2020', 'stele1094', 'leilin', 'months1185', 'maxims1187', 'nie2009', 'kychanov2010', 'nie2004', 'gong2020', 'diamond', 'yang2010', 'yang2011', 'wang2010', 'nishida', 'sun2021', 'songshi', 'shi2003', 'yaoshi', 'du2008', 'chen2015', 'zhai2010', 'wu1983', 'hu2006', 'sushui', 'commons', 'survey2007', 'zhwphui', 'kepping2001', 'kepping1995', 'legal', 'cngsda', 'enwp', 'liaoshi', 'zoenshiueh', 'zoenshiueh2026', 'duan2024', 'qianding1226', 'lizi2019', 'clauson2016', 'westClausonIndex', 'xhzd1997', 'mkpoli2026', 'ma2023',
 ])

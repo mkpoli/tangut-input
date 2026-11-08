@@ -119,6 +119,11 @@ export function byMeaning(query, options = {}) {
       const t = rank(text)
       if (t < tier) { tier = t; sense = text; lang = key }
     }
+    // Chinese senses imported from Wiktionary answer the Chinese search beside the keyed ones.
+    if (languages.includes('zh')) for (const text of entry.wiktionary_zh ?? []) {
+      const t = rank(text)
+      if (t < tier) { tier = t; sense = text; lang = 'zh' }
+    }
     // The 文海's own entry text can answer even when the gloss does not use the word.
     if (tier > 2) for (const key of languages) {
       if (key !== 'zh') continue

@@ -33,20 +33,22 @@ it into your text. <https://tangut.mkpo.li/>
   table compares the names across the languages that record one.
 
 The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position, Mojikyo and
-XXZT code points, Cangjie codes, meanings in English and Japanese,
+XXZT code points, Cangjie codes, meanings in English, Japanese and Chinese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
-further readings and meanings are linked to CCAMC's page for the character rather than copied.
-Character tiles carry a reconstruction above the glyph — the one chosen at the top bar, or the one
-a reading search matched — with the finder's own note below it. The text being written stays in the
+further readings and meanings are linked to CCAMC's page for the character.
+Character tiles show the chosen reconstruction above the glyph, then a Chinese gloss and the
+finder's note. Chinese glosses come from keyed dictionary senses, then Wiktionary, then
+contextual words from 類林; [coverage and sources](docs/han-glosses.md). The text being written stays in the
 browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).
 
 ## Data
 
-- `app/data/tangut-entries.json.gz`: five readings and English and Japanese meanings from
-  [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Gong Hwang-cherng's
+- `app/data/tangut-entries.json.gz`: five readings and English, Japanese and Chinese meanings from
+  [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Chinese meanings keyed
+  from the editions, Gong Hwang-cherng's
   and Gong Xun's readings from the
   [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db),
   descriptions from BabelStone's Tangut IDS, and the 文海's Chinese entry text where it carries one;

@@ -563,7 +563,7 @@
             <div class="ui-tiles mini-tiles" style:--ui-tile-size="52px">
               {#each hits as hit, i (hit.char)}
                 {@const sound = hit.sound ?? readingOf(hit.char, ui.reading)}
-                {@const han = hanGloss(ix.leilin.get(hit.char))}
+                {@const han = hanGloss(ix.leilin.get(hit.char), ix.byChar.get(hit.char)?.definitions?.zh, ix.byChar.get(hit.char)?.wiktionary_zh)}
                 <button type="button" class="ui-tile" aria-label={`${always ? hit.char : t('fanqie.picker.add', { char: hit.char })}${sound ? `, ${sound}` : ''}${han.text ? `, ${han.text}` : ''}${hit.note && hit.note !== han.text ? `, ${hit.note}` : ''}`}
                   title={hit.title || hit.note} onmouseenter={() => peek(hit.char)} onfocus={() => peek(hit.char)}
                   onclick={() => pick(hit, i)}>

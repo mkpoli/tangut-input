@@ -2,6 +2,7 @@
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { indexTibetan } from './tibetan.js'
 import { indexIdentifiers } from './identifiers.js'
+import { englishGloss } from './gloss.js'
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers } from './data.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
@@ -177,8 +178,7 @@ export async function load() {
 /** The first English sense, shortened for a tile or a list row. @param {string} char */
 export function gloss(char) {
   const entry = ix.byChar.get(char)
-  const first = entry?.definitions?.en?.[0] ?? entry?.definitions?.zh?.[0] ?? ix.downes.get(char) ?? ''
-  return first.split(/[;,]/)[0].trim()
+  return englishGloss(entry?.definitions, ix.downes.get(char), entry?.wiktionary_zh)
 }
 
 /**

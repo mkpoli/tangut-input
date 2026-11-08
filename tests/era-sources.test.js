@@ -33,7 +33,7 @@ test('乾定 cites the manuscript transcription', () => {
 })
 
 test('the contemporary Jin era is separate and its proposed transcription follows the photographed order', () => {
-  expect(CONTEMPORARY_ERAS).toEqual([{ era: '貞祐', years: [1213, 1217], tangut: '𗣼𘑨𘏨𘔭', source: 'lizi2019', proposalSource: 'mkpoli2026', dictionarySources: ['clauson2016', 'westClausonIndex'] }])
+  expect(CONTEMPORARY_ERAS).toEqual([{ era: '貞祐', years: [1213, 1217], tangut: '𗣼𘑨𘏨𘔭', source: 'lizi2019', proposalSource: 'mkpoli2026', dictionarySources: ['xhzd1997', 'clauson2016', 'westClausonIndex'] }])
   expect(ERA_SOURCES.mkpoli2026.author).toBe('mkpoli')
   expect(ERA_SOURCES.mkpoli2026.where).toBe('Personal communication, 2026-11-07')
   expect(ERAS.some(row => row.era === '貞祐')).toBe(false)
@@ -76,7 +76,10 @@ test('every locale describes the provisional transcription and its uncertainty',
   expect(page).toMatch(/\[\.\.\.era\.tangut\] as char/)
   expect(page).toContain('onclick={() => choose(char)}><G {char}/></button>')
   expect(en['eras.contemporary.comparison']).toContain('counterclockwise')
-  expect(en['eras.contemporary.comparison']).toContain('all four forms appear irregular')
+  expect(en['eras.contemporary.comparison']).toContain('all four signs differ from standard forms')
+  expect(en['eras.contemporary.dictionary']).toContain('probably a distorted 祐')
+  expect(ja['eras.contemporary.dictionary']).toContain('崩れた「祐」')
+  expect(ERA_SOURCES.xhzd1997.where).toContain('entry #0645')
   expect(en['eras.contemporary.note']).toContain('authenticity, date and official status are uncertain')
   expect(ja['eras.contemporary.note']).toContain('貞祐宝銭')
   expect(ko['eras.contemporary.note']).toContain('貞祐寶錢')
