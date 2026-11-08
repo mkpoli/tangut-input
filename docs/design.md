@@ -194,7 +194,7 @@ way and drawn with a fixed pen.
 
 Each glyph is scored by two chamfer distances. The first is the mean distance from the drawing's ink
 to the glyph's line plus the reverse. The second reads the direction the ink runs at each cell, in
-four bins of 45° taken from the second moments of the ink within two cells, on both sides: each glyph
+eight bins of 22.5° taken from the second moments of the ink within two cells, on both sides: each glyph
 cell adds the distance from itself to drawing ink drawn along its own direction, and the mean is
 doubled. Comparing lines with lines and directions with directions is what a drawing is: it has no
 stroke width to match. A lone stroke keeps a sliver shape instead of being blown up into a block.
