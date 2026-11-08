@@ -300,7 +300,7 @@
   "card.idsEditorial": "글자 단위 IDS · 편집상 추정",
   "card.idsRecorded": "구성 요소 단위 IDS · 출처",
   "card.idsSource": "IDS 출처:",
-  "card.idsMethod": "글자 단위 표시는 완전한 부분 구조와 같은 IDS를 가진 다른 글자가 하나뿐일 때 그 글자로 바꾼 것입니다.",
+  "card.idsMethod": "글자 단위 표시는 완전한 부분 구조와 같은 IDS를 가진 글자가 하나뿐일 때 그 글자로 바꾸고, 세 부분으로 된 설명은 이웃한 두 부분이 글자가 될 때 두 부분으로 읽습니다.",
   "card.copyDescription": "자형 기술 복사",
   "card.description": "자형 기술",
   "card.withTheseParts": "이 부품이 쓰인 글자",

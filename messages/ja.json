@@ -300,7 +300,7 @@
   "card.idsEditorial": "文字単位のIDS・編集上の推定",
   "card.idsRecorded": "部品単位のIDS・出典",
   "card.idsSource": "IDSの出典：",
-  "card.idsMethod": "文字単位の表示では、完全な部分構造と同じIDSを持つ別の文字が一つだけある場合、その文字に置き換えています。",
+  "card.idsMethod": "文字単位の表示では、完全な部分構造と同じIDSを持つ文字が一つだけある場合、その文字に置き換えます。三つの部品をもつ記述は、隣り合う二つが文字になるとき、二つの部品として読みます。",
   "card.copyDescription": "構成記述をコピー",
   "card.description": "構成記述",
   "card.withTheseParts": "同じ部品を持つ文字",

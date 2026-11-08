@@ -300,7 +300,7 @@
   "card.idsEditorial": "Character-sized IDS · editorial inference",
   "card.idsRecorded": "Component-level IDS · source",
   "card.idsSource": "Recorded IDS:",
-  "card.idsMethod": "The editorial view replaces a complete part with a character when exactly one other character has that recorded IDS.",
+  "card.idsMethod": "The editorial view replaces a complete part with the character it spells, and reads a three-part description as two when one adjacent pair of its parts spells a character.",
   "card.copyDescription": "Copy the description",
   "card.description": "the description",
   "card.withTheseParts": "Characters with these parts",
