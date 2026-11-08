@@ -2,6 +2,7 @@
 // The rest are candidates found by comparison, so they stay apart from the stated ones.
 
 import VARIANTS from '../data/tangut-variants.json' with { type: 'json' }
+import { readDescription, writeDescription } from './composition.js'
 
 /** @typedef {{ char: string, composition?: string, definitions?: { en?: string[], ja?: string[] }, pronunciations?: Record<string, string> }} VariantEntry */
 
@@ -23,7 +24,7 @@ function senses(entry) {
 
 /**
  * @typedef {{ of: string[], partial: string[], forms: string[], partialForms: string[], reported: string[], possible: string[] }} Variants
- * @typedef {{ variants: string[][], partial: string[][], synonyms: string[][], components: string[][], reported: string[][] }} Stated
+ * @typedef {{ variants: string[][], partial: string[][], synonyms: string[][], components: string[][], reported: string[][], surrounding?: string[][] }} Stated
  * @typedef {{ one: string, other: string, reading: string, components?: string }} PossiblePair
  */
 
@@ -57,9 +58,48 @@ function statedIndex(stated) {
 }
 
 /**
+ * The descriptions one surrounding form makes from `text`: the plain form first in ⿰ becomes the
+ * hooked form first in ⿺, and the hooked form first in ⿺ becomes the plain form first in ⿰. A
+ * description with more than one root or an operand short is not rewritten.
+ * @param {string} text @param {string} plain @param {string} hooked
+ * @returns {string[]}
+ */
+export function surroundingDescriptions(text, plain, hooked) {
+  const { roots, complete } = readDescription(text)
+  if (!complete || roots.length !== 1) return []
+  const found = new Set()
+  /** @param {any} node @param {number[]} path @param {string} op @param {string} replacement @returns {any} */
+  const rewrite = (node, path, op, replacement) => {
+    const [i, ...rest] = path
+    /** @type {any[]} */
+    const parts = node.parts
+    if (!rest.length) return { ...node, op, parts: parts.map((child, at) => at === i ? replacement : child) }
+    return { ...node, parts: parts.map((child, at) => at === i ? rewrite(child, rest, op, replacement) : child) }
+  }
+  /** @param {any} node @param {number[]} path */
+  const walk = (node, path) => {
+    if (typeof node === 'string') return
+    /** @type {any[]} */
+    const parts = node.parts
+    parts.forEach((part, i) => {
+      if (typeof part !== 'string') { walk(part, [...path, i]); return }
+      if (i !== 0) return
+      if (part === plain && node.op === '⿰') {
+        found.add(writeDescription(rewrite(roots[0], [...path, i], '⿺', hooked)))
+      } else if (part === hooked && node.op === '⿺') {
+        found.add(writeDescription(rewrite(roots[0], [...path, i], '⿰', plain)))
+      }
+    })
+  }
+  walk(roots[0], [])
+  return [...found]
+}
+
+/**
  * The possible variants: characters with the same reading in Li Fanwen's system that also share a
- * sense in Wiktionary, or whose descriptions differ only by a pair of variant components. Characters
- * already linked, or that Wiktionary calls synonyms, are left out.
+ * sense in Wiktionary, or whose descriptions differ only by a pair of variant components. A
+ * surrounding form also turns the ⿰ above it into ⿺, and back. Characters already linked, or that
+ * Wiktionary calls synonyms, are left out.
  * @param {VariantEntry[]} entries
  * @param {Stated} [stated]
  * @returns {PossiblePair[]}
@@ -95,12 +135,26 @@ export function possiblePairs(entries, stated = VARIANTS) {
     for (const peer of peers) if ([...named].some(sense => peer.senses.has(sense))) link(entry.char, peer.char, reading)
     byReading.set(reading, [...peers, { char: entry.char, senses: named }])
   }
+  const surrounding = stated.surrounding ?? []
+  const wrapping = new Set(surrounding.flatMap(([plain, hooked]) => [plain + hooked, hooked + plain]))
   for (const [one, other] of stated.components) {
+    if (wrapping.has(one + other)) continue
     for (const entry of entries) {
       if (!entry.composition?.includes(one)) continue
       const reading = entry.pronunciations?.li_fanwen?.trim()
       for (const match of byDescription.get(entry.composition.replaceAll(one, other)) ?? []) {
         if (reading && match.pronunciations?.li_fanwen?.trim() === reading) link(entry.char, match.char, reading, one + other)
+      }
+    }
+  }
+  for (const [plain, hooked] of surrounding) {
+    for (const entry of entries) {
+      if (!entry.composition) continue
+      const reading = entry.pronunciations?.li_fanwen?.trim()
+      for (const description of surroundingDescriptions(entry.composition, plain, hooked)) {
+        for (const match of byDescription.get(description) ?? []) {
+          if (reading && match.pronunciations?.li_fanwen?.trim() === reading) link(entry.char, match.char, reading, plain + hooked)
+        }
       }
     }
   }

@@ -155,12 +155,17 @@ What English and Chinese Wiktionary state about Tangut variant forms (CC BY-SA 4
 2026-11-01: `form`, `base`, `kind` (`variant` or `synonym`), `scope` (`partial` when the page has several
 etymologies and the statement covers one word) and each page's revision as `wiki:revision`. Rebuild with
 `uv run scripts/extract_tangut_variants.py en=<dump> zh=<dump>`. `tangut-component-variants.tsv` holds
-component pairs used to find possible variants, from NGWU YOH's table, and `tangut-variants-reported.tsv`
-holds pairs from NGWU YOH's messages. `tangut-component-groups.tsv` holds the groups of their table with more
+component pairs used to find possible variants, from NGWU YOH's table and the screenshots of 2026-11-07, and
+`tangut-variants-reported.tsv` holds pairs from NGWU YOH's messages. Which code points the screenshots show is
+the site's reading of them against the Noto Serif Tangut and Tangut Yinchuan glyphs.
+`tangut-component-groups.tsv` holds the groups of their table with more
 than one member, each marked `apart` when its members mostly stand in different places or `shared` when
 they stand in the same ones. `kind_source` says who says so: NGWU YOH for 𘠣𘡍𘠅, the site's reading of the counts
-for the rest. The parts palette keeps them together and the variants page lists them. `uv run scripts/build_tangut_variants.py` writes
-`app/data/tangut-variants.json`, which `app/lib/variants.js` reads.
+for the rest. The build marks a pair `surrounding` when one member stands only first in ⿺ in the recorded
+descriptions and the other never stands there: the app then reads ⿰ beside that member as ⿺ with the hooked
+form, and the other way. `uv run scripts/build_tangut_variants.py` writes
+`app/data/tangut-variants.json`, which `app/lib/variants.js` reads. The parts palette keeps the groups together
+and the variants page lists them.
 
 ## `tangut-titles.tsv`
 
