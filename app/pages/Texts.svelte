@@ -138,7 +138,7 @@
             {/each}
           </p>
           {#if passage.chinese}
-            <p class="translation" lang="zh-Hant">{passage.chinese}{#if passage.chineseUrl} <a class="translation-source" href={passage.chineseUrl} target="_blank" rel="noreferrer" aria-label={passage.chineseCredit ?? 'BabelStone'}>BabelStone</a>{/if}</p>
+            <p class="translation" lang="zh-Hant">{passage.chinese}{#if passage.chineseUrl} <a class="translation-source" href={passage.chineseUrl} target="_blank" rel="noreferrer" title={passage.chineseCredit ?? 'BabelStone'}>BabelStone</a>{/if}</p>
           {/if}
         </li>
       {/each}
