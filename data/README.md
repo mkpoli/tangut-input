@@ -643,6 +643,22 @@ parts', which covers the 6,107 descriptions in 4 to 22 strokes. Rebuild with
 (`ae440bd9bba89b2610cfe6b498ac462d2763dd32bfead8ac30d32988b5b67a27`). Unicode data is
 distributed under the Unicode License v3.
 
+## `tangut-identifiers.json.gz`
+
+The number or code each of 6,482 characters has in four systems besides Unicode: the Li Fanwen
+2008 dictionary index (`L0009`, or `L0042/4537` where a merged character carries two), the 文海 page
+and entry from BabelStone's lookup (`L55.172`, `M10.131`, 3,069 characters), and the Mojikyo
+4.50/4.60 and XXZT A/B code points from BabelStone's conversion table (6,061 and 6,455 characters).
+A Mojikyo or XXZT code is a CJK code point, not a private-use one, and the same code can name two
+characters where the converter prints a choice.
+
+Format: `format`, `retrieved`, `sources` (name, URL, terms) and `chars`, each a list of
+`[scheme, value, edition?]`. The editions are `4.50`/`4.60` for Mojikyo and `A`/`B` for XXZT; a Li
+Fanwen number and a 文海 position carry none. Rebuild with
+`node scripts/build_tangut_identifiers.mjs`, which pins all three source digests. Unicode data is
+under the Unicode License v3; the two BabelStone pages state no licence, and only the factual
+numbers are kept.
+
 ## `tangut-layers.json.gz`
 
 The largest character split of 2,408 Tangut descriptions, 16 KB gzipped. BabelStone describes every
