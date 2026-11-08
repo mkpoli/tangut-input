@@ -705,5 +705,7 @@
   "gyalrongic.kind.dictionary": "词典",
   "gyalrongic.kind.grammar": "语法专著",
   "gyalrongic.kind.preprint": "预印本",
-  "gyalrongic.kind.thesis": "学位论文"
+  "gyalrongic.kind.thesis": "学位论文",
+  "nav.dataset": "手写数据",
+  "nav.dataset.hint": "手写的笔画数据，可自由使用"
 }
