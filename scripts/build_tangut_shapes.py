@@ -13,7 +13,9 @@ a drawing can be compared with each of the shapes a reader might write from.
 The file is a little-endian u32 header length, the header as UTF-8 JSON (format, size, face, font,
 sha256 and the characters in order), then the masks back to back.
 The page normalises a drawing the same way, so a match compares the line of the drawing with the
-line of the font's glyph and nothing else.
+line of the font's glyph and nothing else. After thinning, each line is resampled so that cumulative
+line density is uniform, at half strength (Yamada, Yamamoto and Saito, Pattern Recognition 23.9,
+1990, pp. 1023–1029). app/lib/shape.js applies that same map to a drawing.
 """
 import argparse
 import gzip
@@ -43,6 +45,11 @@ FIT = 30
 THIN_SCALE = 3
 RENDER = 96
 THRESHOLD = 96
+# Blend of a cell's own coordinate and the coordinate that evens out cumulative line density.
+# The same constant is DENSITY_BLEND in app/lib/shape.js.
+DENSITY_BLEND = 0.5
+# Pitch where a scan finds no stroke on one side: four image widths (US 5,757,979, Hongo, 1998).
+OPEN_PITCH = 4
 RANGES = [(0x17000, 0x187FF), (0x18800, 0x18AFF), (0x18D00, 0x18D1F)]
 
 
@@ -179,12 +186,90 @@ def mask_of(canvas):
     pixels = square.load()
     # A low cutoff keeps faint joins from breaking the line before it is thinned.
     ink_cells = {(x, y) for y in range(size) for x in range(size) if pixels[x, y] >= THRESHOLD // 4}
-    ink_cells = {(x // THIN_SCALE, y // THIN_SCALE) for x, y in thinner(ink_cells)}
+    ink_cells = equalize({(x // THIN_SCALE, y // THIN_SCALE) for x, y in thinner(ink_cells)})
     bits = bytearray(SIZE * SIZE // 8)
     for x, y in ink_cells:
         index = y * SIZE + x
         bits[index >> 3] |= 1 << (index & 7)
     return bits
+
+
+def _runs(line):
+    """Centres of the black runs in one scan, with the cells each run covers."""
+    runs = []
+    start = None
+    for i, on in enumerate(line):
+        if on and start is None:
+            start = i
+        elif not on and start is not None:
+            runs.append((start, i - 1, (start + i - 1) / 2))
+            start = None
+    if start is not None:
+        runs.append((start, len(line) - 1, (start + len(line) - 1) / 2))
+    return runs
+
+
+def _pitch_density(line):
+    """Reciprocal of the distance between the ink-run centres on either side of each cell."""
+    runs = _runs(line)
+    open_pitch = OPEN_PITCH * len(line)
+    density = []
+    for x in range(len(line)):
+        inside = next((i for i, (a, b, _) in enumerate(runs) if a <= x <= b), None)
+        left = right = None
+        if inside is not None:
+            if inside > 0:
+                left = runs[inside - 1][2]
+            if inside + 1 < len(runs):
+                right = runs[inside + 1][2]
+        else:
+            for _, _, centre in runs:
+                if centre < x:
+                    left = centre
+                elif centre > x:
+                    right = centre
+                    break
+        pitch = right - left if left is not None and right is not None else open_pitch
+        density.append(1 / pitch if pitch else 1)
+    return density
+
+
+def _axis_map(weights):
+    """Cell i, halfway from itself to where uniform cumulative line density would put it."""
+    n = len(weights)
+    denom = sum(weights[:-1])
+    if denom <= 0:
+        return [float(i) for i in range(n)]
+    out = []
+    acc = 0.0
+    for i in range(n):
+        equalised = (n - 1) * acc / denom
+        out.append((1 - DENSITY_BLEND) * i + DENSITY_BLEND * equalised)
+        if i < n - 1:
+            acc += weights[i]
+    return out
+
+
+def equalize(ink_cells, size=SIZE):
+    """Move thinned ink halfway toward a uniform cumulative line density. Same map as shape.js."""
+    grid = [[False] * size for _ in range(size)]
+    for x, y in ink_cells:
+        if 0 <= x < size and 0 <= y < size:
+            grid[y][x] = True
+    hx = [0.0] * size
+    hy = [0.0] * size
+    for y in range(size):
+        for x, density in enumerate(_pitch_density([grid[y][x] for x in range(size)])):
+            hx[x] += density
+    for x in range(size):
+        for y, density in enumerate(_pitch_density([grid[y][x] for y in range(size)])):
+            hy[y] += density
+    mx, my = _axis_map(hx), _axis_map(hy)
+    return {
+        (min(size - 1, max(0, int(mx[x] + 0.5))), min(size - 1, max(0, int(my[y] + 0.5))))
+        for x, y in ink_cells
+        if 0 <= x < size and 0 <= y < size
+    }
 
 
 def thinner(ink):

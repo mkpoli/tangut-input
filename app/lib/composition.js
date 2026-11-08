@@ -6,7 +6,7 @@
 // form a tree of characters and components, not one flat list of components.
 
 /** @typedef {{ op: string, parts: Node[], cut?: boolean } | string} Node */
-/** @typedef {{ candidates: string[], leaf?: string, children?: PartGroup[] }} PartGroup */
+/** @typedef {{ candidates: string[], leaf?: string, shape?: string, children?: PartGroup[] }} PartGroup */
 
 export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
 const ARITY = /** @type {Record<string, number>} */ ({ '⿲': 3, '⿳': 3 })
@@ -62,12 +62,50 @@ export function leavesOf(composition) {
 }
 
 /**
+ * Whether a part is a description of several characters rather than one encoded character or
+ * component. A description part is an editorial key, not a character of its own.
+ * @param {string} part
+ */
+export const isDescriptionPart = part => [...(part ?? '')].some(char => OPERATORS.has(char))
+
+/**
+ * A description read as two parts wherever a pair of its three operands spells a character: a
+ * character of three columns or three rows is often one part beside a character of two. The pair
+ * that spells a character is the evidence for the cut; both pairs or neither leave three operands.
+ * A node that spells a character whole is left as it is, so the character stays the base there.
+ * @param {{ roots: Node[], complete: boolean }} parsed
+ * @param {(text: string) => string[]} charactersAt the characters a description spells, the character itself left out
+ * @returns {{ roots: Node[], complete: boolean }}
+ */
+export function binaryDescription(parsed, charactersAt) {
+  /** @param {Node} node @returns {Node} */
+  const regroup = node => {
+    if (typeof node === 'string') return node
+    // A truncated node is no character's description, but the operands it kept may be.
+    if (node.cut) return { ...node, parts: node.parts.map(regroup) }
+    // A node that spells a character is that character's base; its own cut is the character's.
+    if (charactersAt(writeDescription(node)).length) return { ...node, parts: node.parts }
+    const parts = node.parts.map(regroup)
+    if (parts.length !== 3) return { ...node, parts }
+    const op = node.op === '⿳' ? '⿱' : node.op === '⿲' ? '⿰' : ''
+    if (!op) return { ...node, parts }
+    const text = parts.map(writeDescription)
+    const tail = charactersAt(op + text[1] + text[2])
+    const head = charactersAt(op + text[0] + text[1])
+    if (tail.length === 1 && !head.length) return { op, parts: [parts[0], { op, parts: [parts[1], parts[2]] }] }
+    if (head.length === 1 && !tail.length) return { op, parts: [{ op, parts: [parts[0], parts[1]] }, parts[2]] }
+    return { ...node, parts }
+  }
+  return { roots: parsed.roots.map(regroup), complete: parsed.complete }
+}
+
+/**
  * The parts of every character, at every layer. A subtree that spells another character stands for
  * that character, whose own parts stand under it in turn, so a part is found however deep it lies.
  * A leaf that spells several characters keeps its written component as the character's direct part,
  * but each candidate remains a part of it. A description short of an operand keeps its components.
  * @param {{ char: string, composition?: string }[]} entries
- * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, partGroups: Map<string, PartGroup[]> }}
+ * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, layoutOf: Map<string, string>, partGroups: Map<string, PartGroup[]> }}
  */
 export function buildPartIndex(entries) {
   /** @type {Map<string, string[]>} */
@@ -83,9 +121,13 @@ export function buildPartIndex(entries) {
   const read = new Map()
   /** @type {Map<string, string>} */
   const compositionOf = new Map()
+  /** @param {{ roots: Node[], complete: boolean }} parsed @param {string} self */
+  function binaryView(parsed, self) {
+    return binaryDescription(parsed, text => (byDescription.get(text) ?? []).filter(char => char !== self))
+  }
   for (const entry of entries) {
     if (!entry.composition) continue
-    read.set(entry.char, readDescription(entry.composition))
+    read.set(entry.char, binaryView(readDescription(entry.composition), entry.char))
     compositionOf.set(entry.char, entry.composition)
   }
 
@@ -97,7 +139,7 @@ export function buildPartIndex(entries) {
 
   /**
    * The parts a character is directly described with: the largest characters its description
-   * spells whole, or the components where no single character does.
+   * spells whole, complete unencoded editorial subtrees, and remaining components.
    * @param {string} char
    * @returns {string[]}
    */
@@ -107,8 +149,8 @@ export function buildPartIndex(entries) {
     if (!found) return leavesOf(composition)
     /** @type {string[]} */
     const parts = []
-    /** @param {Node} node @param {boolean} top */
-    const walk = (node, top) => {
+    /** @param {Node} node @param {boolean} top @param {boolean} root */
+    const walk = (node, top, root) => {
       if (typeof node === 'string') {
         // The root of a description is the character itself, not one of its parts.
         if (top) { if (isTangut(node)) parts.push(node); return }
@@ -118,15 +160,30 @@ export function buildPartIndex(entries) {
         return
       }
       // A truncated node is no character's description; the operands it kept may still be.
-      if (top || node.cut) { for (const part of node.parts) walk(part, false); return }
+      if (top || node.cut) { for (const part of node.parts) walk(part, false, false); return }
       const chars = charactersAt(writeDescription(node), char)
       if (chars.length === 1) { parts.push(chars[0]); return }
-      // No one character stands there, or several do: keep the parts it is written with.
-      for (const part of node.parts) walk(part, false)
+      if (!chars.length && !root) {
+        parts.push(node.op + node.parts.map(part => editorialNode(part, char)).join(''))
+        return
+      }
+      // Several characters stand there: keep the parts it is written with.
+      for (const part of node.parts) walk(part, false, false)
     }
     const top = found.roots.length === 1
-    for (const root of found.roots) walk(root, top)
-    return parts.filter(isTangut)
+    for (const root of found.roots) walk(root, top, true)
+    return parts.filter(part => isTangut(part) || OPERATORS.has([...part][0]))
+  }
+
+  // Render proper children as unambiguous encoded characters, matching the editorial IDS view.
+  /** @param {Node} node @param {string} self @returns {string} */
+  function editorialNode(node, self) {
+    const text = writeDescription(node)
+    if ((typeof node === 'string' && !OPERATORS.has(node)) || (typeof node !== 'string' && !node.cut)) {
+      const chars = charactersAt(text, self).filter(char => /^[\u{17000}-\u{187FF}\u{18D00}-\u{18D7F}]$/u.test(char))
+      if (chars.length === 1) return chars[0]
+    }
+    return typeof node === 'string' ? node : node.op + node.parts.map(part => editorialNode(part, self)).join('')
   }
 
   /** @type {Map<string, PartGroup[]>} */
@@ -142,19 +199,22 @@ export function buildPartIndex(entries) {
     const known = groupCache.get(char)
     if (known) return known
     const found = read.get(char)
-    /** @param {Node} node @param {boolean} top @returns {PartGroup[]} */
-    const walk = (node, top) => {
+    /** @param {Node} node @param {boolean} top @param {boolean} root @returns {PartGroup[]} */
+    const walk = (node, top, root) => {
       if (typeof node === 'string') {
         const candidates = top ? [] : charactersAt(node, char)
         return isTangut(node) || candidates.length ? [{ candidates, ...(isTangut(node) ? { leaf: node } : {}) }] : []
       }
-      const children = node.parts.flatMap(part => walk(part, false))
+      const children = node.parts.flatMap(part => walk(part, false, false))
       if (top || node.cut) return children
       const candidates = charactersAt(writeDescription(node), char)
-      return candidates.length ? [{ candidates, children }] : children
+      if (candidates.length) return [{ candidates, children }]
+      if (root) return children
+      const shape = node.op + node.parts.map(part => editorialNode(part, char)).join('')
+      return [{ candidates, shape, children }]
     }
     const top = found?.roots.length === 1
-    const groups = found ? found.roots.flatMap(root => walk(root, top)) : []
+    const groups = found ? found.roots.flatMap(root => walk(root, top, true)) : []
     groupCache.set(char, groups)
     return groups
   }
@@ -195,6 +255,7 @@ export function buildPartIndex(entries) {
           for (const [part, count] of collect(group.leaf, next)) best.set(part, count)
           best.set(group.leaf, (best.get(group.leaf) ?? 0) + 1)
         }
+        if (group.shape) best.set(group.shape, (best.get(group.shape) ?? 0) + 1)
         for (const [part, count] of best) out.set(part, (out.get(part) ?? 0) + count)
       }
       return out
@@ -208,18 +269,31 @@ export function buildPartIndex(entries) {
   const usedBy = new Map()
   /** @type {Map<string, string[]>} */
   const directPartsOf = new Map()
+  /** @type {Map<string, string>} */
+  const layoutOf = new Map()
   for (const entry of entries) {
     const char = entry.char
     const parts = collect(char, new Set())
     partsOf.set(char, parts)
     directPartsOf.set(char, directParts(char))
+    const root = read.get(char)?.roots[0]
+    if (root !== undefined) layoutOf.set(char, typeof root === 'string' ? '' : root.op)
     for (const part of parts.keys()) {
       let users = usedBy.get(part)
       if (!users) usedBy.set(part, users = new Set())
       users.add(char)
     }
   }
-  return { partsOf, usedBy, directPartsOf, partGroups: groupCache }
+  // A description part's operands are the parts a reader splits it into, characters kept whole.
+  for (const part of usedBy.keys()) {
+    if (!isDescriptionPart(part)) continue
+    const { roots, complete } = readDescription(part)
+    const root = roots[0]
+    if (complete && roots.length === 1 && typeof root !== 'string') {
+      directPartsOf.set(part, root.parts.map(child => editorialNode(child, part)).filter(child => isTangut(child) || isDescriptionPart(child)))
+    }
+  }
+  return { partsOf, usedBy, directPartsOf, layoutOf, partGroups: groupCache }
 }
 
 /**
@@ -270,6 +344,7 @@ export function matchByParts(index, parts) {
       visited.add(state)
       if (at === groups.length) { yield counts; return }
       const group = groups[at]
+      if (group.shape) counts = add(counts, group.shape)
       const candidates = group.candidates.filter(candidate => !path.has(candidate))
       const seen = new Set()
       /** @param {number[]} value */

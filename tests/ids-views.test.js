@@ -50,13 +50,23 @@ test('parts preserve repeats and the recorded text is unchanged', () => {
   expect(result.editorialParts).toEqual(['𗀀', '𗀀'])
 })
 
-test('source data retains a ternary tree and infers one-component characters', () => {
+test('source data keeps the recorded ternary tree and reads the editorial cut as two', () => {
   const data = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-entries.json.gz', import.meta.url))).toString())
   const source = data.rows.map((row) => ({ char: row[0], composition: row[1] ?? undefined }))
   const sourceIndex = indexIdsDescriptions(source)
   const character = source.find((entry) => entry.char === '𗀮')
   const result = idsViews(character.char, character.composition, sourceIndex)
   expect(result.recorded).toBe('⿱𘠀⿲𘨷𘨷𘠢')
-  expect(result.editorial).toContain('⿲𘘤𘘤')
-  expect(result.editorialParts.filter(part => part === '𘘤')).toHaveLength(2)
+  // ⿰𘨷𘨷 is 𘙌, so the three columns read as 𘙌 beside 𘠢.
+  expect(result.editorial).toBe('⿱𘠀⿰𘙌𘠢')
+  expect(result.editorialParts).toEqual(['𘠀', '𘙌', '𘠢'])
+  // The recorded view still names 𘨷 twice, which the editorial view reads as 𘘤.
+  expect(result.recordedParts.filter(part => part === '𘨷')).toHaveLength(2)
+
+  // The cut can stand at the root as well as under one.
+  const rootCharacter = source.find((entry) => entry.char === '𗆫')
+  const rootResult = idsViews(rootCharacter.char, rootCharacter.composition, sourceIndex)
+  expect(rootResult.recorded).toBe('⿲𘠐𘧘𘣩')
+  expect(rootResult.editorial).toBe('⿰𘠐𘓔')
+  expect(rootResult.editorialParts).toEqual(['𘠐', '𘓔'])
 })

@@ -7,6 +7,7 @@
   import { t, i18n } from '../lib/i18n.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import Icon from '../ui/Icon.svelte'
+  import { setaCode } from '../lib/seta.js'
 
   // The chart can be read two ways: by the rhyme books' own classes, or by the characters the
   // spellings are read from — the upper down one axis, the lower down the other.
@@ -176,7 +177,7 @@
   const tibetanShown = (wylie, script) => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}${wylie.includes('[?]') ? '?' : ''}`
   /** A Tibetan gloss's own hover text: its Wylie, and each manuscript it is written in with how often.
    * @param {string} wylie @param {[string, number][]} where */
-  const tibetanTitle = (wylie, where) => `${wylie} · ${where.map(([shelf, count]) => `${shelf} ×${count}`).join(', ')}`
+  const tibetanTitle = (wylie, where, pua = '') => `${wylie} · ${where.map(([shelf, count]) => `${shelf} ×${count}`).join(', ')}${pua ? ` · ${t('card.spellingSeta')} ${pua}` : ''}`
 
   /** What a cell says about one character when opened: its fanqie, class and gloss. @param {string} char */
   function detail(char) {
@@ -276,7 +277,7 @@
                 <td>
                   {#if row.columns.get(group)?.length}
                     {#each row.columns.get(group) ?? [] as char (char)}
-                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan">{#each ix.tibetan.get(char) ?? [] as [wylie, script, where], index (index)}{index ? ' ' : ''}<span lang="bo" title={tibetanTitle(wylie, where)}>{tibetanShown(wylie, script)}</span>{/each}</small>{/if}</button>
+                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan">{#each ix.tibetan.get(char) ?? [] as [wylie, script, where], index (index)}{index ? ' ' : ''}<span lang="bo" title={tibetanTitle(wylie, where, setaCode(ix.seta, script))}>{tibetanShown(wylie, script)}</span>{/each}</small>{/if}</button>
                     {/each}
                   {/if}
                   {#if ix.tibetanRhymes[row.key]?.[group]?.length}

@@ -3,6 +3,8 @@
 // glyph's ink from the drawing's, and how far the direction the drawing runs at each cell is from the
 // direction the glyph runs there. The glyph files hold pen lines thinned to one cell, so a drawing is
 // compared with the line a writer would have followed rather than with a printed stroke's width.
+// Both lines are then resampled at half strength so cumulative line density is uniform, the same map
+// the shape files were built with.
 
 export const SIZE = 32
 const FIT = 30
@@ -15,6 +17,13 @@ const FAR = 255
 // leaving it uncapped lets one stray line outweigh the rest of the character.
 const TRUNCATE = 12
 const BLOCK = 4
+// Blend of a cell's own coordinate and the coordinate that evens out cumulative line density,
+// half and half. Yamada, Yamamoto, Saito, Pattern Recognition 23.9 (1990), pp. 1023–1029.
+// scripts/build_tangut_shapes.py bakes the same blend into the glyph masks.
+const DENSITY_BLEND = 0.5
+// Pitch used where a scan has no stroke on one side: four image widths, the value given for that
+// case of this method by US 5,757,979 (Hongo, 1998).
+const OPEN_PITCH = 4
 
 /** @typedef {{ size: number, chars: string[], masks: Uint8Array }} Shapes */
 /** @typedef {{ chars: string[], fields: Uint8Array, inks: Uint16Array[], bins: Uint8Array[], blocks: Uint8Array[] }} ShapeIndex */
@@ -58,7 +67,7 @@ export function indexShapes(shapes) {
 }
 
 /**
- * The direction the ink runs at each ink cell, in four bins of 45°, from the second moments of the ink
+ * The direction the ink runs at each ink cell, in eight bins of 22.5°, from the second moments of the ink
  * within two cells. A drawing is read the same way, so both sides are measured alike.
  * @param {Uint8Array} grid
  * @param {ArrayLike<number>} ink cells, in the order the bins are returned
@@ -133,11 +142,113 @@ function placeStrokes(strokes, width = PEN) {
   return strokes.map(stroke => stroke.map(([x, y]) => /** @type {[number, number]} */ ([(x - minX) * scale + offsetX, (y - minY) * scale + offsetY])))
 }
 
-/** Draw the strokes as a mask. @param {Stroke[]} strokes @param {number} [width] */
+/**
+ * Line density along one scan: the reciprocal of the distance between the centres of the ink runs
+ * on either side of the cell. A cell with a run missing on one side takes the open pitch.
+ * @param {ArrayLike<number>} line
+ */
+function pitchDensity(line) {
+  /** @type {[number, number, number][]} */
+  const runs = []
+  let start = /** @type {number | null} */ (null)
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] && start === null) start = i
+    else if (!line[i] && start !== null) {
+      runs.push([start, i - 1, (start + i - 1) / 2])
+      start = null
+    }
+  }
+  if (start !== null) runs.push([start, line.length - 1, (start + line.length - 1) / 2])
+  const openPitch = OPEN_PITCH * line.length
+  const density = new Array(line.length)
+  for (let x = 0; x < line.length; x++) {
+    let inside = -1
+    for (let i = 0; i < runs.length; i++) if (runs[i][0] <= x && x <= runs[i][1]) { inside = i; break }
+    /** @type {number | null} */
+    let left = null
+    /** @type {number | null} */
+    let right = null
+    if (inside >= 0) {
+      if (inside > 0) left = runs[inside - 1][2]
+      if (inside + 1 < runs.length) right = runs[inside + 1][2]
+    } else {
+      for (const run of runs) {
+        if (run[2] < x) left = run[2]
+        else if (run[2] > x) { right = run[2]; break }
+      }
+    }
+    const pitch = left !== null && right !== null ? right - left : openPitch
+    density[x] = pitch ? 1 / pitch : 1
+  }
+  return density
+}
+
+/** Cell i mapped halfway from where it is toward a uniform cumulative line density. @param {number[]} weights */
+function axisMap(weights) {
+  const n = weights.length
+  let denom = 0
+  for (let i = 0; i < n - 1; i++) denom += weights[i]
+  const out = new Array(n)
+  if (!(denom > 0)) {
+    for (let i = 0; i < n; i++) out[i] = i
+    return out
+  }
+  let acc = 0
+  for (let i = 0; i < n; i++) {
+    const equalised = (n - 1) * acc / denom
+    out[i] = (1 - DENSITY_BLEND) * i + DENSITY_BLEND * equalised
+    if (i < n - 1) acc += weights[i]
+  }
+  return out
+}
+
+/** The half-strength line-density map of a mask, one position per column and per row. @param {Uint8Array} grid */
+function densityMaps(grid) {
+  const hx = new Array(SIZE).fill(0)
+  const hy = new Array(SIZE).fill(0)
+  const row = new Array(SIZE)
+  for (let y = 0; y < SIZE; y++) {
+    for (let x = 0; x < SIZE; x++) row[x] = grid[y * SIZE + x]
+    const density = pitchDensity(row)
+    for (let x = 0; x < SIZE; x++) hx[x] += density[x]
+  }
+  const column = new Array(SIZE)
+  for (let x = 0; x < SIZE; x++) {
+    for (let y = 0; y < SIZE; y++) column[y] = grid[y * SIZE + x]
+    const density = pitchDensity(column)
+    for (let y = 0; y < SIZE; y++) hy[y] += density[y]
+  }
+  return [axisMap(hx), axisMap(hy)]
+}
+
+/** @param {number} p @param {number[]} map */
+function mapAt(p, map) {
+  const n = map.length
+  if (p <= 0) return map[0]
+  if (p >= n - 1) return map[n - 1]
+  const i = Math.floor(p)
+  const t = p - i
+  return map[i] * (1 - t) + map[Math.min(n - 1, i + 1)] * t
+}
+
+/**
+ * Draw the strokes as a mask. The line-density map is read from a one-cell line, the same ink the
+ * glyph masks hold, and the pen is then drawn along the resampled coordinates.
+ * @param {Stroke[]} strokes
+ * @param {number} [width]
+ */
 export function rasterize(strokes, width = PEN) {
-  const grid = new Uint8Array(CELLS)
-  walk(placeStrokes(strokes, width), width, (cell) => { grid[cell] = 1 })
-  return grid
+  const placed = placeStrokes(strokes, width)
+  const line = new Uint8Array(CELLS)
+  walk(placed, 1, (cell) => { line[cell] = 1 })
+  let ink = 0
+  for (let c = 0; c < CELLS; c++) ink += line[c]
+  if (!ink) return line
+  const [mx, my] = densityMaps(line)
+  const warped = placed.map(stroke => stroke.map(([x, y]) => /** @type {[number, number]} */ ([mapAt(x, mx), mapAt(y, my)])))
+  const out = new Uint8Array(CELLS)
+  walk(warped, width, (cell) => { out[cell] = 1 })
+  return out
 }
 
 /**
@@ -168,7 +279,7 @@ function similarity(a, b) {
   return na && nb ? dot / Math.sqrt(na * nb) : 0
 }
 
-/** The four directions a line can be drawn along, as the index of a 45° bin. @param {number} dx @param {number} dy */
+/** The eight directions a line can be drawn along, as the index of a 22.5° bin. @param {number} dx @param {number} dy */
 export function directionBin(dx, dy) {
   let angle = Math.atan2(dy, dx)
   if (angle < 0) angle += Math.PI
@@ -214,7 +325,7 @@ export function rankShapes(index, drawn, options = {}) {
   for (let c = 0; c < CELLS; c++) if (drawn[c]) ink.push(c)
   if (!ink.length) return []
   const field = distanceField(drawn)
-  // How far each cell lies from ink drawn along each of the four directions.
+  // How far each cell lies from ink drawn along each of the eight directions.
   const drawnBins = inkDirections(drawn, ink)
   const directionFields = []
   for (let b = 0; b < DIRECTIONS; b++) {
