@@ -44,6 +44,7 @@ try {
           assert(await en.count() > 0, 'the English layer renders')
           assert((await en.allInnerTexts()).some(text => /[A-Za-z]/.test(text)), 'the English layer carries English text')
           assert(await page.locator('.passage .gloss[title]').count(), 'a gloss carries its full text and source')
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'no horizontal page overflow')
         }
         if (out) await page.screenshot({ path: join(out, `texts-${phone ? 'phone' : 'desktop'}-${colorScheme}.png`) })
         if (!captureOnly) {
