@@ -230,6 +230,8 @@ test('the Dragon King’s Chinese follows the BabelStone page line by line', () 
     expect(line.chineseUrl).toBe('https://www.babelstone.co.uk/Tangut/DragonKing.html')
   }
   expect(lines[0][1].chinese).toBe('如是我聞：')
+  expect(lines[1][1].chinese).toBe('一時薄伽梵在海龍王宮，')
+  expect(lines.at(-2)[1].chinese).toBe('聞佛所説，皆大歡喜，信受奉行。')
   expect(lines.at(-1)[1].chinese).toBe('佛為海龍王説法印經　畢')
   const wikisource = Object.entries(attestation.lines).filter(([id]) => id.startsWith('wikisource-dragon-king:'))
   expect(wikisource).toHaveLength(2)
