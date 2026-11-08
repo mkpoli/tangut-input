@@ -38,6 +38,8 @@
       <dd>{@html t('about.leilin')}</dd>
       <dt>{t('about.handsTitle')}</dt>
       <dd>{@html t('about.hands')}</dd>
+      <dt>{t('about.setaTitle')}</dt>
+      <dd>{@html t('about.seta')}</dd>
       <dt>{t('about.readingsTitle')}</dt>
       <dd>{@html t('about.readingsSource')}</dd>
       <dt>{t('about.strokesTitle')}</dt>

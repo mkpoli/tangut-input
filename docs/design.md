@@ -141,6 +141,8 @@ recorded with the fanqie it was made for.
 - Add to text, Copy the character, Copy link.
 - Identifiers: the Li Fanwen 2008 number, 文海 page and entry, Mojikyo and XXZT code points,
   click-to-copy, each system linked to its source.
+- A Tibetan spelling's tooltip adds its Tibetan Extension-A code when the precomposed table has
+  the exact sequence.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).

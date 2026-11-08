@@ -667,6 +667,19 @@ Fanwen number and a 文海 position carry none. Rebuild with
 under the Unicode License v3; the two BabelStone pages state no licence, and only the factual
 numbers are kept.
 
+## `tangut-tibetan-seta.json.gz`
+
+The 1,536 precomposed characters of Tibetan Extension-A (藏文编码字符集（扩充集A）), U+F300–U+F8FF,
+each with the Unicode Tibetan sequence it stands for. The source is `data/tibetan-seta.tsv`, read from
+Andrew West's archived mapping table on 2026-11-08; the live page now returns 404. The page states no
+licence, and only the code points and sequences are kept. Set B, announced for the Supplementary
+Private Use Area, was never published.
+
+Format: `format`, `standard`, `source` (the archived URL), `original`, `author`, `retrieved`, `note`
+and `map`, each row `[code, script, sequence]`. Rebuild with `python3 scripts/build_tibetan_seta.py`.
+A spelling matches only when its folded script is exactly one of the sequences; 119 codes cover 213
+characters across BabelStone's index and the hand-class tables.
+
 ## `tangut-layers.json.gz`
 
 The largest character split of 2,408 Tangut descriptions, 16 KB gzipped. BabelStone describes every
