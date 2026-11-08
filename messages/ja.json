@@ -706,6 +706,8 @@
   "gyalrongic.kind.grammar": "文法書",
   "gyalrongic.kind.preprint": "プレプリント",
   "gyalrongic.kind.thesis": "学位論文",
+  "attest.readText": "本文で読む",
+  "texts.earlier": "前の箇所",
   "nav.dataset": "手書きデータ",
   "nav.dataset.hint": "手で書いた字形データ（自由に利用可）"
 }

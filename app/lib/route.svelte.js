@@ -65,22 +65,23 @@ export const PAGES = [PRIMARY, ...GROUPS.flatMap(group => /** @type {PageEntry[]
 
 /** @typedef {PageEntry['path'] | 'variants'} Page */
 
-/** @returns {{ page: Page, q: string, c: string }} */
+/** @returns {{ page: Page, q: string, p: string, c: string }} */
 function read() {
   const path = location.pathname.replace(/^\/+|\/+$/g, '')
   const page = /** @type {Page} */ ([...PAGES, ...MORE].some(entry => entry.path === path) || path === 'variants' ? path : '')
   const params = new URLSearchParams(location.search)
   const code = params.get('c') ?? ''
   const c = /^[0-9a-f]{4,5}$/i.test(code) ? String.fromCodePoint(parseInt(code, 16)) : ''
-  return { page, q: params.get('q') ?? '', c }
+  return { page, q: params.get('q') ?? '', p: params.get('p') ?? '', c }
 }
 
 export const route = $state(read())
 
-/** @param {{ page: Page, q: string, c: string }} next */
+/** @param {{ page: Page, q: string, p: string, c: string }} next */
 function href(next) {
   const params = new URLSearchParams()
   if (next.q) params.set('q', next.q)
+  if (next.p) params.set('p', next.p)
   if (next.c) params.set('c', (next.c.codePointAt(0) ?? 0).toString(16).toUpperCase())
   const search = params.toString()
   return `/${next.page}${search ? `?${search}` : ''}`
@@ -91,6 +92,7 @@ export function go(page) {
   if (page === route.page) return
   route.page = page
   route.q = ''
+  route.p = ''
   history.pushState(null, '', href(route))
   scrollTo(0, 0)
 }
@@ -102,13 +104,16 @@ export function open(char) {
   history.replaceState(null, '', href(route))
 }
 
-/** Keep the page's query in the address without adding to history. @param {string} q */
-export function setQuery(q) {
+/** Keep the page's queries in the address without adding to history.
+ * @param {string} q @param {string} [p] */
+export function setQuery(q, p = '') {
   route.q = q
+  route.p = p
   history.replaceState(null, '', href(route))
 }
 
-/** A link to a page with a character open. @param {Page} page @param {string} [c] @param {string} [q] */
-export const link = (page, c = '', q = '') => href({ page, c, q })
+/** A link to a page with a character open.
+ * @param {Page} page @param {string} [c] @param {string} [q] @param {string} [p] */
+export const link = (page, c = '', q = '', p = '') => href({ page, c, q, p })
 
 addEventListener('popstate', () => Object.assign(route, read()))

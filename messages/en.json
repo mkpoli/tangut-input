@@ -706,6 +706,8 @@
   "gyalrongic.kind.grammar": "Grammar",
   "gyalrongic.kind.preprint": "Preprint",
   "gyalrongic.kind.thesis": "Thesis",
+  "attest.readText": "Read in the texts",
+  "texts.earlier": "Earlier passages",
   "nav.dataset": "Handwriting dataset",
   "nav.dataset.hint": "Strokes drawn by hand, free to use"
 }

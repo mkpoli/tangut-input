@@ -82,7 +82,8 @@ With an empty box, the page shows the nine finders as doors with one line each, 
 Wikisource, the Lausanne Corpus and MiCA. Each row gives its passages and characters, links its
 source, and loads its first line into Transcribe. Read opens the text passage by passage; a Glosses
 toggle puts Chinese and English glosses under each character, and every character opens its card.
-The counts come from the attestation, not from a separate text table.
+A place in the attestation links to the same reader at its line. The counts come from the
+attestation, not from a separate text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
 code box takes letters, candidates are numbered 1–9, `Space` or a digit commits into the text,
