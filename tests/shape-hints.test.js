@@ -10,7 +10,7 @@ const exemplars = new Set(hints.exemplars.map(row => row.char))
 test('the hint file covers every component and every attested example', () => {
   expect(hints.format).toBe('tangut-input/component-shape-hints')
   expect(hints.editorial).toBe(true)
-  expect(hints.counts).toEqual({ components: 768, exemplars: 18 })
+  expect(hints.counts).toEqual({ components: 768, exemplars: 20 })
   expect(hints.components.length).toBe(768)
   expect(hints.components[0].codepoint).toBe('U+18800')
   expect(hints.components.at(-1).codepoint).toBe('U+18AFF')

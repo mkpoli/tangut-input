@@ -114,6 +114,20 @@
       "credit": "Arakawa 2023"
     },
     {
+      "name": "ノくノ",
+      "char": "𘪷",
+      "source": "arakawa-2023",
+      "detail": "A6 in table 4: a ノくノ with a final short horizontal stroke; table 6 maps A6 to this component",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "ノくノ",
+      "char": "𘫙",
+      "source": "arakawa-2023",
+      "detail": "A7 in table 4: a ノくノ with a final short horizontal stroke; table 6 maps A7 to this component",
+      "credit": "Arakawa 2023"
+    },
+    {
       "name": "くノ",
       "char": "𘫺",
       "source": "arakawa-2023",
