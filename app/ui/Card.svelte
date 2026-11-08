@@ -23,6 +23,7 @@
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
   import { bookTitle } from '../lib/books.js'
+  import { setaCode } from '../lib/seta.js'
   import { identifierGroups, editionName } from '../lib/identifiers.js'
 
   const char = $derived(route.c)
@@ -392,7 +393,7 @@
             {#if hands?.tibetan?.length}
               <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">
                 {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
-                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone />
+                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone pua={setaCode(ix.seta, script)} />
                 {/each}
               </td></tr>
             {/if}
