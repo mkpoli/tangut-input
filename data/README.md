@@ -65,6 +65,21 @@ volumes are CC BY 4.0; the other texts keep the terms of the editions cited in `
 `scripts/build_tangut_attestation.py` reads the manifest and adds the 21 texts as one source,
 `lcdtt`.
 
+## `babelstone/`
+
+The parallel Tangut and Chinese text of T599 on Andrew West's
+[BabelStone page](https://www.babelstone.co.uk/Tangut/DragonKing.html), read 2026-11-07:
+`dragon-king.tsv` holds the 26 line pairs, Tangut first, and
+`scripts/fetch_babelstone_dragon_king.py` refetches them. The Chinese is 義淨's
+*佛為海龍王説法印經* as the page prints it; the Tangut column only aligns each Chinese line with the
+LCDTT transcription of the same text, which the corpus already holds. The page states no licence;
+the Chinese is a public-domain translation, and the Tangut transcription and alignment are West's.
+`scripts/build_tangut_attestation.py` reads the checked-in table and adds the Chinese to the
+`lcdtt:dragon-king` lines and to the Wikisource transcription, which holds the same Tangut as one
+line; it stops if the table's Tangut no longer matches either text. The table is a snapshot, not a
+check on the live page: refetch it with the script and rebuild to bring in a page change. See
+`babelstone/README.md`.
+
 ## `tangut-samples.json`
 
 Eighteen passages copied from `app/data/tangut-attestation.json.gz` for the Samples picker: three
@@ -721,6 +736,21 @@ Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_
 `data/wiktionary/definitions-zh.json.gz`, `data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
 `data/wenhai/entry-text.json.gz`, `data/readings/readings.tsv` and the files above. The keyed
 readings and their citations are the builder's own input and come from the editions.
+
+The parts finder indexes complete subtrees of these IDS descriptions as selectable shapes. Where a
+subtree matches a single character's complete description, the editorial form can use that
+character; this is a shape comparison, not a documented historical derivation. A description of
+three columns or three rows is read as two parts when exactly one pair of adjacent operands spells a
+character: 𗆫 (`⿲𘠐𘧘𘣩`) reads as 𘠐 and 𘓔 (`⿰𘧘𘣩`), 633 of the 1,707 complete single-root three-operand descriptions. When
+both pairs spell a character, or neither does, the three operands stay as the source writes them.
+The cut is editorial and comes from the shapes alone; the recorded description is unchanged.
+
+The suggestion to retain intermediate parts, including `⿱𘡊𗎘`, and to keep a whole character such as
+𘓔 as one base, came from a private communication shared on 2026-11-07 (name withheld); it gives
+examples rather than a complete decomposition authority. The underlying IDS data is Andrew West's
+[Tangut IDS](https://www.babelstone.co.uk/Tangut/TangutIDS.txt), as recorded above. The distinction
+between IDS containment and the 文海's cuts is discussed in
+[the construction note](../docs/wenhai-composition.md).
 
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
 one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from

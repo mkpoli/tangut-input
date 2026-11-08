@@ -62,6 +62,7 @@ export const ix = {
   /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
   /** Alternative character readings at each place in a description. @type {ReturnType<typeof buildPartIndex>['partGroups']} */ partGroups: new Map(),
   /** The parts each description names directly, character parts included. @type {Map<string, string[]>} */ directPartsOf: new Map(),
+  /** The outermost operator of each character's editorial description. @type {Map<string, string>} */ layoutOf: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
@@ -153,6 +154,7 @@ export async function load() {
     ix.usedBy = index.usedBy
     ix.partGroups = index.partGroups
     ix.directPartsOf = index.directPartsOf
+    ix.layoutOf = index.layoutOf
     if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))
