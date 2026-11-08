@@ -73,6 +73,10 @@
     hands: ix.tibetanHands[char],
     glosses: ix.tibetan.get(char),
   })
+  /** The hover text, naming the source of a Chinese gloss in the reader's language. @param {{ text: string, title: string, source?: 'keyed' | 'wiktionary' }} value */
+  const titleOf = value => value.source
+    ? `${t(value.source === 'wiktionary' ? 'card.chineseWiktionary' : 'card.keyedGloss')}: ${value.title}`
+    : value.title !== value.text ? value.title : undefined
   /** How many characters of the text a layer has something for. @param {import('../lib/layers.js').Layer} layer */
   const filled = layer => chars.filter(char => valueOf(layer, char).text).length
   /** A layer's row across the whole text, a dash where it has nothing. @param {import('../lib/layers.js').Layer} layer */
@@ -140,8 +144,8 @@
               {@const value = part.kind === 'tangut' ? valueOf(layer, part.char) : { text: layer.kind === 'tangut' ? part.char : '', title: '' }}
               <span class="cell" class:ui-phonetic={layer.kind === 'reading'} class:script={layer.kind === 'tangut'} class:bo={layer.kind === 'tibetan'} class:missing={part.kind === 'tangut' && !value.text}
                 style:font-size="{layer.size}px" style:block-size="{Math.round(layer.size * 1.45)}px" style:max-inline-size="{Math.max(layer.size * 7, 72)}px"
-                title={value.title && value.title !== value.text ? value.title : undefined}
-                lang={layer.kind === 'sinograph' ? 'zh-Hant' : layer.kind === 'japanese' ? 'ja' : layer.kind === 'tibetan' ? 'bo' : undefined}>
+                title={titleOf(value)}
+                lang={layer.kind === 'sinograph' ? (value.source === 'wiktionary' ? 'zh' : 'zh-Hant') : layer.kind === 'japanese' ? 'ja' : layer.kind === 'tibetan' ? 'bo' : undefined}>
                 {#if layer.kind === 'tangut' && part.kind === 'tangut'}
                   <button type="button" class="glyph" aria-label={part.char}><G char={part.char} /></button>
                 {:else if part.kind === 'tangut'}{value.text || '—'}{:else}{value.text}{/if}

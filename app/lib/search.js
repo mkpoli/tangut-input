@@ -1,6 +1,8 @@
 // The finders that read the records directly: Cangjie codes, meanings, parts and code points.
 // Readings live in reading.js and drawings in shape.js.
 import { searchTibetan } from './tibetan.js'
+import { byIdentifier as byStoredIdentifier } from './identifiers.js'
+import { byTibetanSeta as byStoredSeta } from './seta.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
 import { searchShapeNames } from './names.js'
@@ -118,6 +120,11 @@ export function byMeaning(query, options = {}) {
       const t = rank(text)
       if (t < tier) { tier = t; sense = text; lang = key }
     }
+    // Chinese senses imported from Wiktionary answer the Chinese search beside the keyed ones.
+    if (languages.includes('zh')) for (const text of entry.wiktionary_zh ?? []) {
+      const t = rank(text)
+      if (t < tier) { tier = t; sense = text; lang = 'zh' }
+    }
     // The 文海's own entry text can answer even when the gloss does not use the word.
     if (tier > 2) for (const key of languages) {
       if (key !== 'zh') continue
@@ -167,7 +174,9 @@ export function byMeaning(query, options = {}) {
 export function byParts(parts, layout = '') {
   if (!parts.length && !layout) return []
   let hits = parts.length ? matchByParts(ix, parts) : [...ix.byChar.keys()]
-  if (layout) hits = hits.filter(char => ix.byChar.get(char)?.composition?.startsWith(layout))
+  // The layout filters the description the parts finder reads, so a three-part description that
+  // the editorial cut reads as two matches the operator of that cut.
+  if (layout) hits = hits.filter(char => ix.layoutOf.get(char) === layout)
   return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99)
     || frequency(b) - frequency(a) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
@@ -260,3 +269,9 @@ export function tangutIn(text) {
 
 /** Characters by a Tibetan spelling, in script, Wylie or the tables' notation. @param {string} text */
 export const byTibetan = text => searchTibetan(ix.tibetanIndex, text)
+
+/** Characters by a Li Fanwen number, a 文海 position, a Mojikyo code or an XXZT code. @param {string} text */
+export const byIdentifier = text => byStoredIdentifier(ix.identifierIndex, text)
+
+/** Characters whose Tibetan spelling has a Tibetan Extension-A code. @param {string} text */
+export const byTibetanSeta = text => byStoredSeta(ix.setaIndex, text)

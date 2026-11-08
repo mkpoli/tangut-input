@@ -4,7 +4,7 @@
   import { db, ix, gloss, readingOf } from '../lib/db.svelte.js'
   import { loadShapes, SHAPE_FACES } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
-  import { siblingIndex } from '../lib/composition.js'
+  import { isDescriptionPart, siblingIndex } from '../lib/composition.js'
   import { attachPad, put, choose, ui } from '../lib/ui.svelte.js'
   import Candidates from './Candidates.svelte'
   import G from './G.svelte'
@@ -32,7 +32,7 @@
     const codes = query.toLowerCase()
     const shape = foldShapeName(query)
     const named = new Set(shape ? ix.names.filter(row => foldShapeName(row.name).includes(shape)).map(row => row.char) : [])
-    return [...ix.usedBy.keys()].filter(part => !chosen.includes(part) && (!query || part.includes(query) || named.has(part) || (ix.codes.get(part) ?? []).some(code => code.startsWith(codes) || code.startsWith(`p${codes}`))))
+    return [...ix.usedBy.keys()].filter(part => !isDescriptionPart(part) && !chosen.includes(part) && (!query || part.includes(query) || named.has(part) || (ix.codes.get(part) ?? []).some(code => code.startsWith(codes) || code.startsWith(`p${codes}`))))
       .sort((a, b) => (ix.strokes.get(a) ?? 0) - (ix.strokes.get(b) ?? 0) || (ix.usedBy.get(b)?.size ?? 0) - (ix.usedBy.get(a)?.size ?? 0))
   })
 
@@ -102,10 +102,15 @@
     for (const face of indexes) {
       rankShapes(face, mask, { limit: face.chars.length, strokes, strokeCounts: ix.strokes }).forEach((hit, at) => {
         const known = best.get(hit.char)
-        if (!known || at < known.at) best.set(hit.char, { hit, at })
+        if (!known) best.set(hit.char, { hit, at, votes: at < 3 ? 1 : 0 })
+        else {
+          if (at < known.at) known.at = at
+          if (at < 3) known.votes++
+        }
       })
     }
-    return [...best.values()].sort((a, b) => a.at - b.at).map(entry => entry.hit)
+    // Best rank first; among characters a face ranks equally, the one more faces put near the top.
+    return [...best.values()].sort((a, b) => a.at - b.at || b.votes - a.votes).map(entry => entry.hit)
   }
 
   const ranked = $derived.by(() => {

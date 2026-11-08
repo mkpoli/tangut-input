@@ -9,7 +9,7 @@ const entries = json('tangut-entries.json.gz')
 const rhymes = json('tangut-rhymes.json.gz')
 
 test('the packed records keep every character, the five Wiktionary readings and the two Database readings', () => {
-  expect(entries.format).toBe('tangut-input/entries/4')
+  expect(entries.format).toBe('tangut-input/entries/6')
   expect(entries.rows.length).toBe(6144)
   expect(entries.systems).toEqual([
     'li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
@@ -22,6 +22,8 @@ test('the packed records keep every character, the five Wiktionary readings and 
   expect(first[5]).toEqual(['毒'])
   expect(first[6]).toEqual([])
   expect(first[8]).toBe('蝎中蛇右。')
+  expect(first[9]).toEqual(['毒', '下毒者', '毒死'])
+  expect(first[10]).toBe('https://zh.wiktionary.org/w/index.php?title=%F0%97%80%80&oldid=9036839')
 })
 
 test('the 文海 Chinese text is kept for the entries it carries', () => {
@@ -33,6 +35,12 @@ test('the displayable meanings cover only the Wiktionary entries', () => {
   expect(count(4)).toBe(457)
   expect(count(5)).toBe(278)
   expect(count(6)).toBe(0)
+  expect(count(9)).toBe(110)
+  const snapshot = JSON.parse(gunzipSync(readFileSync(new URL('../data/wiktionary/definitions-zh.json.gz', import.meta.url))).toString())
+  for (const row of entries.rows) {
+    expect(row[9]).toEqual(snapshot.pages[row[0]]?.definitions ?? [])
+    if (row[9].length) expect(row[10]).toBe(snapshot.pages[row[0]].url)
+  }
 })
 
 test('every Tibetan spelling stands at a crossing the chart draws', () => {
@@ -211,6 +219,27 @@ test('the monthly ode links the printed study its page cites', () => {
   const ode = attestation.sources.find(source => source.id === 'wikisource-monthly-pleasures')
   expect(ode.study).toContain('西夏語『月々樂詩』の研究')
   expect(ode.studyUrl).toBe('https://hdl.handle.net/2433/73030')
+})
+
+test('the Dragon King’s Chinese follows the BabelStone page line by line', () => {
+  const lines = Object.entries(attestation.lines).filter(([id]) => id.startsWith('lcdtt:dragon-king:'))
+  expect(lines).toHaveLength(25)
+  for (const [, line] of lines) {
+    expect(line.chinese).toBeTruthy()
+    expect(line.chinese).not.toContain('□')
+    expect(line.chineseUrl).toBe('https://www.babelstone.co.uk/Tangut/DragonKing.html')
+  }
+  expect(lines[0][1].chinese).toBe('如是我聞：')
+  expect(lines[1][1].chinese).toBe('一時薄伽梵在海龍王宮，')
+  expect(lines.at(-2)[1].chinese).toBe('聞佛所説，皆大歡喜，信受奉行。')
+  expect(lines.at(-1)[1].chinese).toBe('佛為海龍王説法印經　畢')
+  const wikisource = Object.entries(attestation.lines).filter(([id]) => id.startsWith('wikisource-dragon-king:'))
+  expect(wikisource).toHaveLength(2)
+  const [body, end] = wikisource.map(([, line]) => line)
+  expect(body.chinese).toBe(lines.slice(0, -1).map(([, line]) => line.chinese).join(''))
+  expect(end.chinese).toBe('佛為海龍王説法印經　畢')
+  const others = Object.entries(attestation.lines).filter(([id, line]) => line.chinese && !id.startsWith('lcdtt:dragon-king:') && !id.startsWith('wikisource-dragon-king:'))
+  expect(others).toEqual([])
 })
 
 test('every place points at the character it attests', () => {
