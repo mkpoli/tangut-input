@@ -7,7 +7,7 @@
   import { t, i18n } from '../lib/i18n.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import Icon from '../ui/Icon.svelte'
-  import { tibetanShown, tibetanTitle } from '../lib/tibetan.js'
+  import { setaCode } from '../lib/seta.js'
 
   // The chart can be read two ways: by the rhyme books' own classes, or by the characters the
   // spellings are read from — the upper down one axis, the lower down the other.
@@ -172,7 +172,14 @@
     return list.sort((a, b) => (a.lower.codePointAt(0) ?? 0) - (b.lower.codePointAt(0) ?? 0))
   })
 
-  /** What a cell says about one character when opened: its fanqie, Tibetan gloss and meaning. @param {string} char */
+  /** A Tibetan gloss as the cell shows it: a lone vowel sign on a dotted circle, and a ? where the
+   * Wylie has a letter that could not be read. @param {string} wylie @param {string} script */
+  const tibetanShown = (wylie, script) => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}${wylie.includes('[?]') ? '?' : ''}`
+  /** A Tibetan gloss's own hover text: its Wylie, and each manuscript it is written in with how often.
+   * @param {string} wylie @param {[string, number][]} where */
+  const tibetanTitle = (wylie, where, pua = '') => `${wylie} · ${where.map(([shelf, count]) => `${shelf} ×${count}`).join(', ')}${pua ? ` · ${t('card.spellingSeta')} ${pua}` : ''}`
+
+  /** What a cell says about one character when opened: its fanqie, class and gloss. @param {string} char */
   function detail(char) {
     const value = ix.rhymes.get(char)
     const spelling = value ? [value[3] ?? value[5], value[4] ?? value[6]].filter(Boolean).join('') : ''
@@ -270,7 +277,7 @@
                 <td>
                   {#if row.columns.get(group)?.length}
                     {#each row.columns.get(group) ?? [] as char (char)}
-                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan">{#each ix.tibetan.get(char) ?? [] as [wylie, script, where], index (index)}{index ? ' ' : ''}<span title={tibetanTitle(wylie, where)}><span lang="bo">{tibetanShown(script)}</span>{#if wylie.includes('[?]')} <span class="uncertain-wylie">{wylie}</span>{/if}</span>{/each}</small>{/if}</button>
+                      <button type="button" class="cell ui-script" title={detail(char)} onclick={() => choose(char)} ondblclick={() => put(char)}>{char}{#if ix.tibetan.has(char)}<small class="tibetan">{#each ix.tibetan.get(char) ?? [] as [wylie, script, where], index (index)}{index ? ' ' : ''}<span lang="bo" title={tibetanTitle(wylie, where, setaCode(ix.seta, script))}>{tibetanShown(wylie, script)}</span>{/each}</small>{/if}</button>
                     {/each}
                   {/if}
                   {#if ix.tibetanRhymes[row.key]?.[group]?.length}
@@ -330,7 +337,6 @@
   .cell{vertical-align:top;padding:1px 3px;border:1px solid transparent;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink);font-size:19px;line-height:1.12}
   .cell:hover{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover)}
   .cell small.tibetan{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.3;color:var(--ui-color-ink-soft)}
-  .uncertain-wylie{font-family:var(--ui-font-mono)}
   .spellings{margin:2px 0 0;padding:1px 3px 0;border-top:1px dotted var(--ui-color-border-strong);font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:11px;line-height:1.35;color:var(--ui-color-ink-soft)}
   .cell small{display:block;font-family:var(--ui-font-sans);font-size:9.5px;color:var(--ui-color-ink-muted);line-height:1.1}
   @media (max-width:900px){

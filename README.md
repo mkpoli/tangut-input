@@ -7,12 +7,14 @@ it into your text. <https://tangut.mkpo.li/>
 
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
-  lists code points. Tangut components also answer to their Japanese shape names, such as くノ,
+  lists code points, and `L0009`, `L55.172`, `M202-84B2`, `XXZT-A-764F` or `U+F5C0` open the character a number,
+  legacy code or Tibetan Set A code names. Tangut components also answer to their Japanese shape names, such as くノ,
   ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
   opening part it lists the characters that open that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
   MiCA, with its passages, characters, source and first line. Read opens the text passage by
-  passage, where each character opens its card; Transcribe still loads the first line.
+  passage; a Glosses toggle puts Chinese and English glosses under each character, and each
+  character opens its card. Transcribe still loads the first line.
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
@@ -31,21 +33,24 @@ it into your text. <https://tangut.mkpo.li/>
   recorded name shows an unconfirmed shape hint when one is close. A collapsible
   table compares the names across the languages that record one.
 
-The card of a character shows its code point, Cangjie codes, meanings in English and Japanese,
+The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position, Mojikyo and
+XXZT code points, the Set A code of a Tibetan spelling, Cangjie codes, meanings in English, Japanese and Chinese,
 readings, the 對音 it carries (the Chinese character the 掌中珠 transcribes it with, and any
 Tibetan gloss), structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
-further readings and meanings are linked to CCAMC's page for the character rather than copied.
-Character tiles carry a reconstruction above the glyph — the one chosen at the top bar, or the one
-a reading search matched — with the finder's own note below it. The text being written stays in the
+further readings and meanings are linked to CCAMC's page for the character.
+Character tiles show the chosen reconstruction above the glyph, then a Chinese gloss and the
+finder's note. Chinese glosses come from keyed dictionary senses, then Wiktionary, then
+contextual words from 類林; [coverage and sources](docs/han-glosses.md). The text being written stays in the
 browser and copies as text, code points or Cangjie codes.
 
 The design and its reasoning are in [`docs/design.md`](docs/design.md).
 
 ## Data
 
-- `app/data/tangut-entries.json.gz`: five readings and English and Japanese meanings from
-  [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Gong Hwang-cherng's
+- `app/data/tangut-entries.json.gz`: five readings and English, Japanese and Chinese meanings from
+  [Wiktionary](https://en.wiktionary.org/wiki/Module:txg/data) (CC BY-SA 4.0), Chinese meanings keyed
+  from the editions, Gong Hwang-cherng's
   and Gong Xun's readings from the
   [Tangut Pronunciation Database](https://github.com/semakosa/tangut-pronunciation-db),
   descriptions from BabelStone's Tangut IDS, and the 文海's Chinese entry text where it carries one;
@@ -64,6 +69,14 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   states no licence.
 - `app/data/tangut-strokes.json.gz`: stroke counts, ideographs from Unicode's TangutSources.txt,
   components counted from their glyphs (copied from `data2/`).
+- `app/data/tangut-identifiers.json.gz`: the Li Fanwen 2008 number, 文海 position, Mojikyo
+  4.50/4.60 code point and XXZT A/B code point of 6,482 characters, with each system's source and
+  terms; built by `scripts/build_tangut_identifiers.mjs`. A card lists them, and the Find box reads
+  `L0009`, `L62.221`, `M202-84B2` and `XXZT-A-764F`.
+- `app/data/tangut-tibetan-seta.json.gz`: the 1,536 precomposed Tibetan Extension-A characters
+  (U+F300–F8FF), each paired with the Unicode sequence it stands for; built by
+  `scripts/build_tibetan_seta.py` from `data/tibetan-seta.tsv`. A spelling that matches one shows
+  its code on the spelling tooltip and the Chart, and Find reads `U+F5C0`.
 - `app/data/tangut-supplement.json.gz`: the 33 ideographs and 115 components Unicode 18.0.0 assigns in
   Tangut Supplement and Tangut Components Supplement, with their Unicode names, strokes,
   descriptions (BabelStone for U+18D00–U+18D08, the WG2 proposals for U+18D09–U+18D20), Cangjie codes and
@@ -74,7 +87,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   facsimile crops, English translation and links to ぶんぽ's line readings. Twelve are on Wikisource
   (CC BY-SA 4.0): five Buddhist texts, the three poems, the Liangzhou stele, the Forest of
   Categories, the Precious Dual Maxims and the Tongyin preface. The last is the Lausanne Corpus of
-  Digital Tangut Texts, 21 texts used with permission; see `data/lcdtt/README.md`.
+  Digital Tangut Texts, 21 texts used with permission; see `data/lcdtt/README.md`. The Dragon King's
+  Chinese parallel is the line-by-line *佛為海龍王説法印經* on BabelStone's page, added to the
+  Lausanne and Wikisource transcriptions; see `data/babelstone/README.md`.
   `data/wikisource/pages.json` pins the Wikisource revisions; refresh it with
   `python3 scripts/fetch_tangut_wikisource.py`.
 - `app/data/tangut-samples.json`: eighteen passages copied from the corpus, thirteen marked famous,
@@ -95,6 +110,14 @@ BabelStone Tangut Wenhai, and New Tangut Std (新西夏字體, the 楷書-struct
 terms are in `app/public/fonts/FONT-LICENCES.md`. The newest ideographs, U+187F8–187FF, and the
 characters of both supplement blocks, which none of the four draws, come from a subset of Tangut
 N4694 in the same stack. `bun run build:tangut-fonts` rebuilds the small subsets.
+
+## Cursive forms
+
+BabelStone's [Cursive Tangut](https://www.babelstone.co.uk/Tangut/CursiveTangut.html) page gives
+cursive forms for 108 characters. `data/cursive/forms.json.gz` records its 210 crops with the
+source each comes from and the outlines traced from them; `fonts/CursiveTangut-Regular.woff2` sets
+those characters, with the page's other forms behind `ss01`–`ss07`. The site does not offer the face
+as a setting: it covers 108 characters, so it is a study asset rather than a face for running text.
 
 ## Handwriting data
 

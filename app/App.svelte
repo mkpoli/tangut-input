@@ -339,6 +339,7 @@
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
+            <a href="/dataset/" title={t('nav.dataset.hint')}>{t('nav.dataset')}</a>
           </footer>
         {/if}
       </main>

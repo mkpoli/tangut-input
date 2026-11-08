@@ -43,6 +43,7 @@
     archive: '<rect x="3" y="4.5" width="14" height="4" rx="1"/><path d="M4.5 8.5v7h11v-7M8 11.5h4"/>',
     settings: '<path d="M3 6h8M15 6h2M3 14h2M9 14h8"/><circle cx="13" cy="6" r="2"/><circle cx="7" cy="14" r="2"/>',
     type: '<path d="M4 16.5 10 3.5l6 13"/><path d="M6.5 11.5h7"/>',
+    image: '<rect x="2.8" y="4" width="14.4" height="12" rx="1.5"/><circle cx="7.4" cy="8.2" r="1.2"/><path d="m4.6 14.6 3.4-3.4 2.3 2.3 2.1-2.1 3 3"/>',
   }
 
   /** @type {{ name: keyof typeof ICONS, size?: number, stroke?: number }} */
