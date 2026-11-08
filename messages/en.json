@@ -473,6 +473,7 @@
   "texts.read": "Read",
   "texts.back": "All texts",
   "texts.transcribeLine": "Transcribe this passage",
+  "texts.glosses": "Glosses",
   "texts.more": "Show {count} more passages",
   "texts.transcribe": "Transcribe",
   "texts.source": "Source",

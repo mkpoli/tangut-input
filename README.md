@@ -13,7 +13,8 @@ it into your text. <https://tangut.mkpo.li/>
   opening part it lists the characters that open that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
   MiCA, with its passages, characters, source and first line. Read opens the text passage by
-  passage, where each character opens its card; Transcribe still loads the first line.
+  passage; a Glosses toggle puts Chinese and English glosses under each character, and each
+  character opens its card. Transcribe still loads the first line.
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
