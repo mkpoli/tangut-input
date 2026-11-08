@@ -710,6 +710,7 @@ the TSV, `note`, `counts`, `chars` (character → `[code, IDS, sources]`) and `u
 
 Two rows print a base glyph that does not match the row's code point (U+179D0 and U+17FE9); the
 code point is kept, as the table's identifier.
+The page's introduction ends the range at U+F1612; its table has one more row at U+F1613, kept here.
 
 ## `tangut-layers.json.gz`
 
