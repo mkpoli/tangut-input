@@ -1,0 +1,13 @@
+# Other descriptions of a Tangut character: a reader's analysis of the same glyph, kept beside the
+# record's own description and never instead of it. One line per description:
+# char<TAB>IDS<TAB>source<TAB>detail<TAB>lang (the detail's language; required with a detail)
+#
+# The parts index reads these too, so a character is found from the parts this analysis names; the
+# card shows the analysis with its source, and the description the record carries still draws the
+# structure and decides the parts a character splits into.
+#
+# The IDS here is this project's writing of the analysis: operands in the order IDS gives them, so
+# ⿴𘋢𘠣 puts the enclosing 𘋢 first and the enclosed 𘠣 second.
+#
+# source ngwu-yoh: NGWU YOH, chat message, 2026-11-07. A personal communication, quoted as sent.
+𘋤	⿴𘋢𘠣	NGWU YOH, chat message, 2026-11-07	「𘋤可以拆成𘋢和𘠣」「包圍結構」	zh-Hant

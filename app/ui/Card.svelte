@@ -13,6 +13,7 @@
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { byDescription } from '../lib/search.js'
   import { idsViews } from '../lib/ids-views.js'
+  import { leavesOf } from '../lib/composition.js'
   import { openingOf } from '../lib/description.js'
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
@@ -117,6 +118,19 @@
   // The characters whose own spelling is read from this one, either as its upper or its lower.
   const spells = $derived(ready && char ? [...(ix.fanqieUsedBy.get(char) ?? [])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0)) : [])
   const views = $derived(char && entry?.composition ? idsViews(char, entry.composition, ix.idsIndex) : null)
+  // The alias map fills with the records; the derived reads it after `ready` flips. One heading
+  // per source, the descriptions beneath it.
+  const aliases = $derived(ready && char ? ix.idsAliases.get(char) ?? [] : [])
+  const aliasGroups = $derived.by(() => {
+    /** @type {Map<string, typeof aliases>} */
+    const bySource = new Map()
+    for (const alias of aliases) {
+      const rows = bySource.get(alias.source)
+      if (rows) rows.push(alias)
+      else bySource.set(alias.source, [alias])
+    }
+    return [...bySource].map(([source, rows]) => ({ source, rows }))
+  })
   // The description's opening, which Find reads as a prefix: the family of characters built from it.
   const opening = $derived(openingOf(entry?.composition))
   const openingCount = $derived(ready && opening ? byDescription(opening).length : 0)
@@ -465,6 +479,19 @@
       {:else}
         <p class="ui-hint">{t('card.noDescription')}</p>
       {/if}
+      {#each aliasGroups as group (group.source)}
+        <div class="ids-view">
+          <h4 class="ui-hint">{group.source}</h4>
+          {#each group.rows as alias (alias.ids)}
+            <Ids composition={alias.ids} />
+            <p class="ids">
+              <span class="ui-formula" title={alias.ids}>{alias.ids}</span>
+              <button class="ui-button" data-variant="quiet" data-size="sm" type="button" title={t('card.copyDescription')} aria-label={`${t('common.copy')} · ${alias.ids}`} onclick={() => copy(alias.ids, t('card.description'))}><Icon name="copy" size={13}/>{t('common.copy')}</button>
+              {#if leavesOf(alias.ids).length}<a class="ids-link" aria-label={`${t('card.withTheseParts')} · ${alias.ids}`} href={link('parts', char, leavesOf(alias.ids).join(''))}><Icon name="parts" size={13}/>{t('card.withTheseParts')}</a>{/if}
+            </p>
+          {/each}
+        </div>
+      {/each}
     </section>
 
     <Attest {char} />

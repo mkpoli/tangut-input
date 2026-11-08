@@ -4,7 +4,7 @@ import { indexTibetan, foldScript } from './tibetan.js'
 import { indexTibetanSeta } from './seta.js'
 import { indexIdentifiers } from './identifiers.js'
 import { englishGloss } from './gloss.js'
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadIdsAliases } from './data.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
@@ -60,9 +60,10 @@ export const ix = {
   /** Where each identifier system comes from. @type {Record<string, { name: string, url: string, note?: string, licence?: string }>} */ identifierSources: {},
   /** The maximum count of each part across possible trees. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
   /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
-  /** Alternative character readings at each place in a description. @type {ReturnType<typeof buildPartIndex>['partGroups']} */ partGroups: new Map(),
   /** The parts each description names directly, character parts included. @type {Map<string, string[]>} */ directPartsOf: new Map(),
-  /** The outermost operator of each character's editorial description. @type {Map<string, string>} */ layoutOf: new Map(),
+  /** Other descriptions of a character, with the source that gives each. @type {Map<string, { ids: string, source: string, detail?: string, lang?: string }[]>} */ idsAliases: new Map(),
+  /** Every description of a character with the operator it opens with, the record first.
+   * @type {ReturnType<typeof buildPartIndex>['descriptionGroups']} */ descriptionGroups: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
@@ -92,10 +93,11 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, identifiers, seta, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
+    const [entries, pairs, strokes, identifiers, seta, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited, idsAliases] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadIdentifiers().catch(() => null), loadTibetanSeta().catch(() => null), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
       loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
       loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
+      loadIdsAliases().catch(() => []),
     ])
     ix.citations = cited?.citations ?? {}
     ix.identifiers = new Map(Object.entries(identifiers?.chars ?? {}))
@@ -149,12 +151,16 @@ export async function load() {
     if (hidden) ix.ccamcMeanings = { meanings: hidden.meanings ?? {} }
     ix.strokes = new Map(Object.entries(strokes))
     for (const record of recorded) if (record.strokes) ix.strokes.set(record.char, record.strokes)
-    const index = buildPartIndex(entries)
+    for (const alias of idsAliases) {
+      const list = ix.idsAliases.get(alias.char)
+      if (list) list.push(alias)
+      else ix.idsAliases.set(alias.char, [alias])
+    }
+    const index = buildPartIndex(entries, idsAliases)
     ix.partsOf = index.partsOf
     ix.usedBy = index.usedBy
-    ix.partGroups = index.partGroups
     ix.directPartsOf = index.directPartsOf
-    ix.layoutOf = index.layoutOf
+    ix.descriptionGroups = index.descriptionGroups
     if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))

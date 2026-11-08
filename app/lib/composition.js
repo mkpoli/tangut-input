@@ -8,8 +8,8 @@
 /** @typedef {{ op: string, parts: Node[], cut?: boolean } | string} Node */
 /** @typedef {{ candidates: string[], leaf?: string, shape?: string, children?: PartGroup[] }} PartGroup */
 
-export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
-const ARITY = /** @type {Record<string, number>} */ ({ '⿲': 3, '⿳': 3 })
+export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻㇯'])
+const ARITY = /** @type {Record<string, number>} */ ({ '⿲': 3, '⿳': 3, '㇯': 2 })
 
 /** @param {string} char */
 export const isTangut = char => /^[\u{17000}-\u{18AFF}\u{18D00}-\u{18D7F}\u{18D80}-\u{18DFF}]$/u.test(char)
@@ -104,10 +104,14 @@ export function binaryDescription(parsed, charactersAt) {
  * that character, whose own parts stand under it in turn, so a part is found however deep it lies.
  * A leaf that spells several characters keeps its written component as the character's direct part,
  * but each candidate remains a part of it. A description short of an operand keeps its components.
+ * Other descriptions (aliases) read beside the record: a character is found from the parts they
+ * name, matches a layout they open with, and keeps the record's structure as the one it draws and
+ * splits into.
  * @param {{ char: string, composition?: string }[]} entries
- * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, layoutOf: Map<string, string>, partGroups: Map<string, PartGroup[]> }}
+ * @param {{ char: string, ids: string }[]} [aliases]
+ * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, descriptionGroups: Map<string, { op: string, groups: PartGroup[] }[]> }}
  */
-export function buildPartIndex(entries) {
+export function buildPartIndex(entries, aliases = []) {
   /** @type {Map<string, string[]>} */
   const byDescription = new Map()
   for (const entry of entries) {
@@ -116,6 +120,14 @@ export function buildPartIndex(entries) {
     const chars = byDescription.get(text)
     if (chars) { if (!chars.includes(entry.char)) chars.push(entry.char) }
     else byDescription.set(text, [entry.char])
+  }
+  /** @type {Map<string, string[]>} */
+  const aliasesOf = new Map()
+  for (const alias of aliases) {
+    if (!alias.ids) continue
+    const list = aliasesOf.get(alias.char)
+    if (list) list.push(alias.ids)
+    else aliasesOf.set(alias.char, [alias.ids])
   }
   /** @type {Map<string, { roots: Node[], complete: boolean } | null>} */
   const read = new Map()
@@ -186,19 +198,19 @@ export function buildPartIndex(entries) {
     return typeof node === 'string' ? node : node.op + node.parts.map(part => editorialNode(part, self)).join('')
   }
 
+  /** @type {Map<string, { op: string, groups: PartGroup[] }[]>} */
+  const descriptionGroups = new Map()
+
   /** @type {Map<string, PartGroup[]>} */
   const groupCache = new Map()
   /**
    * Each group is one place in the tree. Its candidates are exclusive; a written leaf is
    * retained under any candidate. Children provide the written subtree when a cycle cuts off
    * every candidate at an internal node.
-   * @param {string} char
+   * @param {string} char @param {{ roots: Node[], complete: boolean } | null | undefined} found
    * @returns {PartGroup[]}
    */
-  function groupsOf(char) {
-    const known = groupCache.get(char)
-    if (known) return known
-    const found = read.get(char)
+  function groupsFor(char, found) {
     /** @param {Node} node @param {boolean} top @param {boolean} root @returns {PartGroup[]} */
     const walk = (node, top, root) => {
       if (typeof node === 'string') {
@@ -214,9 +226,33 @@ export function buildPartIndex(entries) {
       return [{ candidates, shape, children }]
     }
     const top = found?.roots.length === 1
-    const groups = found ? found.roots.flatMap(root => walk(root, top, true)) : []
-    groupCache.set(char, groups)
-    return groups
+    return found ? found.roots.flatMap(root => walk(root, top, true)) : []
+  }
+
+  /** The groups of a character's recorded description. @param {string} char @returns {PartGroup[]} */
+  function groupsOf(char) {
+    const known = groupCache.get(char)
+    if (known) return known
+    const kept = groupsFor(char, read.get(char))
+    groupCache.set(char, kept)
+    return kept
+  }
+
+  /** The operator the first root of a description opens with; a record with several roots keeps
+   * the first, as the layout filter always read it. @param {{ roots: Node[] } | null | undefined} parsed */
+  const openingOf = parsed => (parsed && parsed.roots[0] !== undefined && typeof parsed.roots[0] !== 'string' ? parsed.roots[0].op : '')
+
+  // Every description of a character, the record first, read once so the part counts and the
+  // search descend through all of them at any depth.
+  for (const entry of entries) {
+    if (!entry.composition) continue
+    /** @type {{ op: string, groups: PartGroup[] }[]} */
+    const views = [{ op: openingOf(read.get(entry.char)), groups: groupsOf(entry.char) }]
+    for (const text of aliasesOf.get(entry.char) ?? []) {
+      const parsed = binaryView(readDescription(text), entry.char)
+      views.push({ op: openingOf(parsed), groups: groupsFor(entry.char, parsed) })
+    }
+    descriptionGroups.set(entry.char, views)
   }
 
   /**
@@ -227,40 +263,52 @@ export function buildPartIndex(entries) {
    * @returns {Map<string, number>}
    */
   function collect(char, path) {
-    const next = new Set(path).add(char)
-    /** @param {PartGroup[]} groups @returns {Map<string, number>} */
-    function collectGroups(groups) {
-      /** @type {Map<string, number>} */
-      const out = new Map()
-      for (const group of groups) {
-        /** @type {Map<string, number>} */
-        const best = new Map()
-        const candidates = group.candidates.filter(candidate => !next.has(candidate))
-        for (const candidate of candidates) {
-          /** @type {Map<string, number>} */
-          let found
-          if (group.leaf) {
-            const branch = new Set(next).add(candidate)
-            found = candidate === group.leaf ? collect(candidate, next) :
-              branch.has(group.leaf) ? new Map() : collect(group.leaf, branch)
-            if (!next.has(group.leaf)) found.set(group.leaf, (found.get(group.leaf) ?? 0) + 1)
-          } else found = collect(candidate, next)
-          if (candidate !== group.leaf) found.set(candidate, (found.get(candidate) ?? 0) + 1)
-          for (const [part, count] of found) if (count > (best.get(part) ?? 0)) best.set(part, count)
-        }
-        if (!candidates.length && group.children) {
-          for (const [part, count] of collectGroups(group.children)) best.set(part, count)
-        }
-        if (!candidates.length && group.leaf && !next.has(group.leaf)) {
-          for (const [part, count] of collect(group.leaf, next)) best.set(part, count)
-          best.set(group.leaf, (best.get(group.leaf) ?? 0) + 1)
-        }
-        if (group.shape) best.set(group.shape, (best.get(group.shape) ?? 0) + 1)
-        for (const [part, count] of best) out.set(part, (out.get(part) ?? 0) + count)
+    /** @type {Map<string, number>} */
+    const best = new Map()
+    for (const view of descriptionGroups.get(char) ?? []) {
+      for (const [part, count] of collectGroups(char, view.groups, path)) {
+        if (count > (best.get(part) ?? 0)) best.set(part, count)
       }
-      return out
     }
-    return collectGroups(groupsOf(char))
+    return best
+  }
+
+  /**
+   * The parts of one description of a character, counted through its groups.
+   * @param {string} char @param {PartGroup[]} groups @param {Set<string>} path
+   * @returns {Map<string, number>}
+   */
+  function collectGroups(char, groups, path) {
+    const next = new Set(path).add(char)
+    /** @type {Map<string, number>} */
+    const out = new Map()
+    for (const group of groups) {
+      /** @type {Map<string, number>} */
+      const best = new Map()
+      const candidates = group.candidates.filter(candidate => !next.has(candidate))
+      for (const candidate of candidates) {
+        /** @type {Map<string, number>} */
+        let found
+        if (group.leaf) {
+          const branch = new Set(next).add(candidate)
+          found = candidate === group.leaf ? collect(candidate, next) :
+            branch.has(group.leaf) ? new Map() : collect(group.leaf, branch)
+          if (!next.has(group.leaf)) found.set(group.leaf, (found.get(group.leaf) ?? 0) + 1)
+        } else found = collect(candidate, next)
+        if (candidate !== group.leaf) found.set(candidate, (found.get(candidate) ?? 0) + 1)
+        for (const [part, count] of found) if (count > (best.get(part) ?? 0)) best.set(part, count)
+      }
+      if (!candidates.length && group.children) {
+        for (const [part, count] of collectGroups(char, group.children, path)) best.set(part, count)
+      }
+      if (!candidates.length && group.leaf && !next.has(group.leaf)) {
+        for (const [part, count] of collect(group.leaf, next)) best.set(part, count)
+        best.set(group.leaf, (best.get(group.leaf) ?? 0) + 1)
+      }
+      if (group.shape) best.set(group.shape, (best.get(group.shape) ?? 0) + 1)
+      for (const [part, count] of best) out.set(part, (out.get(part) ?? 0) + count)
+    }
+    return out
   }
 
   /** @type {Map<string, Map<string, number>>} */
@@ -269,15 +317,11 @@ export function buildPartIndex(entries) {
   const usedBy = new Map()
   /** @type {Map<string, string[]>} */
   const directPartsOf = new Map()
-  /** @type {Map<string, string>} */
-  const layoutOf = new Map()
   for (const entry of entries) {
     const char = entry.char
     const parts = collect(char, new Set())
     partsOf.set(char, parts)
     directPartsOf.set(char, directParts(char))
-    const root = read.get(char)?.roots[0]
-    if (root !== undefined) layoutOf.set(char, typeof root === 'string' ? '' : root.op)
     for (const part of parts.keys()) {
       let users = usedBy.get(part)
       if (!users) usedBy.set(part, users = new Set())
@@ -293,28 +337,36 @@ export function buildPartIndex(entries) {
       directPartsOf.set(part, root.parts.map(child => editorialNode(child, part)).filter(child => isTangut(child) || isDescriptionPart(child)))
     }
   }
-  return { partsOf, usedBy, directPartsOf, layoutOf, partGroups: groupCache }
+  return { partsOf, usedBy, directPartsOf, descriptionGroups }
 }
 
 /**
  * The characters that hold every part, as often as asked, at any layer. The smallest set of
  * holders of one part is scanned, never the whole table.
- * @param {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, partGroups: Map<string, PartGroup[]> }} index
+ * @param {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, descriptionGroups: Map<string, { op: string, groups: PartGroup[] }[]> }} index
  * @param {string[]} parts
+ * @param {string} [layout] an IDS operator, matched against the description the parts are read in
  * @returns {string[]}
  */
-export function matchByParts(index, parts) {
-  if (!parts.length) return []
+export function matchByParts(index, parts, layout = '') {
+  if (!parts.length && !layout) return []
   /** @type {Map<string, number>} */
   const need = new Map()
   for (const part of parts) need.set(part, (need.get(part) ?? 0) + 1)
   /** @type {Iterable<string>} */
-  let pool = []
+  let pool = need.size ? [] : (index.descriptionGroups?.keys() ?? [])
   let smallest = Infinity
   for (const part of need.keys()) {
     const users = index.usedBy.get(part)
     if (!users) return []
     if (users.size < smallest) { pool = users; smallest = users.size }
+  }
+  /** Every description a character has, the record first: a nested character is read the same way.
+   * A character without one contributes itself and no parts.
+   * @param {string} char @returns {PartGroup[][]} */
+  const descriptionsOf = char => {
+    const views = index.descriptionGroups?.get(char) ?? []
+    return views.length ? views.map(view => view.groups) : [[]]
   }
   const wanted = [...need.keys()]
   const limits = wanted.map(part => need.get(part) ?? 0)
@@ -358,7 +410,7 @@ export function matchByParts(index, parts) {
       function* expandLeaf(value, branch) {
         if (!group.leaf || branch.has(group.leaf)) { yield value; return }
         const next = new Set(branch).add(group.leaf)
-        yield* resolve(index.partGroups.get(group.leaf) ?? [], next, add(value, group.leaf))
+        for (const groupsOfLeaf of descriptionsOf(group.leaf)) yield* resolve(groupsOfLeaf, next, add(value, group.leaf))
       }
       if (!candidates.length) {
         if (group.children) {
@@ -372,12 +424,16 @@ export function matchByParts(index, parts) {
           if (group.leaf) {
             const value = add(counts, candidate)
             if (candidate === group.leaf) {
-              for (const nested of resolve(index.partGroups.get(candidate) ?? [], next, value)) yield* advance(nested)
+              for (const groupsOfCandidate of descriptionsOf(candidate)) {
+                for (const nested of resolve(groupsOfCandidate, next, value)) yield* advance(nested)
+              }
             } else {
               for (const nested of expandLeaf(value, next)) yield* advance(nested)
             }
           } else {
-            for (const nested of resolve(index.partGroups.get(candidate) ?? [], next, add(counts, candidate))) yield* advance(nested)
+            for (const groupsOfCandidate of descriptionsOf(candidate)) {
+              for (const nested of resolve(groupsOfCandidate, next, add(counts, candidate))) yield* advance(nested)
+            }
           }
         }
       }
@@ -388,12 +444,24 @@ export function matchByParts(index, parts) {
   const hits = []
   for (const char of pool) {
     const have = index.partsOf.get(char)
-    if (![...need].every(([part, count]) => (have?.get(part) ?? 0) >= count)) continue
-    // Per-part maxima are exact for a single distinct part.
-    if (need.size === 1) { hits.push(char); continue }
-    for (const counts of resolve(index.partGroups.get(char) ?? [], new Set([char]), limits.map(() => 0))) {
-      if (counts.every((count, i) => count >= limits[i])) { hits.push(char); break }
-    }
+    if (need.size && ![...need].every(([part, count]) => (have?.get(part) ?? 0) >= count)) continue
+    // The layout and the parts are read from one description: a part of the record does not pair
+    // with an operator only an alias opens with.
+    const views = (index.descriptionGroups?.get(char) ?? []).filter(view => !layout || view.op === layout)
+    if (!views.length) continue
+    if (!need.size) { hits.push(char); continue }
+    // Per-part maxima are exact for a single distinct part, and exact for a character whose one
+    // description already passed the layout filter.
+    if (need.size === 1 && (index.descriptionGroups?.get(char) ?? []).length === 1) { hits.push(char); continue }
+    // A character matches from any one of its descriptions; parts of two descriptions are not
+    // added together.
+    const matches = views.some(view => {
+      for (const counts of resolve(view.groups, new Set([char]), limits.map(() => 0))) {
+        if (counts.every((count, i) => count >= limits[i])) return true
+      }
+      return false
+    })
+    if (matches) hits.push(char)
   }
   return hits
 }
