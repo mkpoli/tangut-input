@@ -13,6 +13,7 @@
   import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
   import STATE_NAMES from '../data/tangut-state-names.json' with { type: 'json' }
   import LATER_ERAS from '../data/tangut-later-eras.json' with { type: 'json' }
+  import CONTEMPORARY_ERAS from '../data/tangut-contemporary-eras.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
   import { choose } from '../lib/ui.svelte.js'
   import { hex } from '../lib/db.svelte.js'
@@ -76,6 +77,7 @@
   const tabs = [
     { id: 'eras', key: 'eras.tab.eras', count: rows.length },
     { id: 'coins', key: 'eras.coins.title', count: COINS.coins.length },
+    { id: 'contemporary-eras', key: 'eras.contemporary.tab', count: CONTEMPORARY_ERAS.length },
     { id: 'titles', key: 'eras.tab.titles', count: TITLES.length },
     { id: 'posthumous', key: 'eras.tab.posthumous', count: POSTHUMOUS.length },
     { id: 'states', key: 'eras.tab.states', count: STATE_NAMES.length },
@@ -249,6 +251,26 @@
     </details>
   </section>
 
+  <section class="ui-section titles" id="contemporary-eras">
+    <h2 class="heading">{t('eras.contemporary.title')}<span class="ui-count">{CONTEMPORARY_ERAS.length}</span></h2>
+    <div class="ui-table-wrap">
+      <table class="ui-table list contemporary-table">
+        <thead><tr><th scope="col">{t('eras.era')}</th><th scope="col">{t('eras.years')}</th><th scope="col">{t('eras.contemporary.inscription')}</th><th scope="col">{t('eras.basis')}</th></tr></thead>
+        <tbody>
+          {#each CONTEMPORARY_ERAS as era (era.era)}
+            <tr>
+              <th scope="row" lang="zh-Hant">{era.era}</th>
+              <td class="years">{era.years.join('–')}</td>
+              <td class="forms title-form"><span class="form" role="group" aria-label={t('eras.contemporary.transcription')}>{#each [...era.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span><span class="mark" role="img" aria-label={t('eras.contemporary.uncertain')}>?</span></td>
+              <td class="basis"><span class="tag" data-kind="reported">{t('eras.contemporary.transcription')}</span>{@render cites([era.proposalSource])}<p class="note">{t('eras.contemporary.note')}{@render cites([era.source])}</p><p class="note">{t('eras.contemporary.comparison')}{@render cites([era.proposalSource, era.source])}</p><p class="note">{t('eras.contemporary.dictionary')}{@render cites(era.dictionarySources)}</p></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="ui-section titles" id="titles">
     <h2 class="heading">{t('eras.titles')}<span class="ui-count">{TITLES.length}</span></h2>
     <p class="ui-hint">{t('eras.titles.intro')}</p>
@@ -390,6 +412,7 @@
   .coins details > .ui-hint{margin-block:var(--ui-space-sm)}
   .coin-characters td{font-variant-numeric:tabular-nums}
   .title-form{white-space:normal}
+  .contemporary-table .title-form{white-space:nowrap}
   .title-form .form{flex-wrap:wrap;vertical-align:middle}
   .chinese{min-inline-size:12em;font-size:var(--ui-text-sm)}
   .inferred{margin-inline-start:2px;color:var(--ui-color-ink-muted)}
@@ -422,6 +445,7 @@
     .posthumous-form{display:flex;margin-inline-start:0}
     .no-chinese{display:none}
     .list thead{display:none}
+    .contemporary-table thead{display:table-header-group;position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
     .list tr{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:baseline;column-gap:var(--ui-space-sm);padding-block:var(--ui-space-sm);border-bottom:1px solid var(--ui-color-border)}
     .list tr:last-child{border-bottom:0}
     .list th[scope='row'],.list td{padding:0 var(--ui-space-sm);border:0}
