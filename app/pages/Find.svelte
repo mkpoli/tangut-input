@@ -10,6 +10,9 @@
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
   import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, tangutIn } from '../lib/search.js'
+  import { isDescriptionPart } from '../lib/composition.js'
+  import { editorialDescription } from '../lib/ids-views.js'
+  import { encodePartsQuery } from '../lib/parts-query.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
   import { parseIdentifier } from '../lib/identifiers.js'
@@ -22,13 +25,22 @@
 
   const groups = $derived.by(() => {
     if (!ready || !text) return []
-    /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string, sound?: string, tibetan?: boolean }[] }[]} */
+    /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, href?: string, total: number, items: { char: string, sub: string, extra?: string, sound?: string, tibetan?: boolean }[] }[]} */
     const out = []
     // A whole description or its opening is read against both recorded and editorial forms.
     const described = byDescription(text)
     if (described.length) {
       out.push({ key: 'description', title: t('find.group.description'), total: described.length,
         items: described.map(char => ({ char, sub: gloss(char) })) })
+      return out
+    }
+    // A description no character carries whole can still be a part the others are built with.
+    const shape = isDescriptionPart(text) ? editorialDescription(text, ix.idsIndex) : ''
+    const holders = shape && ix.usedBy.has(shape) ? [...(ix.usedBy.get(shape) ?? [])] : []
+    if (holders.length) {
+      out.push({ key: 'part', title: t('find.group.parts'), total: holders.length,
+        items: holders.slice(0, 24).map(char => ({ char, sub: gloss(char) })),
+        href: link('parts', '', encodePartsQuery([shape], '')) })
       return out
     }
     const chars = tangutIn(text)
@@ -177,7 +189,7 @@
         <header class="ui-section-head">
           <h2 class="ui-label">{group.title}</h2>
           <span class="ui-count">{group.total > group.items.length ? t('common.of', { shown: group.items.length, total: group.total }) : group.total}</span>
-          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}<Icon name="arrow" size={13}/></a>{/if}
+          {#if group.href}<a class="ui-more-link" href={group.href}>{t('find.continue', { page: t('nav.parts') })}<Icon name="arrow" size={13}/></a>{:else if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}<Icon name="arrow" size={13}/></a>{/if}
         </header>
         {#if group.key === 'text'}
           <ol class="ui-rows">

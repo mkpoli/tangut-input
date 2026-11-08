@@ -79,6 +79,7 @@
   "find.group.meaning": "意味から",
   "find.group.tibetan": "チベット文字表記として",
   "find.group.description": "構成記述から",
+  "find.group.parts": "この部品をもつ文字",
   "find.group.identifier": "識別番号として",
   "find.group.seta": "チベット拡張A PUAコードとして",
   "find.door.cangjie": "字形コードを一字ずつ入力します。候補には番号が振られ、素早く確定できます。画面のキーボードは字根表を兼ねており、すべての部品に固有のコードがあります。",

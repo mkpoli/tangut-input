@@ -79,6 +79,7 @@
   "find.group.meaning": "By meaning",
   "find.group.tibetan": "As a Tibetan spelling",
   "find.group.description": "By description",
+  "find.group.parts": "Characters with this part",
   "find.group.identifier": "As an identifier",
   "find.group.seta": "As a Tibetan Set A PUA code",
   "find.door.cangjie": "Type the glyph code letter by letter; candidates are numbered for quick entry. The keyboard is also the key chart, and every component has its own code.",
