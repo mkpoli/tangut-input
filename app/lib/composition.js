@@ -69,6 +69,37 @@ export function leavesOf(composition) {
 export const isDescriptionPart = part => [...(part ?? '')].some(char => OPERATORS.has(char))
 
 /**
+ * A description read as two parts wherever a pair of its three operands spells a character: a
+ * character of three columns or three rows is often one part beside a character of two. The pair
+ * that spells a character is the evidence for the cut; both pairs or neither leave three operands.
+ * A node that spells a character whole is left as it is, so the character stays the base there.
+ * @param {{ roots: Node[], complete: boolean }} parsed
+ * @param {(text: string) => string[]} charactersAt the characters a description spells, the character itself left out
+ * @returns {{ roots: Node[], complete: boolean }}
+ */
+export function binaryDescription(parsed, charactersAt) {
+  /** @param {Node} node @returns {Node} */
+  const regroup = node => {
+    if (typeof node === 'string') return node
+    // A truncated node is no character's description, but the operands it kept may be.
+    if (node.cut) return { ...node, parts: node.parts.map(regroup) }
+    // A node that spells a character is that character's base; its own cut is the character's.
+    if (charactersAt(writeDescription(node)).length) return { ...node, parts: node.parts }
+    const parts = node.parts.map(regroup)
+    if (parts.length !== 3) return { ...node, parts }
+    const op = node.op === '⿳' ? '⿱' : node.op === '⿲' ? '⿰' : ''
+    if (!op) return { ...node, parts }
+    const text = parts.map(writeDescription)
+    const tail = charactersAt(op + text[1] + text[2])
+    const head = charactersAt(op + text[0] + text[1])
+    if (tail.length === 1 && !head.length) return { op, parts: [parts[0], { op, parts: [parts[1], parts[2]] }] }
+    if (head.length === 1 && !tail.length) return { op, parts: [{ op, parts: [parts[0], parts[1]] }, parts[2]] }
+    return { ...node, parts }
+  }
+  return { roots: parsed.roots.map(regroup), complete: parsed.complete }
+}
+
+/**
  * The parts of every character, at every layer. A subtree that spells another character stands for
  * that character, whose own parts stand under it in turn, so a part is found however deep it lies.
  * A leaf that spells several characters keeps its written component as the character's direct part,
@@ -90,35 +121,9 @@ export function buildPartIndex(entries) {
   const read = new Map()
   /** @type {Map<string, string>} */
   const compositionOf = new Map()
-  /**
-   * A description read as two parts wherever a pair of its three operands spells a character: a
-   * character of three columns or three rows is often one part beside a character of two. The pair
-   * that spells a character is the evidence for the cut; both pairs or neither leave three operands.
-   * A node that spells a character whole is left as it is, so the character stays the base there.
-   * @param {{ roots: Node[], complete: boolean }} parsed @param {string} self
-   */
+  /** @param {{ roots: Node[], complete: boolean }} parsed @param {string} self */
   function binaryView(parsed, self) {
-    /** @param {string} text */
-    const charactersFor = text => (byDescription.get(text) ?? []).filter(char => char !== self)
-    /** @param {Node} node @returns {Node} */
-    const regroup = node => {
-      if (typeof node === 'string') return node
-      // A truncated node is no character's description, but the operands it kept may be.
-      if (node.cut) return { ...node, parts: node.parts.map(regroup) }
-      // A node that spells a character is that character's base; its own cut is the character's.
-      if (charactersFor(writeDescription(node)).length) return { ...node, parts: node.parts }
-      const parts = node.parts.map(regroup)
-      if (parts.length !== 3) return { ...node, parts }
-      const op = node.op === '⿳' ? '⿱' : node.op === '⿲' ? '⿰' : ''
-      if (!op) return { ...node, parts }
-      const text = parts.map(writeDescription)
-      const tail = charactersFor(op + text[1] + text[2])
-      const head = charactersFor(op + text[0] + text[1])
-      if (tail.length === 1 && !head.length) return { op, parts: [parts[0], { op, parts: [parts[1], parts[2]] }] }
-      if (head.length === 1 && !tail.length) return { op, parts: [{ op, parts: [parts[0], parts[1]] }, parts[2]] }
-      return { ...node, parts }
-    }
-    return { roots: parsed.roots.map(regroup), complete: parsed.complete }
+    return binaryDescription(parsed, text => (byDescription.get(text) ?? []).filter(char => char !== self))
   }
   for (const entry of entries) {
     if (!entry.composition) continue
