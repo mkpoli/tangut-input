@@ -94,6 +94,9 @@
   const narrowScreen = () => matchMedia('(max-width: 900px)').matches
   const coinSource = ERA_SOURCES[/** @type {keyof typeof ERA_SOURCES} */ (COINS.source)]
 
+  /** @param {string} text */
+  const isChinese = text => /[\u3400-\u9FFF]/.test(text)
+
   /** @param {CoinImage} image */
   const imageAlt = image => t(image.kind === 'photograph' ? 'eras.coins.image.photographAlt' : 'eras.coins.image.drawingAlt')
 
@@ -384,13 +387,13 @@
                 <span class="preview-failed">{t('eras.coins.image.failed')}</span>
               {:else}
                 <div class="preview-frame">
-                  {#if !loadedImages[image.src]}<span class="preview-loading">{t('eras.coins.image.loading')}</span>{/if}
                   <img src={image.src} alt={imageAlt(image)} width={image.width} height={image.height} decoding="async"
                     onload={() => { loadedImages = { ...loadedImages, [image.src]: true } }}
                     onerror={() => { failedImages = { ...failedImages, [image.src]: true } }}/>
+                  {#if !loadedImages[image.src]}<span class="preview-loading">{t('eras.coins.image.loading')}</span>{/if}
                 </div>
               {/if}
-              <figcaption><span>{t(`eras.coins.image.${image.kind}`)}</span>{#if image.label}<span lang="zh-Hant">{image.label}</span>{/if}</figcaption>
+              <figcaption><span>{t(`eras.coins.image.${image.kind}`)}</span>{#if image.label}<span lang={isChinese(image.label) ? 'zh-Hant' : undefined}>{image.label}</span>{/if}</figcaption>
             </figure>
           {/each}
         </div>
@@ -569,7 +572,7 @@
   .preview-frame{display:grid;place-items:center}
   .preview-frame > *{grid-area:1 / 1}
   .preview-images img{display:block;block-size:112px;inline-size:auto;max-inline-size:100%;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-sm);background:var(--ui-color-canvas)}
-  .preview-loading{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
+  .preview-loading{position:relative;z-index:1;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
   .preview-images figure[data-kind='photograph'] img,.preview-images figure:only-child img{block-size:196px}
   .preview-images figcaption{display:grid;justify-items:center;gap:1px;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);line-height:1.35;text-align:center}
   .preview-images figcaption span:last-child{color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}

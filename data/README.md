@@ -95,7 +95,7 @@ interpretation the drawing sets. Four types have a photograph (福聖, 貞觀, �
 drawing, and 福聖 two drawings for its two readings. The files stay on BabelStone’s server: the
 preview loads them from there and does not copy them. Zeno, the source of two photographs, grants
 reuse with a link to the image number ([terms](https://www.zeno.ru/rules.php)); the 貞觀 and 正德
-photographs come from a [coin forum thread](http://www.hqcoin.com/bbs/TopicOther.asp?t=5&BoardID=356&id=26449)
+photographs come from a [archived coin forum thread](http://web.archive.org/web/20251007194858/http://www.hqcoin.com/bbs/TopicOther.asp?t=5&BoardID=356&id=26449) (the live host no longer answers)
 linked by West, and BabelStone states no terms of its own.
 
 ## `tangut-posthumous.tsv`
