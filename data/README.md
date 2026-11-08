@@ -135,6 +135,16 @@ West warns about wear and forgeries and leaves three types disputed: 福聖/稟�
 questioned era attribution. No reuse licence is stated; photographs remain linked at the source.
 The citation key `west2007` resolves in `app/lib/era-sources.js`.
 
+Each coin also lists the images West prints, shown when a reader hovers the row or opens its
+images button. `kind` is `photograph` for a photograph of one specimen or `drawing` for his
+reconstruction of the inscription as he reads it; `label` is the specimen number or the
+interpretation the drawing sets. Four types have a photograph (福聖, 貞觀, 正德 and 天慶), all six a
+drawing, and 福聖 two drawings for its two readings. The files stay on BabelStone’s server: the
+preview loads them from there and does not copy them. Zeno, the source of two photographs, grants
+reuse with a link to the image number ([terms](https://www.zeno.ru/rules.php)); the 貞觀 and 正德
+photographs come from a [archived coin forum thread](http://web.archive.org/web/20251007194858/http://www.hqcoin.com/bbs/TopicOther.asp?t=5&BoardID=356&id=26449) (the live host no longer answers)
+linked by West, and BabelStone states no terms of its own.
+
 ## `tangut-posthumous.tsv`
 
 Posthumous, temple and tomb names, one row per emperor or empress: `kind`, the names, an empress's `relation` to a ruler, Tangut with its
@@ -161,12 +171,17 @@ What English and Chinese Wiktionary state about Tangut variant forms (CC BY-SA 4
 2026-11-01: `form`, `base`, `kind` (`variant` or `synonym`), `scope` (`partial` when the page has several
 etymologies and the statement covers one word) and each page's revision as `wiki:revision`. Rebuild with
 `uv run scripts/extract_tangut_variants.py en=<dump> zh=<dump>`. `tangut-component-variants.tsv` holds
-component pairs used to find possible variants, from NGWU YOH's table, and `tangut-variants-reported.tsv`
-holds pairs from NGWU YOH's messages. `tangut-component-groups.tsv` holds the groups of their table with more
+component pairs used to find possible variants, from NGWU YOH's table and the screenshots of 2026-11-07, and
+`tangut-variants-reported.tsv` holds pairs from NGWU YOH's messages. Which code points the screenshots show is
+the site's reading of them against the Noto Serif Tangut and Tangut Yinchuan glyphs.
+`tangut-component-groups.tsv` holds the groups of their table with more
 than one member, each marked `apart` when its members mostly stand in different places or `shared` when
 they stand in the same ones. `kind_source` says who says so: NGWU YOH for 𘠣𘡍𘠅, the site's reading of the counts
-for the rest. The parts palette keeps them together and the variants page lists them. `uv run scripts/build_tangut_variants.py` writes
-`app/data/tangut-variants.json`, which `app/lib/variants.js` reads.
+for the rest. The build marks a pair `surrounding` when one member stands only first in ⿺ in the recorded
+descriptions and the other never stands there: the app then reads ⿰ beside that member as ⿺ with the hooked
+form, and the other way. `uv run scripts/build_tangut_variants.py` writes
+`app/data/tangut-variants.json`, which `app/lib/variants.js` reads. The parts palette keeps the groups together
+and the variants page lists them.
 
 ## `tangut-titles.tsv`
 
@@ -673,6 +688,19 @@ Fanwen number and a 文海 position carry none. Rebuild with
 under the Unicode License v3; the two BabelStone pages state no licence, and only the factual
 numbers are kept.
 
+## `tangut-tibetan-seta.json.gz`
+
+The 1,536 precomposed characters of Tibetan Extension-A (藏文编码字符集（扩充集A）), U+F300–U+F8FF,
+each with the Unicode Tibetan sequence it stands for. The source is `data/tibetan-seta.tsv`, read from
+Andrew West's archived mapping table on 2026-11-08; the live page now returns 404. The page states no
+licence, and only the code points and sequences are kept. Set B, announced for the Supplementary
+Private Use Area, was never published.
+
+Format: `format`, `standard`, `source` (the archived URL), `original`, `author`, `retrieved`, `note`
+and `map`, each row `[code, script, sequence]`. Rebuild with `python3 scripts/build_tibetan_seta.py`.
+A spelling matches only when its folded script is exactly one of the sequences; 119 codes cover 213
+characters across BabelStone's index and the hand-class tables.
+
 ## `tangut-layers.json.gz`
 
 The largest character split of 2,408 Tangut descriptions, 16 KB gzipped. BabelStone describes every
@@ -734,9 +762,10 @@ The parts finder indexes complete subtrees of these IDS descriptions as selectab
 subtree matches a single character's complete description, the editorial form can use that
 character; this is a shape comparison, not a documented historical derivation. A description of
 three columns or three rows is read as two parts when exactly one pair of adjacent operands spells a
-character: 𗆫 (`⿲𘠐𘧘𘣩`) reads as 𘠐 and 𘓔 (`⿰𘧘𘣩`), 633 of the 1,707 complete single-root three-operand descriptions. When
-both pairs spell a character, or neither does, the three operands stay as the source writes them.
-The cut is editorial and comes from the shapes alone; the recorded description is unchanged.
+character: 𗆫 (`⿲𘠐𘧘𘣩`) reads as 𘠐 and 𘓔 (`⿰𘧘𘣩`), 633 of the 1,707 complete single-root three-operand
+descriptions. When both pairs spell a character, or neither does, the three operands stay as the
+source writes them. The cut is editorial and comes from the shapes alone; the recorded description
+is unchanged. The card's structure view reads the same cut, so the two show one description.
 
 The suggestion to retain intermediate parts, including `⿱𘡊𗎘`, and to keep a whole character such as
 𘓔 as one base, came from a private communication shared on 2026-11-07 (name withheld); it gives

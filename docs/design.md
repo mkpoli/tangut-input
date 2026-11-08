@@ -80,9 +80,9 @@ With an empty box, the page shows the nine finders as doors with one line each, 
 
 **Texts** (`/texts`) lists the 36 texts behind the attested corpus, grouped as the edition,
 Wikisource, the Lausanne Corpus and MiCA. Each row gives its passages and characters, links its
-source, and loads its first line into Transcribe. Read opens the text passage by passage; every
-Tangut character there opens its card. The counts come from the attestation, not from a separate
-text table.
+source, and loads its first line into Transcribe. Read opens the text passage by passage; a Glosses
+toggle puts Chinese and English glosses under each character, and every character opens its card.
+The counts come from the attestation, not from a separate text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
 code box takes letters, candidates are numbered 1–9, `Space` or a digit commits into the text,
@@ -141,6 +141,8 @@ recorded with the fanqie it was made for.
 - Add to text, Copy the character, Copy link.
 - Identifiers: the Li Fanwen 2008 number, 文海 page and entry, Mojikyo and XXZT code points,
   click-to-copy, each system linked to its source.
+- A Tibetan spelling's tooltip adds its Tibetan Extension-A code when the precomposed table has
+  the exact sequence.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).
@@ -194,7 +196,7 @@ way and drawn with a fixed pen.
 
 Each glyph is scored by two chamfer distances. The first is the mean distance from the drawing's ink
 to the glyph's line plus the reverse. The second reads the direction the ink runs at each cell, in
-four bins of 45° taken from the second moments of the ink within two cells, on both sides: each glyph
+eight bins of 22.5° taken from the second moments of the ink within two cells, on both sides: each glyph
 cell adds the distance from itself to drawing ink drawn along its own direction, and the mean is
 doubled. Comparing lines with lines and directions with directions is what a drawing is: it has no
 stroke width to match. A lone stroke keeps a sliver shape instead of being blown up into a block.

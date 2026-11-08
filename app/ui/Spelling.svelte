@@ -10,10 +10,12 @@
   import { onDestroy } from 'svelte'
   import { t } from '../lib/i18n.svelte.js'
   import { claim, release } from '../lib/spelling.js'
+  import { copy } from '../lib/clip.svelte.js'
+  import { SETA_SOURCE } from '../lib/seta.js'
 
   /** @type {{ script: string, transcription: string, ipa: string, lang: 'bo' | 'sa',
-   *   printed?: string, hand?: string, count?: number, babelstone?: boolean }} */
-  let { script, transcription, ipa, lang, printed = '', hand = '', count, babelstone = false } = $props()
+   *   printed?: string, hand?: string, count?: number, babelstone?: boolean, pua?: string }} */
+  let { script, transcription, ipa, lang, printed = '', hand = '', count, babelstone = false, pua = '' } = $props()
 
   const id = `spelling-${++serial}`
   let open = $state(false)
@@ -145,11 +147,13 @@
       <dl>
         {#if ipa}<dt title={t('card.spellingIpaNote')}>{t('card.spellingIpa')}</dt><dd class="ipa">[{ipa}]</dd>{/if}
         {#if printed && printed !== transcription}<dt>{t('card.spellingPrinted')}</dt><dd class="ui-mono">{printed}</dd>{/if}
+        {#if pua}<dt>{t('card.spellingSeta')}</dt><dd><button type="button" class="ui-mono seta" title={t('card.copyIdentifier', { id: pua })} onclick={() => copy(pua, pua)}>{pua}</button></dd>{/if}
       </dl>
       {#if printed.includes('?')}<p class="unread ui-hint">{t('card.spellingUnread')}</p>{/if}
       <p class="links">
         <a href="https://zhuanlan.zhihu.com/p/272058247" target="_blank" rel="noopener noreferrer">{t('card.spellingSource')}<span aria-hidden="true">↗</span></a>
         {#if babelstone}<a href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.spellingIndex')}<span aria-hidden="true">↗</span></a>{/if}
+        {#if pua}<a href={SETA_SOURCE} target="_blank" rel="noopener noreferrer">{t('card.spellingSetaSource')}<span aria-hidden="true">↗</span></a>{/if}
       </p>
     </div>
   {/if}
@@ -175,6 +179,7 @@
   dt{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
   dd{margin:0;font-size:var(--ui-text-xs);overflow-wrap:anywhere}
   .ipa{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm);letter-spacing:0.01em}
+  .seta{padding:0;border:0;background:none;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
   .unread{margin:var(--ui-space-sm) 0 0;font-size:var(--ui-text-2xs);line-height:1.35}
   .links{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-md);margin:var(--ui-space-sm) 0 0;padding-top:var(--ui-space-sm);border-top:1px solid var(--ui-color-border)}
   .links a{display:inline-flex;align-items:center;gap:2px;font-size:var(--ui-text-xs);text-underline-offset:2px}

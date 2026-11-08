@@ -9,10 +9,11 @@
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
-  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byHanziName, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byHanziName, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
   import { parseIdentifier } from '../lib/identifiers.js'
+  import { parseSetaQuery } from '../lib/seta.js'
   import HanziNames from '../ui/HanziNames.svelte'
 
   let query = $state(route.q)
@@ -36,6 +37,14 @@
     if (chars.length) {
       out.push({ key: 'text', title: chars.length === 1 ? t('find.group.character') : t('find.group.text'), total: chars.length,
         items: chars.map(char => ({ char, sub: gloss(char), extra: firstReading(char) })) })
+      return out
+    }
+    // A Set A code is a whole answer: its digits and Latin letters are not also a reading.
+    const setaQuery = parseSetaQuery(text)
+    if (setaQuery) {
+      const seta = byTibetanSeta(text).sort((a, b) => (ix.frequency.get(b.char) ?? 0) - (ix.frequency.get(a.char) ?? 0) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+      if (seta.length) out.push({ key: 'seta', title: `${t('find.group.seta')} · ${setaQuery}`, total: seta.length,
+        items: seta.slice(0, 24).map(hit => ({ char: hit.char, sub: gloss(hit.char), sound: hit.script, tibetan: true })) })
       return out
     }
     // An identifier is a whole answer: its Latin letters and digits are not also a reading or a code.
@@ -127,6 +136,7 @@
     { value: 'ndzi', mono: true },
     { value: 'U+1736', mono: true },
     { value: 'L0009', mono: true },
+    { value: 'U+F5C0', mono: true },
     { value: '⿰𘤊', ids: true },
   ]
 </script>

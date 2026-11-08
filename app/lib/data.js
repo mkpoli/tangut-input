@@ -32,6 +32,9 @@
  *   cangjie: string[], glyph: string }} SupplementCharacter */
 /** @typedef {{ format: string, unicode: string, built: string, sources: { id: string, name: string, url: string, sha256?: string, commit?: string }[],
  *   counts: Record<string, number>, characters: SupplementCharacter[] }} Supplement */
+/** Tibetan Extension-A code points and the Unicode sequences they stand for. @typedef {{ format: string,
+ *   standard: string, source: string, original: string, author: string, retrieved: string, sha256: string, note: string,
+ *   map: [code: string, script: string, sequence: string][] }} TibetanSeta */
 /** The numbers and legacy code points a character has, by system. @typedef {{ format: string, retrieved: string,
  *   sources: Record<string, { name: string, url: string, sha256?: string, note?: string, licence?: string }>,
  *   chars: Record<string, import('./identifiers.js').Row[]> }} Identifiers */
@@ -153,6 +156,9 @@ export const loadStrokes = () => once('strokes', async () => (await readJson(new
 
 /** The numbers and legacy code points each character has. @returns {Promise<Identifiers>} */
 export const loadIdentifiers = () => once('identifiers', () => readJson(new URL('../data/tangut-identifiers.json.gz', import.meta.url)))
+
+/** The precomposed Tibetan Extension-A characters. @returns {Promise<TibetanSeta>} */
+export const loadTibetanSeta = () => once('tibetan-seta', () => readJson(new URL('../data/tangut-tibetan-seta.json.gz', import.meta.url)))
 
 /** The lines of the recorded corpus and where each character stands in them. @returns {Promise<Attestation>} */
 export const loadAttestation = () => once('attestation', () => readJson(new URL('../data/tangut-attestation.json.gz', import.meta.url)))
