@@ -80,9 +80,9 @@ With an empty box, the page shows the nine finders as doors with one line each, 
 
 **Texts** (`/texts`) lists the 36 texts behind the attested corpus, grouped as the edition,
 Wikisource, the Lausanne Corpus and MiCA. Each row gives its passages and characters, links its
-source, and loads its first line into Transcribe. Read opens the text passage by passage; every
-Tangut character there opens its card. The counts come from the attestation, not from a separate
-text table.
+source, and loads its first line into Transcribe. Read opens the text passage by passage; a Glosses
+toggle puts Chinese and English glosses under each character, and every character opens its card.
+The counts come from the attestation, not from a separate text table.
 
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
 code box takes letters, candidates are numbered 1–9, `Space` or a digit commits into the text,
@@ -115,16 +115,17 @@ number of strokes drawn; another adds components to the search. On a phone, resu
 after the pad and the note follows them.
 
 **Parts** (`/parts`) builds a character from parts, as the script is built. A part can be a
-component or a character that the description spells whole, at any layer of the description: a
-subtree that spells a character stands for it, and its own parts are followed in turn. The palette
-and the matching characters sit in two panes side by side, stacked on a narrow screen, each
-scrolling on its own, so a new match never pushes the palette out of reach. Each chosen part keeps
-only the characters that hold it anywhere in their description (twice if chosen twice), and the
-palette keeps only the parts that still occur, with a count on each, so the next choice always
-leads somewhere. An outer layout (side by side, above and below, three across …) narrows
-further. The palette is ordered by stroke
-count, then by use, and can be filtered by Cangjie code or Japanese shape name. Choosing a part
-also opens it in the card. A card's “Characters with these parts” link opens Parts with that
+component, a character that the description spells whole, or an unencoded tree of either (𗁛 breaks
+into 𘠁 and `⿱𘡊𗎘`), at any layer of the description: a subtree that spells a character stands for it,
+and its own parts are followed in turn. A description of three columns or three rows is read as two
+parts when exactly one adjacent pair spells a character, so 𗆫 is 𘠐 and 𘓔. The palette and the
+matching characters sit in two panes side by side, stacked on a narrow screen, each scrolling on its
+own, so a new match never pushes the palette out of reach. Each chosen part keeps only the
+characters that hold it anywhere in their description (twice if chosen twice), and the palette keeps
+only the parts that still occur, with a count on each, so the next choice always leads somewhere. An
+outer layout (side by side, above and below, three across …) narrows further. The palette is ordered
+by stroke count, then by use, and can be filtered by Cangjie code or Japanese shape name. Choosing a
+part also opens it in the card. A card's “Characters with these parts” link opens Parts with that
 character's parts chosen.
 
 **Fanqie** (`/fanqie`) goes the other way: it takes the upper and lower characters a rhyme book
@@ -139,12 +140,17 @@ recorded with the fanqie it was made for.
 - Large glyph on a centre cross, code point (click to copy), first English sense, strokes, radical
   (click to open).
 - Add to text, Copy the character, Copy link.
+- Identifiers: the Li Fanwen 2008 number, 文海 page and entry, Mojikyo and XXZT code points,
+  click-to-copy, each system linked to its source.
+- A Tibetan spelling's tooltip adds its Tibetan Extension-A code when the precomposed table has
+  the exact sequence.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).
 - 文海 gloss where the records have one (twelve entries).
 - **Built from**: the description drawn as nested frames that follow its layout (a row for ⿰, a
-  column for ⿱, and so on), every part a button to its own card; the raw IDS string, click to copy.
+column for ⿱, and so on), every part a button to its own card; the raw IDS string, click to copy.
+The editorial view reads the same two-part cut the parts finder uses, beside the recorded tree.
   Two links leave the frame: the characters with these parts, and the characters that begin like
   this description.
 - **In a text**: for each place in the corpus, the passage with the character marked (other
@@ -160,9 +166,10 @@ recorded with the fanqie it was made for.
 ## Addresses
 
 Every state worth sharing is in the URL: the finder in the path, the open character as `?c=17E39`
-(hex code point), the finder's query as `?q=`. A link to `/parts?q=𘠀𘠆` opens Parts with those two
-parts chosen; `/?q=…` opens Find with the text. Cloudflare's single-page fallback serves the app
-for every path.
+(hex code point), the finder’s query as `?q=`. A link to `/parts?q=𘠀𘠆` opens Parts with those two
+parts chosen; the page writes its own state back as a JSON pair of parts and layout,
+`?q=[["𘠐","𘓔"],"⿰"]`, so an unencoded part and the chosen layout survive the link. `/?q=…` opens
+Find with the text. Cloudflare’s single-page fallback serves the app for every path.
 
 ## Visual identity
 
@@ -192,7 +199,7 @@ way and drawn with a fixed pen.
 
 Each glyph is scored by two chamfer distances. The first is the mean distance from the drawing's ink
 to the glyph's line plus the reverse. The second reads the direction the ink runs at each cell, in
-four bins of 45° taken from the second moments of the ink within two cells, on both sides: each glyph
+eight bins of 22.5° taken from the second moments of the ink within two cells, on both sides: each glyph
 cell adds the distance from itself to drawing ink drawn along its own direction, and the mean is
 doubled. Comparing lines with lines and directions with directions is what a drawing is: it has no
 stroke width to match. A lone stroke keeps a sliver shape instead of being blown up into a block.

@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
-import { componentPositions, familyIndex, keepVariantsTogether, possiblePairs, variantFamilies, variantIndex } from '../app/lib/variants.js'
+import { componentPositions, familyIndex, keepVariantsTogether, possiblePairs, surroundingDescriptions, variantFamilies, variantIndex } from '../app/lib/variants.js'
 import VARIANTS from '../app/data/tangut-variants.json' with { type: 'json' }
 
 const NONE = { variants: [], partial: [], synonyms: [], components: [], reported: [] }
@@ -18,6 +18,25 @@ test('a shared reading and sense makes a possible variant, and neither alone doe
   expect(index.get('𗀀')?.possible).toEqual(['𗀁'])
   expect(index.get('𗀂')).toBeUndefined()
   expect(index.get('𗀃')).toBeUndefined()
+})
+
+test('a surrounding form turns the ⿰ above it into ⿺, and back', () => {
+  expect(surroundingDescriptions('⿰𘣠𘣩', '𘣠', '𘢢')).toEqual(['⿺𘢢𘣩'])
+  expect(surroundingDescriptions('⿺𘢢𘣩', '𘣠', '𘢢')).toEqual(['⿰𘣠𘣩'])
+  expect(surroundingDescriptions('⿱𘠀⿰𘣠𘣩', '𘣠', '𘢢')).toEqual(['⿱𘠀⿺𘢢𘣩'])
+  // The hook wraps only what follows it: elsewhere, and under another operator, nothing changes.
+  expect(surroundingDescriptions('⿰𘠁𘢢', '𘣠', '𘢢')).toEqual([])
+  expect(surroundingDescriptions('⿱𘣠𘣩', '𘣠', '𘢢')).toEqual([])
+})
+
+test('a surrounding pair links the characters written with either layout', () => {
+  const entry = (char, composition, reading) => ({ char, composition, pronunciations: { li_fanwen: reading } })
+  const stated = { ...NONE, components: [['𘣠', '𘢢']], surrounding: [['𘣠', '𘢢']] }
+  const entries = [entry('𗸘', '⿰𘣠𘣩', 'a1'), entry('𗸠', '⿺𘢢𘣩', 'a1')]
+  expect(variantIndex(possiblePairs(entries, stated), stated).get('𗸘')?.possible).toEqual(['𗸠'])
+  // Without the surrounding rule the plain substitution finds no character at ⿰𘢢𘣩.
+  const plain = { ...NONE, components: [['𘣠', '𘢢']] }
+  expect(variantIndex(possiblePairs(entries, plain), plain).get('𗸘')).toBeUndefined()
 })
 
 test('variant components link characters only when the reading also matches', () => {
@@ -46,8 +65,9 @@ test('the recorded data gives the stated variants and the possible ones', () => 
   const pairs = possiblePairs(entries)
   const index = variantIndex(pairs)
   expect(VARIANTS.variants.length + VARIANTS.partial.length).toBe(28)
-  expect(pairs.length).toBe(19)
-  expect(pairs.filter(pair => pair.components).length).toBe(13)
+  expect(pairs.length).toBe(22)
+  expect(pairs.filter(pair => pair.components).length).toBe(16)
+  expect(VARIANTS.surrounding.length).toBe(4)
   const places = componentPositions(entries)
   expect(Object.keys(places.get('𘡍'))).toEqual(['top'])
   expect(Object.keys(places.get('𘠠'))[0]).toBe('left')
@@ -70,7 +90,11 @@ test('the recorded data gives the stated variants and the possible ones', () => 
   expect(index.get('𗢨')?.reported).toEqual(['𘓐'])
   expect(index.get('𗢨')?.possible).toEqual([])
   expect(index.get('𗥠')?.possible ?? []).toEqual([])
-  expect([...index.values()].flatMap(record => record.possible).length).toBe(38)
+  // 𗸘 is ⿰𘣠𘣩 and 𗸠 is ⿺𘢢𘣩: the plain and the surrounding form of one part, same reading.
+  expect(index.get('𗸘')?.possible).toEqual(['𗸠'])
+  expect(index.get('𗸠')?.possible).toEqual(['𗸘'])
+  expect(index.get('𗸖')?.possible).toEqual(['𗸟'])
+  expect([...index.values()].flatMap(record => record.possible).length).toBe(44)
 })
 
 test('variant components stand together, under the first member\'s strokes', () => {
@@ -119,7 +143,7 @@ test('the recorded data gives the groups a pair list hides', () => {
   const li = packed.systems.indexOf('li_fanwen')
   const entries = packed.rows.map((/** @type {any[]} */ row) => ({ char: row[0], composition: row[1], pronunciations: { li_fanwen: row[7][li] }, definitions: { en: row[4], ja: row[5] } }))
   const families = variantFamilies(possiblePairs(entries))
-  expect(families.length).toBe(46)
+  expect(families.length).toBe(49)
   expect(families[0].members).toEqual(['𗢨', '𘓐'])
   expect(families[0].grounds).toEqual([{ kind: 'reported', count: 1 }])
   const linked = families.filter(family => family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported'))

@@ -36,3 +36,4 @@ the authority for the text, and the editions' own terms apply. The `tangut_lfw.j
 Used by `scripts/build_tangut_attestation.py` as one source, `lcdtt`. The two Bodhicaryāvatāra files
 come from Kirill Solonin and Shintaro Arakawa's edition, whose two ILCAA volumes are CC BY 4.0
 (volume 2: <https://hdl.handle.net/10108/0002001372>). The other texts are cited individually above.
+The Dragon King file's Chinese parallel comes from BabelStone's page; see `../babelstone/README.md`.
