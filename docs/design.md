@@ -143,6 +143,8 @@ recorded with the fanqie it was made for.
   click-to-copy, each system linked to its source.
 - A Tibetan spelling's tooltip adds its Tibetan Extension-A code when the precomposed table has
   the exact sequence.
+- **PUA variants**: the Tangut Yinchuan variant codes of a character, each with its IDS and source,
+  click-to-copy; a code names a variant glyph, not another character.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).
