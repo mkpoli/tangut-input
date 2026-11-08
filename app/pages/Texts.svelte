@@ -21,7 +21,7 @@
     : key === 'mica' ? t('texts.mica')
     : t('texts.wikisource')
 
-  /** @typedef {{ label: string, text: string }} Passage */
+  /** @typedef {{ label: string, text: string, chinese?: string, chineseUrl?: string, chineseCredit?: string }} Passage */
 
   /**
    * One entry per text: a Wikisource page or edition is one text; the Lausanne source is split by
@@ -60,7 +60,7 @@
         entries.set(key, entry)
       }
       entry.passages += 1
-      entry.lines.push({ label: line.label, text: line.text })
+      entry.lines.push({ label: line.label, text: line.text, chinese: line.chinese, chineseUrl: line.chineseUrl, chineseCredit: line.chineseCredit })
       for (const char of line.text) if (isTangut(char)) entry.characters += 1
     }
     return [...entries.values()]
@@ -137,6 +137,9 @@
               {#if isTangut(char)}<button class="char" type="button" onclick={() => choose(char)}>{char}</button>{:else}<span>{char}</span>{/if}
             {/each}
           </p>
+          {#if passage.chinese}
+            <p class="translation" lang="zh-Hant">{passage.chinese}{#if passage.chineseUrl} <a class="translation-source" href={passage.chineseUrl} target="_blank" rel="noreferrer" title={passage.chineseCredit ?? 'BabelStone'}>BabelStone</a>{/if}</p>
+          {/if}
         </li>
       {/each}
     </ol>
@@ -211,6 +214,8 @@
   .passage-head{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm)}
   .label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);font-variant-numeric:tabular-nums}
   .line{margin:0;font-size:22px;line-height:1.8;overflow-wrap:anywhere}
+  .translation{margin:0;font-family:var(--ui-font-serif);font-size:15px;line-height:1.75;color:var(--ui-color-ink-soft);overflow-wrap:anywhere}
+  .translation-source{margin-inline-start:var(--ui-space-2xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted);white-space:nowrap}
   .char{display:inline-flex;align-items:center;justify-content:center;min-inline-size:24px;min-block-size:24px;padding:0 1px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font:inherit;line-height:1.4;cursor:pointer}
   .char:hover{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
   .more{display:flex;justify-content:center}

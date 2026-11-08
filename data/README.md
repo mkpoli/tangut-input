@@ -65,6 +65,21 @@ volumes are CC BY 4.0; the other texts keep the terms of the editions cited in `
 `scripts/build_tangut_attestation.py` reads the manifest and adds the 21 texts as one source,
 `lcdtt`.
 
+## `babelstone/`
+
+The parallel Tangut and Chinese text of T599 on Andrew West's
+[BabelStone page](https://www.babelstone.co.uk/Tangut/DragonKing.html), read 2026-11-07:
+`dragon-king.tsv` holds the 26 line pairs, Tangut first, and
+`scripts/fetch_babelstone_dragon_king.py` refetches them. The Chinese is 義淨's
+*佛為海龍王説法印經* as the page prints it; the Tangut column only aligns each Chinese line with the
+LCDTT transcription of the same text, which the corpus already holds. The page states no licence;
+the Chinese is a public-domain translation, and the Tangut transcription and alignment are West's.
+`scripts/build_tangut_attestation.py` reads the checked-in table and adds the Chinese to the
+`lcdtt:dragon-king` lines and to the Wikisource transcription, which holds the same Tangut as one
+line; it stops if the table's Tangut no longer matches either text. The table is a snapshot, not a
+check on the live page: refetch it with the script and rebuild to bring in a page change. See
+`babelstone/README.md`.
+
 ## `tangut-samples.json`
 
 Eighteen passages copied from `app/data/tangut-attestation.json.gz` for the Samples picker: three
