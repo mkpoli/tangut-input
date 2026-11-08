@@ -84,3 +84,25 @@ test('every alias is one complete description, sourced, and not the recorded one
     expect(row.source.trim()).not.toBe('')
   }
 })
+
+test('a character may carry several aliases', () => {
+  const two = buildPartIndex(
+    [{ char: '𘋤', composition: '⿰𘦘⿰𘠣⿰𘤣𘠢' }],
+    [
+      { char: '𘋤', ids: '⿴𘋢𘠣' },
+      { char: '𘋤', ids: '⿴𘋢𘠢' },
+    ],
+  )
+  expect(two.usedBy.get('𘋢')?.has('𘋤')).toBe(true)
+  expect(two.usedBy.get('𘠢')?.has('𘋤')).toBe(true)
+})
+
+test('a subtraction alias reads beside the record', () => {
+  const row = aliases.find((/** @type {any} */ alias) => alias.char === '𘖨')
+  expect(row?.ids).toBe('⿱𘨞㇯𗀋𘠀')
+  expect(readDescription(row.ids)).toEqual({
+    roots: [{ op: '⿱', parts: ['𘨞', { op: '㇯', parts: ['𗀋', '𘠀'] }] }],
+    complete: true,
+  })
+  expect(index.usedBy.get('𗀋')?.has('𘖨')).toBe(true)
+})

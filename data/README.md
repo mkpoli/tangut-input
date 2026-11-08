@@ -528,8 +528,11 @@ each alias under its source.
 - `𘋤` is ⿴𘋢𘠣 in NGWU YOH's reading (chat message, 2026-11-07; the quoted lines are in the
   row's `detail`). Its record is ⿰𘦘⿰𘠣⿰𘤣𘠢. The IDS is this project's writing of the
   reading: the enclosing part comes first, as in ⿴囗或 for 國.
-- Licence: each row quotes two short lines from a personal communication, with the sender's handle
-  and date; the quoting lines stay as sent. The IDS is this project's reading.
+- 48 further readings filled in the review workbook (chat message, 2026-11-08) are listed with their
+  sources. One character may carry several readings; each is a row. `𘖨` reads ⿱𘨞㇯𗀋𘠀, with ㇯
+  subtracting 𘠀 from 𗀋.
+- Licence: the quoted lines stay as sent, with the sender's handle and date. Rows without a detail
+  carry only the IDS; the IDS is this project's reading.
 
 ## tangut-component-shape-hints.json.gz
 
