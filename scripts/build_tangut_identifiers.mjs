@@ -144,10 +144,10 @@ const document = {
   format: 'tangut-input/identifiers',
   retrieved: RETRIEVED,
   sources: {
-    lfw: { name: SOURCES.lfw.name, url: SOURCES.lfw.url, licence: SOURCES.lfw.licence, note: 'The dictionary index of every encoded Tangut ideograph; a merged character can carry two numbers and an alternative character a letter.' },
-    wenhai: { name: SOURCES.wenhai.name, url: 'https://www.babelstone.co.uk/Tangut/WenhaiLookup.html', note: `${SOURCES.wenhai.note} The data file is ${SOURCES.wenhai.url}.` },
-    mojikyo: { name: 'Mojikyo M202/M203', url: 'https://www.babelstone.co.uk/Unicode/mojikyo.html', note: `${SOURCES.legacy.note} The data file is ${SOURCES.legacy.url}. The code point is a CJK code point, not a private-use one.` },
-    xxzt: { name: 'XXZT (Tangut Yinchuan)', url: 'https://www.babelstone.co.uk/Unicode/xxzt.html', note: `${SOURCES.legacy.note} The data file is ${SOURCES.legacy.url}. The A and B fonts of Jing Yongshi’s XXZT map Tangut glyphs to CJK code points.` },
+    lfw: { name: SOURCES.lfw.name, url: SOURCES.lfw.url, sha256: SOURCES.lfw.sha256, licence: SOURCES.lfw.licence, note: 'The dictionary index of every encoded Tangut ideograph; a merged character can carry two numbers and an alternative character a letter.' },
+    wenhai: { name: SOURCES.wenhai.name, url: 'https://www.babelstone.co.uk/Tangut/WenhaiLookup.html', sha256: SOURCES.wenhai.sha256, note: `${SOURCES.wenhai.note} The data file is ${SOURCES.wenhai.url}.` },
+    mojikyo: { name: 'Mojikyo M202/M203', url: 'https://www.babelstone.co.uk/Unicode/mojikyo.html', sha256: SOURCES.legacy.sha256, note: `${SOURCES.legacy.note} The data file is ${SOURCES.legacy.url}. The code point is a CJK code point, not a private-use one.` },
+    xxzt: { name: 'XXZT (Tangut Yinchuan)', url: 'https://www.babelstone.co.uk/Unicode/xxzt.html', sha256: SOURCES.legacy.sha256, note: `${SOURCES.legacy.note} The data file is ${SOURCES.legacy.url}. The A and B fonts of Jing Yongshi’s XXZT map Tangut glyphs to CJK code points.` },
   },
   chars: Object.fromEntries([...chars].sort(([a], [b]) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))),
 }

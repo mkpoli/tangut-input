@@ -33,7 +33,7 @@
 /** @typedef {{ format: string, unicode: string, built: string, sources: { id: string, name: string, url: string, sha256?: string, commit?: string }[],
  *   counts: Record<string, number>, characters: SupplementCharacter[] }} Supplement */
 /** The numbers and legacy code points a character has, by system. @typedef {{ format: string, retrieved: string,
- *   sources: Record<string, { name: string, url: string, note?: string, licence?: string }>,
+ *   sources: Record<string, { name: string, url: string, sha256?: string, note?: string, licence?: string }>,
  *   chars: Record<string, import('./identifiers.js').Row[]> }} Identifiers */
 
 /**

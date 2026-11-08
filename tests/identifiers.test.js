@@ -75,6 +75,7 @@ test('the shipped table has every system, the expected coverage and one shape pe
   for (const scheme of ['lfw', 'wenhai', 'mojikyo', 'xxzt']) {
     expect(document.sources[scheme].name).toBeTruthy()
     expect(document.sources[scheme].url).toMatch(/^https:/)
+    expect(document.sources[scheme].sha256).toMatch(/^[0-9a-f]{64}$/)
   }
   const counts = Object.fromEntries(['lfw', 'wenhai', 'mojikyo', 'xxzt'].map(scheme => [
     scheme,
