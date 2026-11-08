@@ -5,7 +5,8 @@
   // imperial titles, from `app/data/tangut-titles.json`, each marked by what its Tangut rests on, and
   // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`, and the
   // names of the state, from `app/data/tangut-state-names.json`, and later era names, from
-  // `app/data/tangut-later-eras.json`.
+  // `app/data/tangut-later-eras.json`. The surnames, offices and places are `app/data/tangut-names.json`,
+  // built by `scripts/build_tangut_names.py`.
   import { onMount, tick } from 'svelte'
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import COINS from '../data/tangut-coins.json' with { type: 'json' }
@@ -13,8 +14,10 @@
   import POSTHUMOUS from '../data/tangut-posthumous.json' with { type: 'json' }
   import STATE_NAMES from '../data/tangut-state-names.json' with { type: 'json' }
   import LATER_ERAS from '../data/tangut-later-eras.json' with { type: 'json' }
+  import NAMES from '../data/tangut-names.json' with { type: 'json' }
   import CONTEMPORARY_ERAS from '../data/tangut-contemporary-eras.json' with { type: 'json' }
   import { ERA_SOURCES, ERA_SOURCE_ORDER } from '../lib/era-sources.js'
+  import { NAME_SOURCES, NAME_SOURCE_ORDER } from '../lib/name-sources.js'
   import { choose } from '../lib/ui.svelte.js'
   import { hex } from '../lib/db.svelte.js'
   import { route } from '../lib/route.svelte.js'
@@ -23,9 +26,13 @@
   import Icon from '../ui/Icon.svelte'
 
   /** @typedef {{ era: string, from: string, to: string | null, years: [number, number | null], calendar: string[], evidence: { tangut: string, kind: string, source: string }[] }} Era */
+  /** @typedef {{ kind: 'surname' | 'office' | 'place', tangut: string, reading: string, chinese: string, english: string, modern: string, note: string, sources: string[] }} Name */
+
+  const SOURCES = { ...ERA_SOURCES, ...NAME_SOURCES }
+  const SOURCE_ORDER = [...ERA_SOURCE_ORDER, ...NAME_SOURCE_ORDER]
 
   /** @param {string} key */
-  const number = key => ERA_SOURCE_ORDER.indexOf(/** @type {keyof typeof ERA_SOURCES} */ (key)) + 1
+  const number = key => SOURCE_ORDER.indexOf(/** @type {any} */ (key)) + 1
 
   /**
    * What an era's form rests on: one tag for each kind of evidence, with its sources, or the
@@ -54,6 +61,9 @@
   const years = era => era.years[1] === null ? `${era.years[0]}–` : era.years[0] === era.years[1] ? `${era.years[0]}` : `${era.years[0]}–${era.years[1]}`
 
   const rows = (/** @type {Era[]} */ (ERAS)).map(era => ({ era, ...basis(era) }))
+  const names = /** @type {Name[]} */ (NAMES)
+  /** @param {string} kind */
+  const namesOf = kind => names.filter(name => name.kind === kind)
   const counts = {
     total: rows.length,
     forms: rows.filter(row => row.forms.length).length,
@@ -193,6 +203,9 @@
     { id: 'posthumous', key: 'eras.tab.posthumous', count: POSTHUMOUS.length },
     { id: 'states', key: 'eras.tab.states', count: STATE_NAMES.length },
     { id: 'later-eras', key: 'eras.tab.later', count: LATER_ERAS.length },
+    { id: 'surnames', key: 'names.tab.surname', count: namesOf('surname').length },
+    { id: 'offices', key: 'names.tab.office', count: namesOf('office').length },
+    { id: 'places', key: 'names.tab.place', count: namesOf('place').length },
   ]
   const KINDS = ['coin', 'text', 'disputed', 'calendar', 'post', 'none']
   const kindCounts = Object.fromEntries(KINDS.map(kind => [kind, rows.filter(row => row.tags.some(tag => tag.kind === kind)).length]))
@@ -208,6 +221,16 @@
   let toc = $state(null)
   let frame = 0
 
+  /** Keep the current tab in view when the bar is wider than the column. @param {string} id */
+  function reveal(id) {
+    const link = /** @type {HTMLElement | null} */ (toc?.querySelector(`a[href="#${id}"]`))
+    if (!toc || !link) return
+    if (link.offsetLeft < toc.scrollLeft) toc.scrollLeft = link.offsetLeft
+    else if (link.offsetLeft + link.offsetWidth > toc.scrollLeft + toc.clientWidth) {
+      toc.scrollLeft = link.offsetLeft + link.offsetWidth - toc.clientWidth
+    }
+  }
+
   function sync() {
     if (!toc) return
     const threshold = toc.getBoundingClientRect().bottom + 24
@@ -217,6 +240,7 @@
       if (section && section.getBoundingClientRect().top <= threshold) active = tab.id
     }
     current = active
+    reveal(active)
   }
 
   onMount(() => {
@@ -274,6 +298,34 @@
     </div>
 {/snippet}
 
+{#snippet nameTable(/** @type {Name[]} */ list, /** @type {boolean} */ places)}
+  <div class="ui-table-wrap">
+    <table class="ui-table list name-list">
+      <thead><tr>
+        <th scope="col">{t('eras.tangut')}</th>
+        <th scope="col">{t('names.reading')}</th>
+        <th scope="col">{t('eras.titles.chinese')}</th>
+        <th scope="col">{t('card.meaning')}</th>
+        {#if places}<th scope="col">{t('names.modern')}</th>{/if}
+      </tr></thead>
+      <tbody>
+        {#each list as name (name.tangut)}
+          <tr>
+            <th scope="row" class="name-form">
+              <span class="form" role="group" aria-label={name.tangut}>{#each [...name.tangut] as char, j (j)}<button type="button" class="char" aria-current={route.c === char ? 'true' : undefined}
+                aria-label={t('eras.open', { char, code: hex(char) })} onclick={() => choose(char)}><G {char}/></button>{/each}</span>{@render cites(name.sources)}
+            </th>
+            <td class="name-reading">{name.reading || '—'}</td>
+            <td class="name-chinese" data-empty={!name.chinese || undefined}>{#if name.chinese}<span lang="zh-Hant">{name.chinese}</span>{:else}<span class="ui-hint">—</span>{/if}</td>
+            <td class="name-meaning">{name.english}{#if name.note}<p class="note">{name.note}</p>{/if}</td>
+            {#if places}<td class="name-modern" data-label={t('names.modern')} data-empty={!name.modern || undefined}>{name.modern || '—'}</td>{/if}
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+{/snippet}
+
 {#snippet cites(/** @type {string[]} */ sources)}
   {#if sources.length}<sup class="cite">{#each sources as key, i (key)}{#if i},{/if}<a href={`#era-source-${number(key)}`} aria-label={t('eras.cite', { n: number(key) })}>{number(key)}</a>{/each}</sup>{/if}
 {/snippet}
@@ -286,7 +338,7 @@
 
   <nav class="ui-toc" bind:this={toc} aria-label={t('eras.toc')}>
     {#each tabs as tab (tab.id)}
-      <a href={`#${tab.id}`} onclick={() => { current = tab.id }} aria-current={current === tab.id ? 'true' : undefined}>
+      <a href={`#${tab.id}`} onclick={() => { current = tab.id; reveal(tab.id) }} aria-current={current === tab.id ? 'true' : undefined}>
         <span>{t(tab.key)}</span><span class="ui-count">{tab.count}</span>
       </a>
     {/each}
@@ -524,11 +576,26 @@
     </div>
   </section>
 
+  <section class="ui-section titles" id="surnames">
+    <h2 class="heading">{t('names.tab.surname')}<span class="ui-count">{namesOf('surname').length}</span></h2>
+    {@render nameTable(namesOf('surname'), false)}
+  </section>
+
+  <section class="ui-section titles" id="offices">
+    <h2 class="heading">{t('names.tab.office')}<span class="ui-count">{namesOf('office').length}</span></h2>
+    {@render nameTable(namesOf('office'), false)}
+  </section>
+
+  <section class="ui-section titles" id="places">
+    <h2 class="heading">{t('names.tab.place')}<span class="ui-count">{namesOf('place').length}</span></h2>
+    {@render nameTable(namesOf('place'), true)}
+  </section>
+
   <section class="ui-section sources">
     <h2 class="heading">{t('eras.sources')}</h2>
     <ol class="source-list">
-      {#each ERA_SOURCE_ORDER as key, i (key)}
-        {@const source = ERA_SOURCES[key]}
+      {#each SOURCE_ORDER as key, i (key)}
+        {@const source = SOURCES[key]}
         <li id={`era-source-${i + 1}`}>{source.author}. {#if source.url}<a href={source.url}>{source.title}</a>{:else}{source.title}{/if}. {source.where}.{#if source.note}{' '}{source.note}{/if}</li>
       {/each}
     </ol>
@@ -604,6 +671,10 @@
   .preview-note a{color:inherit;text-underline-offset:2px}
   .coin-image-preview.sheet{inset-block-start:auto;inset-block-end:calc(var(--ui-space-sm) + env(safe-area-inset-bottom));inset-inline:var(--ui-space-sm);inline-size:auto;max-block-size:calc(100dvh - 16px)}
   .title-form{white-space:normal}
+  .name-form{white-space:nowrap}
+  .name-reading{color:var(--ui-color-ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .name-meaning{min-inline-size:12rem}
+  .name-modern{color:var(--ui-color-ink-soft)}
   .contemporary-table .title-form{white-space:nowrap}
   .title-form .form{flex-wrap:wrap;vertical-align:middle}
   .chinese{min-inline-size:12em;font-size:var(--ui-text-sm)}
@@ -649,5 +720,14 @@
     .titles .list .forms{grid-row:auto}
     .titles .list .chinese{grid-column:1 / -1}
     .titles .list .basis{grid-column:1 / -1;text-align:start}
+    .name-list tr{grid-template-columns:auto minmax(0,1fr);align-items:baseline}
+    .name-list .name-form{grid-column:1;grid-row:1}
+    .name-list .name-reading{grid-column:2;grid-row:1;justify-self:end;text-align:end}
+    .name-list .name-chinese{grid-column:1;grid-row:2}
+    .name-list .name-chinese[data-empty]{display:none}
+    .name-list .name-meaning{grid-column:1 / -1;grid-row:3}
+    .name-list .name-modern{grid-column:1 / -1;grid-row:4;font-size:var(--ui-text-xs)}
+    .name-list .name-modern[data-empty]{display:none}
+    .name-list .name-modern::before{content:attr(data-label) ': ';color:var(--ui-color-ink-muted)}
   }
 </style>

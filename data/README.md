@@ -188,6 +188,18 @@ and `backs`, whether the work supports the Tangut or the Chinese. Compiled by ha
 `scripts/build_tangut_titles.py` stops if a title does not occur in its place, and marks each title
 `text`, `reported` or `chinese` by what its Tangut rests on. The build sets `kind`: `city` (城號) when the title has 城 or 𗍁, otherwise `honorific`.
 
+## `tangut-names.tsv`
+
+Surnames, administrative offices and place names, one row per name and citing work: `kind`
+(`surname`, `office`, `place`), the Tangut, the `reading` as the work writes it, the Chinese and
+English where a work identifies the name, a `modern` location for a place, the source's key in
+`app/lib/name-sources.js`, and a `note` shown under the row. Rows for one name from several works
+are merged by `scripts/build_tangut_names.py`, which stops on an unknown kind, a character outside
+the Tangut block, or a source the page cannot number, and writes `app/data/tangut-names.json` for
+the surnames, offices and places on the names page at `/eras`. The place names are West's reading of Or. 12380/2249 and his index; the
+surnames are the forms his two family posts and his character tweets print, with 嵬名 also from
+Chinese Wikipedia. The full surname lists in 雜字 and 碎金 are not keyed here.
+
 ## `tangut-frequency.json.gz`
 
 One count per Tangut character: the number of places it occupies in
