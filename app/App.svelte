@@ -19,6 +19,7 @@
   import Cangjie from './pages/Cangjie.svelte'
   import Sijiao from './pages/Sijiao.svelte'
   import Reading from './pages/Reading.svelte'
+  import Dataset from './pages/Dataset.svelte'
   import Draw from './pages/Draw.svelte'
   import Fanqie from './pages/Fanqie.svelte'
   import Chart from './pages/Chart.svelte'
@@ -328,6 +329,7 @@
         {:else if route.page === 'chart'}<Chart />
         {:else if route.page === 'eras'}<Eras />
         {:else if route.page === 'variants'}<Variants />
+        {:else if route.page === 'dataset'}<Dataset />
         {:else if route.page === 'texts'}<Texts />
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
