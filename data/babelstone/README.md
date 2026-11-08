@@ -7,7 +7,8 @@ BabelStone page, <https://www.babelstone.co.uk/Tangut/DragonKing.html>, read 202
 `scripts/fetch_babelstone_dragon_king.py` writes it. The Chinese is 義淨's translation,
 *佛為海龍王説法印經*, as the page prints it, punctuation included. The Tangut column aligns each
 Chinese line with the Lausanne corpus transcription of the same text; the corpus keeps the LCDTT
-lines, and the build stops if one of them no longer matches a page line. The page's title pair is
+lines, and the build stops if one of them no longer matches the table. The table is a snapshot, not
+a check on the live page; refetch it and rebuild to bring in a page change. The page's title pair is
 kept in the table, but the LCDTT transcription drops headings, so no corpus line carries it.
 
 The page states no licence. The Chinese is a public-domain translation; the Tangut transcription

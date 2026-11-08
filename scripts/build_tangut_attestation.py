@@ -426,7 +426,7 @@ def attach_dragon_king(lines):
     same Tangut transcription with the same line division. Each Chinese line follows the LCDTT line
     whose Tangut it prints. The Wikisource page holds the same Tangut as one line, so it takes the
     Chinese of all the content lines joined; both mappings are checked against the text they attach
-    to, and a changed page stops the build instead of shifting the translation.
+    to, and a changed table stops the build instead of shifting the translation.
     """
     pairs = []
     for row in DRAGON_KING.read_text(encoding='utf-8').splitlines():
