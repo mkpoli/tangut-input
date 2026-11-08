@@ -4,22 +4,27 @@
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
-  import { byMeaning, MEANING_LANGUAGES } from '../lib/search.js'
+  import { byMeaning, byHanziName, MEANING_LANGUAGES } from '../lib/search.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
+  import HanziNames from '../ui/HanziNames.svelte'
+  import HanziEvidence from '../ui/HanziEvidence.svelte'
 
   let query = $state(route.q)
   /** @type {string[]} an empty list searches all three */
   let languages = $state(/** @type {string[]} */ ([]))
   let active = $state(-1)
-  /** @type {HTMLElement | null} */
-  let list = $state(null)
 
   const ready = $derived(db.status === 'ready')
   const text = $derived(query.trim())
   const hits = $derived(ready && text ? byMeaning(text, { languages }) : [])
   const shown = $derived(hits.slice(0, 240))
+  const hanziNames = $derived(ready && text && (!languages.length || languages.includes('zh')) ? byHanziName(text) : [])
+  const candidates = $derived([
+    ...shown.map(hit => ({ value: hit.char, preview: hit.char })),
+    ...hanziNames.slice(0, 48).map(hit => ({ value: hit.record.tangut, preview: '' })),
+  ])
 
   $effect(() => { void text; void languages.length; active = -1 })
 
@@ -30,18 +35,19 @@
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
-    if (!shown.length) {
+    if (event.isComposing) return
+    if (!candidates.length) {
       if (event.key === 'Escape') { query = ''; setQuery('') }
       return
     }
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
-      active = Math.max(0, Math.min(shown.length - 1, active + (event.key === 'ArrowDown' ? 1 : -1)))
-      preview(shown[active].char)
-      list?.children[active]?.scrollIntoView({ block: 'nearest' })
+      active = Math.max(0, Math.min(candidates.length - 1, active + (event.key === 'ArrowDown' ? 1 : -1)))
+      if (candidates[active].preview) preview(candidates[active].preview)
+      document.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: 'nearest' })
     } else if (event.key === 'Enter') {
       event.preventDefault()
-      put(shown[Math.max(0, active)].char, { place: Math.max(0, active) })
+      put(candidates[Math.max(0, active)].value, { place: Math.max(0, active) })
     } else if (event.key === 'Escape') {
       query = ''
       setQuery('')
@@ -82,13 +88,13 @@
     </div>
   {:else if !ready}
     <p class="ui-empty">{t('common.loading')}</p>
-  {:else if !hits.length}
+  {:else if !hits.length && !hanziNames.length}
     <p class="ui-empty">{t('meaning.none', { query: text })}</p>
   {:else}
-    <p class="ui-count" role="status">{t('common.characters', { count: hits.length })}</p>
-    <ol class="ui-rows" bind:this={list}>
+    {#if hits.length}<p class="ui-count" role="status">{t('common.characters', { count: hits.length })}</p>{/if}
+    <ol class="ui-rows">
       {#each shown as hit, i (hit.char)}
-        <li class="ui-row" data-selected={i === active || (active < 0 && route.c === hit.char)}>
+        <li class="ui-row" data-index={i} data-selected={i === active || (active < 0 && route.c === hit.char)}>
           <button type="button" class="ui-row-pick meaning-row" aria-current={i === active || (active < 0 && route.c === hit.char) ? 'true' : undefined}
             onclick={() => { active = i; choose(hit.char) }} ondblclick={() => put(hit.char, { place: i })}>
             <G char={hit.char} />
@@ -97,7 +103,7 @@
               {@const sense = downes ?? ix.byChar.get(hit.char)?.definitions?.en?.[0]}
               <span class="sense" lang={sense ? 'en' : undefined}>{#if sense}<span class="ui-tag" aria-hidden="true">en</span><span class="ui-tag">{downes ? 'Downes' : 'Wiktionary'}</span>{sense}{:else}—{/if}</span>
             {:else}
-              <span class="sense" lang={hit.lang}><span class="ui-tag" aria-hidden="true">{hit.lang}</span>{hit.sense}</span>
+              <span class="sense" lang={hit.lang}><span class="ui-tag" aria-hidden="true">{hit.lang}</span>{#if hit.correspondence}<span class="ui-tag">類林</span>{/if}{hit.sense}</span>
             {/if}
             {#if hit.via !== 'ccamc'}<span class="ui-row-gloss">{gloss(hit.char)}</span>{/if}
           </button>
@@ -105,10 +111,12 @@
             aria-label={t('common.addToText', { char: hit.char })} title={t('common.add')} onclick={() => put(hit.char, { place: i })}>
             <Icon name="add" size={15}/>
           </button>
+          {#if hit.correspondence}<div class="citation"><HanziEvidence records={[hit.correspondence]}/></div>{/if}
         </li>
       {/each}
     </ol>
     {#if hits.length > shown.length}<p class="ui-hint">{t('meaning.cut', { shown: shown.length, total: hits.length })}</p>{/if}
+    <HanziNames hits={hanziNames} {active} offset={shown.length}/>
   {/if}
 </div>
 
@@ -117,6 +125,8 @@
   .filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-sm)}
   .filter-row > .ui-label{inline-size:92px}
   .start{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
+  .ui-row{flex-wrap:wrap}
+  .citation{flex-basis:100%;padding:0 var(--ui-space-md) var(--ui-space-sm)}
   .meaning-row{grid-template-columns:38px minmax(0,1.2fr) minmax(0,1fr)}
   .meaning-row :global(.ui-script){font-size:28px;text-align:center}
   .sense{display:flex;align-items:center;gap:var(--ui-space-2xs);overflow:hidden;color:var(--ui-color-ink);font-size:var(--ui-text-md);text-overflow:ellipsis;white-space:nowrap}

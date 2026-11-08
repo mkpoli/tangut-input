@@ -4,7 +4,8 @@ import { indexTibetan, foldScript } from './tibetan.js'
 import { indexTibetanSeta } from './seta.js'
 import { indexIdentifiers } from './identifiers.js'
 import { englishGloss } from './gloss.js'
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadHanzi, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta } from './data.js'
+import { indexHanzi } from './hanzi.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
@@ -79,6 +80,8 @@ export const ix = {
   /** Characters whose Tibetan spelling has each Set A code. @type {Map<string, Map<string, string>>} */ setaIndex: new Map(),
   /** Alan Downes's English gloss by character. @type {Map<string, string>} */ downes: new Map(),
   /** The Chinese words the Tangut 類林 uses for a character. @type {Map<string, [string, number][]>} */ leilin: new Map(),
+  /** Literal Hanzi glosses and whole names with their evidence. @type {import('./hanzi.js').HanziIndex} */ hanzi: { glosses: new Map(), phrases: [] },
+  /** @type {Record<string, import('./hanzi.js').HanziSource>} */ hanziSources: {},
   /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
   /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
   /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
@@ -92,10 +95,10 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, identifiers, seta, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
+    const [entries, pairs, strokes, identifiers, seta, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, hanzi, supplement, cited] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadIdentifiers().catch(() => null), loadTibetanSeta().catch(() => null), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
       loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
-      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
+      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadHanzi(), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
     ])
     ix.citations = cited?.citations ?? {}
     ix.identifiers = new Map(Object.entries(identifiers?.chars ?? {}))
@@ -108,6 +111,8 @@ export async function load() {
     ix.tibetanHands = tibetanHands?.chars ?? {}
     ix.downes = new Map(Object.entries(downes?.glosses ?? {}))
     ix.leilin = new Map(Object.entries(leilin?.glosses ?? {}))
+    ix.hanzi = indexHanzi(hanzi)
+    ix.hanziSources = hanzi.sources
     ix.tibetanIndex = indexTibetan(ix.tibetan, ix.tibetanHands)
     ix.seta = new Map((seta?.map ?? []).map(([code, script]) => [foldScript(script), code]))
     ix.setaIndex = indexTibetanSeta(ix.seta, ix.tibetan, ix.tibetanHands)

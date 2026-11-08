@@ -148,6 +148,9 @@ export const loadDownes = () => once('downes', () => readJson(new URL('../data/t
 export const loadLeilin = () => once('leilin', () => readJson(new URL('../data/tangut-leilin.json', import.meta.url)))
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
 
+/** Source-labelled Hanzi glosses and whole names. @returns {Promise<import('./hanzi.js').HanziLibrary>} */
+export const loadHanzi = () => once('hanzi', () => readJson(new URL('../data/tangut-hanzi.json', import.meta.url)))
+
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */
 export const loadStrokes = () => once('strokes', async () => (await readJson(new URL('../data/tangut-strokes.json.gz', import.meta.url))).values)
 

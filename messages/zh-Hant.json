@@ -326,7 +326,7 @@
   "find.door.sijiao": "輸入四角號碼的六位數字。候選字帶有編號，便於快速選定。螢幕上的數字鍵同時是字根表。",
   "nav.meaning": "釋義",
   "nav.meaning.hint": "檢索字義訓釋",
-  "meaning.intro": "可用維基詞典、CCAMC和Alan Downes的釋義檢索。CCAMC的結果會連結到其條目。",
+  "meaning.intro": "可按釋義或文獻中記載的名稱查字。",
   "meaning.placeholder": "water、毒、馬…",
   "meaning.label": "按釋義查找",
   "meaning.languages": "語言",

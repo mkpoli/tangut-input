@@ -9,16 +9,18 @@
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
-  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byHanziName, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
   import { parseIdentifier } from '../lib/identifiers.js'
   import { parseSetaQuery } from '../lib/seta.js'
+  import HanziNames from '../ui/HanziNames.svelte'
 
   let query = $state(route.q)
   let active = $state(-1)
   const ready = $derived(db.status === 'ready')
   const text = $derived(query.trim())
+  const hanziNames = $derived(ready && text && !tangutIn(text).length ? byHanziName(text) : [])
 
   const groups = $derived.by(() => {
     if (!ready || !text) return []
@@ -78,7 +80,7 @@
     const spelled = byTibetan(text).filter(hit => hit.tier === 0 || /[\u0f40-\u0fbc]/.test(text))
     if (spelled.length) out.push({ key: 'tibetan', title: t('find.group.tibetan'), total: spelled.length, items: spelled.slice(0, 24).map(hit => ({ char: hit.char, sub: gloss(hit.char), sound: hit.shown, tibetan: true })) })
     const meanings = byMeaning(text)
-    if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: gloss(hit.char) })) })
+    if (meanings.length) out.push({ key: 'meaning', title: t('find.group.meaning'), page: 'meaning', total: meanings.length, items: meanings.slice(0, 48).map(hit => ({ char: hit.char, sub: gloss(hit.char) })) })
     return out
   })
   /** The Li Fanwen reading, or the first system that has one, marked with its system. @param {string} char */
@@ -89,21 +91,25 @@
     return system ? `${readings[system.key].trim()} (${system.tag})` : ''
   }
   const flat = $derived(groups.flatMap(group => group.items))
+  const candidates = $derived([
+    ...flat.map(item => ({ value: item.char, preview: item.char })),
+    ...hanziNames.slice(0, 48).map(hit => ({ value: hit.record.tangut, preview: '' })),
+  ])
 
   $effect(() => { void text; active = -1 })
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
-    if (!flat.length) return
+    if (event.isComposing || !candidates.length) return
     const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key]
     if (step && !(event.key.startsWith('ArrowL') || event.key.startsWith('ArrowR')) || (step && active >= 0)) {
       event.preventDefault()
-      active = Math.max(0, Math.min(flat.length - 1, active + step))
-      preview(flat[active].char)
+      active = Math.max(0, Math.min(candidates.length - 1, active + step))
+      if (candidates[active].preview) preview(candidates[active].preview)
       document.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: 'nearest' })
     } else if (event.key === 'Enter') {
       event.preventDefault()
-      put(flat[Math.max(0, active)].char, { place: Math.max(0, active) })
+      put(candidates[Math.max(0, active)].value, { place: Math.max(0, active) })
     }
   }
 
@@ -168,7 +174,7 @@
     <p class="tip">{t('find.tip')}</p>
   {:else if !ready}
     <p class="ui-empty">{t('common.loading')}</p>
-  {:else if !groups.length}
+  {:else if !groups.length && !hanziNames.length}
     <p class="ui-empty">{t('find.none', { text })}</p>
   {:else}
     {#each groups as group, g (group.key)}
@@ -177,7 +183,7 @@
         <header class="ui-section-head">
           <h2 class="ui-label">{group.title}</h2>
           <span class="ui-count">{group.total > group.items.length ? t('common.of', { shown: group.items.length, total: group.total }) : group.total}</span>
-          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}<Icon name="arrow" size={13}/></a>{/if}
+          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(`nav.${group.page}`) })}</a>{/if}
         </header>
         {#if group.key === 'text'}
           <ol class="ui-rows">
@@ -205,6 +211,7 @@
         {/if}
       </section>
     {/each}
+    <HanziNames hits={hanziNames} {active} offset={flat.length}/>
   {/if}
 </div>
 

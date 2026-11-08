@@ -326,7 +326,7 @@
   "find.door.sijiao": "四角号碼の六桁を入力します。候補には番号が振られ、素早く確定できます。画面の数字キーは字根表を兼ねています。",
   "nav.meaning": "意味検索",
   "nav.meaning.hint": "語釈から探す",
-  "meaning.intro": "ウィクショナリーとCCAMC、Alan Downesの語釈から字を引けます。CCAMCの結果はその項目へリンクします。",
+  "meaning.intro": "語釈や資料に記された名前から字を引けます。",
   "meaning.placeholder": "water、毒、馬…",
   "meaning.label": "意味で探す",
   "meaning.languages": "言語",
