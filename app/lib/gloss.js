@@ -5,34 +5,44 @@ export function englishGloss(definitions, downes, wiktionary = []) {
 }
 
 const HAN = /\p{Script=Han}/u
+const SEPARATOR = /[;,；，、。]/
+
+/** The first segment of a sense that is written in Han, or nothing. @param {string} sense */
+function firstHanSegment(sense) {
+  for (const part of sense.split(SEPARATOR)) {
+    const text = part.trim()
+    if (text && HAN.test(text)) return text
+  }
+  return ''
+}
 
 /**
  * A Chinese dictionary sense, then a Chinese Wiktionary sense, then the commonest contextual word
- * in 類林. A sense with no Han character is a grammatical label or a placeholder, not a Chinese
- * gloss, so it never becomes the visible text; the full list stays in the title and on the card.
+ * in 類林. A segment with no Han character is a grammatical label or a placeholder, not a Chinese
+ * gloss, so it never becomes the visible text; the card keeps the full record.
  * @param {[string, number][] | undefined} words
  * @param {string[]} [keyed] Chinese meanings keyed from the editions
  * @param {string[]} [wiktionary] Chinese Wiktionary senses
  */
 export function hanGloss(words, keyed, wiktionary) {
   const senses = keyed?.filter(text => text.trim()) ?? []
-  const keyedText = senses.find(text => HAN.test(text))
+  const keyedText = senses.map(firstHanSegment).find(Boolean)
   if (keyedText) return {
-    text: keyedText.split(/[;,；，、。]/)[0].trim(),
+    text: keyedText,
     title: senses.join('；'),
     source: 'keyed',
   }
   const imported = wiktionary?.filter(text => text.trim()) ?? []
-  const importedText = imported.find(text => HAN.test(text))
+  const importedText = imported.map(firstHanSegment).find(Boolean)
   if (importedText) return {
-    text: importedText.split(/[;,；，、。]/)[0].trim(),
+    text: importedText,
     title: imported.join('；'),
     source: 'wiktionary',
   }
   const records = words ?? []
-  const leilinText = records.find(([word]) => HAN.test(word))
+  const leilinText = records.map(([word]) => firstHanSegment(word)).find(Boolean)
   return {
-    text: leilinText ? leilinText[0] : '',
+    text: leilinText ?? '',
     title: records.map(([word]) => word).join('、'),
     source: 'leilin',
   }
