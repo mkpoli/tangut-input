@@ -1,6 +1,6 @@
 # 漢字 glosses
 
-Tiles and the reading tool show the first Chinese sense keyed from the editions, then the first Chinese Wiktionary sense, then the commonest contextual word in 類林. Tiles name the source and list every sense on hover; the character card gives the keyed dictionary, Wiktionary and 類林 records each their own row.
+Tiles and the reading tool show the first Chinese sense keyed from the editions, then the first Chinese Wiktionary sense, then the commonest contextual word in 類林. Tiles name the source and list every sense on hover; the character card gives the keyed dictionary, Wiktionary and 類林 records each their own row. A 類林 entry that is a grammatical abbreviation or a placeholder stays in the card's 類林 row and never fills the Han line.
 
 ## Coverage
 

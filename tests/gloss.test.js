@@ -31,6 +31,14 @@ test('the commonest 類林 word supplies a fallback, with every recorded word on
   expect(hanGloss([['虎', 8]], [], [])).toEqual({ text: '虎', title: '虎', source: 'leilin' })
 })
 
+test('a grammatical label or placeholder never becomes the Han text', () => {
+  expect(hanGloss([['ᴘꜰᴠ:ᴜᴘ/ɪɴᴛʀɢ', 118], ['一', 38]], [])).toEqual({
+    text: '一', title: 'ᴘꜰᴠ:ᴜᴘ/ɪɴᴛʀɢ、一', source: 'leilin',
+  })
+  expect(hanGloss([['ɴᴇɢ', 174]], [])).toEqual({ text: '', title: 'ɴᴇɢ', source: 'leilin' })
+  expect(hanGloss([['???', 1], ['？', 1]], [])).toEqual({ text: '', title: '???、？', source: 'leilin' })
+})
+
 test('missing Chinese glosses produce no placeholder or invented translation', () => {
   expect(hanGloss(undefined)).toEqual({ text: '', title: '', source: 'leilin' })
   expect(hanGloss([])).toEqual({ text: '', title: '', source: 'leilin' })
