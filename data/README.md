@@ -94,8 +94,9 @@ reconstruction of the inscription as he reads it; `label` is the specimen number
 interpretation the drawing sets. Four types have a photograph (福聖, 貞觀, 正德 and 天慶), all six a
 drawing, and 福聖 two drawings for its two readings. The files stay on BabelStone’s server: the
 preview loads them from there and does not copy them. Zeno, the source of two photographs, grants
-reuse with a link to the image number; the 貞觀 and 正德 photographs come from a coin forum linked by
-West, and BabelStone states no terms of its own.
+reuse with a link to the image number ([terms](https://www.zeno.ru/rules.php)); the 貞觀 and 正德
+photographs come from a [coin forum thread](http://www.hqcoin.com/bbs/TopicOther.asp?t=5&BoardID=356&id=26449)
+linked by West, and BabelStone states no terms of its own.
 
 ## `tangut-posthumous.tsv`
 

@@ -6,7 +6,7 @@
   // the posthumous, temple and tomb names of 宋史, from `app/data/tangut-posthumous.json`, and the
   // names of the state, from `app/data/tangut-state-names.json`, and later era names, from
   // `app/data/tangut-later-eras.json`.
-  import { onMount } from 'svelte'
+  import { onMount, tick } from 'svelte'
   import ERAS from '../data/tangut-eras.json' with { type: 'json' }
   import COINS from '../data/tangut-coins.json' with { type: 'json' }
   import TITLES from '../data/tangut-titles.json' with { type: 'json' }
@@ -81,18 +81,25 @@
   let preview = $state(null)
   /** @type {Record<string, boolean>} */
   let failedImages = $state({})
+  /** @type {Record<string, boolean>} */
+  let loadedImages = $state({})
   /** @type {HTMLElement | null} */
   let panel = $state(null)
+  /** @type {HTMLButtonElement | null} */
+  let closeButton = $state(null)
   let closeTimer = 0
-  let hoverArmed = true
+  let hoverMutedUntil = 0
+  let refocusing = false
+  const PANEL_WIDTH = 320
   const narrowScreen = () => matchMedia('(max-width: 900px)').matches
+  const coinSource = ERA_SOURCES[/** @type {keyof typeof ERA_SOURCES} */ (COINS.source)]
 
   /** @param {CoinImage} image */
-  const imageCaption = image => t(`eras.coins.image.${image.kind}`) + (image.label ? `: ${image.label}` : '')
+  const imageAlt = image => t(image.kind === 'photograph' ? 'eras.coins.image.photographAlt' : 'eras.coins.image.drawingAlt')
 
   function placePreview() {
     if (!preview || preview.sheet) return
-    const width = 320
+    const width = PANEL_WIDTH
     const rect = preview.anchor.getBoundingClientRect()
     const edge = preview.anchor.closest('.ui-table-wrap')?.getBoundingClientRect().right ?? rect.right
     const beside = rect.right + 12
@@ -114,13 +121,23 @@
   /** @param {Coin} coin @param {HTMLElement} anchor @param {boolean} pinned */
   function openPreview(coin, anchor, pinned) {
     clearTimeout(closeTimer)
+    failedImages = {}
+    for (const image of coin.images) new Image().src = image.src
     preview = { coin, anchor, pinned, sheet: narrowScreen(), left: 0, top: 0 }
     placePreview()
   }
 
   function closePreview() {
     clearTimeout(closeTimer)
+    const anchor = preview?.anchor
+    const refocus = Boolean(anchor && panel?.contains(document.activeElement))
     preview = null
+    if (anchor && refocus) {
+      // Focusing the trigger fires its focus handler, which would open the panel again.
+      refocusing = true
+      anchor.focus()
+      refocusing = false
+    }
   }
 
   /** Leave after a moment, so the pointer can cross the gap into the panel. */
@@ -132,8 +149,10 @@
 
   /** @param {PointerEvent} event @param {Coin} coin */
   function hoverPreview(event, coin) {
-    if (!hoverArmed || event.pointerType !== 'mouse' || preview?.pinned || preview?.coin.id === coin.id) return
-    for (const image of coin.images) new Image().src = image.src
+    // A narrow screen opens the sheet on a click or tap; hovering it would put the sheet over the
+    // button, so the click could never arrive.
+    if (narrowScreen() || Date.now() < hoverMutedUntil || event.pointerType !== 'mouse'
+      || preview?.pinned || preview?.coin.id === coin.id) return
     const anchor = /** @type {HTMLElement | null} */ (event.currentTarget instanceof Element ? event.currentTarget.querySelector('[data-coin-preview-trigger]') : null)
     if (anchor) openPreview(coin, anchor, false)
   }
@@ -142,8 +161,7 @@
   // pointer and open its images at once.
   function closeFromPanel() {
     closePreview()
-    hoverArmed = false
-    addEventListener('pointermove', () => { hoverArmed = true }, { once: true, capture: true })
+    hoverMutedUntil = Date.now() + 300
   }
 
   /** @param {MouseEvent} event @param {Coin} coin */
@@ -151,12 +169,14 @@
     event.stopPropagation()
     if (preview?.coin.id === coin.id && preview.pinned) { closePreview(); return }
     openPreview(coin, /** @type {HTMLElement} */ (event.currentTarget), true)
+    // A keyboard activation moves focus into the panel; a mouse click leaves it on the trigger.
+    if (event.detail === 0) tick().then(() => closeButton?.focus())
   }
 
   /** @param {FocusEvent} event @param {Coin} coin */
   function focusPreview(event, coin) {
-    // A touch tap focuses the button, and the sheet's scrim would then swallow the click.
-    if (narrowScreen() || preview?.coin.id === coin.id) return
+    // A touch tap focuses the button, and the sheet would then swallow the tap.
+    if (refocusing || narrowScreen() || preview?.coin.id === coin.id) return
     openPreview(coin, /** @type {HTMLElement} */ (event.currentTarget), false)
   }
 
@@ -348,7 +368,6 @@
       </table>
     </div>
     {#if preview}
-      {#if preview.sheet}<div class="coin-preview-scrim" role="presentation" onclick={closePreview}></div>{/if}
       <aside id="coin-images" class="coin-image-preview" class:sheet={preview.sheet} bind:this={panel}
         role="group" aria-label={t('eras.coins.preview.title', { era: preview.coin.era })}
         style:left={preview.sheet ? undefined : `${preview.left}px`} style:top={preview.sheet ? undefined : `${preview.top}px`}
@@ -356,7 +375,7 @@
         <header>
           <span class="preview-era" lang="zh-Hant">{preview.coin.era}</span>
           <span class="tag" data-kind={preview.coin.kind}>{t(preview.coin.kind === 'clear' ? 'eras.clear' : 'eras.disputed')}</span>
-          <button type="button" class="preview-close" aria-label={t('eras.coins.preview.close')} onclick={closeFromPanel}><Icon name="close" size={15}/></button>
+          <button type="button" class="preview-close" bind:this={closeButton} aria-label={t('eras.coins.preview.close')} onclick={closeFromPanel}><Icon name="close" size={15}/></button>
         </header>
         <div class="preview-images">
           {#each preview.coin.images as image (image.src)}
@@ -364,14 +383,18 @@
               {#if failedImages[image.src]}
                 <span class="preview-failed">{t('eras.coins.image.failed')}</span>
               {:else}
-                <img src={image.src} alt={imageCaption(image)} width={image.width} height={image.height} decoding="async"
-                  onerror={() => { failedImages = { ...failedImages, [image.src]: true } }}/>
+                <div class="preview-frame">
+                  {#if !loadedImages[image.src]}<span class="preview-loading">{t('eras.coins.image.loading')}</span>{/if}
+                  <img src={image.src} alt={imageAlt(image)} width={image.width} height={image.height} decoding="async"
+                    onload={() => { loadedImages = { ...loadedImages, [image.src]: true } }}
+                    onerror={() => { failedImages = { ...failedImages, [image.src]: true } }}/>
+                </div>
               {/if}
               <figcaption><span>{t(`eras.coins.image.${image.kind}`)}</span>{#if image.label}<span lang="zh-Hant">{image.label}</span>{/if}</figcaption>
             </figure>
           {/each}
         </div>
-        <p class="preview-note">{t('eras.coins.imagesNote')}</p>
+        <p class="preview-note"><a href={coinSource.url}>{t('eras.coins.imagesNote')}</a>{#if preview.coin.example} <span aria-hidden="true">·</span> <a href={preview.coin.example.url}>{preview.coin.example.label}</a>{/if}</p>
       </aside>
     {/if}
     <details>
@@ -533,9 +556,8 @@
   .coins details[open] summary::before{content:'▾'}
   .coins details > .ui-hint{margin-block:var(--ui-space-sm)}
   .coin-characters td{font-variant-numeric:tabular-nums}
-  .coin-preview-trigger{display:inline-flex;align-items:center;gap:4px;margin-inline-start:var(--ui-space-xs);padding:1px 7px;border:1px solid var(--ui-color-border);border-radius:999px;background:none;color:var(--ui-color-ink-soft);font:inherit;font-size:var(--ui-text-xs);vertical-align:middle;cursor:pointer}
+  .coin-preview-trigger{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-block-size:var(--ui-target-min);margin-inline-start:var(--ui-space-xs);padding:0 7px;border:1px solid var(--ui-color-border);border-radius:999px;background:none;color:var(--ui-color-ink-soft);font:inherit;font-size:var(--ui-text-xs);vertical-align:middle;cursor:pointer}
   .coin-preview-trigger:hover,.coin-preview-trigger[aria-expanded='true']{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover);color:var(--ui-color-ink)}
-  .coin-preview-scrim{position:fixed;inset:0;z-index:calc(var(--ui-z-hint) - 1);background:rgb(0 0 0 / .34)}
   .coin-image-preview{position:fixed;z-index:var(--ui-z-hint);inline-size:320px;max-block-size:calc(100dvh - 16px);overflow:auto;padding:var(--ui-space-md);border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-lg);background:var(--ui-color-surface);box-shadow:var(--ui-shadow-2)}
   .coin-image-preview header{display:flex;align-items:center;gap:var(--ui-space-sm);margin-block-end:var(--ui-space-sm)}
   .preview-era{margin-inline-end:auto;font-family:var(--ui-font-serif);font-size:var(--ui-text-lg);font-weight:var(--ui-weight-semibold)}
@@ -544,13 +566,17 @@
   .preview-images{display:flex;flex-wrap:wrap;align-items:end;justify-content:center;gap:var(--ui-space-md) var(--ui-space-sm)}
   .preview-images figure{display:grid;justify-items:center;gap:2px;margin:0}
   .preview-images figure[data-kind='photograph']{flex:1 0 100%}
-  .preview-images img{display:block;block-size:112px;inline-size:auto;max-inline-size:100%;border-radius:var(--ui-radius-sm);background:var(--ui-color-canvas)}
+  .preview-frame{display:grid;place-items:center}
+  .preview-frame > *{grid-area:1 / 1}
+  .preview-images img{display:block;block-size:112px;inline-size:auto;max-inline-size:100%;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-sm);background:var(--ui-color-canvas)}
+  .preview-loading{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
   .preview-images figure[data-kind='photograph'] img,.preview-images figure:only-child img{block-size:196px}
   .preview-images figcaption{display:grid;justify-items:center;gap:1px;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);line-height:1.35;text-align:center}
   .preview-images figcaption span:last-child{color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .preview-failed{display:grid;place-items:center;block-size:112px;inline-size:112px;border:1px dashed var(--ui-color-border);border-radius:var(--ui-radius-sm);color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);text-align:center}
   .preview-images figure[data-kind='photograph'] .preview-failed{block-size:196px;inline-size:196px}
   .preview-note{margin:var(--ui-space-sm) 0 0;color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs)}
+  .preview-note a{color:inherit;text-underline-offset:2px}
   .coin-image-preview.sheet{inset-block-start:auto;inset-block-end:calc(var(--ui-space-sm) + env(safe-area-inset-bottom));inset-inline:var(--ui-space-sm);inline-size:auto;max-block-size:calc(100dvh - 16px)}
   .title-form{white-space:normal}
   .title-form .form{flex-wrap:wrap;vertical-align:middle}
@@ -579,8 +605,8 @@
     .coin-table th[scope='row'],.coin-table td{padding:0;border:0}
     .coin-table th[scope='row']{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:var(--ui-space-2xs) var(--ui-space-sm)}
     .coin-table th[scope='row'] > span:first-child{grid-area:1 / 1;align-self:center}
-    .coin-table th[scope='row'] .coin-example{grid-area:1 / 2;justify-self:end;align-self:center;margin:0}
-    .coin-table th[scope='row'] .coin-preview-trigger{grid-row:2;grid-column:1 / -1;justify-self:start;margin:0}
+    .coin-table th[scope='row'] .coin-preview-trigger{grid-area:1 / 2;justify-self:end;margin:0}
+    .coin-table th[scope='row'] .coin-example{grid-area:2 / 1 / -1 / -1;justify-self:start;margin:0}
     .coin-characters th,.coin-characters td{padding-inline:var(--ui-space-xs)}
     .plain th,.plain td{padding-inline:var(--ui-space-sm)}
     .plain thead th{white-space:normal}
