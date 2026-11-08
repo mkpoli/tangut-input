@@ -79,6 +79,7 @@
   "find.group.meaning": "按釋義",
   "find.group.tibetan": "按藏文拼寫",
   "find.group.description": "按構字描述",
+  "find.group.parts": "含有此部件的字",
   "find.group.identifier": "按編號",
   "find.group.seta": "作為藏文擴充集A PUA編碼",
   "find.door.cangjie": "逐字母輸入字形編碼，候選字帶有編號，便於快速上屏。螢幕鍵盤兼作字根表，每個部件都有各自的編碼。",
