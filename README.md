@@ -92,6 +92,14 @@ terms are in `app/public/fonts/FONT-LICENCES.md`. The newest ideographs, U+187F8
 characters of both supplement blocks, which none of the four draws, come from a subset of Tangut
 N4694 in the same stack. `bun run build:tangut-fonts` rebuilds the small subsets.
 
+## Cursive forms
+
+BabelStone's [Cursive Tangut](https://www.babelstone.co.uk/Tangut/CursiveTangut.html) page gives
+cursive forms for 108 characters. `data/cursive/forms.json.gz` records its 210 crops with the
+source each comes from and the outlines traced from them; `fonts/CursiveTangut-Regular.woff2` sets
+those characters, with the page's other forms behind `ss01`–`ss07`. The site does not offer the face
+as a setting: it covers 108 characters, so it is a study asset rather than a face for running text.
+
 ## Handwriting data
 
 `bun run quiz` serves a local quiz on <http://127.0.0.1:5411/>: it shows one Tangut character to
