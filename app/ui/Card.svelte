@@ -16,6 +16,7 @@
   import { openingOf } from '../lib/description.js'
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
+  import { scriptForms } from '../lib/script-forms.js'
   import Attest from './Attest.svelte'
   import { loadWenhaiComposition } from '../lib/data.js'
   import Peek from './Peek.svelte'
@@ -43,6 +44,7 @@
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
   const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
+  const forms = $derived(char ? scriptForms(char) : [])
   // The group the character stands in, when a pair list would hide part of it: a chain of stated
   // forms, or the pair someone reported.
   const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
@@ -270,6 +272,20 @@
         {/each}
       </div>
     </section>
+
+    {#if forms.length}
+      <section>
+        <h3 class="ui-label"><Icon name="shape" size={15}/>{t('script.seal')}</h3>
+        <div class="scripts">
+          {#each forms as form (form.source + form.position)}
+            <figure class="script">
+              <img src={form.image} width={form.width} height={form.height} alt={t('script.alt', { char })} loading="lazy" />
+            </figure>
+          {/each}
+        </div>
+        <p class="ui-hint">李范文《夏漢字典》 · 篆額復原圖</p>
+      </section>
+    {/if}
 
     {#if codes.length}
       <section>
@@ -570,6 +586,9 @@
   .record section > .ui-label,.faces-head .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .more a{display:inline-flex;align-items:center;gap:3px}
   .faces{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:var(--ui-space-2xs)}
+  .scripts{display:flex;flex-wrap:wrap;gap:var(--ui-space-sm);margin-block-end:var(--ui-space-xs)}
+  .script{display:grid;place-items:center;margin:0;inline-size:88px;block-size:88px;padding:6px;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface-sunken)}
+  .script img{max-inline-size:100%;max-block-size:100%;inline-size:auto;block-size:auto}
   .group{display:grid;gap:var(--ui-space-xs);margin-block-end:var(--ui-space-sm)}
   .group-link{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ui-space-xs)}
   .chain-tie{inline-size:12px;block-size:1px;background:var(--ui-color-border-strong)}
