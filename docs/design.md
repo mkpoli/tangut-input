@@ -139,6 +139,8 @@ recorded with the fanqie it was made for.
 - Large glyph on a centre cross, code point (click to copy), first English sense, strokes, radical
   (click to open).
 - Add to text, Copy the character, Copy link.
+- Identifiers: the Li Fanwen 2008 number, 文海 page and entry, Mojikyo and XXZT code points,
+  click-to-copy, each system linked to its source.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).

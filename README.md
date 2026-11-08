@@ -7,7 +7,8 @@ it into your text. <https://tangut.mkpo.li/>
 
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
-  lists code points. Tangut components also answer to their Japanese shape names, such as くノ,
+  lists code points, and `L0009`, `L55.172`, `M202-84B2` or `XXZT-A-764F` open the character a
+  number or legacy code names. Tangut components also answer to their Japanese shape names, such as くノ,
   ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
   opening part it lists the characters that open that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
@@ -31,7 +32,8 @@ it into your text. <https://tangut.mkpo.li/>
   recorded name shows an unconfirmed shape hint when one is close. A collapsible
   table compares the names across the languages that record one.
 
-The card of a character shows its code point, Cangjie codes, meanings in English, Japanese and Chinese,
+The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position, Mojikyo and
+XXZT code points, Cangjie codes, meanings in English, Japanese and Chinese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
 further readings and meanings are linked to CCAMC's page for the character.
@@ -60,6 +62,10 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   states no licence.
 - `app/data/tangut-strokes.json.gz`: stroke counts, ideographs from Unicode's TangutSources.txt,
   components counted from their glyphs (copied from `data2/`).
+- `app/data/tangut-identifiers.json.gz`: the Li Fanwen 2008 number, 文海 position, Mojikyo
+  4.50/4.60 code point and XXZT A/B code point of 6,482 characters, with each system's source and
+  terms; built by `scripts/build_tangut_identifiers.mjs`. A card lists them, and the Find box reads
+  `L0009`, `L62.221`, `M202-84B2` and `XXZT-A-764F`.
 - `app/data/tangut-supplement.json.gz`: the 33 ideographs and 115 components Unicode 18.0.0 assigns in
   Tangut Supplement and Tangut Components Supplement, with their Unicode names, strokes,
   descriptions (BabelStone for U+18D00–U+18D08, the WG2 proposals for U+18D09–U+18D20), Cangjie codes and
