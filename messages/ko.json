@@ -710,5 +710,7 @@
   "gyalrongic.kind.dictionary": "사전",
   "gyalrongic.kind.grammar": "문법서",
   "gyalrongic.kind.preprint": "프리프린트",
-  "gyalrongic.kind.thesis": "학위논문"
+  "gyalrongic.kind.thesis": "학위논문",
+  "nav.dataset": "필사 데이터",
+  "nav.dataset.hint": "손으로 쓴 필획 데이터, 자유롭게 이용 가능"
 }

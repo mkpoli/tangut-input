@@ -710,5 +710,7 @@
   "gyalrongic.kind.dictionary": "辞書",
   "gyalrongic.kind.grammar": "文法書",
   "gyalrongic.kind.preprint": "プレプリント",
-  "gyalrongic.kind.thesis": "学位論文"
+  "gyalrongic.kind.thesis": "学位論文",
+  "nav.dataset": "手書きデータ",
+  "nav.dataset.hint": "手で書いた字形データ（自由に利用可）"
 }
