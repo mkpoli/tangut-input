@@ -22,6 +22,9 @@
   import Spelling from './Spelling.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
+  import { bookTitle } from '../lib/books.js'
+  import { setaCode } from '../lib/seta.js'
+  import { identifierGroups, editionName } from '../lib/identifiers.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -34,6 +37,7 @@
   const partTerm = part => part ? (PART_TERMS[/** @type {keyof typeof PART_TERMS} */ (part)] ?? part) : ''
   const entry = $derived(ready && char ? ix.byChar.get(char) : undefined)
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
+  const identifiers = $derived(ready && char ? identifierGroups(ix.identifiers.get(char) ?? []) : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
@@ -44,7 +48,20 @@
   const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
   const linkedGroup = $derived(family && (family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) ? family : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
-  const wordClass = $derived(partsOfSpeech(meanings.zh))
+  const wordClass = $derived(partsOfSpeech([...(meanings.zh ?? []), ...(entry?.wiktionary_zh ?? [])]))
+  const READING_FIELDS = /** @type {readonly { key: string, name?: string, zh?: string, label?: string, lang: string }[]} */ ([
+    { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文', lang: 'zh-Hant' },
+    { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山', lang: 'zh-Hant' },
+    { key: 'tibetan', label: 'card.tibetan', lang: 'bo' },
+  ])
+  /** A transcribed field's label: a sound gloss names the scholar in the reader's script, a
+   * transcription its own script. @param {{ name?: string, zh?: string, label?: string }} field */
+  const fieldLabel = field => {
+    if (!field.name) return t(/** @type {string} */ (field.label))
+    const name = /^(ja|zh|ko)/.test(i18n.locale) && field.zh ? field.zh : field.name
+    return t('card.soundGloss', { name })
+  }
+
   const readings = $derived(SYSTEMS.map(system => ({ ...system, value: entry?.pronunciations?.[system.key]?.trim() ?? '' })).filter(r => r.value))
   // The rhyme books: the class a character stands in, its tone, and the two characters its spelling
   // is read from. 文海 where it has one, 合編 where it does not.
@@ -71,6 +88,26 @@
     if (!entry?.composition) return []
     return ix.entries.filter(other => other.char !== char && other.composition === entry.composition).map(other => other.char)
   })
+  /**
+   * The books and pages a keyed value stands on. @param {string} field
+   * @returns {{ work: string, locator: string, note: string }[]}
+   */
+  const cites = field => ix.citations[char]?.[field] ?? []
+
+  /**
+   * A locator as the reader sees it: a 掌中珠 column is canvas, band and column, the rest is the
+   * page as written. @param {string} locator
+   */
+  const place = locator => locator
+    .replace(/^canvas (\d+) band (\d+) c(\d+)$/, (_, canvas, band, column) => `${canvas}·${band}·${column}`)
+    .replace(/^canvas (\d+) c(\d+)$/, (_, canvas, column) => `${canvas}·${column}`)
+
+  // The readings keyed from the editions — 音（李范文）, 音（聂历山）, the 藏文對音 — each with the
+  // page it stands on. They stand in the readings table like every other reading.
+  const keyed = $derived(READING_FIELDS
+    .map(field => ({ ...field, value: entry?.pronunciations?.[field.key]?.trim() ?? '', cites: cites(field.key) }))
+    .filter(field => field.value))
+
   const homophones = $derived.by(() => {
     const li = entry?.pronunciations?.li_fanwen?.trim()
     if (!li) return []
@@ -192,6 +229,27 @@
       <button class="ui-button" data-size="sm" type="button" onclick={() => copy(address, t('card.link'))}><Icon name="link" size={14}/>{t('card.copyLink')}</button>
     </div>
 
+    {#if identifiers.length}
+      <section class="identifiers">
+        <h3 class="ui-label">{t('card.identifiers')}</h3>
+        <dl>
+          {#each identifiers as group (group.scheme + (group.edition ?? ''))}
+            <dt>
+              {#if ix.identifierSources[group.scheme]?.url}
+                <a href={ix.identifierSources[group.scheme].url} target="_blank" rel="noopener noreferrer" title={t('card.identifierSource')}>{t(group.label)}</a>
+              {:else}{t(group.label)}{/if}
+              {#if group.edition}<span class="ui-hint">{editionName(group.scheme, group.edition)}</span>{/if}
+            </dt>
+            <dd>
+              {#each group.values as value (value)}
+                <button class="identifier ui-mono" type="button" title={t('card.copyIdentifier', { id: value })} onclick={() => copy(value, value)}>{value}</button>
+              {/each}
+            </dd>
+          {/each}
+        </dl>
+      </section>
+    {/if}
+
     <section class="faces-section">
       <div class="faces-head">
         <h3 class="ui-label"><Icon name="layers" size={15}/>{t('card.renderings')}</h3>
@@ -227,7 +285,7 @@
       </section>
     {/if}
 
-    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes || leilin?.length}
+    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || entry?.wiktionary_zh?.length || downes || leilin?.length}
       <section>
         <h3 class="ui-label"><Icon name="meaning" size={15}/>{t('card.meaning')}</h3>
         {#if wordClass.length}
@@ -238,7 +296,19 @@
         <dl class="means">
           {#if meanings.en?.length}<dt>en</dt><dd><ol>{#each meanings.en as sense, i (i)}<li>{sense}</li>{/each}</ol></dd>{/if}
           {#if meanings.ja?.length}<dt>ja</dt><dd lang="ja">{meanings.ja.join(' ')}</dd>{/if}
-          {#if meanings.zh?.length}<dt>zh</dt><dd lang="zh-Hant">{meanings.zh.join('；')}</dd>{/if}
+          {#if meanings.zh?.length}
+            <dt>zh</dt>
+            <dd lang="zh-Hant">
+              {meanings.zh.join('；')}
+              {#each cites('gloss_zh') as cite (cite.locator)}
+                <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+              {/each}
+            </dd>
+          {/if}
+          {#if entry?.wiktionary_zh?.length}
+            <dt><a href={entry.wiktionary_zh_url ?? `https://zh.wiktionary.org/wiki/${encodeURIComponent(char)}`} target="_blank" rel="noopener noreferrer" title={t('card.chineseWiktionary')}>zh</a></dt>
+            <dd lang="zh">{entry.wiktionary_zh.join('；')}</dd>
+          {/if}
           {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}
           {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
         </dl>
@@ -287,13 +357,32 @@
       </section>
     {/if}
 
-    {#if readings.length || rhymeClass}
+    {#if readings.length || keyed.length || rhymeClass}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
           <tbody>
             {#each readings as reading (reading.key)}
-              <tr><th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th><td>{reading.value}</td></tr>
+              <tr>
+                <th scope="row" title={systemTitle(reading)}>{systemName(reading, i18n.locale)}</th>
+                <td>
+                  {reading.value}
+                  {#each cites(reading.key) as cite (cite.locator)}
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+                  {/each}
+                </td>
+              </tr>
+            {/each}
+            {#each keyed as field (field.key)}
+              <tr>
+                <th scope="row" title={field.name ? `${field.name} · ${field.zh}` : fieldLabel(field)}>{fieldLabel(field)}</th>
+                <td class:cjk={field.lang !== 'bo'}>
+                  <span class:bo={field.lang === 'bo'} lang={field.lang}>{field.value}</span>
+                  {#each field.cites as cite (cite.locator)}
+                    <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+                  {/each}
+                </td>
+              </tr>
             {/each}
             {#if rhymeClass}
               <tr><th scope="row">{t('card.rhyme')}</th><td>{rhymeClass}{#if toneName}<span class="ui-hint"> · {t(toneName)}</span>{/if}</td></tr>
@@ -304,7 +393,7 @@
             {#if hands?.tibetan?.length}
               <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">
                 {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
-                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone />
+                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone pua={setaCode(ix.seta, script)} />
                 {/each}
               </td></tr>
             {/if}
@@ -331,7 +420,12 @@
     {#if entry?.wenhai_text_zh}
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.wenhai')}</h3>
-        <p lang="zh-Hant">{entry.wenhai_text_zh}</p>
+        <p lang="zh-Hant">
+          {entry.wenhai_text_zh}
+          {#each cites('wenhai_zh') as cite (cite.locator)}
+            <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
+          {/each}
+        </p>
       </section>
     {/if}
 
@@ -466,6 +560,12 @@
   .inline{padding:0 3px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font-size:17px;vertical-align:-2px}
   .inline:hover{background:var(--ui-color-surface-hover)}
   .use{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);padding-bottom:var(--ui-space-xl)}
+  .identifiers dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-2xs) var(--ui-space-lg);margin:0}
+  .identifiers dt{display:flex;align-items:baseline;gap:var(--ui-space-2xs);color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);white-space:nowrap}
+  .identifiers dt a{display:inline-flex;align-items:center;gap:1px;color:inherit;text-underline-offset:2px}
+  .identifiers dd{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs);margin:0;min-inline-size:0}
+  .identifier{padding:1px 6px;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-xs);background:var(--ui-color-surface-sunken);color:var(--ui-color-ink);font:inherit;font-size:var(--ui-text-xs);line-height:1.6;cursor:pointer}
+  .identifier:hover{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover)}
   .faces-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--ui-space-sm)}
   .record section > .ui-label,.faces-head .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .more a{display:inline-flex;align-items:center;gap:3px}
@@ -496,6 +596,7 @@
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings td.hands{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--ui-space-xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
+  .cite{display:block;margin-block-start:2px;font-family:var(--ui-font-sans);font-size:var(--ui-text-xs);color:var(--ui-color-ink-muted)}
   .spelling{font-size:18px}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
@@ -513,6 +614,11 @@
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}
   .credit{border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg);font-size:var(--ui-text-2xs);line-height:1.6;margin-top:var(--ui-space-xl)}
+  @media (max-width:560px){
+    .identifiers dl{grid-template-columns:1fr;gap:2px}
+    .identifiers dt{white-space:normal}
+    .identifiers dd{margin-bottom:var(--ui-space-xs)}
+  }
   @media (max-width:900px){
     .record{padding:var(--ui-space-lg) var(--ui-space-lg) var(--ui-space-5xl)}
     .head{gap:var(--ui-space-lg)}

@@ -2,6 +2,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
+import { createHash } from 'node:crypto'
 
 const hints = JSON.parse(gunzipSync(readFileSync(new URL('../data/tangut-component-shape-hints.json.gz', import.meta.url))).toString())
 const exemplars = new Set(hints.exemplars.map(row => row.char))
@@ -30,6 +31,16 @@ test('a named component never offers itself', () => {
   for (const component of hints.components.filter(row => row.named)) {
     expect(component.candidates.every(candidate => candidate.char !== component.char)).toBe(true)
   }
+})
+
+test('the app copy is the published hints file', () => {
+  const hash = path => createHash('sha256').update(readFileSync(new URL(path, import.meta.url))).digest('hex')
+  expect(hash('../app/data/tangut-component-shape-hints.json.gz')).toBe(hash('../data/tangut-component-shape-hints.json.gz'))
+})
+
+test('some unnamed components pass the card threshold', () => {
+  const hinted = hints.components.filter(row => !row.named && row.candidates[0]?.score >= 0.7 && row.candidates[0]?.sameStrokes)
+  expect(hinted.length).toBeGreaterThan(0)
 })
 
 test('the method states the limitation the names exist to mark', () => {

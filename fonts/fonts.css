@@ -18,6 +18,9 @@
 @font-face{font-family:"IDS Tangut";src:url("./NotoSerifTangut-Regular.woff2") format("woff2");font-display:swap;
   unicode-range:U+17000-18AFF,U+18D00-18DFF}
 
+/* The cursive forms of 108 characters, traced from BabelStone's examples; see fonts/README.md. */
+@font-face{font-family:"Cursive Tangut";src:url("./CursiveTangut-Regular.woff2") format("woff2");font-display:swap}
+
 @font-face{font-family:"IDS Seal";src:url("./IDSSeal-Regular.woff2") format("woff2");font-display:swap;
   unicode-range:U+3D000-3FC3F}
 

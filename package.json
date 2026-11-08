@@ -72,7 +72,7 @@
     "types": "node scripts/emit-types.mjs",
     "check": "tsrs -p tsconfig.json --noEmit && tsrs -p tsconfig.worker.json --noEmit && svelte-check --tsconfig ./tsconfig.svelte.json --threshold warning",
     "i18n": "x18n check --skip key-conflict",
-    "verify": "bun run test && bun run check && bun run i18n",
+    "verify": "bun run test && bun run check && bun run i18n && bun run check:readings",
     "dev": "vite app",
     "build:subtrees": "node scripts/build_subtree_parts.mjs",
     "build:demo": "vite build demo",
@@ -93,7 +93,9 @@
     "build:tangut-sijiao": "uv run scripts/build_tangut_sijiao.py",
     "build:tangut-rhymes": "uv run scripts/build_tangut_rhymes.py",
     "check:design": "bun scripts/check_design.mjs",
-    "check:zhangzhongzhu": "uv run scripts/check_zhangzhongzhu.py"
+    "check:zhangzhongzhu": "uv run scripts/check_zhangzhongzhu.py",
+    "check:books": "uv run scripts/fetch_books.py --check",
+    "check:readings": "uv run scripts/check_readings.py"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261102.1",

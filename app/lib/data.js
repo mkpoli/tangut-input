@@ -6,7 +6,8 @@
  * @typedef {{ [char: string]: [number | null, number | null, string | null, string | null, string | null, string | null, string | null] }} RhymeChars */
 /** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
 /** @typedef {{ char: string, codepoint?: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
- *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_zh?: string }} Entry */
+ *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_zh?: string,
+ *   wiktionary_zh?: string[], wiktionary_zh_url?: string }} Entry */
 /** Normalized terms derived from CCAMC records, used only to answer a search: the readings of three
  * systems Wiktionary does not carry, and the English and Chinese glosses. Never rendered.
  * @typedef {{ format: string, note: string, readings: Record<string, Record<string, string>>,
@@ -15,8 +16,8 @@
  *   publisher: string, url: string, licence: string, licenceUrl?: string, manuscript?: string, facsimile?: string,
  *   facsimileCredit?: string, reading?: string, readingUrl?: string, retrieved?: string, revision?: number, note?: string,
  *   study?: string, studyUrl?: string, pages?: { title: string, url: string, revision: number }[], commit?: string }} AttestationSource */
-/** @typedef {{ text: string, label: string, english?: string, page?: number, read?: boolean, url?: string, section?: string,
- *   chapter?: number, revision?: number }} AttestedLine */
+/** @typedef {{ text: string, label: string, english?: string, chinese?: string, chineseUrl?: string, chineseCredit?: string,
+ *   page?: number, read?: boolean, url?: string, section?: string, chapter?: number, revision?: number }} AttestedLine */
 /** @typedef {[line: string, position: number]} Place */
 /** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sources: number, sha256: string },
  *   sources: AttestationSource[], lines: Record<string, AttestedLine>, rows: Record<string, Record<string, Place[]>> }} Attestation */
@@ -31,6 +32,12 @@
  *   cangjie: string[], glyph: string }} SupplementCharacter */
 /** @typedef {{ format: string, unicode: string, built: string, sources: { id: string, name: string, url: string, sha256?: string, commit?: string }[],
  *   counts: Record<string, number>, characters: SupplementCharacter[] }} Supplement */
+/** Tibetan Extension-A code points and the Unicode sequences they stand for. @typedef {{ format: string,
+ *   standard: string, source: string, original: string, author: string, retrieved: string, sha256: string, note: string,
+ *   map: [code: string, script: string, sequence: string][] }} TibetanSeta */
+/** The numbers and legacy code points a character has, by system. @typedef {{ format: string, retrieved: string,
+ *   sources: Record<string, { name: string, url: string, sha256?: string, note?: string, licence?: string }>,
+ *   chars: Record<string, import('./identifiers.js').Row[]> }} Identifiers */
 
 /**
  * Fetch a gzipped file. The dev server may hand it over already decoded, so the magic bytes decide
@@ -71,7 +78,7 @@ export const loadEntries = () => once('entries', async () => {
  * @returns {Entry[]}
  */
 function expandEntries(packed) {
-  return packed.rows.map(([char, composition, strokes, radical, en, ja, zh, readings, wenhaiZh]) => {
+  return packed.rows.map(([char, composition, strokes, radical, en, ja, zh, readings, wenhaiZh, wiktionaryZh, wiktionaryUrl]) => {
     /** @type {Record<string, string>} */
     const pronunciations = {}
     packed.systems.forEach((key, i) => {
@@ -90,9 +97,16 @@ function expandEntries(packed) {
       definitions,
       pronunciations,
       wenhai_text_zh: wenhaiZh || undefined,
+      wiktionary_zh: wiktionaryZh?.length ? wiktionaryZh : undefined,
+      wiktionary_zh_url: wiktionaryUrl || undefined,
     }
   })
 }
+
+/**
+ * Where each keyed value of a character stands: the book and page. @returns {Promise<{ citations: Record<string, Record<string, { work: string, locator: string, note: string }[]>> }>}
+ */
+export const loadReadingSources = () => once('reading-sources', () => readJson(new URL('../data/tangut-reading-sources.json.gz', import.meta.url)))
 
 /** The derived CCAMC search terms. @returns {Promise<CcamcIndex>} */
 export const loadCcamcIndex = () => once('ccamc', () => readJson(new URL('../data/tangut-ccamc-index.json.gz', import.meta.url)))
@@ -105,6 +119,9 @@ export const loadTangutNames = () => once('tangut-names', async () => (await rea
 
 /** The same names compared across the languages that record one. @returns {Promise<{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] }>} */
 export const loadPartNames = () => once('part-names', () => readJson(new URL('../data/tangut-part-names.json', import.meta.url)))
+
+/** Editorial shape hints, not attested names. @returns {Promise<{ components: { char: string, named: boolean, candidates: { name: string, char: string, score: number, strokes: number | null, sameStrokes: boolean }[] }[] }>} */
+export const loadShapeHints = () => once('shape-hints', () => readJson(new URL('../data/tangut-component-shape-hints.json.gz', import.meta.url)))
 
 /** Four-corner codes as [character, six digits] pairs, from the rhyme-dictionary table. @returns {Promise<[string, string][]>} */
 export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/tangut-sijiao.json.gz', import.meta.url)))
@@ -134,6 +151,12 @@ export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */
 export const loadStrokes = () => once('strokes', async () => (await readJson(new URL('../data/tangut-strokes.json.gz', import.meta.url))).values)
+
+/** The numbers and legacy code points each character has. @returns {Promise<Identifiers>} */
+export const loadIdentifiers = () => once('identifiers', () => readJson(new URL('../data/tangut-identifiers.json.gz', import.meta.url)))
+
+/** The precomposed Tibetan Extension-A characters. @returns {Promise<TibetanSeta>} */
+export const loadTibetanSeta = () => once('tibetan-seta', () => readJson(new URL('../data/tangut-tibetan-seta.json.gz', import.meta.url)))
 
 /** The lines of the recorded corpus and where each character stands in them. @returns {Promise<Attestation>} */
 export const loadAttestation = () => once('attestation', () => readJson(new URL('../data/tangut-attestation.json.gz', import.meta.url)))
