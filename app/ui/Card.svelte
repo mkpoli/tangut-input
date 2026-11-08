@@ -38,6 +38,7 @@
   const entry = $derived(ready && char ? ix.byChar.get(char) : undefined)
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const identifiers = $derived(ready && char ? identifierGroups(ix.identifiers.get(char) ?? []) : [])
+  const pua = $derived(ready && char ? ix.pua.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
@@ -247,6 +248,27 @@
             </dd>
           {/each}
         </dl>
+      </section>
+    {/if}
+
+    {#if pua.length}
+      <section class="pua-variants">
+        <h3 class="ui-label">
+          {#if ix.puaSource?.source}
+            <a href={ix.puaSource.source} target="_blank" rel="noopener noreferrer" title={t('card.puaSource', { version: ix.puaSource.version ?? '' })}>{t('card.puaVariants')}</a>
+          {:else}{t('card.puaVariants')}{/if}
+          <span class="ui-count">{pua.length}</span>
+        </h3>
+        <ul class="pua-list">
+          {#each pua as [code, ids, sources] (code + ids)}
+            <li>
+              <button class="identifier ui-mono" type="button" title={t('card.copyIdentifier', { id: code })} onclick={() => copy(code, code)}>{code}</button>
+              <span class="ui-formula pua-ids" title={ids}>{ids}</span>
+              {#if sources.length}<span class="ui-hint pua-source">{sources.join(' · ')}</span>{/if}
+            </li>
+          {/each}
+        </ul>
+        <p class="ui-hint pua-note">{t('card.puaNote', { version: ix.puaSource?.version ?? '' })}</p>
       </section>
     {/if}
 
@@ -560,6 +582,13 @@
   .inline{padding:0 3px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font-size:17px;vertical-align:-2px}
   .inline:hover{background:var(--ui-color-surface-hover)}
   .use{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);padding-bottom:var(--ui-space-xl)}
+  .pua-variants .ui-label{flex-wrap:wrap}
+  .pua-variants .ui-label a{display:inline-flex;align-items:center;gap:2px;color:inherit;text-underline-offset:2px}
+  .pua-list{display:grid;gap:var(--ui-space-2xs);margin:0;padding:0;list-style:none}
+  .pua-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--ui-space-xs)}
+  .pua-ids{font-size:16px;line-height:1.5}
+  .pua-source{font-size:var(--ui-text-2xs);line-height:1.45}
+  .pua-note{margin:0;font-size:var(--ui-text-2xs);line-height:1.45}
   .identifiers dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-2xs) var(--ui-space-lg);margin:0}
   .identifiers dt{display:flex;align-items:baseline;gap:var(--ui-space-2xs);color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);white-space:nowrap}
   .identifiers dt a{display:inline-flex;align-items:center;gap:1px;color:inherit;text-underline-offset:2px}
