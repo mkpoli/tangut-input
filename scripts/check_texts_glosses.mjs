@@ -47,14 +47,14 @@ try {
         }
         if (out) await page.screenshot({ path: join(out, `texts-${phone ? 'phone' : 'desktop'}-${colorScheme}.png`) })
         if (!captureOnly) {
-          const toggle = page.getByRole('button', { name: 'Glosses' })
+          const toggle = page.locator('.view-tools .ui-chip')
           assert.equal(await toggle.getAttribute('aria-pressed'), 'true', 'glosses start on')
           await toggle.click()
           assert.equal(await page.locator('.passage .gloss').count(), 0, 'the layers turn off')
           await page.reload()
           await page.locator('.passage').first().waitFor()
           assert.equal(await page.locator('.passage .gloss').count(), 0, 'the off choice persists')
-          await page.getByRole('button', { name: 'Glosses' }).click()
+          await page.locator('.view-tools .ui-chip').click()
           assert(await page.locator('.passage .gloss.zh').count() > 0, 'the layers turn back on')
         }
         assert.deepEqual(errors, [])
