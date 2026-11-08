@@ -7,8 +7,8 @@ it into your text. <https://tangut.mkpo.li/>
 
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
-  lists code points, and `L0009`, `L55.172`, `M202-84B2` or `XXZT-A-764F` open the character a
-  number or legacy code names. Tangut components also answer to their Japanese shape names, such as くノ,
+  lists code points, and `L0009`, `L55.172`, `M202-84B2`, `XXZT-A-764F` or `U+F5C0` open the character a number,
+  legacy code or Tibetan Set A code names. Tangut components also answer to their Japanese shape names, such as くノ,
   ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
   opening part it lists the characters that open that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
@@ -33,7 +33,7 @@ it into your text. <https://tangut.mkpo.li/>
   table compares the names across the languages that record one.
 
 The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position, Mojikyo and
-XXZT code points, Cangjie codes, meanings in English, Japanese and Chinese,
+XXZT code points, the Set A code of a Tibetan spelling, Cangjie codes, meanings in English, Japanese and Chinese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
 further readings and meanings are linked to CCAMC's page for the character.
@@ -66,6 +66,10 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   4.50/4.60 code point and XXZT A/B code point of 6,482 characters, with each system's source and
   terms; built by `scripts/build_tangut_identifiers.mjs`. A card lists them, and the Find box reads
   `L0009`, `L62.221`, `M202-84B2` and `XXZT-A-764F`.
+- `app/data/tangut-tibetan-seta.json.gz`: the 1,536 precomposed Tibetan Extension-A characters
+  (U+F300–F8FF), each paired with the Unicode sequence it stands for; built by
+  `scripts/build_tibetan_seta.py` from `data/tibetan-seta.tsv`. A spelling that matches one shows
+  its code on the spelling tooltip and the Chart, and Find reads `U+F5C0`.
 - `app/data/tangut-supplement.json.gz`: the 33 ideographs and 115 components Unicode 18.0.0 assigns in
   Tangut Supplement and Tangut Components Supplement, with their Unicode names, strokes,
   descriptions (BabelStone for U+18D00–U+18D08, the WG2 proposals for U+18D09–U+18D20), Cangjie codes and
