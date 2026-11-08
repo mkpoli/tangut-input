@@ -12,9 +12,16 @@ Chinese and Latin script and are typed, not OCR'd.
 An image model reads one 掌中珠 band off the scan and writes an export: a row per glyph, with the
 canvas, the band, the column, the role, the glyph and its code point, and a note naming the pair it
 reads and how sure it is. The exports are kept in `cells/`, named `<canvas>b<band>[r].tsv` (`r` for
-one side of the opening only). `scripts/key_zzz_readings.py` turns an export into rows of the table
-below, one per transcription character, and pairs each with the Tangut code point in the same column;
-`--write` merges them into the table, replacing the rows of that canvas.
+one side of the opening only), and `bun run check:cells` holds their shape: four columns to a group,
+the Tangut column the same length as its transcription, every sign in the corpus, and a certainty
+word on every pair. `scripts/key_zzz_readings.py` turns an export into rows of the table below, one
+per transcription character, and pairs each with the Tangut code point in the same column; `--write`
+merges them into the table, replacing the rows of that canvas.
+
+Naming the Tangut sign under a Chinese character is the slow part: the corpus has 6,144 signs. The
+Chinese character's initial rules out most of them before any ink is compared, and
+`bun run key:sheet <character> <initial> <output>` draws what survives, sorted by stroke count and
+paged, so the eye works through hundreds rather than thousands. It narrows; it never decides.
 
 ## Table
 
@@ -47,6 +54,17 @@ A 直音 read from 掌中珠 into `sound_li_fanwen` names `zhangzhongzhu` as its
 掌中珠 prints a Chinese character for a Tangut one, which is the 直音 itself, and 夏漢字典 is the
 second reading. `uv run scripts/check_readings.py` holds the shape; it does not judge a reading.
 
+## The other dictionaries
+
+Arakawa's 西夏語通韻字典 is a table, not prose: one row per syllable, with the rhyme number, the
+characters that share the syllable, and the reconstruction in an IPA column. A page rendered at
+200 dpi comes apart cleanly enough for the model to be useful on the first three — the rhyme header
+`R. 19 平声19韻·上声16韻` is read, and so are the character cells — but the IPA column is beyond it
+(`mγ-ia` comes back as `mYa`, `tsh-ia` as `tha̱`), at 300 dpi as at 200. So the characters, the rhyme
+number and the class header are within reach of a parser, and the readings they share will need an
+eye. `bun run ocr:table --model <clone> --page <png>` prints the header, the class it names, and one
+line per row of the class with its characters and whatever the reading cell yielded. 149 pages.
+
 ## Locators
 
 - `zhangzhongzhu`: `canvas <n>`, `band <n>` and `c<n>`, the column's number counting from the band's
@@ -63,9 +81,10 @@ second reading. `uv run scripts/check_readings.py` holds the shape; it does not 
 A value stands alone only when the page prints it plainly. A damaged or doubtful glyph is
 `uncertain`, and gets a second witness — the other 掌中珠 copy, or the dictionary's own recap — before
 the status rises. A dictionary prints a character more than once, so two rows for one character and
-field are kept while they say the same thing; a page that disagrees with another is reported. An
-uncertain row is held back from the build until then, so the card never shows a reading nobody has
-confirmed; its `note` says what is doubtful. Nothing here is retyped from another site: every value is
+field are kept while they say the same thing; two held-back rows are compared with nothing, and two
+asserted rows that read a character differently are reported. An uncertain row is held back from the
+build until then, so the card never shows a reading nobody has confirmed; its `note` says what is
+doubtful. Nothing here is retyped from another site: every value is
 keyed from the edition, with its page.
 
 The non-commercial terms of the 掌中珠 photographs and the copyright in the other editions govern the

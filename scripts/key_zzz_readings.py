@@ -68,9 +68,19 @@ HEADER = ("char", "field", "value", "work", "locator", "note", "status", "checke
 
 
 def merge(table: Path, rows: list[dict[str, str]], canvases: set[str]) -> int:
-    """Rewrite the table without the 掌中珠 rows on `canvases`, then add `rows`. Returns the count."""
+    """Rewrite the table without the 掌中珠 rows on `canvases`, then add `rows`. Returns the count.
+
+    A row that has not changed keeps the date it was checked on, so re-running a band does not rewrite
+    the table's history.
+    """
     kept, dropped = [], 0
-    for line in table.read_text(encoding="utf-8").splitlines():
+    dated = {}
+    lines = table.read_text(encoding="utf-8").splitlines()
+    for line in lines:
+        fields = line.split("\t")
+        if len(fields) == len(HEADER) and fields[:1] != ["char"]:
+            dated[(fields[0], fields[1], fields[2], fields[3], fields[4])] = fields[7]
+    for line in lines:
         fields = line.split("\t")
         if fields[:1] == ["char"]:
             continue
@@ -79,8 +89,16 @@ def merge(table: Path, rows: list[dict[str, str]], canvases: set[str]) -> int:
             dropped += 1
             continue
         kept.append(line)
-    table.write_text("\n".join(["\t".join(HEADER), *kept, *(row["line"] for row in rows)]) + "\n",
-                     encoding="utf-8")
+    for row in rows:
+        fields = row["line"].split("\t")
+        known = dated.get((fields[0], fields[1], fields[2], fields[3], fields[4]))
+        if known:
+            fields[7] = known
+            row["line"] = "\t".join(fields)
+    # One canonical order, so re-running a band changes the rows it touched and nothing else.
+    body = sorted(kept + [row["line"] for row in rows],
+                  key=lambda line: tuple(line.split("\t")[index] for index in (0, 1, 3, 4, 2)))
+    table.write_text("\n".join(["\t".join(HEADER), *body]) + "\n", encoding="utf-8")
     return dropped
 
 
