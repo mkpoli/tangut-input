@@ -711,5 +711,7 @@
   "gyalrongic.kind.dictionary": "詞典",
   "gyalrongic.kind.grammar": "語法專著",
   "gyalrongic.kind.preprint": "預印本",
-  "gyalrongic.kind.thesis": "學位論文"
+  "gyalrongic.kind.thesis": "學位論文",
+  "nav.dataset": "手寫數據",
+  "nav.dataset.hint": "手寫的筆畫數據，可自由使用"
 }
