@@ -18,6 +18,7 @@
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { loadShapes } from '../lib/data.js'
   import { parseShapes, indexShapes, rasterize, rankShapes, SIZE } from '../lib/shape.js'
+  import { isDescriptionPart } from '../lib/composition.js'
   import { preview, ui } from '../lib/ui.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import G from './G.svelte'
@@ -85,7 +86,7 @@
   const palette = $derived.by(() => {
     if (db.status !== 'ready') return []
     const needle = partFilter.trim().toLowerCase()
-    let list = [...ix.usedBy.keys()].map(part => ({
+    let list = [...ix.usedBy.keys()].filter(part => !isDescriptionPart(part)).map(part => ({
       part,
       code: ix.codes.get(part)?.[0] ?? '',
       strokes: ix.strokes.get(part) ?? 99,
@@ -96,6 +97,12 @@
     if (partAmong) list = list.filter(item => item.live > 0)
     return keepVariantsTogether(list.sort((a, b) => a.strokes - b.strokes || b.uses - a.uses))
   })
+
+  /** What a palette tile is: its code, and how many characters hold it. @param {{ code: string, uses: number, live: number }} item */
+  function partTitle(item) {
+    const count = item.live >= 0 ? item.live : item.uses
+    return [item.code, count === 1 ? t('parts.info.oneCharacter') : t('common.characters', { count })].filter(Boolean).join(' · ')
+  }
 
   /** The palette by stroke count, the order a reader looks for a component in. */
   const paletteGroups = $derived.by(() => {
@@ -585,8 +592,7 @@
               <div class="ui-tiles" style:--ui-tile-size="44px">
                 {#each items as item (item.part)}
                   {@const sound = readingOf(item.part, ui.reading)}
-                  <button type="button" class="ui-tile" onclick={() => addPart(item.part)}
-                    title={t('parts.componentTitle', { code: item.code, count: item.live >= 0 ? item.live : item.uses })}>
+                  <button type="button" class="ui-tile" onclick={() => addPart(item.part)} title={partTitle(item)}>
                     <span class="ui-tile-glyph"><G char={item.part} /></span>
                     {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
                     <span class="ui-tile-note">{item.live > 0 ? item.live : item.code}{#if item.strokes !== item.section}{' · '}{t('draw.strokes', { count: item.strokes })}{/if}</span>
