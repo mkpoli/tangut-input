@@ -42,6 +42,8 @@
       <dd>{@html t('about.readingsSource')}</dd>
       <dt>{t('about.strokesTitle')}</dt>
       <dd>{@html t('about.strokes')}</dd>
+      <dt>{t('about.identifiersTitle')}</dt>
+      <dd>{@html t('about.identifiers')}</dd>
       <dt>{t('about.attestTitle')}</dt>
       <dd>
         <p>{t('about.attestation')}</p>

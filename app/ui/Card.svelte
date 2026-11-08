@@ -23,6 +23,7 @@
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
   import { bookTitle } from '../lib/books.js'
+  import { identifierGroups, editionName } from '../lib/identifiers.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -35,6 +36,7 @@
   const partTerm = part => part ? (PART_TERMS[/** @type {keyof typeof PART_TERMS} */ (part)] ?? part) : ''
   const entry = $derived(ready && char ? ix.byChar.get(char) : undefined)
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
+  const identifiers = $derived(ready && char ? identifierGroups(ix.identifiers.get(char) ?? []) : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
@@ -45,7 +47,7 @@
   const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
   const linkedGroup = $derived(family && (family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) ? family : undefined)
   // The part of speech the Chinese gloss marks, where it marks one.
-  const wordClass = $derived(partsOfSpeech(meanings.zh))
+  const wordClass = $derived(partsOfSpeech([...(meanings.zh ?? []), ...(entry?.wiktionary_zh ?? [])]))
   const READING_FIELDS = /** @type {readonly { key: string, name?: string, zh?: string, label?: string, lang: string }[]} */ ([
     { key: 'sound_li_fanwen', name: 'Li Fanwen', zh: '李範文', lang: 'zh-Hant' },
     { key: 'sound_nie_lishan', name: 'Nie Lishan', zh: '聶歷山', lang: 'zh-Hant' },
@@ -226,6 +228,27 @@
       <button class="ui-button" data-size="sm" type="button" onclick={() => copy(address, t('card.link'))}><Icon name="link" size={14}/>{t('card.copyLink')}</button>
     </div>
 
+    {#if identifiers.length}
+      <section class="identifiers">
+        <h3 class="ui-label">{t('card.identifiers')}</h3>
+        <dl>
+          {#each identifiers as group (group.scheme + (group.edition ?? ''))}
+            <dt>
+              {#if ix.identifierSources[group.scheme]?.url}
+                <a href={ix.identifierSources[group.scheme].url} target="_blank" rel="noopener noreferrer" title={t('card.identifierSource')}>{t(group.label)}</a>
+              {:else}{t(group.label)}{/if}
+              {#if group.edition}<span class="ui-hint">{editionName(group.scheme, group.edition)}</span>{/if}
+            </dt>
+            <dd>
+              {#each group.values as value (value)}
+                <button class="identifier ui-mono" type="button" title={t('card.copyIdentifier', { id: value })} onclick={() => copy(value, value)}>{value}</button>
+              {/each}
+            </dd>
+          {/each}
+        </dl>
+      </section>
+    {/if}
+
     <section class="faces-section">
       <div class="faces-head">
         <h3 class="ui-label"><Icon name="layers" size={15}/>{t('card.renderings')}</h3>
@@ -261,7 +284,7 @@
       </section>
     {/if}
 
-    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || downes || leilin?.length}
+    {#if meanings.en?.length || meanings.ja?.length || meanings.zh?.length || entry?.wiktionary_zh?.length || downes || leilin?.length}
       <section>
         <h3 class="ui-label"><Icon name="meaning" size={15}/>{t('card.meaning')}</h3>
         {#if wordClass.length}
@@ -280,6 +303,10 @@
                 <span class="cite"><b>{bookTitle(cite.work) || cite.note}</b><span class="ui-hint" title={cite.locator}>{place(cite.locator)}</span></span>
               {/each}
             </dd>
+          {/if}
+          {#if entry?.wiktionary_zh?.length}
+            <dt><a href={entry.wiktionary_zh_url ?? `https://zh.wiktionary.org/wiki/${encodeURIComponent(char)}`} target="_blank" rel="noopener noreferrer" title={t('card.chineseWiktionary')}>zh</a></dt>
+            <dd lang="zh">{entry.wiktionary_zh.join('；')}</dd>
           {/if}
           {#if leilin?.length}<dt title={t('card.leilinTitle')}>類林</dt><dd lang="zh-Hant">{leilin.map(([word]) => word).join('、')}</dd>{/if}
           {#if downes}<dt class="downes" title={t('card.downesTitle')}>Downes</dt><dd>{downes}</dd>{/if}
@@ -532,6 +559,12 @@
   .inline{padding:0 3px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font-size:17px;vertical-align:-2px}
   .inline:hover{background:var(--ui-color-surface-hover)}
   .use{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);padding-bottom:var(--ui-space-xl)}
+  .identifiers dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-2xs) var(--ui-space-lg);margin:0}
+  .identifiers dt{display:flex;align-items:baseline;gap:var(--ui-space-2xs);color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);white-space:nowrap}
+  .identifiers dt a{display:inline-flex;align-items:center;gap:1px;color:inherit;text-underline-offset:2px}
+  .identifiers dd{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs);margin:0;min-inline-size:0}
+  .identifier{padding:1px 6px;border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-xs);background:var(--ui-color-surface-sunken);color:var(--ui-color-ink);font:inherit;font-size:var(--ui-text-xs);line-height:1.6;cursor:pointer}
+  .identifier:hover{border-color:var(--ui-color-border-strong);background:var(--ui-color-surface-hover)}
   .faces-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--ui-space-sm)}
   .record section > .ui-label,.faces-head .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
   .more a{display:inline-flex;align-items:center;gap:3px}
@@ -580,6 +613,11 @@
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}
   .credit{border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg);font-size:var(--ui-text-2xs);line-height:1.6;margin-top:var(--ui-space-xl)}
+  @media (max-width:560px){
+    .identifiers dl{grid-template-columns:1fr;gap:2px}
+    .identifiers dt{white-space:normal}
+    .identifiers dd{margin-bottom:var(--ui-space-xs)}
+  }
   @media (max-width:900px){
     .record{padding:var(--ui-space-lg) var(--ui-space-lg) var(--ui-space-5xl)}
     .head{gap:var(--ui-space-lg)}

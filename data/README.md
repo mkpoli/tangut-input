@@ -17,6 +17,32 @@ snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
 underlying editions are in `wikisource/README.md` and in the source records of the built file.
 
+## `wiktionary/definitions-zh.json.gz`
+
+Chinese Wiktionary's Tangut definitions from the [2026-11-01 dump](https://dumps.wikimedia.org/zhwiktionary/20261101/),
+SHA1 `bd139bae2c7c9f5fad6d6a347d07296bf9bcabdc`, checked against Wikimedia's
+[checksum list](https://dumps.wikimedia.org/zhwiktionary/20261101/zhwiktionary-20261101-sha1sums.txt).
+Each page retains its revision, timestamp, latest editor, contributor-history URL and original wikitext.
+The snapshot contains 152 displayable senses for 110 characters; unresolved markup and three
+identified source inconsistencies remain in its rejected records.
+
+Licence: **CC BY-SA 4.0**, Chinese Wiktionary contributors, under the
+[recorded copyright notice](https://zh.wiktionary.org/w/index.php?title=Wiktionary:%E7%89%88%E6%9D%83%E4%BF%A1%E6%81%AF&oldid=8368252).
+The latest editor is one contributor; the linked page history provides the others.
+The primary dictionaries were not checked, and some reference templates link to CCAMC.
+[Coverage and source limitations](../docs/han-glosses.md).
+
+```sh
+uv run scripts/extract_tangut_chinese.py --dump /path/to/zhwiktionary-20261101-pages-articles.xml.bz2 --retrieved 2026-11-07
+uv run scripts/build_tangut_entries.py
+```
+
+## `cursive/`
+
+The 108 characters on [BabelStone's Cursive Tangut](https://www.babelstone.co.uk/Tangut/CursiveTangut.html)
+page, its 210 crops and the outlines traced from them. [`cursive/README.md`](cursive/README.md) gives
+the fields, the sources and their terms.
+
 ## `mica/`
 
 Two texts the Mi Corpus Annotation Group transcribed itself: 華嚴經 juan 77, from the images in 荒川慎太郎
@@ -38,6 +64,21 @@ The repository states no licence. The project owner granted permission to use th
 volumes are CC BY 4.0; the other texts keep the terms of the editions cited in `lcdtt/README.md`.
 `scripts/build_tangut_attestation.py` reads the manifest and adds the 21 texts as one source,
 `lcdtt`.
+
+## `babelstone/`
+
+The parallel Tangut and Chinese text of T599 on Andrew West's
+[BabelStone page](https://www.babelstone.co.uk/Tangut/DragonKing.html), read 2026-11-07:
+`dragon-king.tsv` holds the 26 line pairs, Tangut first, and
+`scripts/fetch_babelstone_dragon_king.py` refetches them. The Chinese is 義淨's
+*佛為海龍王説法印經* as the page prints it; the Tangut column only aligns each Chinese line with the
+LCDTT transcription of the same text, which the corpus already holds. The page states no licence;
+the Chinese is a public-domain translation, and the Tangut transcription and alignment are West's.
+`scripts/build_tangut_attestation.py` reads the checked-in table and adds the Chinese to the
+`lcdtt:dragon-king` lines and to the Wikisource transcription, which holds the same Tangut as one
+line; it stops if the table's Tangut no longer matches either text. The table is a snapshot, not a
+check on the live page: refetch it with the script and rebuild to bring in a page change. See
+`babelstone/README.md`.
 
 ## `tangut-samples.json`
 
@@ -616,6 +657,22 @@ parts', which covers the 6,107 descriptions in 4 to 22 strokes. Rebuild with
 (`ae440bd9bba89b2610cfe6b498ac462d2763dd32bfead8ac30d32988b5b67a27`). Unicode data is
 distributed under the Unicode License v3.
 
+## `tangut-identifiers.json.gz`
+
+The number or code each of 6,482 characters has in four systems besides Unicode: the Li Fanwen
+2008 dictionary index (`L0009`, or `L0042/4537` where a merged character carries two), the 文海 page
+and entry from BabelStone's lookup (`L55.172`, `M10.131`, 3,069 characters), and the Mojikyo
+4.50/4.60 and XXZT A/B code points from BabelStone's conversion table (6,061 and 6,455 characters).
+A Mojikyo or XXZT code is a CJK code point, not a private-use one, and the same code can name two
+characters where the converter prints a choice.
+
+Format: `format`, `retrieved`, `sources` (name, URL, terms) and `chars`, each a list of
+`[scheme, value, edition?]`. The editions are `4.50`/`4.60` for Mojikyo and `A`/`B` for XXZT; a Li
+Fanwen number and a 文海 position carry none. Rebuild with
+`node scripts/build_tangut_identifiers.mjs`, which pins all three source digests. Unicode data is
+under the Unicode License v3; the two BabelStone pages state no licence, and only the factual
+numbers are kept.
+
 ## `tangut-layers.json.gz`
 
 The largest character split of 2,408 Tangut descriptions, 16 KB gzipped. BabelStone describes every
@@ -662,15 +719,31 @@ modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyak
 Sofronov 1968, Nishida 1966), Gong Hwang-cherng's GHC and Gong Xun's GX202411 from the Tangut
 Pronunciation Database, English
 meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
+Chinese meanings from the pinned zhwiktionary snapshot and Chinese glosses keyed from the editions,
 BabelStone's IDS description, the 文海's Chinese entry text for the six characters it carries in
 this snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
 meanings are CC BY-SA 4.0; GHC and GX202411 are cited from the Tangut Pronunciation Database under
 its Limited Public Use licence; the description is public domain; the radical and stroke data are
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
 `data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
-`data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
+`data/wiktionary/definitions-zh.json.gz`, `data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
 `data/wenhai/entry-text.json.gz`, `data/readings/readings.tsv` and the files above. The keyed
 readings and their citations are the builder's own input and come from the editions.
+
+The parts finder indexes complete subtrees of these IDS descriptions as selectable shapes. Where a
+subtree matches a single character's complete description, the editorial form can use that
+character; this is a shape comparison, not a documented historical derivation. A description of
+three columns or three rows is read as two parts when exactly one pair of adjacent operands spells a
+character: 𗆫 (`⿲𘠐𘧘𘣩`) reads as 𘠐 and 𘓔 (`⿰𘧘𘣩`), 633 of the 1,707 complete single-root three-operand descriptions. When
+both pairs spell a character, or neither does, the three operands stay as the source writes them.
+The cut is editorial and comes from the shapes alone; the recorded description is unchanged.
+
+The suggestion to retain intermediate parts, including `⿱𘡊𗎘`, and to keep a whole character such as
+𘓔 as one base, came from a private communication shared on 2026-11-07 (name withheld); it gives
+examples rather than a complete decomposition authority. The underlying IDS data is Andrew West's
+[Tangut IDS](https://www.babelstone.co.uk/Tangut/TangutIDS.txt), as recorded above. The distinction
+between IDS containment and the 文海's cuts is discussed in
+[the construction note](../docs/wenhai-composition.md).
 
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
 one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from

@@ -9,9 +9,10 @@
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
-  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byHanziName, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byHanziName, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
+  import { parseIdentifier } from '../lib/identifiers.js'
   import HanziNames from '../ui/HanziNames.svelte'
 
   let query = $state(route.q)
@@ -35,6 +36,17 @@
     if (chars.length) {
       out.push({ key: 'text', title: chars.length === 1 ? t('find.group.character') : t('find.group.text'), total: chars.length,
         items: chars.map(char => ({ char, sub: gloss(char), extra: firstReading(char) })) })
+      return out
+    }
+    // An identifier is a whole answer: its Latin letters and digits are not also a reading or a code.
+    if (parseIdentifier(text)) {
+      const identified = byIdentifier(text).sort((a, b) => (ix.frequency.get(b.char) ?? 0) - (ix.frequency.get(a.char) ?? 0) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+      if (identified.length) {
+        const first = identified[0]
+        const system = `${t(`card.identifier.${first.scheme}`)}${first.edition ? ` ${first.edition}` : ''}`
+        out.push({ key: 'identifier', title: `${t('find.group.identifier')} · ${system}`, total: identified.length,
+          items: identified.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.value })) })
+      }
       return out
     }
     const points = byCodePoint(text)
@@ -114,6 +126,7 @@
     { value: 'msb', mono: true },
     { value: 'ndzi', mono: true },
     { value: 'U+1736', mono: true },
+    { value: 'L0009', mono: true },
     { value: '⿰𘤊', ids: true },
   ]
 </script>
