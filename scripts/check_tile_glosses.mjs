@@ -78,6 +78,12 @@ try {
           await mini.waitFor()
           assert.match(await mini.getAttribute('aria-label'), /虎/, 'the picker announces its Chinese gloss')
           assert(await mini.locator('.ui-tile-note-text').innerText(), 'the picker retains English')
+          // 類林's ɴᴇɢ is a grammatical label, not a Han gloss, so the Han line stays empty.
+          await page.locator('.picker-panel input').first().fill('𗅋')
+          const neg = page.locator('.mini-tiles .ui-tile').first()
+          await neg.waitFor()
+          assert.equal(await neg.locator('.ui-tile-han').count(), 0, 'a grammatical label does not fill the Han line')
+          assert.match(await neg.locator('.ui-tile-note-text').innerText(), /not/)
         }
         assert.deepEqual(errors, [])
         console.log(`${phone ? 'phone' : 'desktop'} ${colorScheme}: passed`)
