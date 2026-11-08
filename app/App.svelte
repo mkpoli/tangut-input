@@ -337,7 +337,7 @@
         {:else if route.page === 'intro'}<Intro />
         {:else if route.page === 'gyalrongic'}<Gyalrongic />
         {:else}<About />{/if}
-        {#if route.page !== 'about'}
+        {#if route.page !== 'about' && route.page !== 'dataset'}
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
