@@ -717,5 +717,6 @@
   "nav.dataset": "手写数据",
   "nav.dataset.hint": "手写的笔画数据，可自由使用",
   "draw.dataset": "手写数据",
-  "draw.dataset.hint": "这些手写笔画已作为数据集公开。"
+  "draw.dataset.hint": "这些手写笔画已作为数据集公开。",
+  "pick.undo": "撤销一笔"
 }

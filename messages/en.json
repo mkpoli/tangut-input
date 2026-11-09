@@ -717,5 +717,6 @@
   "nav.dataset": "Dataset",
   "nav.dataset.hint": "Strokes drawn by hand, free to use",
   "draw.dataset": "Stroke dataset",
-  "draw.dataset.hint": "The strokes behind this page are released as a dataset."
+  "draw.dataset.hint": "The strokes behind this page are released as a dataset.",
+  "pick.undo": "Undo stroke"
 }

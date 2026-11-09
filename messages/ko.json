@@ -717,5 +717,6 @@
   "nav.dataset": "필사 데이터",
   "nav.dataset.hint": "손으로 쓴 필획 데이터, 자유롭게 이용 가능",
   "draw.dataset": "필사 데이터",
-  "draw.dataset.hint": "이 화면의 필획 데이터는 데이터셋으로 공개되어 있습니다."
+  "draw.dataset.hint": "이 화면의 필획 데이터는 데이터셋으로 공개되어 있습니다.",
+  "pick.undo": "한 획 되돌리기"
 }
