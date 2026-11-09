@@ -9,11 +9,12 @@
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
-  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byTangutPua, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
   import { parseIdentifier } from '../lib/identifiers.js'
   import { parseSetaQuery } from '../lib/seta.js'
+  import { parsePuaQuery } from '../lib/pua.js'
 
   let query = $state(route.q)
   let active = $state(-1)
@@ -35,6 +36,14 @@
     if (chars.length) {
       out.push({ key: 'text', title: chars.length === 1 ? t('find.group.character') : t('find.group.text'), total: chars.length,
         items: chars.map(char => ({ char, sub: gloss(char), extra: firstReading(char) })) })
+      return out
+    }
+    // A Tangut PUA code is a five-digit private-use code; the encoded block is not in its range.
+    const puaQuery = parsePuaQuery(text)
+    if (puaQuery) {
+      const pua = byTangutPua(text).sort((a, b) => (ix.frequency.get(b.char) ?? 0) - (ix.frequency.get(a.char) ?? 0) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+      if (pua.length) out.push({ key: 'pua', title: `${t('find.group.pua')} · ${puaQuery}`, total: pua.length,
+        items: pua.slice(0, 24).map(hit => ({ char: hit.char, sub: gloss(hit.char) })) })
       return out
     }
     // A Set A code is a whole answer: its digits and Latin letters are not also a reading.
@@ -131,6 +140,7 @@
     { value: 'U+1736', mono: true },
     { value: 'L0009', mono: true },
     { value: 'U+F5C0', mono: true },
+    { value: 'U+F02BB', mono: true },
     { value: '⿰𘤊', ids: true },
   ]
 </script>

@@ -3,6 +3,7 @@
 import { searchTibetan } from './tibetan.js'
 import { byIdentifier as byStoredIdentifier } from './identifiers.js'
 import { byTibetanSeta as byStoredSeta } from './seta.js'
+import { byTangutPua as byStoredPua } from './pua.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
 import { searchShapeNames } from './names.js'
@@ -275,3 +276,6 @@ export const byIdentifier = text => byStoredIdentifier(ix.identifierIndex, text)
 
 /** Characters whose Tibetan spelling has a Tibetan Extension-A code. @param {string} text */
 export const byTibetanSeta = text => byStoredSeta(ix.setaIndex, text)
+
+/** Characters a Tangut Yinchuan PUA variant code names. @param {string} text */
+export const byTangutPua = text => byStoredPua(ix.puaIndex, text)
