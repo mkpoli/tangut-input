@@ -11,6 +11,7 @@ import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
 import { indexIdsDescriptions } from './ids-views.js'
 import { indexDescriptions } from './description.js'
+import { indexShapeSpellings } from './names.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
 
@@ -86,6 +87,7 @@ export const ix = {
   /** The Chinese words the Tangut 類林 uses for a character. @type {Map<string, [string, number][]>} */ leilin: new Map(),
   /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
   /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
+  /** The shape spelling of each character whose parts all have a shape name. @type {Map<string, string[]>} */ shapeSpellings: new Map(),
   /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
   /** The components Tangut Components Supplement adds. @type {string[]} */ supplementComponents: [],
   /** Editorial shape hints by component, not names. @type {Map<string, { name: string, char: string, score: number, strokes: number | null, sameStrokes: boolean }[]>} */ shapeHints: new Map(),
@@ -148,6 +150,7 @@ export async function load() {
     ix.variantGroups = variantFamilies(ix.variantPairs)
     ix.familyOf = familyIndex(ix.variantGroups)
     ix.names = names
+    ix.shapeSpellings = indexShapeSpellings(entries, names)
     ix.partNames = partNames
     ix.shapeHints = new Map((shapeHints?.components ?? []).map(row => [row.char, row.candidates]))
     for (const [char, code] of pairs) {

@@ -74,6 +74,7 @@
   "find.group.text": "텍스트의 각 글자",
   "find.group.codepoint": "코드 포인트",
   "find.group.shape": "모양 이름으로",
+  "find.group.spelling": "모양 이름을 이어서",
   "find.group.cangjie": "창힐 부호",
   "find.group.reading": "재구음",
   "find.group.meaning": "뜻으로",

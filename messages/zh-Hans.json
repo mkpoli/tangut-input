@@ -74,6 +74,7 @@
   "find.group.text": "文本中的各个字",
   "find.group.codepoint": "按码位",
   "find.group.shape": "按形状名",
+  "find.group.spelling": "按形状名拼写",
   "find.group.cangjie": "作为仓颉码",
   "find.group.reading": "作为拟音",
   "find.group.meaning": "按释义",

@@ -1,5 +1,5 @@
 {
-  "note": "Names recorded for the nine Tangut components with Japanese shape names. A dash means no name is recorded in the sources read.",
+  "note": "Names recorded for the Tangut components with Japanese shape names. A dash means no name is recorded in the sources read.",
   "languages": [
     "ja",
     "en",
@@ -245,6 +245,19 @@
         "ko": []
       },
       "source": "Arakawa 2020; Wikipedia"
+    },
+    {
+      "char": "𘫿",
+      "names": {
+        "ja": [
+          "コくノ"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "NGWU YOH, chat message, 2026-11-10"
     }
   ]
 }

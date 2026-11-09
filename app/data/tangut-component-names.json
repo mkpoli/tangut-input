@@ -126,6 +126,13 @@
       "source": "ja-wikipedia-tangut",
       "detail": "Arakawa 2020 distinguishes this form from ノメメ; Wikipedia gives the code point",
       "credit": "Arakawa 2020 · Japanese Wikipedia"
+    },
+    {
+      "name": "コくノ",
+      "char": "𘫿",
+      "source": "NGWU YOH, chat message, 2026-11-10",
+      "detail": "The plain コくノ, the form without the emphatic dot; Arakawa 2023 names コくノ and its dotted A3 コくノ﹅ (𘧆). U+18AFF is this project's reading of the glyph.",
+      "credit": "NGWU YOH"
     }
   ]
 }

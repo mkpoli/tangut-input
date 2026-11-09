@@ -74,6 +74,7 @@
   "find.group.text": "Each character in the text",
   "find.group.codepoint": "By code point",
   "find.group.shape": "By shape name",
+  "find.group.spelling": "By shape spelling",
   "find.group.cangjie": "As a Cangjie code",
   "find.group.reading": "As a reading",
   "find.group.meaning": "By meaning",

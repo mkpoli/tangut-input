@@ -6,7 +6,7 @@ import { byTibetanSeta as byStoredSeta } from './seta.js'
 import { byTangutPua as byStoredPua } from './pua.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
-import { searchShapeNames } from './names.js'
+import { searchShapeNames, searchShapeSpellings } from './names.js'
 import { describedBy } from './description.js'
 
 /** @typedef {{ char: string, code: string, near?: boolean }} CodeHit */
@@ -86,6 +86,13 @@ const rank = (code, typed) => (code === typed ? 0 : 1000) + code.length
  * @returns {{ char: string, name: string, tier: number }[]}
  */
 export const byName = query => searchShapeNames(ix.names, query)
+
+/**
+ * Characters whose parts, named in order, spell the query with their Japanese shape names.
+ * @param {string} query
+ * @returns {{ char: string, spelling: string }[]}
+ */
+export const byShapeSpelling = query => searchShapeSpellings(ix.shapeSpellings, query)
 
 /** The languages the meanings are recorded in. */
 export const MEANING_LANGUAGES = /** @type {const} */ (['en', 'ja', 'zh'])

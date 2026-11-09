@@ -1,6 +1,6 @@
 # The names, words and readings people use for components, for the component search (src/core/names.js).
 # columns: name, char, source, detail
-# rows: 6660
+# rows: 6661
 # Built by scripts/build_component_names.py.
 # source kanji-tools: anzumura/kanji-tools data/radicals.txt at c3e52cbca38a1fdbf9a96abb1dd015450cc1411c; MIT; Copyright (c) 2022 Dan H
 #   https://github.com/anzumura/kanji-tools
@@ -31,6 +31,7 @@
 #   https://ja.wikipedia.org/wiki/西夏文字
 # source arakawa-2020: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回大会予稿集; the distinction between the ノメメ and くくノ forms
 #   https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf
+# source NGWU YOH, chat message, 2026-11-10: コくノ for 𘫿, the plain form of Arakawa's コくノ﹅; the code point is this project's reading of the glyph
 # The file as a whole is shared alike under CC BY-SA 4.0, because the Wikipedia and KANJIDIC2 rows are:
 # https://creativecommons.org/licenses/by-sa/4.0/
 cangzidi	㔾	pypinyin	pinyin of 仓字底
@@ -6682,6 +6683,7 @@ juanzitou	龹	pypinyin	pinyin of 卷字头
 くノ﹅ノメ	𘧶	arakawa-2023	A5 in table 4: a くノ with the emphatic dot above a ノメ
 くノ	𘫺	arakawa-2023	Arakawa calls this the くノ型 lower-left element (n. 21)
 くくノ	𘫽	ja-wikipedia-tangut	Arakawa 2020 distinguishes this form from ノメメ; Wikipedia gives the code point
+コくノ	𘫿	NGWU YOH, chat message, 2026-11-10	The plain コくノ, the form without the emphatic dot; Arakawa 2023 names コくノ and its dotted A3 コくノ﹅ (𘧆). U+18AFF is this project's reading of the glyph.
 fengzikuang	𠘨	pypinyin	pinyin of 凤字框
 fengzitou	𠘨	pypinyin	pinyin of 风字头
 jizidi	𠘨	pypinyin	pinyin of 几字底
