@@ -518,23 +518,14 @@ empty cells where the sources read record no name.
 
 Other descriptions of a Tangut character, from a named source, kept beside the record's own.
 Format: `char`, `IDS`, `source`, `detail`, `lang`; comments start with `#`. `lang` names the
-language of `detail` and is required whenever a detail is given.
+language of `detail`.
 `scripts/build_tangut_ids_aliases.py` checks each description and writes
-`app/data/tangut-ids-aliases.json`. The parts index reads it: a character is found from the parts
-an alias names, at any depth, and its layout; parts and layout are read from one description, so a
-part of the record does not pair with an operator only an alias opens with. The record's
-description still draws the structure and decides the parts the card splits into. The card shows
-each alias under its source.
+`app/data/tangut-ids-aliases.json`. The parts index reads it; the record still draws the structure
+and decides the direct parts.
 
-- `𘋤` is ⿴𘋢𘠣 in NGWU YOH's reading (chat message, 2026-11-07; the quoted lines are in the
-  row's `detail`). Its record is ⿰𘦘⿰𘠣⿰𘤣𘠢. The IDS is this project's writing of the
-  reading: the enclosing part comes first, as in ⿴囗或 for 國.
-- 89 further readings filled in the review workbook (48 on 2026-11-08, 41 on 2026-11-09) are listed
-  with their sources. One character may carry several readings; each is a row. `⿽` (from lower right)
-  and `㇯` (subtraction) are accepted: `𘖨` reads ⿱𘨞㇯𗀋𘠀, and `𗊳` carries ⿰𘠣⿽𗎘𘠚 beside
-  ⿶𗊈𘠚.
-- Licence: the quoted lines stay as sent, with the sender's handle and date. Rows without a detail
-  carry only the IDS; the IDS is this project's reading.
+- `𘋤` is ⿴𘋢𘠣 in NGWU YOH's reading (2026-11-07); its record is ⿰𘦘⿰𘠣⿰𘤣𘠢.
+- 89 further readings (2026-11-08, 2026-11-09); one character may have several.
+- Licence: the readings are cited; no source text is redistributed.
 
 ## tangut-component-shape-hints.json.gz
 
