@@ -44,6 +44,10 @@ export const PAGE_SEO = {
     title: 'Fanqie — Tangut Input',
     description: 'Type the two characters a Tangut fanqie is spelt with, the upper and the lower, and find the character they spell.',
   },
+  chains: {
+    title: 'Fanqie chains — Tangut Input',
+    description: 'The 文海’s fanqie followed as two graphs: 173 initial chains and 321 rhyme chains, their members, direct links, crossings and unresolved sets.',
+  },
   chart: {
     title: 'Rhyme chart — Tangut Input',
     description: 'The rhyme books laid out as a chart: rhymes down the side, initial groups across the top, and the characters that stand at each crossing.',

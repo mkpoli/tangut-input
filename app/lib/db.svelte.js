@@ -5,7 +5,8 @@ import { indexTibetanSeta } from './seta.js'
 import { indexTangutPua } from './pua.js'
 import { indexIdentifiers } from './identifiers.js'
 import { englishGloss } from './gloss.js'
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua, loadWenhai } from './data.js'
+import { indexWenhai } from './wenhai.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
@@ -68,6 +69,7 @@ export const ix = {
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
   /** The rhyme books' record by character. @type {Map<string, import('./data.js').RhymeChars[string]>} */ rhymes: new Map(),
+  /** The 文海 and its fanqie chains, indexed. @type {import('./wenhai.js').WenhaiIndex | null} */ wenhai: null,
   /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
   /** Tibetan phonetic glosses by character: [Wylie, Tibetan script, [[shelfmark, count]…]]. @type {Map<string, [string, string, [string, number][]][]>} */ tibetan: new Map(),
@@ -96,10 +98,11 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, identifiers, seta, pua, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
+    const [entries, pairs, strokes, identifiers, seta, pua, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited, wenhai] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadIdentifiers().catch(() => null), loadTibetanSeta().catch(() => null), loadTangutPua().catch(() => null), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
       loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
       loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
+      loadWenhai().catch(() => null),
     ])
     ix.citations = cited?.citations ?? {}
     ix.identifiers = new Map(Object.entries(identifiers?.chars ?? {}))
@@ -163,6 +166,7 @@ export async function load() {
     ix.directPartsOf = index.directPartsOf
     ix.layoutOf = index.layoutOf
     if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
+    if (wenhai) ix.wenhai = indexWenhai(wenhai)
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))
       ix.rhymeSource = rhymes.source

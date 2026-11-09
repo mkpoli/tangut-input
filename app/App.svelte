@@ -22,6 +22,7 @@
   import Dataset from './pages/Dataset.svelte'
   import Draw from './pages/Draw.svelte'
   import Fanqie from './pages/Fanqie.svelte'
+  import Chains from './pages/Chains.svelte'
   import Chart from './pages/Chart.svelte'
   import Eras from './pages/Eras.svelte'
   import Variants from './pages/Variants.svelte'
@@ -327,6 +328,7 @@
         {:else if route.page === 'sijiao'}<Sijiao />
         {:else if route.page === 'reading'}<Reading />
         {:else if route.page === 'fanqie'}<Fanqie />
+        {:else if route.page === 'chains'}<Chains />
         {:else if route.page === 'chart'}<Chart />
         {:else if route.page === 'eras'}<Eras />
         {:else if route.page === 'variants'}<Variants />

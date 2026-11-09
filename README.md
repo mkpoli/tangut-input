@@ -25,6 +25,9 @@ it into your text. <https://tangut.mkpo.li/>
 - **Fanqie**: type the two characters a rhyme book spells a character with, or pick each from a
   compact panel beside the field that offers Find, Meaning, Cangjie, Four-corner, Reading, Draw and
   Parts in miniature.
+- **Chains**: the 文海's fanqie followed as two graphs: 173 sets linked by an upper speller and 321
+  by a lower speller, each opening to its members, upper spellers, direct links and the crossings
+  the 同音 and the rhyme divisions expose.
 - **Draw**: a drawing pad ranked by glyph shape against bundled Tangut faces. Choose parts to
   narrow the candidates.
 - **Parts**: choose parts, components or character-sized, from the palette or by drawing them;
@@ -33,9 +36,9 @@ it into your text. <https://tangut.mkpo.li/>
   recorded name shows an unconfirmed shape hint when one is close. A collapsible
   table compares the names across the languages that record one.
 
-The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position, Mojikyo and
-XXZT code points, its Tangut Yinchuan PUA variants, the Set A code of a Tibetan spelling,
-Cangjie codes, meanings in English, Japanese and Chinese,
+The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position and fanqie
+chains, Mojikyo and XXZT code points, its Tangut Yinchuan PUA variants, the Set A code of a Tibetan
+spelling, Cangjie codes, meanings in English, Japanese and Chinese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
 further readings and meanings are linked to CCAMC's page for the character.
@@ -72,6 +75,13 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   Use Area-A, U+F0000–U+F1613; 2,775 attach to 2,257 encoded characters and 39 have no base.
   Each variant keeps its IDS and source; built by `scripts/build_tangut_pua.py` from
   `data/tangut-pua-variants.tsv`.
+- `app/data/tangut-wenhai.json.gz`: the 3,085 head positions of the 文海, the fanqie statement that
+  governs each position, its 同音 class, its initial and rhyme chain identifiers, and the 173
+  initial and 321 rhyme chains with their members, direct links, eight cross-同音 and thirteen
+  cross-rhyme chains and six unresolved sets, from
+  [The Digital Wenhai](https://zenodo.org/records/23956653), version 1.2 (Beaudouin 2026,
+  CC BY 4.0); built by `scripts/build_tangut_wenhai.py`, which pins the version DOI and the
+  SHA-256 of all eight files.
 - `app/data/tangut-tibetan-seta.json.gz`: the 1,536 precomposed Tibetan Extension-A characters
   (U+F300–F8FF), each paired with the Unicode sequence it stands for; built by
   `scripts/build_tibetan_seta.py` from `data/tibetan-seta.tsv`. A spelling that matches one shows
