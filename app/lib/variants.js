@@ -99,35 +99,55 @@ export function surroundingDescriptions(text, plain, hooked) {
 }
 
 /**
- * The descriptions one component substitution makes from a character's recorded description when no
- * character carries them. Both directions of a component pair are tried, and a surrounding pair
- * turns ⿰ into ⿺ and back. The character's own description is not returned.
- * @param {VariantEntry} entry
+ * The variant descriptions no character carries: one substitution of a variant component in each
+ * character's recorded description, both directions and with the surrounding rewrite. A row names
+ * the character, the description, and the component pair that made it.
+ * @param {VariantEntry[]} entries
  * @param {{ has: (description: string) => boolean }} known every description a character is recorded under
  * @param {Stated} [stated]
- * @returns {string[]}
+ * @returns {{ char: string, description: string, components: string }[]}
  */
-export function derivedDescriptions(entry, known, stated = VARIANTS) {
-  const composition = entry.composition
-  if (!composition) return []
+export function derivedForms(entries, known, stated = VARIANTS) {
   /** @type {Map<string, string[]>} */
   const wrapping = new Map((stated.surrounding ?? []).flatMap(([plain, hooked]) => [
     [plain + hooked, [plain, hooked]],
     [hooked + plain, [plain, hooked]],
   ]))
-  const found = new Set()
-  for (const [one, other] of stated.components) {
-    const wrap = wrapping.get(one + other)
-    if (wrap) {
-      for (const description of surroundingDescriptions(composition, wrap[0], wrap[1])) found.add(description)
-      continue
+  /** @type {{ char: string, description: string, components: string }[]} */
+  const rows = []
+  for (const entry of entries) {
+    const composition = entry.composition
+    if (!composition) continue
+    /** @type {Map<string, string>} */
+    const found = new Map()
+    for (const [one, other] of stated.components) {
+      const wrap = wrapping.get(one + other)
+      if (wrap) {
+        for (const description of surroundingDescriptions(composition, wrap[0], wrap[1])) found.set(description, one + other)
+        continue
+      }
+      if (composition.includes(one)) found.set(composition.replaceAll(one, other), one + other)
+      if (composition.includes(other)) found.set(composition.replaceAll(other, one), one + other)
     }
-    if (composition.includes(one)) found.add(composition.replaceAll(one, other))
-    if (composition.includes(other)) found.add(composition.replaceAll(other, one))
+    found.delete(composition)
+    for (const [description, components] of found) {
+      if (!known.has(description)) rows.push({ char: entry.char, description, components })
+    }
   }
-  found.delete(composition)
-  for (const description of [...found]) if (known.has(description)) found.delete(description)
-  return [...found].sort()
+  return rows.sort((a, b) => (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0)
+    || (a.description < b.description ? -1 : a.description > b.description ? 1 : 0))
+}
+
+/**
+ * The descriptions one substitution makes from one character's recorded description where no
+ * character carries them.
+ * @param {VariantEntry} entry
+ * @param {{ has: (description: string) => boolean }} known
+ * @param {Stated} [stated]
+ * @returns {string[]}
+ */
+export function derivedDescriptions(entry, known, stated = VARIANTS) {
+  return derivedForms([entry], known, stated).map(row => row.description)
 }
 
 /**
