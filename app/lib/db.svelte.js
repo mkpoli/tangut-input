@@ -1,9 +1,17 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao, loadRhymes, loadFanqieAliases, loadTangutNames, loadIdsAliases, loadComponentVariants } from './data.js'
-import { indexReadings } from './reading.js'
+import { indexTibetan, foldScript } from './tibetan.js'
+import { indexTibetanSeta } from './seta.js'
+import { indexTangutPua } from './pua.js'
+import { indexIdentifiers } from './identifiers.js'
+import { englishGloss } from './gloss.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua } from './data.js'
+import { possiblePairs, variantIndex, variantFamilies, familyIndex, SURROUNDING } from './variants.js'
+import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
-import { buildFamilies, baseOf } from './family.js'
+import { indexIdsDescriptions } from './ids-views.js'
+import { indexDescriptions } from './description.js'
+import { indexShapeSpellings } from './names.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
 
@@ -11,10 +19,13 @@ export { OPERATORS, isTangut }
 
 /** @param {string} char */
 export const isComponent = char => /^[\u{18800}-\u{18AFF}\u{18D80}-\u{18DFF}]$/u.test(char)
-/** Whether the bundled fonts draw the character (Noto Serif Tangut 2.168 stops at U+187F7 and U+18D08). @param {string} char */
+/** The ranges a bundled face draws: Noto Serif Tangut 2.168 through the old end of each block, and
+ *  the Tangut N4694 subset for what it lacks. @type {[number, number][]} */
+const GLYPH_RANGES = [[0x17000, 0x187FF], [0x18800, 0x18AFF], [0x18D00, 0x18D20], [0x18D80, 0x18DF2]]
+/** Whether the bundled faces draw the character. @param {string} char */
 export const hasGlyph = char => {
   const code = char.codePointAt(0) ?? 0
-  return (code >= 0x17000 && code <= 0x187F7) || (code >= 0x18800 && code <= 0x18AFF) || (code >= 0x18D00 && code <= 0x18D08)
+  return GLYPH_RANGES.some(([low, high]) => code >= low && code <= high)
 }
 /** @param {string} char */
 export const hex = char => (char.codePointAt(0) ?? 0).toString(16).toUpperCase()
@@ -24,45 +35,125 @@ export const codePoint = char => `U+${hex(char)}`
 export const db = $state({
   /** @type {'loading' | 'ready' | 'failed'} */ status: 'loading',
   /** @type {import('./data.js').Attestation | null} */ attestation: null,
+  /** Whether the attestation request failed. */ attestationFailed: false,
+  /** @type {import('./data.js').Sample[]} */ samples: [],
 })
 
 /** The indexes, filled when the records arrive. */
 export const ix = {
   /** @type {Entry[]} */ entries: [],
   /** @type {Map<string, Entry>} */ byChar: new Map(),
+  /** Complete recorded descriptions, used to render editorial views. @type {Map<string, Set<string>>} */ idsIndex: new Map(),
+  /** The characters recorded under each description. @type {Map<string, string[]>} */ byDescription: new Map(),
+  /** Recorded and editorial descriptions, ordered for prefix search. @type {[string, string][]} */ descriptions: [],
+  /** Variant forms, stated and possible. @type {Map<string, import('./variants.js').Variants>} */ variants: new Map(),
+  /** @type {import('./variants.js').PossiblePair[]} */ variantPairs: [],
+  /** @type {import('./variants.js').Family[]} */ variantGroups: [],
+  /** The group each character stands in. @type {Map<string, import('./variants.js').Family>} */ familyOf: new Map(),
   /** Cangjie codes by character, shortest first. @type {Map<string, string[]>} */ codes: new Map(),
   /** Every [code, character] pair, ordered by code. @type {[string, string][]} */ codeList: [],
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
   /** @type {import('./reading.js').Reading[]} */ readings: [],
+  /** CCAMC readings Wiktionary does not carry, used by the search and never shown. @type {import('./reading.js').HiddenReading[]} */ hiddenReadings: [],
+  /** CCAMC glosses as normalized terms, used by the meaning search and never shown.
+   *  @type {{ meanings: Record<string, Record<string, string[]>> }} */ ccamcMeanings: { meanings: {} },
   /** @type {Map<string, number>} */ strokes: new Map(),
-  /** The parts of each description at every layer, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
+  /** Numbers and legacy code points by character. @type {Map<string, import('./identifiers.js').Row[]>} */ identifiers: new Map(),
+  /** Every identifier key, to the characters it names. @type {Map<string, string[]>} */ identifierIndex: new Map(),
+  /** Where each identifier system comes from. @type {Record<string, { name: string, url: string, note?: string, licence?: string }>} */ identifierSources: {},
+  /** The maximum count of each part across possible trees. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
   /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
+  /** Alternative character readings at each place in a description. @type {ReturnType<typeof buildPartIndex>['partGroups']} */ partGroups: new Map(),
   /** The parts each description names directly, character parts included. @type {Map<string, string[]>} */ directPartsOf: new Map(),
+  /** The outermost operator of each character's editorial description. @type {Map<string, string>} */ layoutOf: new Map(),
+  /** The layouts each recorded description answers, ⿰ also for a surrounding ⿺. @type {Map<string, Set<string>>} */ layoutsOf: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
   /** The rhyme books' record by character. @type {Map<string, import('./data.js').RhymeChars[string]>} */ rhymes: new Map(),
   /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
-  /** The several characters that stand for one Chinese fanqie initial: each maps to its group. @type {Map<string, string[]>} */ fanqieAliases: new Map(),
-  /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, strokes: number, credit: string }[]} */ names: [],
-  /** Other descriptions of a character, with the source for each. @type {Map<string, { ids: string, source: string, detail?: string }[]>} */ aliases: new Map(),
-  /** The descriptions a character is indexed under: its own first, then any alias. @type {Map<string, string[]>} */ descriptionsOf: new Map(),
-  /** The forms each component is written in, the plain form first. @type {import('./family.js').Families} */ families: buildFamilies([]),
-  /** The characters that use any form of each part family. @type {Map<string, Set<string>>} */ familyUsers: new Map(),
-  /** The characters carrying each description, the recorded one or an alias. @type {Map<string, string[]>} */ charsByDescription: new Map(),
+  /** Tibetan phonetic glosses by character: [Wylie, Tibetan script, [[shelfmark, count]…]]. @type {Map<string, [string, string, [string, number][]][]>} */ tibetan: new Map(),
+  /** The Tibetan spellings at each crossing: `rhyme·tone`, then initial class. @type {Record<string, Record<string, [string, string][]>>} */ tibetanRhymes: {},
+  /** 龔煌城's value for each rhyme. @type {Record<string, string>} */ gongRhymes: {},
+  /** The Chinese characters transcribing each rhyme: [character, final?]. @type {Record<string, [string, string?][]>} */ chineseRhymes: {},
+  /** Tibetan spellings by hand class and Sanskrit, by character. @type {Record<string, { tibetan?: [string, string, number, string, string, string][], sanskrit?: [string, string, string][] }>} */ tibetanHands: {},
+  /** Every Tibetan spelling, keyed for search. @type {import('./tibetan.js').TibetanSpelling[]} */ tibetanIndex: [],
+  /** Tibetan Extension-A codes, keyed by the folded Unicode sequence. @type {Map<string, string>} */ seta: new Map(),
+  /** Characters whose Tibetan spelling has each Set A code. @type {Map<string, Map<string, string>>} */ setaIndex: new Map(),
+  /** Tangut Yinchuan PUA variants by encoded base character. @type {Map<string, [string, string, string[]][]>} */ pua: new Map(),
+  /** The base characters each PUA code names. @type {Map<string, string[]>} */ puaIndex: new Map(),
+  /** The PUA table and its source record. @type {import('./data.js').TangutPua | null} */ puaSource: null,
+  /** Alan Downes's English gloss by character. @type {Map<string, string>} */ downes: new Map(),
+  /** The Chinese words the Tangut 類林 uses for a character. @type {Map<string, [string, number][]>} */ leilin: new Map(),
+  /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
+  /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, credit: string }[]} */ names: [],
+  /** The shape spelling of each character whose parts all have a shape name. @type {Map<string, string[]>} */ shapeSpellings: new Map(),
+  /** The same names compared across languages. @type {{ languages: string[], rows: { char: string, names: Record<string, string[]>, source: string }[] } | null} */ partNames: null,
+  /** The components Tangut Components Supplement adds. @type {string[]} */ supplementComponents: [],
+  /** Editorial shape hints by component, not names. @type {Map<string, { name: string, char: string, score: number, strokes: number | null, sameStrokes: boolean }[]>} */ shapeHints: new Map(),
+  /** Characters one component away, built on the first ask: a reader who means one shape and draws
+   *  a neighbour of it needs that neighbour offered. @type {Map<string, string[]>} */ siblings: new Map(),
+  /** Whether the sibling index has been built. */ siblingsReady: false,
+  /** Where a keyed value stands: char → field → the books and pages it was read from. @type {Record<string, Record<string, { work: string, locator: string, note: string }[]>>} */ citations: {},
 }
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, aliases, names, idsAliases, variantRows] = await Promise.all([
-      loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
-      loadFanqieAliases().catch(() => null), loadTangutNames().catch(() => []), loadIdsAliases().catch(() => []),
-      loadComponentVariants().catch(() => []),
+    const [entries, pairs, strokes, identifiers, seta, pua, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
+      loadEntries(), loadCodes(), loadStrokes(), loadIdentifiers().catch(() => null), loadTibetanSeta().catch(() => null), loadTangutPua().catch(() => null), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
+      loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
+      loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
     ])
+    ix.citations = cited?.citations ?? {}
+    ix.identifiers = new Map(Object.entries(identifiers?.chars ?? {}))
+    ix.identifierSources = identifiers?.sources ?? {}
+    ix.identifierIndex = indexIdentifiers(identifiers?.chars ?? {})
+    ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
+    ix.tibetanRhymes = tibetanRhymes?.cells ?? {}
+    ix.gongRhymes = gongRhymes?.values ?? {}
+    ix.chineseRhymes = chineseRhymes?.rhymes ?? {}
+    ix.tibetanHands = tibetanHands?.chars ?? {}
+    ix.downes = new Map(Object.entries(downes?.glosses ?? {}))
+    ix.leilin = new Map(Object.entries(leilin?.glosses ?? {}))
+    ix.tibetanIndex = indexTibetan(ix.tibetan, ix.tibetanHands)
+    ix.seta = new Map((seta?.map ?? []).map(([code, script]) => [foldScript(script), code]))
+    ix.setaIndex = indexTibetanSeta(ix.seta, ix.tibetan, ix.tibetanHands)
+    ix.pua = new Map(Object.entries(pua?.chars ?? {}))
+    ix.puaIndex = indexTangutPua(pua?.chars ?? {})
+    ix.puaSource = pua
+    const recorded = supplement?.characters ?? []
+    ix.supplementComponents = recorded.filter(record => record.block === 'components').map(record => record.char)
+    const known = new Set(entries.map(entry => entry.char))
+    for (const record of recorded) {
+      if (record.block === 'components' || known.has(record.char)) continue
+      entries.push({
+        char: record.char,
+        composition: record.ids,
+        total_strokes: record.strokes,
+        radical: record.radical,
+        definitions: {},
+        pronunciations: {},
+      })
+    }
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
+    ix.idsIndex = indexIdsDescriptions(entries)
+    ix.descriptions = indexDescriptions(entries, ix.idsIndex)
+    for (const entry of entries) {
+      if (!entry.composition) continue
+      const chars = ix.byDescription.get(entry.composition)
+      if (chars) chars.push(entry.char)
+      else ix.byDescription.set(entry.composition, [entry.char])
+    }
+    ix.variantPairs = possiblePairs(entries)
+    ix.variants = variantIndex(ix.variantPairs)
+    ix.variantGroups = variantFamilies(ix.variantPairs)
+    ix.familyOf = familyIndex(ix.variantGroups)
     ix.names = names
+    ix.shapeSpellings = indexShapeSpellings(entries, names)
+    ix.partNames = partNames
+    ix.shapeHints = new Map((shapeHints?.components ?? []).map(row => [row.char, row.candidates]))
     for (const [char, code] of pairs) {
       const list = ix.codes.get(char)
       if (list) list.push(code)
@@ -72,38 +163,18 @@ export async function load() {
     ix.codeList = pairs.map(([char, code]) => /** @type {[string, string]} */ ([code, char])).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)
     ix.palette = ix.codeList.filter(([code]) => code.startsWith('p'))
     ix.readings = indexReadings(entries)
+    ix.hiddenReadings = indexHiddenReadings(hidden)
+    if (hidden) ix.ccamcMeanings = { meanings: hidden.meanings ?? {} }
     ix.strokes = new Map(Object.entries(strokes))
-    for (const alias of idsAliases) {
-      const list = ix.aliases.get(alias.char)
-      if (list) list.push(alias)
-      else ix.aliases.set(alias.char, [alias])
-    }
-    const index = buildPartIndex(entries, idsAliases)
+    for (const record of recorded) if (record.strokes) ix.strokes.set(record.char, record.strokes)
+    const index = buildPartIndex(entries, SURROUNDING)
     ix.partsOf = index.partsOf
     ix.usedBy = index.usedBy
+    ix.partGroups = index.partGroups
     ix.directPartsOf = index.directPartsOf
-    ix.descriptionsOf = new Map(entries.map(entry => [entry.char, [
-      ...(entry.composition ? [entry.composition] : []),
-      ...(ix.aliases.get(entry.char) ?? []).map(alias => alias.ids),
-    ]]))
-    ix.families = buildFamilies(variantRows)
-    for (const [char, descriptions] of ix.descriptionsOf) {
-      for (const text of descriptions) {
-        const chars = ix.charsByDescription.get(text)
-        if (chars) { if (!chars.includes(char)) chars.push(char) }
-        else ix.charsByDescription.set(text, [char])
-      }
-    }
-    // A part family counts the characters that hold any of its forms, once each.
-    for (const [char, parts] of ix.partsOf) {
-      for (const part of parts.keys()) {
-        const base = baseOf(ix.families, part)
-        const users = ix.familyUsers.get(base)
-        if (users) users.add(char)
-        else ix.familyUsers.set(base, new Set([char]))
-      }
-    }
-    if (aliases) for (const group of aliases.groups) for (const char of group) ix.fanqieAliases.set(char, group)
+    ix.layoutOf = index.layoutOf
+    ix.layoutsOf = index.layoutsOf
+    if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))
       ix.rhymeSource = rhymes.source
@@ -119,20 +190,31 @@ export async function load() {
     }
     for (const [char, code] of sijiao) ix.sijiao.set(char, code)
     ix.sijiaoList = [...ix.sijiao].map(([char, code]) => /** @type {[string, string]} */ ([code, char])).sort((a, b) => a[0].localeCompare(b[0]) || (a[1].codePointAt(0) ?? 0) - (b[1].codePointAt(0) ?? 0))
-    ix.all = [...new Set([...ix.byChar.keys(), ...ix.codes.keys()])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
+    ix.all = [...new Set([...ix.byChar.keys(), ...ix.codes.keys(), ...recorded.map(record => record.char)])].sort((a, b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
     db.status = 'ready'
   } catch (error) {
     console.error(error)
     db.status = 'failed'
   }
-  loadAttestation().then(found => { db.attestation = found }, error => console.error(error))
+  loadAttestation().then(found => { db.attestation = found; db.attestationFailed = false },
+    error => { console.error(error); db.attestationFailed = true })
+  loadSamples().then(found => { db.samples = found.samples }, error => console.error(error))
 }
 
 /** The first English sense, shortened for a tile or a list row. @param {string} char */
 export function gloss(char) {
   const entry = ix.byChar.get(char)
-  const first = entry?.definitions?.en?.[0] ?? entry?.definitions?.zh?.[0] ?? ''
-  return first.split(/[;,]/)[0].trim()
+  return englishGloss(entry?.definitions, ix.downes.get(char), entry?.wiktionary_zh)
+}
+
+/**
+ * A character's reconstruction in one of the eight systems, when the records give one. The caller
+ * passes the system the reader chose, or the one a reading search matched.
+ * @param {string} char
+ * @param {string} system
+ */
+export function readingOf(char, system) {
+  return ix.byChar.get(char)?.pronunciations?.[system]?.trim() ?? ''
 }
 
 /** The places in the recorded corpus that attest a character. @param {string} char */

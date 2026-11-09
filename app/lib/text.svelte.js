@@ -11,6 +11,9 @@ export const text = $state({
   end: -1,
 })
 
+/** The text a sample replaced, kept so the reader can return to it. */
+export const sampleHistory = $state({ backup: /** @type {string | null} */ (null) })
+
 /** Every field that holds this text: the writing strip and the transcribe box. @type {Set<HTMLTextAreaElement>} */
 const fields = new Set()
 /** The field an insertion follows: the focused one, else the last one attached. @type {HTMLTextAreaElement | null} */
@@ -44,6 +47,20 @@ export function setText(value) {
   save()
 }
 
+/** Load a sample passage, remembering the text it replaces. @param {string} value */
+export function loadSample(value) {
+  if (value === text.value) return
+  if (sampleHistory.backup === null) sampleHistory.backup = text.value
+  setText(value)
+}
+
+/** Put back the text a sample replaced. */
+export function restoreSample() {
+  if (sampleHistory.backup === null) return
+  setText(sampleHistory.backup)
+  sampleHistory.backup = null
+}
+
 /** Remember the caret of the writing field. */
 export function remember() {
   const element = field()
@@ -69,11 +86,18 @@ export function insert(chars) {
 
 /** Delete the character before the caret, as Backspace in an empty code box does. */
 export function backspace() {
-  const chars = [...text.value.slice(0, text.start < 0 ? text.value.length : text.start)]
+  const start = text.start < 0 ? text.value.length : text.start
+  // A selection is what goes, and nothing before it.
+  if (text.end > start) {
+    text.value = text.value.slice(0, start) + text.value.slice(text.end)
+    text.end = start
+    save()
+    return
+  }
+  const chars = [...text.value.slice(0, start)]
   if (!chars.length) return
   const removed = chars.pop() ?? ''
-  const start = text.start < 0 ? text.value.length : text.start
-  text.value = text.value.slice(0, start - removed.length) + text.value.slice(Math.max(start, text.end))
+  text.value = text.value.slice(0, start - removed.length) + text.value.slice(start)
   text.start = text.end = start - removed.length
   save()
 }
