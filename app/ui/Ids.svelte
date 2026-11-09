@@ -5,7 +5,7 @@
   export const LAYOUTS = /** @type {Record<string, string>} */ ({
     '⿰': 'side by side', '⿱': 'above and below', '⿲': 'three across', '⿳': 'three down',
     '⿴': 'surrounded', '⿵': 'open below', '⿶': 'open above', '⿷': 'open right',
-    '⿸': 'from upper left', '⿹': 'from upper right', '⿺': 'from lower left', '⿻': 'overlaid', '㇯': 'one part with another taken out',
+    '⿸': 'from upper left', '⿹': 'from upper right', '⿺': 'from lower left', '⿻': 'overlaid', '⿽': 'from lower right', '㇯': 'one part with another taken out',
   })
 
   /** Parse a description into its tree; a malformed tail is kept as plain leaves. @param {string} text @returns {Node[]} */

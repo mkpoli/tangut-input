@@ -106,3 +106,16 @@ test('a subtraction alias reads beside the record', () => {
   })
   expect(index.usedBy.get('𗀋')?.has('𘖨')).toBe(true)
 })
+
+test('one character carries two readings', () => {
+  expect(aliases.filter((/** @type {any} */ row) => row.char === '𗊳').map(row => row.ids)).toEqual([
+    '⿰𘠣⿽𗎘𘠚',
+    '⿶𗊈𘠚',
+  ])
+})
+
+test('an alias opens from the lower right', () => {
+  const row = aliases.find((/** @type {any} */ alias) => alias.char === '𗅍')
+  expect(row?.ids).toBe('⿰𘠐⿽𗎘𘠚')
+  expect(readDescription(row.ids).complete).toBe(true)
+})

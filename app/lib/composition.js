@@ -8,8 +8,8 @@
 /** @typedef {{ op: string, parts: Node[], cut?: boolean } | string} Node */
 /** @typedef {{ candidates: string[], leaf?: string, shape?: string, children?: PartGroup[] }} PartGroup */
 
-export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻㇯'])
-const ARITY = /** @type {Record<string, number>} */ ({ '⿲': 3, '⿳': 3, '㇯': 2 })
+export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻⿽㇯'])
+const ARITY = /** @type {Record<string, number>} */ ({ '⿲': 3, '⿳': 3, '⿽': 2, '㇯': 2 })
 
 /** @param {string} char */
 export const isTangut = char => /^[\u{17000}-\u{18AFF}\u{18D00}-\u{18D7F}\u{18D80}-\u{18DFF}]$/u.test(char)
