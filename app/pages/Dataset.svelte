@@ -4,6 +4,12 @@
    * The files themselves are static beside this page under /dataset/.
    */
   import { counts } from '../lib/dataset-counts.js'
+  import { leaderboard } from '../lib/leaderboard.js'
+
+  /** @type {{ name: string, top1: number, top5: number, top24: number, mrr: number }[]} */
+  const entries = Object.entries(leaderboard)
+    .map(([name, result]) => ({ name, ...result }))
+    .sort((a, b) => b.top1 - a.top1)
 
   const example = `{"id": "2026-11-01T14-42-08/001", "char": "𗀀", "kind": "glyph", "label": "answer",
  "strokes": [[[0.13, 0.44], [0.51, 0.4]], …],
@@ -62,6 +68,21 @@
       <tr><td>Reviewer</td><td>drawn to point at the character another drawing should have been</td></tr>
     </tbody>
   </table>
+
+  <h2>Benchmark</h2>
+  <p>A fixed split, a scorer and a baseline. Rank up to 24 characters per drawing and score it:
+    <code>bun benchmark/score.mjs --name you submissions/you.jsonl</code>.</p>
+  <table class="board">
+    <thead><tr><th>Entry</th><th>First</th><th>In five</th><th>In 24</th><th>MRR</th></tr></thead>
+    <tbody>
+      {#each entries as entry (entry.name)}
+        <tr><th>{entry.name}</th><td>{(entry.top1 * 100).toFixed(1)}%</td><td>{(entry.top5 * 100).toFixed(1)}%</td>
+          <td>{(entry.top24 * 100).toFixed(1)}%</td><td>{entry.mrr.toFixed(3)}</td></tr>
+      {/each}
+    </tbody>
+  </table>
+  <p class="note">Protocol and submission format:
+    <a href="https://github.com/mkpoli/tangut-input/blob/main/benchmark/README.md">benchmark/README.md</a>.</p>
 
   <h2>Licence</h2>
   <p>The drawings are released under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite
