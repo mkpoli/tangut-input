@@ -1,6 +1,7 @@
 # Handwriting
 
-Drawings of Tangut characters made on the quiz's pad, kept under `data/handwriting/`, which is
+Strokes drawn on the quiz's pad with a mouse, a trackpad or a stylus — one width per drawing, by visitors
+rather than by calligraphers, for recognition in a search box — kept under `data/handwriting/`, which is
 ignored by git: the recordings stay on the machine that made them. The quiz writes them and rebuilds
 the dataset after every saved drawing; `bun run quiz:dataset` rebuilds it on its own.
 

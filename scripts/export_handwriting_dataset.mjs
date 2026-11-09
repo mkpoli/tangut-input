@@ -19,9 +19,12 @@ const manifest = JSON.parse(readFileSync(new URL('dataset.json', DATA), 'utf8'))
 const annotations = JSON.parse(readFileSync(new URL('annotations.json', DATA), 'utf8'))
 const rows = gunzipSync(readFileSync(new URL('dataset.jsonl.gz', DATA))).toString().trim().split('\n').map(line => JSON.parse(line))
 
-copyFileSync(new URL('dataset.jsonl.gz', DATA), new URL('tangut-handwriting.jsonl.gz', OUT))
+copyFileSync(new URL('dataset.jsonl.gz', DATA), new URL('tangut-strokes.jsonl.gz', OUT))
 writeFileSync(new URL('manifest.json', OUT), JSON.stringify({
   ...manifest,
+  about: 'Strokes drawn with a mouse, trackpad or stylus on a browser pad, one width per drawing, by ' +
+    'visitors to the site. Collected to train and test character recognition for search, not as a record ' +
+    'of handwriting or calligraphy.',
   counts: {
     drawings: rows.length,
     chars: new Set(rows.map(row => row.char)).size,

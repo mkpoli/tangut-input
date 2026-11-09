@@ -12,8 +12,9 @@
 
 <section class="dataset">
   <header>
-    <h1>Tangut handwriting dataset</h1>
-    <p class="lead">Strokes drawn by hand on this site's pad, kept with the character each one was made for.</p>
+    <h1>Tangut stroke dataset</h1>
+    <p class="lead">Strokes drawn on this site's pad with a mouse, a trackpad or a stylus, kept with the
+      character each one was made for.</p>
     <p class="counts">
         <span>{counts.drawings} drawings</span>
         <span>{counts.chars} characters</span>
@@ -25,16 +26,30 @@
 
   <h2>Files</h2>
   <ul class="files">
-    <li><a href="/dataset/tangut-handwriting.jsonl.gz">tangut-handwriting.jsonl.gz</a> — one JSON record per line, gzipped</li>
+    <li><a href="/dataset/tangut-strokes.jsonl.gz">tangut-strokes.jsonl.gz</a> — one JSON record per line, gzipped</li>
     <li><a href="/dataset/annotations.json">annotations.json</a> — a reader's verdict on each reviewed drawing, and the character it should have been</li>
     <li><a href="/dataset/manifest.json">manifest.json</a> — schema version, counts, and the faces the printed shapes come from</li>
     <li><a href="/dataset/gallery.html">gallery.html</a> — every drawing beside the character it was made for</li>
   </ul>
 
+  <h2>What this is</h2>
+  <p>Input for a search box: rough shapes a reader can produce in a few seconds to find a character they
+    cannot type. The pad records the path of the pointer and nothing else.</p>
+  <table class="scope">
+    <tbody>
+      <tr><th>Input</th><td>mouse, trackpad or stylus, in a browser</td></tr>
+      <tr><th>Line</th><td>one width per drawing, whatever the speed or the pressure</td></tr>
+      <tr><th>Writers</th><td>visitors to the site, with no knowledge of the script required</td></tr>
+      <tr><th>Order</th><td>the order the strokes were drawn, which is not always the order a scribe writes them</td></tr>
+      <tr><th>Use</th><td>training and testing character recognition for search</td></tr>
+    </tbody>
+  </table>
+
   <h2>A record</h2>
   <pre><code>{example}</code></pre>
-  <p class="note">Strokes are polylines in the unit square, in the order they were drawn. <code>times</code> and
-    <code>pressure</code> are kept where the browser reported them. <code>label</code> reads <code>answer</code>
+  <p class="note">Strokes are polylines in the unit square, in the order they were drawn. <code>times</code>
+    records when each point was sampled; <code>pressure</code> is kept where the browser reported one, and on a
+    mouse it is absent. <code>label</code> reads <code>answer</code>
     where the character was shown to the writer, and <code>picked</code> where it is only what a reader chose from
     the search results.</p>
 
@@ -50,7 +65,7 @@
 
   <h2>Licence</h2>
   <p>The drawings are released under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite
-    “Tangut handwriting dataset, tangut.mkpo.li” with the date you downloaded it. The printed characters are not
+    “Tangut stroke dataset, tangut.mkpo.li” with the date you downloaded it. The printed characters are not
     part of this release; they belong to the typefaces the site draws with, each under its own licence, listed in
     <a href="/about">Sources</a>.</p>
 
