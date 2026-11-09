@@ -713,5 +713,7 @@
   "gyalrongic.kind.preprint": "預印本",
   "gyalrongic.kind.thesis": "學位論文",
   "nav.dataset": "手寫數據",
-  "nav.dataset.hint": "手寫的筆畫數據，可自由使用"
+  "nav.dataset.hint": "手寫的筆畫數據，可自由使用",
+  "draw.dataset": "手寫數據",
+  "draw.dataset.hint": "這些手寫筆畫已作為數據集公開。"
 }

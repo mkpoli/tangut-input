@@ -713,5 +713,7 @@
   "gyalrongic.kind.preprint": "プレプリント",
   "gyalrongic.kind.thesis": "学位論文",
   "nav.dataset": "手書きデータ",
-  "nav.dataset.hint": "手で書いた字形データ（自由に利用可）"
+  "nav.dataset.hint": "手で書いた字形データ（自由に利用可）",
+  "draw.dataset": "手書きデータ",
+  "draw.dataset.hint": "この画面の手書きデータはデータセットとして公開しています。"
 }

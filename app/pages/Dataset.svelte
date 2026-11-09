@@ -84,6 +84,12 @@
   <p class="note">Protocol and submission format:
     <a href="https://github.com/mkpoli/tangut-input/blob/main/benchmark/README.md">benchmark/README.md</a>.</p>
 
+  <h2>Where else it lives</h2>
+  <ul class="files">
+    <li><a href="https://huggingface.co/datasets/mkpoli/tangut-strokes">Hugging Face</a> — the records, the split and the baseline, loadable with <code>load_dataset</code></li>
+    <li><a href="https://www.kaggle.com/datasets/mkpoli/tangut-strokes">Kaggle</a> — the same files, with notebooks beside them</li>
+  </ul>
+
   <h2>Licence</h2>
   <p>The drawings are released under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite
     “Tangut stroke dataset, tangut.mkpo.li” with the date you downloaded it. The printed characters are not
