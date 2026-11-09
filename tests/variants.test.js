@@ -1,6 +1,7 @@
 import { expect, test } from 'bun:test'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
+import { buildPartIndex } from '../app/lib/composition.js'
 import { componentPositions, derivedDescriptions, familyIndex, keepVariantsTogether, possiblePairs, surroundingDescriptions, variantFamilies, variantIndex } from '../app/lib/variants.js'
 import VARIANTS from '../app/data/tangut-variants.json' with { type: 'json' }
 
@@ -21,29 +22,41 @@ test('a shared reading and sense makes a possible variant, and neither alone doe
 })
 
 test('a surrounding form turns the ⿰ above it into ⿺, and back', () => {
-  expect(surroundingDescriptions('⿰𘣠𘣩', '𘣠', '𘢢')).toEqual(['⿺𘢢𘣩'])
-  expect(surroundingDescriptions('⿺𘢢𘣩', '𘣠', '𘢢')).toEqual(['⿰𘣠𘣩'])
-  expect(surroundingDescriptions('⿱𘠀⿰𘣠𘣩', '𘣠', '𘢢')).toEqual(['⿱𘠀⿺𘢢𘣩'])
+  expect(surroundingDescriptions('⿰𘣠𘣩', '𘣠', '𘣢')).toEqual(['⿺𘣢𘣩'])
+  expect(surroundingDescriptions('⿺𘣢𘣩', '𘣠', '𘣢')).toEqual(['⿰𘣠𘣩'])
+  expect(surroundingDescriptions('⿱𘠀⿰𘣠𘣩', '𘣠', '𘣢')).toEqual(['⿱𘠀⿺𘣢𘣩'])
   // The hook wraps only what follows it: elsewhere, and under another operator, nothing changes.
-  expect(surroundingDescriptions('⿰𘠁𘢢', '𘣠', '𘢢')).toEqual([])
-  expect(surroundingDescriptions('⿱𘣠𘣩', '𘣠', '𘢢')).toEqual([])
+  expect(surroundingDescriptions('⿰𘠁𘣢', '𘣠', '𘣢')).toEqual([])
+  expect(surroundingDescriptions('⿱𘣠𘣩', '𘣠', '𘣢')).toEqual([])
 })
 
 test('a surrounding pair links the characters written with either layout', () => {
   const entry = (char, composition, reading) => ({ char, composition, pronunciations: { li_fanwen: reading } })
-  const stated = { ...NONE, components: [['𘣠', '𘢢']], surrounding: [['𘣠', '𘢢']] }
-  const entries = [entry('𗸘', '⿰𘣠𘣩', 'a1'), entry('𗸠', '⿺𘢢𘣩', 'a1')]
+  const stated = { ...NONE, components: [['𘣠', '𘣢']], surrounding: [['𘣠', '𘣢']] }
+  const entries = [entry('𗸘', '⿰𘣠𘣩', 'a1'), entry('𗸠', '⿺𘣢𘣩', 'a1')]
   expect(variantIndex(possiblePairs(entries, stated), stated).get('𗸘')?.possible).toEqual(['𗸠'])
-  // Without the surrounding rule the plain substitution finds no character at ⿰𘢢𘣩.
-  const plain = { ...NONE, components: [['𘣠', '𘢢']] }
+  // Without the surrounding rule the plain substitution finds no character at ⿰𘣢𘣩.
+  const plain = { ...NONE, components: [['𘣠', '𘣢']] }
   expect(variantIndex(possiblePairs(entries, plain), plain).get('𗸘')).toBeUndefined()
 })
 
+test('a surrounding form first in ⿺ answers the side-by-side layout', () => {
+  const index = buildPartIndex([
+    { char: '𗸘', composition: '⿰𘣠𘣩' },
+    { char: '𗸠', composition: '⿺𘣢𘣩' },
+  ], [['𘣠', '𘣢']])
+  expect([...index.layoutsOf.get('𗸘')]).toEqual(['⿰'])
+  expect([...index.layoutsOf.get('𗸠')]).toEqual(['⿺', '⿰'])
+  // A ⿺ whose first part is not a recorded surrounding form stays an enclosure.
+  const plain = buildPartIndex([{ char: '𗸞', composition: '⿺𘠁𘣩' }], [['𘣠', '𘣢']])
+  expect([...plain.layoutsOf.get('𗸞')]).toEqual(['⿺'])
+})
+
 test('a derived description is the substitution no character carries', () => {
-  const stated = { ...NONE, components: [['𘣠', '𘢢']], surrounding: [['𘣠', '𘢢']] }
+  const stated = { ...NONE, components: [['𘣠', '𘣢']], surrounding: [['𘣠', '𘣢']] }
   const entry = { char: '𗸘', composition: '⿰𘣠𘣩' }
-  expect(derivedDescriptions(entry, new Set(['⿰𘣠𘣩']), stated)).toEqual(['⿺𘢢𘣩'])
-  expect(derivedDescriptions(entry, new Set(['⿰𘣠𘣩', '⿺𘢢𘣩']), stated)).toEqual([])
+  expect(derivedDescriptions(entry, new Set(['⿰𘣠𘣩']), stated)).toEqual(['⿺𘣢𘣩'])
+  expect(derivedDescriptions(entry, new Set(['⿰𘣠𘣩', '⿺𘣢𘣩']), stated)).toEqual([])
   // A hook with no surrounding rewrite keeps the layout, and either direction is written out.
   const hook = { ...NONE, components: [['𘣜', '𘣝']] }
   expect(derivedDescriptions({ char: '𗠐', composition: '⿰𘡯𘣝' }, new Set(['⿰𘡯𘣝']), hook)).toEqual(['⿰𘡯𘣜'])
@@ -102,7 +115,7 @@ test('the recorded data gives the stated variants and the possible ones', () => 
   expect(index.get('𗢨')?.reported).toEqual(['𘓐'])
   expect(index.get('𗢨')?.possible).toEqual([])
   expect(index.get('𗥠')?.possible ?? []).toEqual([])
-  // 𗸘 is ⿰𘣠𘣩 and 𗸠 is ⿺𘢢𘣩: the plain and the surrounding form of one part, same reading.
+  // 𗸘 is ⿰𘣠𘣩 and 𗸠 is ⿺𘣢𘣩: the plain and the surrounding form of one part, same reading.
   expect(index.get('𗸘')?.possible).toEqual(['𗸠'])
   expect(index.get('𗸠')?.possible).toEqual(['𗸘'])
   expect(index.get('𗸖')?.possible).toEqual(['𗸟'])

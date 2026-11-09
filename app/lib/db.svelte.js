@@ -6,7 +6,7 @@ import { indexTangutPua } from './pua.js'
 import { indexIdentifiers } from './identifiers.js'
 import { englishGloss } from './gloss.js'
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua } from './data.js'
-import { possiblePairs, variantIndex, variantFamilies, familyIndex } from './variants.js'
+import { possiblePairs, variantIndex, variantFamilies, familyIndex, SURROUNDING } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
 import { indexIdsDescriptions } from './ids-views.js'
@@ -66,6 +66,7 @@ export const ix = {
   /** Alternative character readings at each place in a description. @type {ReturnType<typeof buildPartIndex>['partGroups']} */ partGroups: new Map(),
   /** The parts each description names directly, character parts included. @type {Map<string, string[]>} */ directPartsOf: new Map(),
   /** The outermost operator of each character's editorial description. @type {Map<string, string>} */ layoutOf: new Map(),
+  /** The layouts each recorded description answers, ⿰ also for a surrounding ⿺. @type {Map<string, Set<string>>} */ layoutsOf: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
@@ -166,12 +167,13 @@ export async function load() {
     if (hidden) ix.ccamcMeanings = { meanings: hidden.meanings ?? {} }
     ix.strokes = new Map(Object.entries(strokes))
     for (const record of recorded) if (record.strokes) ix.strokes.set(record.char, record.strokes)
-    const index = buildPartIndex(entries)
+    const index = buildPartIndex(entries, SURROUNDING)
     ix.partsOf = index.partsOf
     ix.usedBy = index.usedBy
     ix.partGroups = index.partGroups
     ix.directPartsOf = index.directPartsOf
     ix.layoutOf = index.layoutOf
+    ix.layoutsOf = index.layoutsOf
     if (frequency) ix.frequency = new Map(Object.entries(frequency.counts))
     if (rhymes) {
       ix.rhymes = new Map(Object.entries(rhymes.chars))
