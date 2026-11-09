@@ -3,6 +3,6 @@ export const counts = {
   "drawings": 211,
   "chars": 180,
   "sessions": 13,
-  "reviewed": 103,
-  "corrected": 32
+  "reviewed": 184,
+  "corrected": 63
 }
