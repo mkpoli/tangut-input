@@ -123,7 +123,8 @@ matching characters sit in two panes side by side, stacked on a narrow screen, e
 own, so a new match never pushes the palette out of reach. Each chosen part keeps only the
 characters that hold it anywhere in their description (twice if chosen twice), and the palette keeps
 only the parts that still occur, with a count on each, so the next choice always leads somewhere. An
-outer layout (side by side, above and below, three across …) narrows further. The palette is ordered
+outer layout (side by side, above and below, three across …) narrows further; a hooked form recorded
+first in ⿺ answers the side-by-side layout, because the hook belongs to the part. The palette is ordered
 by stroke count, then by use, and can be filtered by Cangjie code or Japanese shape name. Choosing a
 part also opens it in the card. A card's “Characters with these parts” link opens Parts with that
 character's parts chosen.

@@ -176,8 +176,9 @@ export function byParts(parts, layout = '') {
   if (!parts.length && !layout) return []
   let hits = parts.length ? matchByParts(ix, parts) : [...ix.byChar.keys()]
   // The layout filters the description the parts finder reads, so a three-part description that
-  // the editorial cut reads as two matches the operator of that cut.
-  if (layout) hits = hits.filter(char => ix.layoutOf.get(char) === layout)
+  // the editorial cut reads as two matches the operator of that cut. A surrounding form first in
+  // ⿺ answers the side-by-side layout, because the hook belongs to the part.
+  if (layout) hits = hits.filter(char => ix.layoutsOf.get(char)?.has(layout))
   return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99)
     || frequency(b) - frequency(a) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
