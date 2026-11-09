@@ -83,7 +83,6 @@
   const context = pad.getContext('2d')
 
   let item = null
-  let chosen = null
   // Who is drawing, kept in this browser: a recognizer is judged on writers it has not seen.
   let writer = localStorage.getItem('tangut-quiz:writer') ?? ''
   // Each point's time and pressure, per stroke, for a recognizer that reads the pen's path.
@@ -112,7 +111,8 @@
       if (stroke.length === 1) context.lineTo(stroke[0][0] * ratio + 0.1, stroke[0][1] * ratio)
       context.stroke()
     }
-    done.disabled = !strokes.length || (item?.kind === 'lookalike' && !chosen)
+    // A prompt shows one character to draw; nothing has to be chosen before Done will take it.
+    done.disabled = !strokes.length
   }
 
   function point(event) {
@@ -120,13 +120,13 @@
     return [event.clientX - box.left, event.clientY - box.top]
   }
   pad.addEventListener('pointerdown', event => {
-    if (!item || (item.kind === 'lookalike' && !chosen)) return
+    if (!item) return
     pad.setPointerCapture(event.pointerId)
     first = event.pointerId
     pointer = event.pointerType || 'mouse'
     current = [point(event)]
-    times = [...times, [Math.round(event.timeStamp)]]
-    pressure = [...pressure, [event.pressure ?? 0]]
+    times = [[Math.round(event.timeStamp)]]
+    pressure = [[event.pressure ?? 0]]
     live = true
     strokes = [...strokes, current]
     paint()
@@ -152,60 +152,21 @@
   pad.addEventListener('pointerup', end)
   pad.addEventListener('pointercancel', end)
 
-  let captured = ''
-  const OUTBOX = 'tangut-quiz:captures'
-  const queued = () => { try { return JSON.parse(localStorage.getItem(OUTBOX) || '[]') } catch { return [] } }
-  let sending = false
-  async function flushCaptures() {
-    if (sending) return
-    sending = true
-    try {
-      while (queued().length) {
-        const body = queued()[0]
-        const response = await fetch('/api/capture', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), keepalive: true })
-        if (!response.ok) {
-          if (response.status !== 400) break
-          // A previous session's prompt remains available for recovery without blocking this round.
-          const unresolved = JSON.parse(localStorage.getItem(`${OUTBOX}:unresolved`) || '[]')
-          localStorage.setItem(`${OUTBOX}:unresolved`, JSON.stringify([...unresolved, body]))
-        }
-        localStorage.setItem(OUTBOX, JSON.stringify(queued().filter(entry => entry.captureId !== body.captureId)))
-      }
-    } catch {} finally { sending = false }
-  }
-  addEventListener('online', flushCaptures)
-  void flushCaptures()
-  function capture() {
-    if (!item || !strokes.length) return
-    const width = pad.clientWidth, height = pad.clientHeight
-    const body = { prompt: item.prompt, strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / width).toFixed(4), +(y / height).toFixed(4)])), times, pressure, pointer, writer: writer || null, width, height }
-    const key = JSON.stringify(body)
-    if (key === captured) return
-    try {
-      localStorage.setItem(OUTBOX, JSON.stringify([...queued(), { ...body, captureId: crypto.randomUUID() }]))
-      captured = key
-      void flushCaptures()
-    } catch {
-      // A blocked store still gets a best-effort keepalive send.
-      void fetch('/api/capture', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...body, captureId: crypto.randomUUID() }), keepalive: true }).catch(() => {})
-    }
-  }
-  function leave() {
-    current = null
-    first = null
-    capture()
-  }
-  addEventListener('beforeunload', leave)
-  addEventListener('pagehide', leave)
-  document.addEventListener('visibilitychange', () => { if (document.hidden) leave() })
-
   document.getElementById('undo').onclick = () => {
     if (!strokes.length) return
-    capture()
-    current = null; first = null
     strokes = strokes.slice(0, -1); times = times.slice(0, -1); pressure = pressure.slice(0, -1); paint()
   }
-  document.getElementById('clear').onclick = () => { capture(); current = null; first = null; strokes = []; times = []; pressure = []; paint() }
+  const clearPad = () => {
+    // A clear in the middle of a stroke leaves the pointer captured and the next stroke joins it.
+    if (first !== null && pad.hasPointerCapture(first)) pad.releasePointerCapture(first)
+    first = null
+    current = null
+    strokes = []
+    times = []
+    pressure = []
+    paint()
+  }
+  document.getElementById('clear').onclick = clearPad
 
   /** A prompt as the page shows it: the image to copy, and one line of instruction. */
   function show(body) {
@@ -218,10 +179,11 @@
     picture.alt = 'The character to draw'
     picture.decoding = 'sync'
     glyph.replaceChildren(picture)
-    chosen = body.kind
     instruction.textContent = body.kind === 'lookalike'
       ? 'This character has several lookalikes. Draw this one in the square below.'
-      : 'Draw this whole character in the square below, as large as it fits.'
+      : body.kind === 'component'
+        ? 'Draw this component on its own, as large as it fits.'
+        : 'Draw this whole character in the square below, as large as it fits.'
     paint()
   }
 
@@ -249,12 +211,9 @@
   }
 
   async function next() {
-    current = null
-    first = null
     strokes = []
     times = []
     pressure = []
-    chosen = null
     item = null
     paint()
     if (ahead) {
@@ -279,9 +238,16 @@
       bar.textContent = ''
       glyph.className = 'glyph'
       glyph.textContent = '✓'
-      instruction.textContent = 'That is the whole round. Thank you; every drawing is saved on the server.'
+      instruction.innerHTML = 'That is the whole round. <button class="primary" id="another">Draw another round</button>'
       pad.style.display = 'none'
       document.querySelector('.actions').style.display = 'none'
+      document.getElementById('another').onclick = async () => {
+        // The page reloads onto the new round rather than resetting a dozen pieces of state:
+        // a half-reset pad was where a round used to freeze.
+        instruction.textContent = 'Starting another round…'
+        await fetch('/api/round', { method: 'POST' })
+        location.reload()
+      }
       return
     }
     instruction.textContent = ''
@@ -308,11 +274,10 @@
       status.textContent = `Not saved: ${body.error ?? response.status}. Press Done again.`
       return
     }
-    captured = JSON.stringify({ prompt: item.prompt, strokes: strokes.map(stroke => stroke.map(([x, y]) => [+(x / width).toFixed(4), +(y / height).toFixed(4)])), times, pressure, pointer, writer: writer || null, width, height })
     status.textContent = `Saved as ${body.saved}.`
     await next()
   }
-  document.getElementById('skip').onclick = async () => { capture(); await fetch('/api/skip', { method: 'POST' }); next() }
+  document.getElementById('skip').onclick = async () => { await fetch('/api/skip', { method: 'POST' }); next() }
 
   const writerField = document.getElementById('writer')
   writerField.value = writer
