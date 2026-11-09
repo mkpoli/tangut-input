@@ -176,7 +176,8 @@ descriptions and the other never stands there: the app then reads ⿰ beside tha
 form, and the other way, including the Parts finder's side-by-side layout filter. `uv run scripts/build_tangut_variants.py` writes
 `app/data/tangut-variants.json`, which `app/lib/variants.js` reads. The parts palette keeps the groups together
 and the variants page lists them. A component substitution whose description no recorded character carries is
-written out on the card as a derived form; it names no character and no reading.
+written out on the card and listed on the variants page as a derived form; it names no character and
+no reading.
 
 ## `tangut-titles.tsv`
 
