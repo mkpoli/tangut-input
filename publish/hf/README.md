@@ -20,6 +20,8 @@ configs:
 
 # Tangut strokes
 
+![Drawings beside their characters](cover.png)
+
 Strokes drawn on https://tangut.mkpo.li/dataset/ with a mouse, a trackpad or a stylus, each kept with
 the character it was made for. The pad records the path of the pointer at one width, by visitors with
 no training in the script, to test character recognition for a search box.
