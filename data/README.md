@@ -173,9 +173,10 @@ than one member, each marked `apart` when its members mostly stand in different 
 they stand in the same ones. `kind_source` says who says so: NGWU YOH for 𘠣𘡍𘠅, the site's reading of the counts
 for the rest. The build marks a pair `surrounding` when one member stands only first in ⿺ in the recorded
 descriptions and the other never stands there: the app then reads ⿰ beside that member as ⿺ with the hooked
-form, and the other way. `uv run scripts/build_tangut_variants.py` writes
+form, and the other way, including the Parts finder's side-by-side layout filter. `uv run scripts/build_tangut_variants.py` writes
 `app/data/tangut-variants.json`, which `app/lib/variants.js` reads. The parts palette keeps the groups together
-and the variants page lists them.
+and the variants page lists them. A component substitution whose description no recorded character carries is
+written out on the card as a derived form; it names no character and no reading.
 
 ## `tangut-titles.tsv`
 
@@ -412,15 +413,15 @@ rows), each row naming its source.
 The names, words and readings people use for components, for the parts finder's search: 絞絲 and
 绞丝 for 糸, ノ文 and のぶん for 攵, ノ木 and のぎ for 禾, 宝盖 and 寶蓋 for 宀, 倒八 for 丷,
 卷字头 for 龹, and water, silk, みず, shui, mizu, jiaosipang, 수, thủy, Bộ Thủy, Kangxi radical 120
-for the same components. 6,660 rows, 298 KB (58 KB gzipped), built by
+for the same components. 6,661 rows, 298 KB (58 KB gzipped), built by
 `scripts/build_component_names.py`. Format: `name`, `char`, `source`, `detail`, one name for one
 component per row; comments start with `#`.
 
-Eighteen rows name Tangut components by the kana their strokes resemble: the five base names
+Nineteen rows name Tangut components by the kana their strokes resemble: the five base names
 くノ, ノメ, ノノメ, ノメメ and くくノ, the five A-class variants くノ﹅, ノくノ﹅, くくノ﹅,
-コくノ﹅ and くノ﹅ノメ, and the eight B-class variants ノ匕﹅, ノノ匕﹅, 一匕﹅, 二匕﹅,
-ソ一匕﹅, ラ匕﹅, コ匕﹅ and コ一匕﹅. Their source is `data/tangut-component-names.tsv`, which the build
-merges in; the naming convention and its limits are in
+コくノ﹅ and くノ﹅ノメ, the eight B-class variants ノ匕﹅, ノノ匕﹅, 一匕﹅, 二匕﹅,
+ソ一匕﹅, ラ匕﹅, コ匕﹅ and コ一匕﹅, and コくノ for 𘫿, read from the plain form. Their source is
+`data/tangut-component-names.tsv`, which the build merges in; the naming convention and its limits are in
 [`docs/tangut-component-names.md`](../docs/tangut-component-names.md).
 
 The search folds a query and a name (NFKC, katakana as hiragana, Latin accents off, spaces and
@@ -490,11 +491,11 @@ again and rewrites them, and also rebuilds the folds.
 
 ## tangut-component-names.tsv
 
-Eighteen Japanese shape names for Tangut components, the rows the build adds to
-`component-names.tsv`: the five base names, five A-class variants and eight B-class variants. The names describe the
-kana a component's strokes resemble; they are not an official nomenclature, and the wider
-vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-names.md). Format:
-`name`, `char`, `source`, `detail`; comments start with `#`.
+Nineteen Japanese shape names for Tangut components, the rows the build adds to
+`component-names.tsv`: the five base names, five A-class variants, eight B-class variants and コくノ.
+The names describe the kana a component's strokes resemble; they are not an official nomenclature,
+and the wider vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-names.md).
+Format: `name`, `char`, `source`, `detail`; comments start with `#`.
 
 - Source `arakawa-2023`: 荒川慎太郎「西夏文字における「点」の出現環境と機能」『言語研究』164
   (2023): 39–66, §1.4, §3.2 and n. 21
@@ -506,18 +507,21 @@ vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-nam
 - Source `arakawa-2020`: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回
   大会予稿集 (<https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf>):
   the distinction between the two forms.
+- Source `NGWU YOH, chat message, 2026-11-10`: コくノ for 𘫿, the plain form of Arakawa's dotted
+  A3 コくノ﹅. The code point is this project's reading of the glyph.
 - Licence: **CC BY-SA 4.0** for the Wikipedia rows; the Arakawa rows are short shape names.
 
 `app/data/tangut-component-names.json` is the copy the site's Find page and the part cards read;
-`tests/names.test.js` keeps it equal to this table. `app/data/tangut-part-names.json` is the eighteen-row
+`tests/names.test.js` keeps it equal to this table. `app/data/tangut-part-names.json` is the nineteen-row
 comparison on Parts: Japanese shape names, the English abstract's wording for くノ and ノメ, and
 empty cells where the sources read record no name.
 
 ## tangut-component-shape-hints.json.gz
 
 An editorial ranking, not a name table. Each of the 768 Tangut components U+18800–18AFF is compared
-with the eighteen components that have an attested Japanese shape name, and the three nearest names
-are kept with a cosine score and whether the stroke count agrees. 16 KB gzipped, built by
+with the nineteen components that have a Japanese shape name, eighteen attested and コくノ read
+from the glyph, and the three nearest names are kept with a cosine score and whether the stroke
+count agrees. 16 KB gzipped, built by
 `uv run scripts/rank_component_shapes.py` from `app/public/fonts/TangutYinchuan.ttf`.
 
 The score says the ink resembles an attested component's ink; it does not say the two are the same
@@ -694,6 +698,23 @@ Format: `format`, `standard`, `source` (the archived URL), `original`, `author`,
 and `map`, each row `[code, script, sequence]`. Rebuild with `python3 scripts/build_tibetan_seta.py`.
 A spelling matches only when its folded script is exactly one of the sequences; 119 codes cover 213
 characters across BabelStone's index and the hand-class tables.
+
+## `tangut-pua.json.gz`
+
+The 2,814 Tangut Yinchuan PUA variant forms in Supplementary Private Use Area-A, U+F0000–U+F1613,
+from `data/tangut-pua-variants.tsv`: the encoded base character, the PUA code, the variant's IDS and
+the source that attests it. 2,775 rows attach to 2,257 encoded characters; 39 rows have no base
+character and are kept in `unassigned`. One PUA code, F023C, appears twice with two IDS. The page
+states no licence; the font terms are on the BabelStone Yinchuan page. A PUA code names a glyph
+variant, not a different character.
+
+Format: `format`, `source` (the variants page), `font`, `version` (16.0.4), `retrieved`, `sha256` of
+the TSV, `note`, `counts`, `chars` (character → `[code, IDS, sources]`) and `unassigned`. Rebuild with
+`python3 scripts/build_tangut_pua.py`.
+
+Two rows print a base glyph that does not match the row's code point (U+179D0 and U+17FE9); the
+code point is kept, as the table's identifier.
+The page's introduction ends the range at U+F1612; its table has one more row at U+F1613, kept here.
 
 ## `tangut-layers.json.gz`
 

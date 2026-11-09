@@ -19,6 +19,7 @@
   import Cangjie from './pages/Cangjie.svelte'
   import Sijiao from './pages/Sijiao.svelte'
   import Reading from './pages/Reading.svelte'
+  import Dataset from './pages/Dataset.svelte'
   import Draw from './pages/Draw.svelte'
   import Fanqie from './pages/Fanqie.svelte'
   import Chart from './pages/Chart.svelte'
@@ -75,7 +76,8 @@
   })
 
   // The pages that are read, full width and without the character card.
-  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic'])
+  // Pages that are read rather than searched: they take the full width and carry no character card.
+  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic', 'dataset'])
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page @returns {boolean} whether the page changes */
   function nav(event, page) {
@@ -328,6 +330,7 @@
         {:else if route.page === 'chart'}<Chart />
         {:else if route.page === 'eras'}<Eras />
         {:else if route.page === 'variants'}<Variants />
+        {:else if route.page === 'dataset'}<Dataset />
         {:else if route.page === 'texts'}<Texts />
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
@@ -335,7 +338,7 @@
         {:else if route.page === 'intro'}<Intro />
         {:else if route.page === 'gyalrongic'}<Gyalrongic />
         {:else}<About />{/if}
-        {#if route.page !== 'about'}
+        {#if route.page !== 'about' && route.page !== 'dataset'}
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>

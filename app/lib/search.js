@@ -3,9 +3,10 @@
 import { searchTibetan } from './tibetan.js'
 import { byIdentifier as byStoredIdentifier } from './identifiers.js'
 import { byTibetanSeta as byStoredSeta } from './seta.js'
+import { byTangutPua as byStoredPua } from './pua.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
-import { searchShapeNames } from './names.js'
+import { searchShapeNames, searchShapeSpellings } from './names.js'
 import { describedBy } from './description.js'
 
 /** @typedef {{ char: string, code: string, near?: boolean }} CodeHit */
@@ -85,6 +86,13 @@ const rank = (code, typed) => (code === typed ? 0 : 1000) + code.length
  * @returns {{ char: string, name: string, tier: number }[]}
  */
 export const byName = query => searchShapeNames(ix.names, query)
+
+/**
+ * Characters whose parts, named in order, spell the query with their Japanese shape names.
+ * @param {string} query
+ * @returns {{ char: string, spelling: string }[]}
+ */
+export const byShapeSpelling = query => searchShapeSpellings(ix.shapeSpellings, query)
 
 /** The languages the meanings are recorded in. */
 export const MEANING_LANGUAGES = /** @type {const} */ (['en', 'ja', 'zh'])
@@ -175,8 +183,9 @@ export function byParts(parts, layout = '') {
   if (!parts.length && !layout) return []
   let hits = parts.length ? matchByParts(ix, parts) : [...ix.byChar.keys()]
   // The layout filters the description the parts finder reads, so a three-part description that
-  // the editorial cut reads as two matches the operator of that cut.
-  if (layout) hits = hits.filter(char => ix.layoutOf.get(char) === layout)
+  // the editorial cut reads as two matches the operator of that cut. A surrounding form first in
+  // ⿺ answers the side-by-side layout, because the hook belongs to the part.
+  if (layout) hits = hits.filter(char => ix.layoutsOf.get(char)?.has(layout))
   return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99)
     || frequency(b) - frequency(a) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
@@ -275,3 +284,6 @@ export const byIdentifier = text => byStoredIdentifier(ix.identifierIndex, text)
 
 /** Characters whose Tibetan spelling has a Tibetan Extension-A code. @param {string} text */
 export const byTibetanSeta = text => byStoredSeta(ix.setaIndex, text)
+
+/** Characters a Tangut Yinchuan PUA variant code names. @param {string} text */
+export const byTangutPua = text => byStoredPua(ix.puaIndex, text)

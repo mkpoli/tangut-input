@@ -32,6 +32,11 @@
  *   cangjie: string[], glyph: string }} SupplementCharacter */
 /** @typedef {{ format: string, unicode: string, built: string, sources: { id: string, name: string, url: string, sha256?: string, commit?: string }[],
  *   counts: Record<string, number>, characters: SupplementCharacter[] }} Supplement */
+/** Tangut Yinchuan PUA variants, by encoded base character. @typedef {{ format: string, source: string,
+ *   font: string, version: string, retrieved: string, sha256: string, note: string,
+ *   counts: { rows: number, assigned: number, characters: number, codes: number, unassigned: number },
+ *   chars: Record<string, [code: string, ids: string, sources: string[]][]>,
+ *   unassigned: [code: string, ids: string, sources: string[]][] }} TangutPua */
 /** Tibetan Extension-A code points and the Unicode sequences they stand for. @typedef {{ format: string,
  *   standard: string, source: string, original: string, author: string, retrieved: string, sha256: string, note: string,
  *   map: [code: string, script: string, sequence: string][] }} TibetanSeta */
@@ -164,6 +169,9 @@ export const loadIdentifiers = () => once('identifiers', () => readJson(new URL(
 
 /** The precomposed Tibetan Extension-A characters. @returns {Promise<TibetanSeta>} */
 export const loadTibetanSeta = () => once('tibetan-seta', () => readJson(new URL('../data/tangut-tibetan-seta.json.gz', import.meta.url)))
+
+/** Tangut Yinchuan PUA variants, keyed by their encoded base character. @returns {Promise<TangutPua>} */
+export const loadTangutPua = () => once('tangut-pua', () => readJson(new URL('../data/tangut-pua.json.gz', import.meta.url)))
 
 /** The lines of the recorded corpus and where each character stands in them. @returns {Promise<Attestation>} */
 export const loadAttestation = () => once('attestation', () => readJson(new URL('../data/tangut-attestation.json.gz', import.meta.url)))

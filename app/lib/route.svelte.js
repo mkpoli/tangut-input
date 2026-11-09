@@ -54,6 +54,7 @@ export const MORE = /** @type {const} */ ([
   { path: 'intro', label: 'nav.intro', icon: 'book', hint: 'nav.intro.hint' },
   { path: 'gyalrongic', label: 'gyalrongic.title', icon: 'book', hint: 'gyalrongic.hint' },
   { path: 'about', label: 'nav.sources', icon: 'sources', hint: 'nav.sources.hint' },
+  { path: 'dataset', label: 'nav.dataset', icon: 'code', hint: 'nav.dataset.hint' },
 ])
 
 /** @typedef {typeof GROUPS[number]['pages'][number] | typeof MORE[number]} MenuEntry */
