@@ -11,6 +11,7 @@
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
+  import { derivedDescriptions } from '../lib/variants.js'
   import { byDescription } from '../lib/search.js'
   import { idsViews } from '../lib/ids-views.js'
   import { openingOf } from '../lib/description.js'
@@ -44,6 +45,8 @@
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
   const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
+  // The same substitution the possible pairs use, written out where no character carries it.
+  const derivedForms = $derived(ready && entry?.composition ? derivedDescriptions(entry, ix.byDescription) : [])
   // The group the character stands in, when a pair list would hide part of it: a chain of stated
   // forms, or the pair someone reported.
   const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
@@ -337,29 +340,40 @@
       </section>
     {/if}
 
-    {#if variants}
+    {#if variants || derivedForms.length}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
-        {#each [
-          { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms], ['card.variantFormsPartial', variants.partialForms]] },
-          { source: 'card.variantReportedSource', rows: [['card.variantReported', variants.reported]] },
-          { source: 'card.variantsPossibleSource', rows: [['card.variantPossible', variants.possible]] },
-        ] as block (block.source)}
-          {#if block.rows.some(([, others]) => others.length)}
-            {#each block.rows as [label, others] (label)}
-              {#if others.length}
-                <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
-                <div class="ui-tiles rel" style:--ui-tile-size="48px">
-                  {#each others as other (other)}
-                    {@const sound = readingOf(other, ui.reading)}
-                    <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
-                  {/each}
-                </div>
-              {/if}
+        {#if variants}
+          {#each [
+            { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms], ['card.variantFormsPartial', variants.partialForms]] },
+            { source: 'card.variantReportedSource', rows: [['card.variantReported', variants.reported]] },
+            { source: 'card.variantsPossibleSource', rows: [['card.variantPossible', variants.possible]] },
+          ] as block (block.source)}
+            {#if block.rows.some(([, others]) => others.length)}
+              {#each block.rows as [label, others] (label)}
+                {#if others.length}
+                  <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
+                  <div class="ui-tiles rel" style:--ui-tile-size="48px">
+                    {#each others as other (other)}
+                      {@const sound = readingOf(other, ui.reading)}
+                      <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+                    {/each}
+                  </div>
+                {/if}
+              {/each}
+              <p class="ui-hint">{t(block.source)}</p>
+            {/if}
+          {/each}
+        {/if}
+        {#if derivedForms.length}
+          <p class="ui-hint">{t('card.variantDerived')}</p>
+          <ul class="derived">
+            {#each derivedForms.slice(0, 6) as description (description)}
+              <li><span class="ui-formula" title={description}>{description}</span></li>
             {/each}
-            <p class="ui-hint">{t(block.source)}</p>
-          {/if}
-        {/each}
+          </ul>
+          <p class="ui-hint">{t('card.variantDerivedSource')}</p>
+        {/if}
         {#if linkedGroup}
           <p class="ui-hint">{t('card.family')}</p>
           <div class="group">
@@ -639,6 +653,8 @@
   .wenhai-term{color:var(--ui-color-ink-muted);font-family:var(--ui-font-serif);font-size:var(--ui-text-sm)}
   .wenhai-sep{color:var(--ui-color-ink-muted)}
   .wenhai-position{margin-inline-start:auto;font-size:var(--ui-text-2xs);letter-spacing:0}
+  .derived{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);margin:var(--ui-space-xs) 0 0;padding:0;list-style:none}
+  .derived .ui-formula{font-size:16px}
   .rel{gap:3px}
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}

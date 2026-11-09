@@ -295,6 +295,8 @@
   "card.family": "一つの組",
   "card.variantReportedSource": "出典：NGWU YOH",
   "card.variantPossible": "同じ字の可能性",
+  "card.variantDerived": "派生した形",
+  "card.variantDerivedSource": "異体部品をこの字の記述と入れ替えたもの。この記述を持つ文字は記録されていません。",
   "card.variantsSource": "ウィクショナリーの記述によります。ここに載るのはごく一部です。",
   "card.variantsPossibleSource": "読み（李範文）が同じで、ウィクショナリーの語義が重なるか、異体の部品一つだけが異なる字です。異体字とする資料は確認できていません。",
   "card.readings": "字音",

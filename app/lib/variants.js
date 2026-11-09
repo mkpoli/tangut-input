@@ -96,6 +96,38 @@ export function surroundingDescriptions(text, plain, hooked) {
 }
 
 /**
+ * The descriptions one component substitution makes from a character's recorded description when no
+ * character carries them. Both directions of a component pair are tried, and a surrounding pair
+ * turns ⿰ into ⿺ and back. The character's own description is not returned.
+ * @param {VariantEntry} entry
+ * @param {{ has: (description: string) => boolean }} known every description a character is recorded under
+ * @param {Stated} [stated]
+ * @returns {string[]}
+ */
+export function derivedDescriptions(entry, known, stated = VARIANTS) {
+  const composition = entry.composition
+  if (!composition) return []
+  /** @type {Map<string, string[]>} */
+  const wrapping = new Map((stated.surrounding ?? []).flatMap(([plain, hooked]) => [
+    [plain + hooked, [plain, hooked]],
+    [hooked + plain, [plain, hooked]],
+  ]))
+  const found = new Set()
+  for (const [one, other] of stated.components) {
+    const wrap = wrapping.get(one + other)
+    if (wrap) {
+      for (const description of surroundingDescriptions(composition, wrap[0], wrap[1])) found.add(description)
+      continue
+    }
+    if (composition.includes(one)) found.add(composition.replaceAll(one, other))
+    if (composition.includes(other)) found.add(composition.replaceAll(other, one))
+  }
+  found.delete(composition)
+  for (const description of [...found]) if (known.has(description)) found.delete(description)
+  return [...found].sort()
+}
+
+/**
  * The possible variants: characters with the same reading in Li Fanwen's system that also share a
  * sense in Wiktionary, or whose descriptions differ only by a pair of variant components. A
  * surrounding form also turns the ⿰ above it into ⿺, and back. Characters already linked, or that

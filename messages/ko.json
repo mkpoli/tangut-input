@@ -295,6 +295,8 @@
   "card.family": "한 묶음",
   "card.variantReportedSource": "출처: NGWU YOH",
   "card.variantPossible": "같은 글자일 가능성",
+  "card.variantDerived": "파생된 형태",
+  "card.variantDerivedSource": "이 글자의 기술에서 이체 부품을 바꾼 것이며, 이 기술을 가진 문자는 기록되어 있지 않습니다.",
   "card.variantsSource": "위키낱말사전의 기술에 따른 것으로, 여기 실린 것은 일부입니다.",
   "card.variantsPossibleSource": "독음(리판원)이 같고, 위키낱말사전의 뜻이 겹치거나 이체 부품 하나만 다른 글자입니다. 이체자라고 한 자료는 확인되지 않았습니다.",
   "card.readings": "독음",

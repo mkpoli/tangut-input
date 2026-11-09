@@ -295,6 +295,8 @@
   "card.family": "整組",
   "card.variantReportedSource": "來源：NGWU YOH",
   "card.variantPossible": "可能為同一字",
+  "card.variantDerived": "衍生構形",
+  "card.variantDerivedSource": "以異體部件替換此字構形所得；尚無記錄到具有此構形的字符。",
   "card.variantsSource": "據維基詞典所述，此處所收僅為少數。",
   "card.variantsPossibleSource": "讀音（李範文）相同，且維基詞典的釋義有重合，或只差一個異體部件。未見資料稱其為異體。",
   "card.readings": "讀音",

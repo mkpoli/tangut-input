@@ -37,7 +37,7 @@ The card of a character shows its code point, its Li Fanwen 2008 number, 文海 
 XXZT code points, its Tangut Yinchuan PUA variants, the Set A code of a Tibetan spelling,
 Cangjie codes, meanings in English, Japanese and Chinese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
-the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
+the facsimile, related characters, and the variant forms no character has yet. The 文海's own entry text is shown where it carries one;
 further readings and meanings are linked to CCAMC's page for the character.
 Character tiles show the chosen reconstruction above the glyph, then a Chinese gloss and the
 finder's note. Chinese glosses come from keyed dictionary senses, then Wiktionary, then
