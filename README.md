@@ -8,9 +8,11 @@ it into your text. <https://tangut.mkpo.li/>
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
   lists code points, and `L0009`, `L55.172`, `M202-84B2`, `XXZT-A-764F`, `U+F5C0` or `U+F02BB` open the character a
-  number, legacy code, Tibetan Set A code or Tangut PUA variant names. Tangut components also answer to their Japanese shape names, such as くノ,
-  ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
-  opening part it lists the characters that open that way.
+  number, legacy code, Tibetan Set A code or Tangut PUA variant names. Tangut components also answer
+  to their Japanese shape names, such as くノ, ノメ or くくノ; a character whose parts all have
+  names answers to the names run together: コくノノノメ names 𘄳. A description is read against the
+  records' own: `⿰𘤊𘠡` names 𗾇, and cut after its opening part it lists the characters that open
+  that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
   MiCA, with its passages, characters, source and first line. Read opens the text passage by
   passage; a Glosses toggle puts Chinese and English glosses under each character, and each

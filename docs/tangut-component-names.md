@@ -24,6 +24,7 @@ shorthand for a shape: 𘡃 is ノメ and 𘫺 is くノ, and the two are told a
 | ラ匕﹅ | 𘣭 U+188ED | Arakawa 2023, table 5 B8 |
 | コ匕﹅ | 𘤾 U+1893E | Arakawa 2023, table 5 B9 |
 | コ一匕﹅ | 𘦺 U+189BA | Arakawa 2023, table 5 B11 |
+| コくノ | 𘫿 U+18AFF | NGWU YOH, chat message, 2026-11-10; Arakawa 2023 names the shape |
 
 The hover card takes a component's stroke count from the site's Unicode-derived data, which can
 differ from a count in the source.
@@ -34,14 +35,19 @@ Lotus Sutra; Arakawa 2023 adds ノくノ, コくノ, くノメ, くノノメ, �
 ソ一匕, フサ二匕 and ラ匕. These describe one element's strokes, often across more than one encoded
 component, and they are not a list of names for the 768 Tangut components.
 
-The eighteen rows above are the five base names and the thirteen variants that the cited sources
-tie to a code point. They are kept in `data/tangut-component-names.tsv` and merged into
+The nineteen rows above are the five base names, the thirteen variants that the cited sources tie
+to a code point, and コくノ for 𘫿. The last is NGWU YOH's reading of the plain form (chat message,
+2026-11-10): Arakawa 2023 names コくノ and its dotted A3 コくノ﹅, and the plain form has no
+entry of its own in table 4. The rows are kept in `data/tangut-component-names.tsv` and merged into
 `data/component-names.tsv` by `scripts/build_component_names.py`, so a search for くノ or ノメ
-reaches 𘫺 or 𘡃. The site's Find page reads the same eighteen rows from
-`app/data/tangut-component-names.json` and shows them in a shape-name group; the Parts filter accepts the names too, and the part card on Parts and the Cangjie
-palette shows its name with its code point, component number, strokes, uses and Cangjie codes. Parts
-adds an eighteen-row table comparing the names across Japanese, English, Chinese, Russian and Korean. The rest of the vocabulary
-is recorded here because the sources read for this note do not assign it to individual code points.
+reaches 𘫺 or 𘡃. The site's Find page reads the same nineteen rows from
+`app/data/tangut-component-names.json` and shows them in a shape-name group. When every part of
+a character has a name, the names run together name the character: コくノノノメ finds 𘄳, in
+katakana or hiragana alike. The Parts filter accepts the names too, and the part card on Parts and the Cangjie palette
+shows its name with its code point, component number, strokes, uses and Cangjie codes. Parts adds a
+nineteen-row table comparing the names across Japanese, English, Chinese, Russian and Korean. The
+rest of the vocabulary is recorded here because the sources read for this note do not assign it to
+individual code points.
 
 `data/tangut-component-shape-hints.json.gz` is a separate editorial aid: the three nearest attested
 names for each of the 768 components, by ink similarity, with scores. It is not a name list. The

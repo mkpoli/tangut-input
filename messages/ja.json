@@ -74,6 +74,7 @@
   "find.group.text": "テキスト内の各文字",
   "find.group.codepoint": "符号位置",
   "find.group.shape": "形の名から",
+  "find.group.spelling": "形の名を綴って",
   "find.group.cangjie": "倉頡コードとして",
   "find.group.reading": "再構音として",
   "find.group.meaning": "意味から",

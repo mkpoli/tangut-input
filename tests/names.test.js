@@ -2,13 +2,16 @@
 // copy the site's Find page reads.
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { gunzipSync } from 'node:zlib'
 import { createNameSearch, readNames } from '../src/core/names.js'
-import { searchShapeNames } from '../app/lib/names.js'
+import { indexShapeSpellings, searchShapeNames, searchShapeSpellings, spellShape } from '../app/lib/names.js'
 
 const names = readNames(readFileSync(new URL('../data/component-names.tsv', import.meta.url), 'utf8'))
 const search = createNameSearch(names)
 const app = JSON.parse(readFileSync(new URL('../app/data/tangut-component-names.json', import.meta.url), 'utf8')).names
 const comparison = JSON.parse(readFileSync(new URL('../app/data/tangut-part-names.json', import.meta.url), 'utf8'))
+
+const SHAPE_SOURCES = new Set(['arakawa-2023', 'ja-wikipedia-tangut', 'NGWU YOH, chat message, 2026-11-10'])
 
 const TANGUT = [
   ['くノ', '𘫺'],
@@ -29,11 +32,12 @@ const TANGUT = [
   ['ラ匕﹅', '𘣭'],
   ['コ匕﹅', '𘤾'],
   ['コ一匕﹅', '𘦺'],
+  ['コくノ', '𘫿'],
 ]
 
-test('the eighteen Tangut components are named by their Japanese shapes', () => {
+test('the nineteen Tangut components are named by their Japanese shapes', () => {
   const found = new Map(names
-    .filter(name => name.source === 'arakawa-2023' || name.source === 'ja-wikipedia-tangut')
+    .filter(name => SHAPE_SOURCES.has(name.source))
     .map(name => [name.name, name.char]))
   expect(found).toEqual(new Map(TANGUT))
 })
@@ -55,7 +59,7 @@ test('the site copy holds the same rows as the source table', () => {
     .filter(line => line && !line.startsWith('#'))
     .map(line => {
       const [name, char, from, detail] = line.split('\t')
-      return [name, { char, source: from, detail, credit: from === 'arakawa-2023' ? 'Arakawa 2023' : 'Arakawa 2020 · Japanese Wikipedia' }]
+      return [name, { char, source: from, detail, credit: from === 'arakawa-2023' ? 'Arakawa 2023' : from === 'ja-wikipedia-tangut' ? 'Arakawa 2020 · Japanese Wikipedia' : from.split(',')[0] }]
     }))
   const site = new Map(app.map(row => [row.name, { char: row.char, source: row.source, detail: row.detail, credit: row.credit }]))
   expect(site).toEqual(source)
@@ -74,4 +78,30 @@ test('a shape name reaches its component first', () => {
     expect(search.search([...name].map(kana => kana === 'ノ' ? 'の' : kana).join(''))[0].char).toBe(char)
     expect(searchShapeNames(app, name)[0]).toMatchObject({ char, name, tier: 0 })
   }
+})
+
+const entries = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-entries.json.gz', import.meta.url))).toString())
+  .rows.map(row => ({ char: row[0], composition: row[1] ?? undefined }))
+const spellings = indexShapeSpellings(entries, app)
+
+test('a character reads as the names of its parts run together', () => {
+  // 𘄳 is ⿰𘫿𘢌: コくノ and ノノメ.
+  expect(spellings.get('𘄳')).toEqual(['コくノノノメ'])
+  for (const query of ['コくノノノメ', 'コクノノノメ', 'こくのののめ']) {
+    expect(searchShapeSpellings(spellings, query)).toEqual([{ char: '𘄳', spelling: 'コくノノノメ' }])
+  }
+})
+
+test('a description with a part that has no name spells nothing', () => {
+  // Most characters mix parts that have a name with parts that do not.
+  expect(spellings.has('𗀀')).toBe(false)
+})
+
+test('only a complete description with one root spells', () => {
+  const namesOf = new Map([['𘫿', ['コくノ']], ['𘢌', ['ノノメ']]])
+  expect(spellShape('⿰𘫿𘢌', namesOf)).toEqual(['コくノノノメ'])
+  expect(spellShape('𘫿𘢌', namesOf)).toEqual([])
+  expect(spellShape('⿰𘫿', namesOf)).toEqual([])
+  // A placeholder operand is not a named component.
+  expect(spellShape('⿱？𘢌', namesOf)).toEqual([])
 })

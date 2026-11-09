@@ -27,8 +27,9 @@ from their readings and meanings:
 - Wikidata: labels and aliases for the radicals in English, Japanese, Chinese, Korean and
   Vietnamese (Kangxi radical 120, 糸部, 실사, Bộ Thủy), CC0 1.0.
 - An editorial Hepburn and Kunrei table: the romanization of each kana name (nobun, sanzui, ukanmuri, nogihen; si, ti, tu, hu for the Kunrei spellings).
-- Arakawa 2023, Arakawa 2020 and Japanese Wikipedia: five Japanese shape names for Tangut components (くノ,
-  ノメ, ノノメ, ノメメ, くくノ), kept in `data/tangut-component-names.tsv` and merged into the table.
+- Arakawa 2023, Arakawa 2020 and Japanese Wikipedia: Japanese shape names for Tangut components,
+  kept in `data/tangut-component-names.tsv` and merged into the table. コくノ for 𘫿 is NGWU YOH's
+  reading of the glyph.
 
 The traditional or simplified spelling of a Chinese name is added through OpenCC (Apache 2.0) when it
 differs, except for characters that are radicals in their own right (几, 厂, 干, 尸, 里, 凶, 虫): those
@@ -890,6 +891,7 @@ def header(wikipedia: dict, wikidata: dict, rows: list[tuple[str, str, str, str]
 #   https://ja.wikipedia.org/wiki/西夏文字
 # source arakawa-2020: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回大会予稿集; the distinction between the ノメメ and くくノ forms
 #   https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf
+# source NGWU YOH, chat message, 2026-11-10: コくノ for 𘫿, the plain form of Arakawa's コくノ﹅; the code point is this project's reading of the glyph
 # The file as a whole is shared alike under CC BY-SA 4.0, because the Wikipedia and KANJIDIC2 rows are:
 # https://creativecommons.org/licenses/by-sa/4.0/
 """
