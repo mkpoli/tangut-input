@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
-import { componentPositions, familyIndex, keepVariantsTogether, possiblePairs, surroundingDescriptions, variantFamilies, variantIndex } from '../app/lib/variants.js'
+import { componentPositions, derivedDescriptions, familyIndex, keepVariantsTogether, possiblePairs, surroundingDescriptions, variantFamilies, variantIndex } from '../app/lib/variants.js'
 import VARIANTS from '../app/data/tangut-variants.json' with { type: 'json' }
 
 const NONE = { variants: [], partial: [], synonyms: [], components: [], reported: [] }
@@ -37,6 +37,18 @@ test('a surrounding pair links the characters written with either layout', () =>
   // Without the surrounding rule the plain substitution finds no character at ⿰𘢢𘣩.
   const plain = { ...NONE, components: [['𘣠', '𘢢']] }
   expect(variantIndex(possiblePairs(entries, plain), plain).get('𗸘')).toBeUndefined()
+})
+
+test('a derived description is the substitution no character carries', () => {
+  const stated = { ...NONE, components: [['𘣠', '𘢢']], surrounding: [['𘣠', '𘢢']] }
+  const entry = { char: '𗸘', composition: '⿰𘣠𘣩' }
+  expect(derivedDescriptions(entry, new Set(['⿰𘣠𘣩']), stated)).toEqual(['⿺𘢢𘣩'])
+  expect(derivedDescriptions(entry, new Set(['⿰𘣠𘣩', '⿺𘢢𘣩']), stated)).toEqual([])
+  // A hook with no surrounding rewrite keeps the layout, and either direction is written out.
+  const hook = { ...NONE, components: [['𘣜', '𘣝']] }
+  expect(derivedDescriptions({ char: '𗠐', composition: '⿰𘡯𘣝' }, new Set(['⿰𘡯𘣝']), hook)).toEqual(['⿰𘡯𘣜'])
+  expect(derivedDescriptions({ char: '𗠐', composition: '⿰𘡯𘣜' }, new Set(['⿰𘡯𘣜']), hook)).toEqual(['⿰𘡯𘣝'])
+  expect(derivedDescriptions({ char: '𗸘' }, new Set(), stated)).toEqual([])
 })
 
 test('variant components link characters only when the reading also matches', () => {
@@ -95,6 +107,11 @@ test('the recorded data gives the stated variants and the possible ones', () => 
   expect(index.get('𗸠')?.possible).toEqual(['𗸘'])
   expect(index.get('𗸖')?.possible).toEqual(['𗸟'])
   expect([...index.values()].flatMap(record => record.possible).length).toBe(44)
+  // The same substitution, written out where no character carries it.
+  const described = new Set(entries.map(entry => entry.composition).filter(Boolean))
+  const byChar = new Map(entries.map(entry => [entry.char, entry]))
+  expect(derivedDescriptions(byChar.get('𗠐'), described)).toContain('⿰𘡯𘣜')
+  expect(derivedDescriptions(byChar.get('𗸘'), described)).toEqual([])
 })
 
 test('variant components stand together, under the first member\'s strokes', () => {

@@ -1,0 +1,17 @@
+{
+  "title": "Tangut strokes",
+  "id": "mkpoli/tangut-strokes",
+  "licenses": [
+    {
+      "name": "CC-BY-4.0"
+    }
+  ],
+  "description": "Strokes drawn with a mouse, trackpad or stylus on a browser pad, each with the Tangut character it was made for. 211 drawings of 180 characters, polylines in the unit square. Collected to train and test character recognition for a search box. Baseline: 32.1% first, 57.5% in five, MRR 0.440 on the fixed 106-drawing test split.",
+  "keywords": [
+    "classification",
+    "text",
+    "image",
+    "linguistics"
+  ],
+  "subtitle": "Strokes drawn with a mouse, for recognising Tangut characters"
+}

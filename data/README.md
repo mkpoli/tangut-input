@@ -175,7 +175,8 @@ for the rest. The build marks a pair `surrounding` when one member stands only f
 descriptions and the other never stands there: the app then reads ⿰ beside that member as ⿺ with the hooked
 form, and the other way. `uv run scripts/build_tangut_variants.py` writes
 `app/data/tangut-variants.json`, which `app/lib/variants.js` reads. The parts palette keeps the groups together
-and the variants page lists them.
+and the variants page lists them. A component substitution whose description no recorded character carries is
+written out on the card as a derived form; it names no character and no reading.
 
 ## `tangut-titles.tsv`
 
@@ -716,6 +717,23 @@ Format: `format`, `standard`, `source` (the archived URL), `original`, `author`,
 and `map`, each row `[code, script, sequence]`. Rebuild with `python3 scripts/build_tibetan_seta.py`.
 A spelling matches only when its folded script is exactly one of the sequences; 119 codes cover 213
 characters across BabelStone's index and the hand-class tables.
+
+## `tangut-pua.json.gz`
+
+The 2,814 Tangut Yinchuan PUA variant forms in Supplementary Private Use Area-A, U+F0000–U+F1613,
+from `data/tangut-pua-variants.tsv`: the encoded base character, the PUA code, the variant's IDS and
+the source that attests it. 2,775 rows attach to 2,257 encoded characters; 39 rows have no base
+character and are kept in `unassigned`. One PUA code, F023C, appears twice with two IDS. The page
+states no licence; the font terms are on the BabelStone Yinchuan page. A PUA code names a glyph
+variant, not a different character.
+
+Format: `format`, `source` (the variants page), `font`, `version` (16.0.4), `retrieved`, `sha256` of
+the TSV, `note`, `counts`, `chars` (character → `[code, IDS, sources]`) and `unassigned`. Rebuild with
+`python3 scripts/build_tangut_pua.py`.
+
+Two rows print a base glyph that does not match the row's code point (U+179D0 and U+17FE9); the
+code point is kept, as the table's identifier.
+The page's introduction ends the range at U+F1612; its table has one more row at U+F1613, kept here.
 
 ## `tangut-layers.json.gz`
 

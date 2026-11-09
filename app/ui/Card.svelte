@@ -11,6 +11,7 @@
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
+  import { derivedDescriptions } from '../lib/variants.js'
   import { byDescription } from '../lib/search.js'
   import { idsViews } from '../lib/ids-views.js'
   import { leavesOf } from '../lib/composition.js'
@@ -39,11 +40,14 @@
   const entry = $derived(ready && char ? ix.byChar.get(char) : undefined)
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const identifiers = $derived(ready && char ? identifierGroups(ix.identifiers.get(char) ?? []) : [])
+  const pua = $derived(ready && char ? ix.pua.get(char) ?? [] : [])
   const strokes = $derived(ready && char ? entry?.total_strokes ?? ix.strokes.get(char) : undefined)
   const meanings = $derived(entry?.definitions ?? {})
   const downes = $derived(ready && char ? ix.downes.get(char) : undefined)
   const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
+  // The same substitution the possible pairs use, written out where no character carries it.
+  const derivedForms = $derived(ready && entry?.composition ? derivedDescriptions(entry, ix.byDescription) : [])
   // The group the character stands in, when a pair list would hide part of it: a chain of stated
   // forms, or the pair someone reported.
   const family = $derived(ready && char ? ix.familyOf.get(char) : undefined)
@@ -264,6 +268,27 @@
       </section>
     {/if}
 
+    {#if pua.length}
+      <section class="pua-variants">
+        <h3 class="ui-label">
+          {#if ix.puaSource?.source}
+            <a href={ix.puaSource.source} target="_blank" rel="noopener noreferrer" title={t('card.puaSource', { version: ix.puaSource.version ?? '' })}>{t('card.puaVariants')}</a>
+          {:else}{t('card.puaVariants')}{/if}
+          <span class="ui-count">{pua.length}</span>
+        </h3>
+        <ul class="pua-list">
+          {#each pua as [code, ids, sources] (code + ids)}
+            <li>
+              <button class="identifier ui-mono" type="button" title={t('card.copyIdentifier', { id: code })} onclick={() => copy(code, code)}>{code}</button>
+              <span class="ui-formula pua-ids" title={ids}>{ids}</span>
+              {#if sources.length}<span class="ui-hint pua-source">{sources.join(' · ')}</span>{/if}
+            </li>
+          {/each}
+        </ul>
+        <p class="ui-hint pua-note">{t('card.puaNote', { version: ix.puaSource?.version ?? '' })}</p>
+      </section>
+    {/if}
+
     <section class="faces-section">
       <div class="faces-head">
         <h3 class="ui-label"><Icon name="layers" size={15}/>{t('card.renderings')}</h3>
@@ -329,29 +354,40 @@
       </section>
     {/if}
 
-    {#if variants}
+    {#if variants || derivedForms.length}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
-        {#each [
-          { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms], ['card.variantFormsPartial', variants.partialForms]] },
-          { source: 'card.variantReportedSource', rows: [['card.variantReported', variants.reported]] },
-          { source: 'card.variantsPossibleSource', rows: [['card.variantPossible', variants.possible]] },
-        ] as block (block.source)}
-          {#if block.rows.some(([, others]) => others.length)}
-            {#each block.rows as [label, others] (label)}
-              {#if others.length}
-                <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
-                <div class="ui-tiles rel" style:--ui-tile-size="48px">
-                  {#each others as other (other)}
-                    {@const sound = readingOf(other, ui.reading)}
-                    <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
-                  {/each}
-                </div>
-              {/if}
+        {#if variants}
+          {#each [
+            { source: 'card.variantsSource', rows: [['card.variantOf', variants.of], ['card.variantOfPartial', variants.partial], ['card.variantForms', variants.forms], ['card.variantFormsPartial', variants.partialForms]] },
+            { source: 'card.variantReportedSource', rows: [['card.variantReported', variants.reported]] },
+            { source: 'card.variantsPossibleSource', rows: [['card.variantPossible', variants.possible]] },
+          ] as block (block.source)}
+            {#if block.rows.some(([, others]) => others.length)}
+              {#each block.rows as [label, others] (label)}
+                {#if others.length}
+                  <p class="ui-hint">{t(/** @type {string} */ (label))}</p>
+                  <div class="ui-tiles rel" style:--ui-tile-size="48px">
+                    {#each others as other (other)}
+                      {@const sound = readingOf(other, ui.reading)}
+                      <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+                    {/each}
+                  </div>
+                {/if}
+              {/each}
+              <p class="ui-hint">{t(block.source)}</p>
+            {/if}
+          {/each}
+        {/if}
+        {#if derivedForms.length}
+          <p class="ui-hint">{t('card.variantDerived')}</p>
+          <ul class="derived">
+            {#each derivedForms.slice(0, 6) as description (description)}
+              <li><span class="ui-formula" title={description}>{description}</span></li>
             {/each}
-            <p class="ui-hint">{t(block.source)}</p>
-          {/if}
-        {/each}
+          </ul>
+          <p class="ui-hint">{t('card.variantDerivedSource')}</p>
+        {/if}
         {#if linkedGroup}
           <p class="ui-hint">{t('card.family')}</p>
           <div class="group">
@@ -587,6 +623,13 @@
   .inline{padding:0 3px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font-size:17px;vertical-align:-2px}
   .inline:hover{background:var(--ui-color-surface-hover)}
   .use{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);padding-bottom:var(--ui-space-xl)}
+  .pua-variants .ui-label{flex-wrap:wrap}
+  .pua-variants .ui-label a{display:inline-flex;align-items:center;gap:2px;color:inherit;text-underline-offset:2px}
+  .pua-list{display:grid;gap:var(--ui-space-2xs);margin:0;padding:0;list-style:none}
+  .pua-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--ui-space-xs)}
+  .pua-ids{font-size:16px;line-height:1.5}
+  .pua-source{font-size:var(--ui-text-2xs);line-height:1.45}
+  .pua-note{margin:0;font-size:var(--ui-text-2xs);line-height:1.45}
   .identifiers dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-2xs) var(--ui-space-lg);margin:0}
   .identifiers dt{display:flex;align-items:baseline;gap:var(--ui-space-2xs);color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);white-space:nowrap}
   .identifiers dt a{display:inline-flex;align-items:center;gap:1px;color:inherit;text-underline-offset:2px}
@@ -637,6 +680,8 @@
   .wenhai-term{color:var(--ui-color-ink-muted);font-family:var(--ui-font-serif);font-size:var(--ui-text-sm)}
   .wenhai-sep{color:var(--ui-color-ink-muted)}
   .wenhai-position{margin-inline-start:auto;font-size:var(--ui-text-2xs);letter-spacing:0}
+  .derived{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);margin:var(--ui-space-xs) 0 0;padding:0;list-style:none}
+  .derived .ui-formula{font-size:16px}
   .rel{gap:3px}
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}

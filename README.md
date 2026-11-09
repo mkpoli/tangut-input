@@ -7,8 +7,8 @@ it into your text. <https://tangut.mkpo.li/>
 
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
-  lists code points, and `L0009`, `L55.172`, `M202-84B2`, `XXZT-A-764F` or `U+F5C0` open the character a number,
-  legacy code or Tibetan Set A code names. Tangut components also answer to their Japanese shape names, such as くノ,
+  lists code points, and `L0009`, `L55.172`, `M202-84B2`, `XXZT-A-764F`, `U+F5C0` or `U+F02BB` open the character a
+  number, legacy code, Tibetan Set A code or Tangut PUA variant names. Tangut components also answer to their Japanese shape names, such as くノ,
   ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
   opening part it lists the characters that open that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
@@ -34,9 +34,10 @@ it into your text. <https://tangut.mkpo.li/>
   table compares the names across the languages that record one.
 
 The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position, Mojikyo and
-XXZT code points, the Set A code of a Tibetan spelling, Cangjie codes, meanings in English, Japanese and Chinese,
+XXZT code points, its Tangut Yinchuan PUA variants, the Set A code of a Tibetan spelling,
+Cangjie codes, meanings in English, Japanese and Chinese,
 readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
-the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
+the facsimile, related characters, and the variant forms no character has yet. The 文海's own entry text is shown where it carries one;
 further readings and meanings are linked to CCAMC's page for the character.
 Character tiles show the chosen reconstruction above the glyph, then a Chinese gloss and the
 finder's note. Chinese glosses come from keyed dictionary senses, then Wiktionary, then
@@ -67,6 +68,10 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   4.50/4.60 code point and XXZT A/B code point of 6,482 characters, with each system's source and
   terms; built by `scripts/build_tangut_identifiers.mjs`. A card lists them, and the Find box reads
   `L0009`, `L62.221`, `M202-84B2` and `XXZT-A-764F`.
+- `app/data/tangut-pua.json.gz`: 2,814 Tangut Yinchuan variant forms in Supplementary Private
+  Use Area-A, U+F0000–U+F1613; 2,775 attach to 2,257 encoded characters and 39 have no base.
+  Each variant keeps its IDS and source; built by `scripts/build_tangut_pua.py` from
+  `data/tangut-pua-variants.tsv`.
 - `app/data/tangut-tibetan-seta.json.gz`: the 1,536 precomposed Tibetan Extension-A characters
   (U+F300–F8FF), each paired with the Unicode sequence it stands for; built by
   `scripts/build_tibetan_seta.py` from `data/tibetan-seta.tsv`. A spelling that matches one shows
