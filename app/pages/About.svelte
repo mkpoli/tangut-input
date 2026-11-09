@@ -20,6 +20,8 @@
       <dd>{@html t('about.wiktionary')}</dd>
       <dt>{t('about.wenhaiTitle')}</dt>
       <dd>{@html t('about.wenhai')}</dd>
+      <dt>{t('about.wenhaiChainsTitle')}</dt>
+      <dd>{@html t('about.wenhaiChains')}</dd>
       <dt>{t('about.cangjieTitle')}</dt>
       <dd>{@html t('about.cangjieSource')}</dd>
       <dt>{t('about.rhymeBooksTitle')}</dt>

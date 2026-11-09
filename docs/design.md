@@ -18,7 +18,7 @@ The site has three parts.
   drawing land in the same place. It can be typed or pasted into directly, and copied as text, as
   code points or as Cangjie codes. Clicking beside a character in it opens that character's card.
 - **The finders.** One page for each way of naming a character: Find, Meaning, Cangjie,
-  Four-corner, Reading, Fanqie, Chart, Transcribe, Draw and Parts. Their inputs differ in kind
+  Four-corner, Reading, Fanqie, Chains, Chart, Transcribe, Draw and Parts. Their inputs differ in kind
   (letters, a reconstruction, a drawing, a set of components), so each page is laid out for its own
   input. The one shared box with tabs is the Fanqie picker, where the point is to choose two
   characters without leaving the field. Texts sits beside them: it starts from a whole text and
@@ -135,6 +135,15 @@ and Parts finders in miniature. The first pick fills the upper, the second the l
 closes when both are in, and a later pick replaces the lower while keeping the upper. Each pick is
 recorded with the fanqie it was made for.
 
+**Chains** (`/chains`) reads the 文海's fanqie as two graphs: 173 sets linked by an upper speller and
+321 by a lower speller. A row is one chain, with its identifier, its 同音 class or
+level-tone rhymes, its anchor and its size. Opening it shows every member as a tile in the chosen
+reconstruction, the upper spellers with their classes, the rhyme numbers in the chain, the junction
+where a cross-category chain changes class, and the direct links the set was built from. The tabs
+switch between the graphs, the box narrows by chain ID or character, and “Crossings only” keeps the
+eight initial and thirteen rhyme chains whose members the 同音 or the rhyme divisions classify
+differently. The six unresolved sets close the page.
+
 ## The card
 
 - Large glyph on a centre cross, code point (click to copy), first English sense, strokes, radical
@@ -150,6 +159,8 @@ recorded with the fanqie it was made for.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).
 - 文海 gloss where the records have one (twelve entries).
+- The 文海's position and two fanqie chains, the statement it states or inherits, its 同音 class,
+  Beaudouin's reconstruction, and the other members of its initial chain as tiles.
 - **Built from**: the description drawn as nested frames that follow its layout (a row for ⿰, a
 column for ⿱, and so on), every part a button to its own card; the raw IDS string, click to copy.
 The editorial view reads the same two-part cut the parts finder uses, beside the recorded tree.

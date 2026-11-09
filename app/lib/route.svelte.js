@@ -34,6 +34,7 @@ export const GROUPS = /** @type {const} */ ([
     icon: 'sound',
     pages: [
       { path: 'fanqie', label: 'nav.fanqie', icon: 'fanqie', hint: 'nav.fanqie.hint' },
+      { path: 'chains', label: 'nav.chains', icon: 'link', hint: 'nav.chains.hint' },
       { path: 'chart', label: 'nav.chart', icon: 'chart', hint: 'nav.chart.hint' },
       { path: 'reading', label: 'nav.reading', icon: 'reading', hint: 'nav.reading.hint' },
     ],

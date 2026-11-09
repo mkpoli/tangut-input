@@ -25,6 +25,7 @@
   import { bookTitle } from '../lib/books.js'
   import { setaCode } from '../lib/seta.js'
   import { identifierGroups, editionName } from '../lib/identifiers.js'
+  import { chainsOf, memberChars } from '../lib/wenhai.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -84,6 +85,15 @@
     if (upper.length) return upper.join('')
     return [cell(rhyme[5]), cell(rhyme[6])].filter(Boolean).join('')
   })
+
+  // The 文海's record of the character: its positions, its 同音 class and the two fanqie chains,
+  // from The Digital Wenhai. A character read two ways has one record per reading.
+  const wenhaiHeads = $derived(ready && char ? ix.wenhai?.heads.get(char) ?? [] : [])
+  const wenhaiChains = $derived(ready && char && ix.wenhai ? chainsOf(ix.wenhai, char) : { initial: [], rhyme: [] })
+  // A character read two ways has two initial chains; its mates would then belong to one reading.
+  const initialChain = $derived(wenhaiChains.initial.length === 1 ? wenhaiChains.initial[0] : undefined)
+  const mateChars = $derived(initialChain ? memberChars(initialChain).filter(other => other !== char) : [])
+  const MATE_TILES = 18
 
   const same = $derived.by(() => {
     if (!entry?.composition) return []
@@ -431,6 +441,57 @@
       </section>
     {/if}
 
+    {#if wenhaiHeads.length}
+      <section class="wenhai-chains">
+        <h3 class="ui-label"><Icon name="fanqie" size={15}/>{t('card.wenhaiChains')}
+          {#if wenhaiChains.initial.length || wenhaiChains.rhyme.length}<a class="chain-all" href={link('chains', char)}>{t('card.allChains')}</a>{/if}
+        </h3>
+        <table class="chain-table">
+          <thead><tr>
+            <th scope="col">{t('card.wenhaiPosition')}</th>
+            <th scope="col">{t('card.wenhaiClass')}</th>
+            <th scope="col">{t('card.chains')}</th>
+            <th scope="col">{t('card.wenhaiFanqie')}</th>
+            <th scope="col">{t('card.beaudouin')}</th>
+          </tr></thead>
+          <tbody>
+            {#each wenhaiHeads as head (head.pos + head.char)}
+              <tr>
+                <th scope="row" title={[head.cycle, head.she && `She ${head.she}`, head.subcycle, head.grade && `Grade ${head.grade}`].filter(Boolean).join(' · ') || undefined}>
+                  <span class="ui-mono">{head.pos}</span>{#if head.tr}<span class="ui-hint"> · {head.tr}</span>{/if}
+                </th>
+                <td>{head.ty ?? '—'}</td>
+                <td class="chain-ids">
+                  {#if head.initial}<a href={link('chains', char, head.initial)}>{head.initial}</a>{/if}
+                  {#if head.rhyme}<a href={link('chains', char, head.rhyme)}>{head.rhyme}</a>{/if}
+                </td>
+                <td class="cjk">
+                  {#if head.fanqie}
+                    <span class="ui-script">{head.fanqie}</span>
+                    {#if !head.stated}<span class="ui-hint">{t('card.wenhaiInherited', { position: head.via ?? '' })}</span>{/if}
+                  {:else}<span class="ui-hint">—</span>{/if}
+                </td>
+                <td>{head.mb ?? '—'}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+        {#if mateChars.length}
+          <p class="ui-hint">{t('card.chainMates', { id: initialChain?.id ?? '', count: initialChain?.size ?? mateChars.length + 1 })}</p>
+          <div class="ui-tiles mates" style:--ui-tile-size="44px">
+            {#each mateChars.slice(0, MATE_TILES) as other (other)}
+              {@const sound = readingOf(other, ui.reading)}
+              <button class="ui-tile" type="button" title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+            {/each}
+            {#if mateChars.length > MATE_TILES}
+              <a class="ui-tile more" href={link('chains', char, initialChain?.id ?? '')} aria-label={t('card.chainMore', { count: mateChars.length - MATE_TILES })}>+{mateChars.length - MATE_TILES}</a>
+            {/if}
+          </div>
+        {/if}
+        <p class="ui-hint chain-source">{@html t('card.wenhaiSource')}</p>
+      </section>
+    {/if}
+
     {#if !isComponent(char)}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.ccamc')}</h3>
@@ -642,6 +703,20 @@
   .rel{gap:3px}
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}
+  .wenhai-chains .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
+  .chain-all{margin-inline-start:auto;font-size:var(--ui-text-2xs);font-weight:var(--ui-weight-regular);letter-spacing:0;text-transform:none}
+  .chain-table{border-collapse:collapse;inline-size:100%;font-size:var(--ui-text-xs)}
+  .chain-table th,.chain-table td{padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;vertical-align:baseline;font-weight:var(--ui-weight-normal)}
+  .chain-table thead th{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);white-space:nowrap}
+  .chain-table tbody th{white-space:nowrap}
+  .chain-table tbody tr + tr{border-top:1px solid var(--ui-color-border)}
+  .chain-ids{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs) var(--ui-space-xs);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs)}
+  .chain-ids a{text-underline-offset:2px}
+  .chain-table .cjk .ui-script{font-size:18px;margin-inline-end:var(--ui-space-2xs)}
+  .chain-table td:last-child{font-family:var(--ui-font-phonetic)}
+  .wenhai-chains .mates{margin-block:var(--ui-space-2xs) var(--ui-space-sm)}
+  .wenhai-chains a.more{display:grid;place-items:center;font-size:var(--ui-text-sm);color:var(--ui-color-ink-muted)}
+  .chain-source{margin-block-start:var(--ui-space-sm)}
   .credit{border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg);font-size:var(--ui-text-2xs);line-height:1.6;margin-top:var(--ui-space-xl)}
   @media (max-width:560px){
     .identifiers dl{grid-template-columns:1fr;gap:2px}

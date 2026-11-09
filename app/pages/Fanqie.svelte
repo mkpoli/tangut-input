@@ -3,9 +3,10 @@
   // upper giving the initial and the lower the rhyme; typing those two finds what they spell.
   import { db, ix, gloss, isTangut } from '../lib/db.svelte.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
-  import { route, setQuery } from '../lib/route.svelte.js'
+  import { link, route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui, setReading } from '../lib/ui.svelte.js'
   import { byFanqie } from '../lib/search.js'
+  import { chainsOf } from '../lib/wenhai.js'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { record } from '../lib/record.js'
   import MiniFinder from '../ui/MiniFinder.svelte'
@@ -20,6 +21,8 @@
   // One character is two questions: what spells it, and what it spells. The first is its own record.
   // A Tangut character is two UTF-16 units, so the count has to be over code points.
   const own = $derived(ready && [...text].length === 1 ? ix.rhymes.get(text) ?? null : null)
+  // The 文海's own chains for the character: which initial and rhyme the fanqie graphs put it in.
+  const wenhaiChains = $derived(ready && ix.wenhai && [...text].length === 1 ? chainsOf(ix.wenhai, text) : { initial: [], rhyme: [] })
   const ownSpelling = $derived(own ? (own[3] || own[4] ? `${own[3] ?? ''}${own[4] ?? ''}` : `${own[5] ?? ''}${own[6] ?? ''}`) : '')
   /** @param {string} char */
   const reading = char => (ix.byChar.get(char)?.pronunciations ?? {})[ui.reading]?.trim() ?? ''
@@ -89,6 +92,13 @@
       </span>
       <span class="own-meta">
         {#if own[0]}<span class="ui-hint">{t('card.rhyme')} {own[0]}</span>{/if}
+        {#if wenhaiChains.initial.length || wenhaiChains.rhyme.length}
+          <span class="chain-links">
+            {#each [...wenhaiChains.initial, ...wenhaiChains.rhyme] as chain (chain.id)}
+              <a href={link('chains', text, chain.id)} title={t('nav.chains')}>{chain.id}</a>
+            {/each}
+          </span>
+        {/if}
         {#if own[1]}<span class="ui-hint"> · {t(`card.tone.${own[1] === 1 ? 'level' : own[1] === 2 ? 'rising' : 'entering'}`)}</span>{/if}
         {#if reading(text)}<span class="own-reading">{reading(text)}</span>
         {:else if inferred.get(ownSpelling)}<span class="own-reading guess" title={t('fanqie.inferred', { char: inferred.get(ownSpelling)?.from ?? '' })}>{inferred.get(ownSpelling)?.value}</span>{/if}
@@ -152,6 +162,7 @@
   .cut small{font-family:var(--ui-font-serif);font-size:10px;color:var(--ui-color-ink-muted);margin-top:3px}
   .own-card .cuts :global(.ui-script){font-size:24px}
   .own-meta{display:flex;align-items:center;gap:var(--ui-space-xs);margin-inline-start:auto}
+  .chain-links{display:flex;gap:var(--ui-space-xs);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs)}
   .own-reading{font-family:var(--ui-font-serif);font-size:var(--ui-text-lg);padding-inline-start:var(--ui-space-sm)}
   .say{font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
   .guess{color:var(--ui-color-ink-muted);font-style:italic;border-bottom:1px dotted var(--ui-color-border-strong);cursor:help}

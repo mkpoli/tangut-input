@@ -5,6 +5,32 @@
 /** A character's place in the rhyme books: `[rhyme, tone, group, upper, lower, upperB, lowerB]`.
  * @typedef {{ [char: string]: [number | null, number | null, string | null, string | null, string | null, string | null, string | null] }} RhymeChars */
 /** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
+/** A head of the 文海: one source position, its independent 同音 class, its place in the two fanqie
+ *  chains, and the release's two phonological representations.
+ * @typedef {{ pos: string, char: string, ty: string | null, initial: string | null,
+ *   rhyme: string | null, tr: string | null, grade: string | null, cycle: string | null,
+ *   she: string | null, subcycle: string | null, fanqie: string | null, stated: boolean, via: string | null,
+ *   mb: string | null }} WenhaiHead */
+/** One connected set of the initial or rhyme graph, with the evidence the release gives for it. A
+ *  member can carry the suffix of a reading-specific node (`𘅇a`).
+ * @typedef {{ id: string, size: number, anchor: string, members: string[], evidence: string | null,
+ *   junctions: string | null, cross: boolean, ty?: string, uppers?: string[], level?: string[],
+ *   other?: string[], partial?: boolean }} WenhaiChain */
+/** A set the release leaves unresolved: its members share an initial or a rhyme, but no readable
+ *  speller links them to an identified chain.
+ * @typedef {{ graph: 'Initial' | 'Rhyme', base: string, fanqie: string, members: string[], status: string }} WenhaiUnresolved */
+/** The Digital Wenhai as the site reads it: every head, every chain, the direct links that hold a
+ *  chain together, the thirteen rhyme crossings and eight class crossings, and the unresolved sets.
+ * @typedef {{ built: string, source: { name: string, subtitle: string, author: string, orcid: string,
+ *   affiliation: string, version: string, published: string, record: number, doi: string,
+ *   versionDoi: string, url: string, licence: string, licenceUrl: string, citation: string,
+ *   files: { name: string, sha256: string, bytes: number }[] },
+ *   stats: { heads: number, characters: number, initial: number, rhyme: number, initialCross: number,
+ *     rhymeCross: number, unresolved: number },
+ *   heads: WenhaiHead[], initial: WenhaiChain[], rhyme: WenhaiChain[],
+ *   links: { initial: Record<string, [string, string, string, string, string][]>,
+ *     rhyme: Record<string, [string, string, string, string, string][]> },
+ *   cross: { initial: string[], rhyme: string[] }, unresolved: WenhaiUnresolved[] }} Wenhai */
 /** @typedef {{ char: string, codepoint?: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
  *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_zh?: string,
  *   wiktionary_zh?: string[], wiktionary_zh_url?: string }} Entry */
@@ -176,6 +202,10 @@ export const loadFrequency = () => once('frequency', () => readJson(new URL('../
 
 /** The 60 文海 constructions: each head character's page and its source/part pairs. @returns {Promise<WenhaiComposition>} */
 export const loadWenhaiComposition = () => once('wenhai-composition', () => readJson(new URL('../data/wenhai-composition.json', import.meta.url)))
+
+/** The 文海 and its fanqie chains, from The Digital Wenhai (Beaudouin 2026, CC BY 4.0).
+ *  @returns {Promise<Wenhai>} */
+export const loadWenhai = () => once('wenhai', () => readJson(new URL('../data/tangut-wenhai.json.gz', import.meta.url)))
 
 /** The characters in the two Tangut supplement blocks, with the fields each one has.
  * @returns {Promise<Supplement>} */
