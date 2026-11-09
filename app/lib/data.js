@@ -7,12 +7,15 @@
 /** @typedef {{ built: string, source: { name: string, author: string, url: string, commit: string, file: string, sha256: string }, columns: string[], chars: RhymeChars }} Rhymes */
 /** @typedef {{ char: string, codepoint?: string, composition?: string, total_strokes?: number, radical?: string, radical_extra_strokes?: number,
  *   definitions?: Definitions, pronunciations?: Record<string, string>, wenhai_text_en?: string, wenhai_text_zh?: string }} Entry */
-/** @typedef {{ id: string, title: string, author: string, year: number, publisher: string, url: string, licence: string, manuscript: string,
- *   facsimile: string, facsimileCredit: string, reading: string, readingUrl: string }} AttestationSource */
-/** @typedef {{ text: string, english: string, page: number, read: boolean, url: string }} AttestedLine */
+/** @typedef {{ id: string, kind: 'facsimile' | 'transcription', title: string, shortTitle?: string, titleTangut?: string, author: string, year?: number,
+ *   publisher: string, url: string, licence: string, licenceUrl?: string, manuscript?: string, facsimile?: string,
+ *   facsimileCredit?: string, reading?: string, readingUrl?: string, retrieved?: string, revision?: number, note?: string,
+ *   pages?: { title: string, url: string, revision: number }[] }} AttestationSource */
+/** @typedef {{ text: string, label: string, english?: string, page?: number, read?: boolean, url?: string, section?: string,
+ *   chapter?: number, revision?: number }} AttestedLine */
 /** @typedef {[line: string, position: number]} Place */
-/** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sha256: string }, sources: AttestationSource[],
- *   lines: Record<string, AttestedLine>, rows: Record<string, Record<string, Place[]>> }} Attestation */
+/** @typedef {{ built: string, corpus: { lines: number, characters: number, distinct: number, sources: number, sha256: string },
+ *   sources: AttestationSource[], lines: Record<string, AttestedLine>, rows: Record<string, Record<string, Place[]>> }} Attestation */
 
 /**
  * Fetch a gzipped file. The dev server may hand it over already decoded, so the magic bytes decide
@@ -79,6 +82,15 @@ function expandEntries(packed) {
 
 /** Cangjie codes as [character, code] pairs, from the RIME Tangut Cangjie table. @returns {Promise<[string, string][]>} */
 export const loadCodes = () => once('codes', () => readJson(new URL('../data/tangut-cangjie.json.gz', import.meta.url)))
+
+/** Japanese shape names for Tangut components. @returns {Promise<{ name: string, char: string, source: string, detail: string, strokes: number, credit: string }[]>} */
+export const loadTangutNames = () => once('tangut-names', async () => (await readJson(new URL('../data/tangut-component-names.json', import.meta.url))).names)
+
+/** Other descriptions of a character, each with the source that gives it. @returns {Promise<{ char: string, ids: string, source: string, detail?: string }[]>} */
+export const loadIdsAliases = () => once('ids-aliases', async () => (await readJson(new URL('../data/tangut-ids-aliases.json', import.meta.url))).rows)
+
+/** The forms one component is written in, each with the plain form it stands for. @returns {Promise<{ form: string, base: string, kind: 'surround' | 'hook', source: string, detail?: string }[]>} */
+export const loadComponentVariants = () => once('component-variants', async () => (await readJson(new URL('../data/tangut-component-variants.json', import.meta.url))).rows)
 
 /** Four-corner codes as [character, six digits] pairs, from the rhyme-dictionary table. @returns {Promise<[string, string][]>} */
 export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/tangut-sijiao.json.gz', import.meta.url)))

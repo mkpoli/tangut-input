@@ -1,14 +1,14 @@
 // The records every page reads, loaded once and indexed for each way of finding a character.
 // The indexes are plain (not reactive) objects; only the load status is state.
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao, loadRhymes, loadFanqieAliases } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSijiao, loadRhymes, loadFanqieAliases, loadTangutNames, loadIdsAliases, loadComponentVariants } from './data.js'
 import { indexReadings } from './reading.js'
+import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
+import { buildFamilies, baseOf } from './family.js'
 
 /** @typedef {import('./data.js').Entry} Entry */
 
-export const OPERATORS = new Set([...'⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻'])
+export { OPERATORS, isTangut }
 
-/** @param {string} char */
-export const isTangut = char => /^[\u{17000}-\u{18AFF}\u{18D00}-\u{18D7F}\u{18D80}-\u{18DFF}]$/u.test(char)
 /** @param {string} char */
 export const isComponent = char => /^[\u{18800}-\u{18AFF}\u{18D80}-\u{18DFF}]$/u.test(char)
 /** Whether the bundled fonts draw the character (Noto Serif Tangut 2.168 stops at U+187F7 and U+18D08). @param {string} char */
@@ -35,8 +35,9 @@ export const ix = {
   /** Characters and components with a component code (one beginning `p`), by code. @type {[string, string][]} */ palette: [],
   /** @type {import('./reading.js').Reading[]} */ readings: [],
   /** @type {Map<string, number>} */ strokes: new Map(),
-  /** The parts of each description, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
-  /** The characters whose description uses each part. @type {Map<string, Set<string>>} */ usedBy: new Map(),
+  /** The parts of each description at every layer, counted. @type {Map<string, Map<string, number>>} */ partsOf: new Map(),
+  /** The characters holding each part at any layer. @type {Map<string, Set<string>>} */ usedBy: new Map(),
+  /** The parts each description names directly, character parts included. @type {Map<string, string[]>} */ directPartsOf: new Map(),
   /** Every character the site knows, in code point order. @type {string[]} */ all: [],
   /** Four-corner codes by character. @type {Map<string, string>} */ sijiao: new Map(),
   /** [code, character] pairs ordered by code. @type {[string, string][]} */ sijiaoList: [],
@@ -44,16 +45,24 @@ export const ix = {
   /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
   /** The several characters that stand for one Chinese fanqie initial: each maps to its group. @type {Map<string, string[]>} */ fanqieAliases: new Map(),
+  /** Japanese shape names for Tangut components. @type {{ name: string, char: string, source: string, detail: string, strokes: number, credit: string }[]} */ names: [],
+  /** Other descriptions of a character, with the source for each. @type {Map<string, { ids: string, source: string, detail?: string }[]>} */ aliases: new Map(),
+  /** The descriptions a character is indexed under: its own first, then any alias. @type {Map<string, string[]>} */ descriptionsOf: new Map(),
+  /** The forms each component is written in, the plain form first. @type {import('./family.js').Families} */ families: buildFamilies([]),
+  /** The characters that use any form of each part family. @type {Map<string, Set<string>>} */ familyUsers: new Map(),
+  /** The characters carrying each description, the recorded one or an alias. @type {Map<string, string[]>} */ charsByDescription: new Map(),
 }
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, sijiao, rhymes, aliases] = await Promise.all([
+    const [entries, pairs, strokes, sijiao, rhymes, aliases, names, idsAliases, variantRows] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
-      loadFanqieAliases().catch(() => null),
+      loadFanqieAliases().catch(() => null), loadTangutNames().catch(() => []), loadIdsAliases().catch(() => []),
+      loadComponentVariants().catch(() => []),
     ])
     ix.entries = entries
     ix.byChar = new Map(entries.map(entry => [entry.char, entry]))
+    ix.names = names
     for (const [char, code] of pairs) {
       const list = ix.codes.get(char)
       if (list) list.push(code)
@@ -64,17 +73,35 @@ export async function load() {
     ix.palette = ix.codeList.filter(([code]) => code.startsWith('p'))
     ix.readings = indexReadings(entries)
     ix.strokes = new Map(Object.entries(strokes))
-    for (const entry of entries) {
-      /** @type {Map<string, number>} */
-      const counts = new Map()
-      for (const part of entry.composition ?? '') {
-        if (OPERATORS.has(part) || !isTangut(part)) continue
-        counts.set(part, (counts.get(part) ?? 0) + 1)
-        let users = ix.usedBy.get(part)
-        if (!users) ix.usedBy.set(part, users = new Set())
-        users.add(entry.char)
+    for (const alias of idsAliases) {
+      const list = ix.aliases.get(alias.char)
+      if (list) list.push(alias)
+      else ix.aliases.set(alias.char, [alias])
+    }
+    const index = buildPartIndex(entries, idsAliases)
+    ix.partsOf = index.partsOf
+    ix.usedBy = index.usedBy
+    ix.directPartsOf = index.directPartsOf
+    ix.descriptionsOf = new Map(entries.map(entry => [entry.char, [
+      ...(entry.composition ? [entry.composition] : []),
+      ...(ix.aliases.get(entry.char) ?? []).map(alias => alias.ids),
+    ]]))
+    ix.families = buildFamilies(variantRows)
+    for (const [char, descriptions] of ix.descriptionsOf) {
+      for (const text of descriptions) {
+        const chars = ix.charsByDescription.get(text)
+        if (chars) { if (!chars.includes(char)) chars.push(char) }
+        else ix.charsByDescription.set(text, [char])
       }
-      ix.partsOf.set(entry.char, counts)
+    }
+    // A part family counts the characters that hold any of its forms, once each.
+    for (const [char, parts] of ix.partsOf) {
+      for (const part of parts.keys()) {
+        const base = baseOf(ix.families, part)
+        const users = ix.familyUsers.get(base)
+        if (users) users.add(char)
+        else ix.familyUsers.set(base, new Set([char]))
+      }
     }
     if (aliases) for (const group of aliases.groups) for (const char of group) ix.fanqieAliases.set(char, group)
     if (rhymes) {

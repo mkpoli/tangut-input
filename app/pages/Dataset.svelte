@@ -7,7 +7,7 @@
   import { leaderboard } from '../lib/leaderboard.js'
   import { history } from '../lib/benchmark-history.js'
 
-  /** @type {{ name: string, top1: number, top5: number, top24: number, mrr: number }[]} */
+  /** @type {{ name: string, version?: string, top1: number, top5: number, top24: number, mrr: number }[]} */
   const entries = Object.entries(leaderboard)
     .map(([name, result]) => ({ name, ...result }))
     .sort((a, b) => b.top1 - a.top1)
@@ -94,7 +94,7 @@
     <thead><tr><th>Entry</th><th>First</th><th>In five</th><th>In 24</th><th>MRR</th></tr></thead>
     <tbody>
       {#each entries as entry (entry.name)}
-        <tr><th>{entry.name}</th><td>{(entry.top1 * 100).toFixed(1)}%</td><td>{(entry.top5 * 100).toFixed(1)}%</td>
+        <tr><th>{entry.name}{entry.version ? ` ${entry.version}` : ''}</th><td>{(entry.top1 * 100).toFixed(1)}%</td><td>{(entry.top5 * 100).toFixed(1)}%</td>
           <td>{(entry.top24 * 100).toFixed(1)}%</td><td>{entry.mrr.toFixed(3)}</td></tr>
       {/each}
     </tbody>

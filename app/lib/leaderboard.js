@@ -1,6 +1,7 @@
 // Written by `bun benchmark/score.mjs`; imported by the dataset page so the board paints without a request.
 export const leaderboard = {
   "baseline": {
+    "version": "0.3.1",
     "scored": 128,
     "missing": 0,
     "top1": 0.34375,
