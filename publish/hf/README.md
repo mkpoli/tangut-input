@@ -35,7 +35,7 @@ no training in the script, to test character recognition for a search box.
 
 ## Baseline
 
-The site's own matcher, across five typefaces: 32.1% first, 57.5% in five, 75.5% in 24, MRR 0.440.
+The site's own matcher, across five typefaces: 34.0% first, 60.4% in five, 76.4% in 24, MRR 0.459.
 Predictions are in `baseline-submission.jsonl`; `score.mjs` reproduces the figures.
 
 ## Citation

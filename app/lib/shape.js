@@ -10,7 +10,7 @@ export const SIZE = 32
 const FIT = 30
 const PEN = 1.6
 const DIRECTIONS = 8
-const DIRECTION_WEIGHT = 2
+const DIRECTION_WEIGHT = 1
 const CELLS = SIZE * SIZE
 const FAR = 255
 // Distances are read in units of half a cell; past six cells a stroke is simply elsewhere, and

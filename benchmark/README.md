@@ -39,7 +39,7 @@ typefaces: `bun benchmark/baseline.mjs` then `bun benchmark/score.mjs --name bas
 
 | | First | In five | In 24 | MRR |
 | --- | ---: | ---: | ---: | ---: |
-| Baseline, site matcher | 32.1% | 57.5% | 75.5% | 0.440 |
+| Baseline, site matcher | 34.0% | 60.4% | 76.4% | 0.459 |
 
 ## Rules
 
