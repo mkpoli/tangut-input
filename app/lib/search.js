@@ -1,10 +1,18 @@
 // The finders that read the records directly: Cangjie codes, meanings, parts and code points.
 // Readings live in reading.js and drawings in shape.js.
+import { searchTibetan } from './tibetan.js'
+import { byIdentifier as byStoredIdentifier } from './identifiers.js'
+import { byTibetanSeta as byStoredSeta } from './seta.js'
+import { byTangutPua as byStoredPua } from './pua.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
-import { baseOf, formsOf, matchesLayout } from './family.js'
-import { searchShapeNames } from './names.js'
+import { matchByParts } from './composition.js'
+import { searchShapeNames, searchShapeSpellings } from './names.js'
+import { describedBy } from './description.js'
 
-/** @typedef {{ char: string, code: string }} CodeHit */
+/** @typedef {{ char: string, code: string, near?: boolean }} CodeHit */
+
+/** How often the character occurs in the corpus. @param {string} char */
+const frequency = char => ix.frequency.get(char) ?? 0
 
 /**
  * Characters whose Cangjie code begins with the typed letters: an exact code first, then shorter
@@ -30,9 +38,42 @@ export function byCode(letters, options = {}) {
     const known = best.get(char)
     if (known === undefined || rank(code, typed) < rank(known, typed)) best.set(char, code)
   }
-  return [...best].map(([char, code]) => ({ char, code }))
-    .sort((a, b) => rank(a.code, typed) - rank(b.code, typed) || a.code.localeCompare(b.code)
-      || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+  if (best.size) {
+    return [...best].map(([char, code]) => ({ char, code, near: false }))
+      .sort((a, b) => rank(a.code, typed) - rank(b.code, typed)
+        || frequency(b.char) - frequency(a.char) || a.code.localeCompare(b.code)
+        || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+  }
+  // Nothing begins with the typed code. A code one key away is what a reader most often typed:
+  // a letter misread from the chart, or a second analysis of the same shape.
+  /** @type {Map<string, string>} */
+  const near = new Map()
+  for (const [code, char] of list) {
+    if (Math.abs(code.length - typed.length) > 1) continue
+    if (!within(code, typed)) continue
+    const known = near.get(char)
+    if (known === undefined || code.length < known.length) near.set(char, code)
+  }
+  return [...near].map(([char, code]) => ({ char, code, near: true }))
+    .sort((a, b) => a.code.length - b.code.length || frequency(b.char) - frequency(a.char)
+      || a.code.localeCompare(b.code) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+}
+
+/**
+ * Whether two codes differ by at most one key: one letter added, dropped or replaced.
+ * @param {string} a @param {string} b
+ */
+function within(a, b) {
+  if (a === b) return false
+  const [short, long] = a.length <= b.length ? [a, b] : [b, a]
+  if (long.length - short.length > 1) return false
+  let i = 0, j = 0, edits = 0
+  while (i < short.length && j < long.length) {
+    if (short[i] === long[j]) { i++; j++; continue }
+    if (++edits > 1) return false
+    if (short.length === long.length) { i++; j++ } else j++
+  }
+  return edits + (long.length - j) + (short.length - i) <= 1
 }
 
 /** @param {string} code @param {string} typed */
@@ -46,16 +87,24 @@ const rank = (code, typed) => (code === typed ? 0 : 1000) + code.length
  */
 export const byName = query => searchShapeNames(ix.names, query)
 
+/**
+ * Characters whose parts, named in order, spell the query with their Japanese shape names.
+ * @param {string} query
+ * @returns {{ char: string, spelling: string }[]}
+ */
+export const byShapeSpelling = query => searchShapeSpellings(ix.shapeSpellings, query)
+
 /** The languages the meanings are recorded in. */
 export const MEANING_LANGUAGES = /** @type {const} */ (['en', 'ja', 'zh'])
 
 /**
  * Characters whose recorded meanings contain the words: a whole sense first, then a whole word, then
- * any substring. The glosses are Open Tangut's, in English, Japanese and Chinese; a search can keep
- * to one of the three. The 文海 explanation of a character is searched too, after every gloss.
+ * any substring. The displayed glosses are Wiktionary's, in English, Japanese and Chinese; a search
+ * can keep to one of the three. CCAMC's normalized terms answer the search too, after every gloss,
+ * but a result that only CCAMC answers carries no sense: the card links to CCAMC instead.
  * @param {string} query
  * @param {{ languages?: string[] }} [options]
- * @returns {{ char: string, tier: number, sense: string, lang: string }[]}
+ * @returns {{ char: string, tier: number, sense: string, lang: string, via?: 'ccamc' }[]}
  */
 export function byMeaning(query, options = {}) {
   const needle = query.trim().toLowerCase()
@@ -68,8 +117,10 @@ export function byMeaning(query, options = {}) {
     const senses = lower.split(/[;；,，。、]\s*/)
     return senses.some(/** @param {string} part */ part => part.trim() === needle) ? 0 : word.test(lower) ? 1 : lower.includes(needle) ? 2 : 9
   }
-  /** @type {{ char: string, tier: number, sense: string, lang: string }[]} */
+  /** @type {{ char: string, tier: number, sense: string, lang: string, via?: 'ccamc' }[]} */
   const hits = []
+  /** @type {Set<string>} */
+  const seen = new Set()
   for (const entry of ix.entries) {
     const d = entry.definitions ?? {}
     let tier = 9, sense = '', lang = ''
@@ -77,73 +128,78 @@ export function byMeaning(query, options = {}) {
       const t = rank(text)
       if (t < tier) { tier = t; sense = text; lang = key }
     }
-    // A character the 文海 explains with the word, without glossing it so, still answers the search.
-    if (tier > 2) for (const key of languages) {
-      const text = /** @type {any} */ (entry)[`wenhai_text_${key}`]
-      if (typeof text !== 'string') continue
+    // Chinese senses imported from Wiktionary answer the Chinese search beside the keyed ones.
+    if (languages.includes('zh')) for (const text of entry.wiktionary_zh ?? []) {
       const t = rank(text)
-      if (t + 3 < tier) { tier = t + 3; sense = text; lang = key }
+      if (t < tier) { tier = t; sense = text; lang = 'zh' }
     }
-    if (tier < 9) hits.push({ char: entry.char, tier, sense, lang })
+    // The 文海's own entry text can answer even when the gloss does not use the word.
+    if (tier > 2) for (const key of languages) {
+      if (key !== 'zh') continue
+      const value = entry.wenhai_text_zh
+      if (typeof value !== 'string') continue
+      const t = rank(value)
+      if (t + 3 < tier) { tier = t + 3; sense = value; lang = key }
+    }
+    if (tier < 9) { hits.push({ char: entry.char, tier, sense, lang }); seen.add(entry.char) }
   }
-  return hits.sort((a, b) => a.tier - b.tier || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+  // Downes's glosses answer below Wiktionary's, for the characters it did not find.
+  if (languages.includes('en')) {
+    for (const [char, text] of ix.downes) {
+      if (seen.has(char)) continue
+      const tier = rank(text)
+      if (tier < 9) {
+        hits.push({ char, tier: tier + 3, sense: text, lang: 'en' })
+        seen.add(char)
+      }
+    }
+  }
+  const hidden = ix.ccamcMeanings
+  for (const key of languages) {
+    for (const [char, terms] of Object.entries(hidden.meanings?.[key] ?? {})) {
+      if (seen.has(char)) continue
+      let tier = 9
+      for (const text of terms) tier = Math.min(tier, rank(text))
+      if (tier < 9) {
+        hits.push({ char, tier: tier + 3, sense: '', lang: key, via: 'ccamc' })
+        seen.add(char)
+      }
+    }
+  }
+  return hits.sort((a, b) => a.tier - b.tier || frequency(b.char) - frequency(a.char)
+    || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
 
 
 /**
  * Characters whose description holds every chosen part at any layer (a part chosen twice must
  * appear twice), optionally with a given outermost layout. A part can be a component or a
- * character the description spells whole. A component stands for every form its family records,
- * so the plain form finds the characters written with the hook.
+ * character the description spells whole.
  * @param {string[]} parts
  * @param {string} [layout] an IDS operator the description must begin with
  * @returns {string[]}
  */
 export function byParts(parts, layout = '') {
   if (!parts.length && !layout) return []
-  /** @type {Map<string, number>} */
-  const need = new Map()
-  for (const part of parts) {
-    const base = baseOf(ix.families, part)
-    need.set(base, (need.get(base) ?? 0) + 1)
-  }
-  /** @type {Iterable<string>} */
-  let pool = ix.byChar.keys()
-  let smallest = Infinity
-  for (const base of need.keys()) {
-    const users = ix.familyUsers.get(base)
-    if (!users) return []
-    if (users.size < smallest) { pool = users; smallest = users.size }
-  }
-  /** @type {string[]} */
-  const hits = []
-  for (const char of pool) {
-    if (layout && !(ix.descriptionsOf.get(char) ?? [ix.byChar.get(char)?.composition ?? '']).some(text => matchesLayout(ix.families, text, layout))) continue
-    const have = ix.partsOf.get(char)
-    if ([...need].every(([base, count]) => formsOf(ix.families, base).reduce((held, form) => held + (have?.get(form) ?? 0), 0) >= count)) hits.push(char)
-  }
-  return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
+  let hits = parts.length ? matchByParts(ix, parts) : [...ix.byChar.keys()]
+  // The layout filters the description the parts finder reads, so a three-part description that
+  // the editorial cut reads as two matches the operator of that cut. A surrounding form first in
+  // ⿺ answers the side-by-side layout, because the hook belongs to the part.
+  if (layout) hits = hits.filter(char => ix.layoutsOf.get(char)?.has(layout))
+  return hits.sort((a, b) => (ix.strokes.get(a) ?? 99) - (ix.strokes.get(b) ?? 99)
+    || frequency(b) - frequency(a) || (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0))
 }
 
-/** The part families the given characters hold at any layer, with how many use each. @param {string[]} chars */
+/** The parts the given characters hold at any layer, with how many use each. @param {string[]} chars */
 export function partsAmong(chars) {
   /** @type {Map<string, number>} */
   const counts = new Map()
-  for (const char of chars) {
-    /** @type {Set<string>} */
-    const held = new Set()
-    for (const part of ix.partsOf.get(char)?.keys() ?? []) held.add(baseOf(ix.families, part))
-    for (const base of held) counts.set(base, (counts.get(base) ?? 0) + 1)
-  }
+  for (const char of chars) for (const part of ix.partsOf.get(char)?.keys() ?? []) counts.set(part, (counts.get(part) ?? 0) + 1)
   return counts
 }
 
-/**
- * The components written in a description, in order, without the layout operators. A
- * character-sized part is opened to the components it is written with.
- * @param {string} char
- */
-export function leavesIn(char) {
+/** The components of a description, in order, without the layout operators. @param {string} char */
+export function partsIn(char) {
   return [...(ix.byChar.get(char)?.composition ?? '')].filter(part => !OPERATORS.has(part) && isTangut(part))
 }
 
@@ -180,7 +236,7 @@ export function byFanqie(text) {
     hits.push({ char, rhyme, tone, spelling: `${usedUpper}${usedLower}`, upper: usedUpper, lower: usedLower })
   }
   return hits.sort((a, b) => (a.rhyme ?? 99) - (b.rhyme ?? 99) || (a.tone ?? 9) - (b.tone ?? 9)
-    || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
+    || frequency(b.char) - frequency(a.char) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
 
 /**
@@ -203,10 +259,31 @@ export function bySijiao(digits) {
   for (const [code, char] of ix.sijiaoList) {
     if (code.startsWith(typed)) hits.push({ char, code })
   }
-  return hits
+  return hits.sort((a, b) => a.code.localeCompare(b.code) || frequency(b.char) - frequency(a.char)
+    || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
+
+/**
+ * Characters whose recorded or editorial description begins with the typed or pasted text: the whole description
+ * names its character, a description cut after its opening part names the family that opens so.
+ * @param {string} text
+ * @returns {string[]}
+ */
+export const byDescription = text => describedBy(ix.descriptions, text)
 
 /** The Tangut characters in a piece of text, each once, in order. @param {string} text */
 export function tangutIn(text) {
   return [...new Set([...text].filter(isTangut))]
 }
+
+/** Characters by a Tibetan spelling, in script, Wylie or the tables' notation. @param {string} text */
+export const byTibetan = text => searchTibetan(ix.tibetanIndex, text)
+
+/** Characters by a Li Fanwen number, a 文海 position, a Mojikyo code or an XXZT code. @param {string} text */
+export const byIdentifier = text => byStoredIdentifier(ix.identifierIndex, text)
+
+/** Characters whose Tibetan spelling has a Tibetan Extension-A code. @param {string} text */
+export const byTibetanSeta = text => byStoredSeta(ix.setaIndex, text)
+
+/** Characters a Tangut Yinchuan PUA variant code names. @param {string} text */
+export const byTangutPua = text => byStoredPua(ix.puaIndex, text)
