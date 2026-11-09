@@ -718,5 +718,8 @@
   "nav.dataset.hint": "손으로 쓴 필획 데이터, 자유롭게 이용 가능",
   "draw.dataset": "필사 데이터",
   "draw.dataset.hint": "이 화면의 필획 데이터는 데이터셋으로 공개되어 있습니다.",
-  "pick.undo": "한 획 되돌리기"
+  "pick.undo": "한 획 되돌리기",
+  "pick.drawHint": "여기에 글자를 쓰면 그 획이 고른 글자와 함께 저장됩니다(검토자의 필적으로).",
+  "pick.clear": "지우기",
+  "pick.loadingPad": "필기 준비 중…"
 }

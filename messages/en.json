@@ -718,5 +718,8 @@
   "nav.dataset.hint": "Strokes drawn by hand, free to use",
   "draw.dataset": "Stroke dataset",
   "draw.dataset.hint": "The strokes behind this page are released as a dataset.",
-  "pick.undo": "Undo stroke"
+  "pick.undo": "Undo stroke",
+  "pick.drawHint": "Draw the character here and the strokes are kept with the pick, as a reviewer’s sample.",
+  "pick.clear": "Clear the pad",
+  "pick.loadingPad": "Loading the pad…"
 }

@@ -718,5 +718,8 @@
   "nav.dataset.hint": "手寫的筆畫數據，可自由使用",
   "draw.dataset": "手寫數據",
   "draw.dataset.hint": "這些手寫筆畫已作為數據集公開。",
-  "pick.undo": "復原一筆"
+  "pick.undo": "復原一筆",
+  "pick.drawHint": "在這裡寫字，筆畫會隨所選字一起保存（作為審閱者的筆跡）。",
+  "pick.clear": "清除",
+  "pick.loadingPad": "正在準備手寫…"
 }
