@@ -91,7 +91,24 @@ half and reported on the other:
 `bun scripts/bench_tangut_drawings.mjs --good` reproduces it; leave `--good` off to see the whole
 corpus, where the eight scribbles a reviewer threw out pull the figures down. The defaults
 (direction weight 2, stroke weight 0.35, re-ranking the first 150 by block direction at weight 0.5)
-are the best of the settings swept on that subset.
+are the best of the settings swept on that subset: direction weight 0 or 1 loses 7 to 20 points of
+first place, a heavier or absent stroke term loses 4 to 10, and a shallower or deeper re-rank loses
+5 points of five-place accuracy.
 
 Where the intended character sat, across the 31 drawings a reviewer corrected: first in 10, within
 five in 7 more, within thirty in 11 more, absent 3 — 90% within the first page, median rank 3.
+
+## What has not worked
+
+Four attempts, each measured on the same frozen split, none kept:
+
+| Attempt | Measured | Why it fails |
+| --- | --- | --- |
+| A convolutional classifier over augmented skeletons | 5% first place on the fair drawings | the corpus is font lines against two hands |
+| Weights learned from the corrections as ranked pairs | 46.0% to 36.3% first place | the loss drives every term to one shrunken value: the corrections ask for different features, not different weights |
+| Scoring a candidate by whether its IDS parts appear in the drawing | worse at every weight, 66.4% to 50.4% and down | a part found anywhere in a busy drawing says little; the test needs position |
+| Ranking against other hand drawings instead of typefaces | 2.5% first place | the corpus holds about one drawing per character, so a neighbour is almost never the same character |
+
+The common cause is the corpus: 296 drawings of 245 characters from two writers. Every method that needs
+many drawings per character — a classifier, a learned metric, exemplar matching — is starved, and the one
+method that needs none, chamfer against typeface skeletons, is what the site runs.
