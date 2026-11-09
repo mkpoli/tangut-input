@@ -333,7 +333,7 @@ export function rankShapes(index, drawn, options = {}) {
     for (let k = 0; k < ink.length; k++) if (drawnBins[k] === b) grid[ink[k]] = 1
     directionFields.push(distanceField(grid))
   }
-  /** @type {{ char: string, at: number, score: number, forward: number, backward: number, direction: number, stroke: number }[]} */
+  /** @type {{ char: string, at: number, score: number, forward: number, backward: number, direction: number, stroke: number, block?: number }[]} */
   const scored = []
   for (let i = 0; i < index.chars.length; i++) {
     const char = index.chars[i]
@@ -372,7 +372,12 @@ export function rankShapes(index, drawn, options = {}) {
     const head = scored.slice(0, rerankDepth)
     const own = blockHistogram(drawnBins, ink)
     const scale = head[0]?.score || 1
-    for (const hit of head) hit.score = hit.score / scale + rerankWeight * (1 - similarity(own, index.blocks[hit.at]))
+    for (const hit of head) {
+      // The block distance is kept on the hit: a re-ranker outside this function cannot reproduce
+      // the order without it.
+      hit.block = 1 - similarity(own, index.blocks[hit.at])
+      hit.score = hit.score / scale + rerankWeight * hit.block
+    }
     head.sort((a, b) => a.score - b.score)
     scored.splice(0, rerankDepth, ...head)
   }
