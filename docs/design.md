@@ -154,7 +154,8 @@ recorded with the fanqie it was made for.
 column for ⿱, and so on), every part a button to its own card; the raw IDS string, click to copy.
 The editorial view reads the same two-part cut the parts finder uses, beside the recorded tree.
   Two links leave the frame: the characters with these parts, and the characters that begin like
-  this description.
+  this description. A description another source gives follows under that source
+  (`data/tangut-ids-aliases.tsv`).
 - **In a text**: for each place in the corpus, the passage with the character marked (other
   characters open their cards). A facsimile source adds the scribe's form cut from the page, the
   edition's English line, the page and a link to ぶんぽ's reading; a transcription adds the passage

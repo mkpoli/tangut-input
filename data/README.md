@@ -514,6 +514,19 @@ vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-nam
 comparison on Parts: Japanese shape names, the English abstract's wording for くノ and ノメ, and
 empty cells where the sources read record no name.
 
+## tangut-ids-aliases.tsv
+
+Other descriptions of a Tangut character, from a named source, kept beside the record's own.
+Format: `char`, `IDS`, `source`, `detail`, `lang`; comments start with `#`. `lang` names the
+language of `detail`.
+`scripts/build_tangut_ids_aliases.py` checks each description and writes
+`app/data/tangut-ids-aliases.json`. The parts index reads it; the record still draws the structure
+and decides the direct parts.
+
+- `𘋤` is ⿴𘋢𘠣 in NGWU YOH's reading (2026-11-07); its record is ⿰𘦘⿰𘠣⿰𘤣𘠢.
+- 89 further readings (2026-11-08, 2026-11-09); one character may have several.
+- Licence: the readings are cited; no source text is redistributed.
+
 ## tangut-component-shape-hints.json.gz
 
 An editorial ranking, not a name table. Each of the 768 Tangut components U+18800–18AFF is compared

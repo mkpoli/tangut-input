@@ -74,9 +74,14 @@ test('a character of three columns reads as one part beside a character of two',
 
 test('the outermost operator is the editorial one, for the layout filter', () => {
   // 𗆫 is recorded as ⿲𘠐𘧘𘣩 and read as two parts, so its layout is ⿰.
-  expect(index.layoutOf.get('𗆫')).toBe('⿰')
+  expect(index.descriptionGroups.get('𗆫')?.[0].op).toBe('⿰')
   // 𗁋 is ⿲𘠁𘦢𘠅 with both pairs spelling a character, so it stays three.
-  expect(index.layoutOf.get('𗁋')).toBe('⿲')
+  expect(index.descriptionGroups.get('𗁋')?.[0].op).toBe('⿲')
+})
+
+test('a record with more than one root keeps its first operator', () => {
+  // 𗌜 is ⿲𘠣𘡝𘡤𘫽: the trailing operand is a root of its own, and the layout is still ⿲.
+  expect(index.descriptionGroups.get('𗌜')?.[0].op).toBe('⿲')
 })
 
 test('a complete subtree under a truncated node is regrouped too', () => {
