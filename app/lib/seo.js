@@ -30,15 +30,11 @@ export const PAGE_SEO = {
   },
   reading: {
     title: 'Reading — Tangut Input',
-    description: 'Type a Tangut reconstruction in any of the seven systems the site shows — Li Fanwen, Gong Hwang-cherng, Gong Xun 2024-11, Miyake, Nishida, Kychanov, Sofronov — and see the characters read so.',
-  },
-  texts: {
-    title: 'Texts — Tangut Input',
-    description: 'Browse the texts behind the attested corpus, with their passages, characters and sources, and load a first passage into Transcribe.',
+    description: 'Type a Tangut reconstruction in any of eight systems — Li Fanwen, Gong Hwang-cherng, Miyake and the rest — and see the characters read so.',
   },
   transcribe: {
     title: 'Transcribe Tangut text — every character’s reading',
-    description: 'Paste a line of Tangut and read every character: its reconstruction in any of seven systems, its rhyme and tone, and a table of all seven for copying.',
+    description: 'Paste a line of Tangut and read every character: its reconstruction in any of eight systems, its rhyme and tone, and a table of all eight for copying.',
   },
   fanqie: {
     title: 'Fanqie — Tangut Input',
@@ -48,33 +44,17 @@ export const PAGE_SEO = {
     title: 'Rhyme chart — Tangut Input',
     description: 'The rhyme books laid out as a chart: rhymes down the side, initial groups across the top, and the characters that stand at each crossing.',
   },
-  eras: {
-    title: 'Names and titles of the Western Xia — Tangut Input',
-    description: 'The era names, imperial titles, posthumous names and state names of the Western Xia, with Tangut where recorded and each marked by what it rests on.',
-  },
   draw: {
     title: 'Draw — Tangut Input',
-    description: 'Sketch a Tangut character on the pad and see the glyphs closest to it in shape, compared against five Tangut fonts.',
+    description: 'Sketch a Tangut character on the pad and see the glyphs closest to it in shape, compared against five Tangut faces.',
   },
   parts: {
     title: 'Parts — Tangut Input',
     description: 'Choose the components you can see in a Tangut character and narrow the list to the characters built with them.',
   },
-  variants: {
-    title: 'Variant forms — Tangut Input',
-    description: 'Tangut characters and components written in more than one way, each with what supports it.',
-  },
-  intro: {
-    title: 'Tangut: people, script, language and texts — Tangut Input',
-    description: 'A short introduction to the Tanguts (党項), the Western Xia state, the Tangut script and language, the surviving texts, and how the script is used today.',
-  },
-  gyalrongic: {
-    title: 'Gyalrongic literature — Tangut Input',
-    description: 'Grammars, dictionaries, data and studies of rGyalrong, Khroskyabs and Horpa, with the work that compares them with Tangut.',
-  },
   about: {
     title: 'Sources — Tangut Input',
-    description: 'Where every record on Tangut Input comes from — Wiktionary, BabelStone, the Tangut Cangjie table, Unicode, an edition with facsimile, twelve Wikisource texts and the Lausanne Corpus — and what the site keeps.',
+    description: 'Where every record on Tangut Input comes from — Open Tangut, the Tangut Cangjie table, Unicode and the Bodhicaryāvatāra corpus — and what the site keeps.',
   },
 }
 

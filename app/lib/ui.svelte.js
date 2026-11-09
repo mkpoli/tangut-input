@@ -1,11 +1,9 @@
 // The few view states that are not worth an address: the phone's card sheet and the theme.
-import { untrack } from 'svelte'
 import { open, route } from './route.svelte.js'
 import { insert } from './text.svelte.js'
 import { say } from './clip.svelte.js'
 import { i18n, t } from './i18n.svelte.js'
 import { record } from './record.js'
-import { readingFromStore } from './reading.js'
 
 const THEME = 'tangut-input:theme'
 const TANGUT = 'tangut-input:font'
@@ -42,8 +40,8 @@ export const ui = $state({
   ),
   /** The face Tangut is set in. @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */
   tangut: /** @type {'serif' | 'yinchuan' | 'wenhai' | 'kai'} */ ((typeof localStorage !== 'undefined' && localStorage.getItem(TANGUT)) || 'serif'),
-  /** Which reconstruction readings are shown in, wherever a system can be chosen. */
-  reading: readingFromStore(typeof localStorage !== 'undefined' ? localStorage.getItem(READING) : null),
+  /** Which reconstruction readings are shown in, wherever a system can be chosen. 龔勛's by default. */
+  reading: (typeof localStorage !== 'undefined' && localStorage.getItem(READING)) || 'gong_xun_202411',
 })
 
 /** Remember the reconstruction a reader picked, for the pages that show readings. @param {string} key */
@@ -52,10 +50,8 @@ export function setReading(key) {
   try { localStorage.setItem(READING, key) } catch { /* a blocked store only loses the choice */ }
 }
 
-/** Show a character in the card without taking the reader anywhere (arrow keys, highlighting).
- * A page previews from an effect on its highlight; the open character stays out of that effect, so a
- * choice made in the card is not put back. @param {string} char */
-export const preview = char => untrack(() => open(char))
+/** Show a character in the card without taking the reader anywhere (arrow keys, highlighting). @param {string} char */
+export const preview = char => open(char)
 
 /** Open a character: the card on a wide screen, the sheet on a narrow one. @param {string} char */
 export function choose(char) {
@@ -69,11 +65,11 @@ export function choose(char) {
 }
 
 /** The pad a page is drawing on, if any: a pick made while it has a drawing carries that drawing.
- * @type {null | ((picked: string, place: number | null) => boolean)} */
+ * @type {null | (() => { strokes: [number, number][][], width?: number, height?: number } | null)} */
 let pad = null
 
 /** Hand the page's drawing to the pick that follows. `null` when the pad goes away.
- * @param {null | ((picked: string, place: number | null) => boolean)} source */
+ * @param {null | (() => { strokes: [number, number][][], width?: number, height?: number } | null)} source */
 export function attachPad(source) {
   pad = source
 }
@@ -84,8 +80,10 @@ export function attachPad(source) {
  * @param {{ place?: number }} [context]
  */
 export function put(char, context = {}) {
-  const drawing = pad?.(char, context.place ?? null)
-  if (!drawing) {
+  const drawing = pad?.()
+  if (drawing?.strokes?.length) {
+    record({ type: 'drawing', origin: 'draw', strokes: drawing.strokes, picked: char, place: context.place ?? null, width: drawing.width ?? null, height: drawing.height ?? null })
+  } else {
     record({ type: 'pick', char, finder: route.page || 'find', query: route.q || null, place: context.place ?? null, locale: i18n.locale })
   }
   insert(char)
@@ -99,6 +97,9 @@ export function setTheme(theme) {
   try { localStorage.setItem(THEME, theme) } catch { /* ignore */ }
 }
 
+export function cycleTheme() {
+  setTheme(ui.theme === 'auto' ? 'light' : ui.theme === 'light' ? 'dark' : 'auto')
+}
 
 /** @param {'paper' | 'mineral' | 'indigo' | 'sand'} key */
 export function setPalette(key) {
