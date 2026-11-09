@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: Tangut stroke dataset
+message: If you use these strokes, cite the dataset and the character data it is measured against.
+type: dataset
+license: CC-BY-4.0
+year: 2026
+authors:
+  - name: Tangut Input contributors
+repository-code: https://github.com/mkpoli/tangut-input
+url: https://tangut.mkpo.li/dataset/
+abstract: >-
+  Strokes drawn with a mouse, a trackpad or a stylus on a browser pad, each kept with the Tangut
+  character it was made for. Collected to train and test character recognition for a search box.
+keywords:
+  - Tangut
+  - handwriting
+  - stroke recognition
+  - low-resource
+  - dataset
+preferred-citation:
+  type: dataset
+  title: Tangut stroke dataset
+  authors:
+    - name: Tangut Input contributors
+  year: 2026
+  url: https://tangut.mkpo.li/dataset/
+  license: CC-BY-4.0
