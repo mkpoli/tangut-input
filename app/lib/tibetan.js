@@ -85,3 +85,15 @@ export function searchTibetan(index, query) {
   }
   return [...hits.values()].sort((a, b) => a.tier - b.tier || b.count - a.count || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
 }
+
+// Add a dotted circle to a lone vowel sign for display. Unread letters remain in the Wylie,
+// whose [?] records their position; the partial script alone cannot locate them.
+/** @param {string} script */
+export const tibetanShown = script => `${/^\p{M}/u.test(script) ? '◌' : ''}${script}`
+
+/** @param {[string, number][]} where */
+export const tibetanWhere = where => where.map(([shelf, count]) => `${shelf} ×${count}`).join(', ')
+
+/** A gloss's hover text: its Wylie, and each manuscript it is written in with how often.
+ *  @param {string} wylie @param {[string, number][]} where */
+export const tibetanTitle = (wylie, where) => `${wylie} · ${tibetanWhere(where)}`

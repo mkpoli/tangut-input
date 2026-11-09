@@ -134,6 +134,14 @@ export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/t
 /** The rhyme books' class for each character, with its fanqie. @returns {Promise<Rhymes>} */
 export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/tangut-rhymes.json.gz', import.meta.url)))
 
+/** The Chinese character the 掌中珠 transcribes each Tangut character with, and the entry it stands
+ * in. An entry is paired only where its two columns have the same number of positions.
+ * @typedef {{ text: string, entry: string }} ZzzPair
+ * @typedef {{ format: string, built: string, source: { name: string, date: string, edition: string, doi: string, url: string, licence: string },
+ *   counts: Record<string, number>, pairs: Record<string, ZzzPair[]> }} Zzz */
+/** @returns {Promise<Zzz>} */
+export const loadZzz = () => once('zzz', () => readJson(new URL('../data/tangut-zzz.json.gz', import.meta.url)))
+
 /** Tibetan phonetic glosses by character, from BabelStone's index of five British Library manuscripts:
  * each gloss is [Wylie, Tibetan script, [[shelfmark, count]…]].
  * @returns {Promise<{ format: string, source: string, author: string, modified: string | null, retrieved: string, note: string, glosses: Record<string, [string, string, [string, number][]][]> }>} */

@@ -5,7 +5,7 @@ import { indexTibetanSeta } from './seta.js'
 import { indexTangutPua } from './pua.js'
 import { indexIdentifiers } from './identifiers.js'
 import { englishGloss } from './gloss.js'
-import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua } from './data.js'
+import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua, loadZzz } from './data.js'
 import { possiblePairs, variantIndex, variantFamilies, familyIndex, SURROUNDING } from './variants.js'
 import { indexReadings, indexHiddenReadings } from './reading.js'
 import { OPERATORS, isTangut, buildPartIndex } from './composition.js'
@@ -73,6 +73,8 @@ export const ix = {
   /** The rhyme books' record by character. @type {Map<string, import('./data.js').RhymeChars[string]>} */ rhymes: new Map(),
   /** Where the rhyme record comes from, for the sources page. @type {import('./data.js').Rhymes['source'] | null} */ rhymeSource: null,
   /** The characters whose spelling is read from this one. @type {Map<string, Set<string>>} */ fanqieUsedBy: new Map(),
+  /** The 掌中珠's Chinese transcription of each Tangut character, with the entry it stands in.
+   *  @type {Map<string, import('./data.js').ZzzPair[]>} */ zzz: new Map(),
   /** Tibetan phonetic glosses by character: [Wylie, Tibetan script, [[shelfmark, count]…]]. @type {Map<string, [string, string, [string, number][]][]>} */ tibetan: new Map(),
   /** The Tibetan spellings at each crossing: `rhyme·tone`, then initial class. @type {Record<string, Record<string, [string, string][]>>} */ tibetanRhymes: {},
   /** 龔煌城's value for each rhyme. @type {Record<string, string>} */ gongRhymes: {},
@@ -100,9 +102,9 @@ export const ix = {
 
 export async function load() {
   try {
-    const [entries, pairs, strokes, identifiers, seta, pua, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
+    const [entries, pairs, strokes, identifiers, seta, pua, sijiao, rhymes, hidden, tibetan, tibetanRhymes, gongRhymes, chineseRhymes, zzz, tibetanHands, downes, leilin, names, partNames, shapeHints, frequency, supplement, cited] = await Promise.all([
       loadEntries(), loadCodes(), loadStrokes(), loadIdentifiers().catch(() => null), loadTibetanSeta().catch(() => null), loadTangutPua().catch(() => null), loadSijiao().catch(() => []), loadRhymes().catch(() => null),
-      loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
+      loadCcamcIndex().catch(() => null), loadTibetan().catch(() => null), loadTibetanRhymes().catch(() => null), loadGongRhymes().catch(() => null), loadChineseRhymes().catch(() => null), loadZzz().catch(() => null), loadTibetanHands().catch(() => null), loadDownes().catch(() => null), loadLeilin().catch(() => null), loadTangutNames().catch(() => []),
       loadPartNames().catch(() => null), loadShapeHints().catch(() => null), loadFrequency().catch(() => null), loadSupplement().catch(() => null), loadReadingSources().catch(() => null),
     ])
     ix.citations = cited?.citations ?? {}
@@ -110,6 +112,7 @@ export async function load() {
     ix.identifierSources = identifiers?.sources ?? {}
     ix.identifierIndex = indexIdentifiers(identifiers?.chars ?? {})
     ix.tibetan = new Map(Object.entries(tibetan?.glosses ?? {}))
+    ix.zzz = new Map(Object.entries(zzz?.pairs ?? {}))
     ix.tibetanRhymes = tibetanRhymes?.cells ?? {}
     ix.gongRhymes = gongRhymes?.values ?? {}
     ix.chineseRhymes = chineseRhymes?.rhymes ?? {}

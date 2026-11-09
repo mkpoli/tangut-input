@@ -38,7 +38,8 @@ it into your text. <https://tangut.mkpo.li/>
 The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position, Mojikyo and
 XXZT code points, its Tangut Yinchuan PUA variants, the Set A code of a Tibetan spelling,
 Cangjie codes, meanings in English, Japanese and Chinese,
-readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
+readings, the 對音 it carries (the Chinese character the 掌中珠 transcribes it with, and any
+Tibetan gloss), structure, the lines of the recorded corpus where it stands with the scribe's form from
 the facsimile, related characters, and the variant forms no character has yet. The 文海's own entry text is shown where it carries one;
 further readings and meanings are linked to CCAMC's page for the character.
 Character tiles show the chosen reconstruction above the glyph, then a Chinese gloss and the
@@ -60,6 +61,11 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   `data/wenhai/`.
 - `app/data/tangut-ccamc-index.json.gz`: normalized terms from CCAMC's records, used only to answer
   the reading and meaning searches. No page renders them; the card links to CCAMC.
+- `app/data/tangut-zzz.json.gz`: the Chinese character 《番漢合時掌中珠》 transcribes each Tangut
+  character with, and the entry it stands in; built by `scripts/build_tangut_zzz.mjs` from the
+  keyed columns of the NIJL scan. Empty until the keying reaches the Tangut headwords.
+- `app/data/tangut-tibetan.json`: Tibetan phonetic glosses of 197 characters in five British
+  Library manuscripts, from [BabelStone](https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html).
 - `app/data/tangut-cangjie.json.gz`: Cangjie codes, from
   [rime_tangutcjkk](https://github.com/Hulenkius/rime_tangutcjkk) by Hulenkius, after the scheme of
   Kawasaki Keigo (2016). The table warns that some characters are wrongly encoded; the repository
@@ -142,8 +148,8 @@ them; `docs/handwriting.md` describes the fields.
 ## Materials
 
 `docs/materials.md` lists every source the site draws on — what each actually gives, the terms it
-comes under, and what is still missing: 掌中珠's entries, a per-character 藏文對音 table, and any
-seal or cursive forms.
+comes under, and what is still missing: 掌中珠's entries, 藏文對音 beyond five manuscripts,
+and any seal or cursive forms.
 
 ## Records
 
