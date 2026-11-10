@@ -54,3 +54,47 @@ export function byTangutPua(index, text) {
   if (!code) return []
   return (index.get(code) ?? []).map(char => ({ char, code }))
 }
+
+/**
+ * The PUA rows that no Unicode 18.0 character owns, by code.
+ * @param {[code: string, ids: string, sources: string[]][]} rows
+ * @returns {Map<string, { code: string, ids: string, sources: string[] }>}
+ */
+export function indexUnencodedPua(rows) {
+  return new Map(rows.map(([code, ids, sources]) => [code, { code, ids, sources }]))
+}
+
+/**
+ * The unencoded PUA row a query names, or null. A code with a base in the table is left to
+ * `byTangutPua`; one that Unicode 18.0 has since given a character to `byEncodedPua`.
+ * @param {Map<string, { code: string, ids: string, sources: string[] }>} index
+ * @param {string} text
+ */
+export function byUnencodedPua(index, text) {
+  const code = parsePuaQuery(text)
+  return (code && index.get(code)) || null
+}
+
+/** The private-use character a PUA code names, for a face that draws it. @param {string} code */
+export const puaCharacter = code => String.fromCodePoint(parseInt(code.slice(2), 16))
+
+/**
+ * The PUA rows that Unicode 18.0 gives a character, by code.
+ * @param {[code: string, ids: string, sources: string[], point: string][]} rows
+ * @returns {Map<string, { code: string, ids: string, sources: string[], point: string, char: string }>}
+ */
+export function indexEncodedPua(rows) {
+  return new Map(rows.map(([code, ids, sources, point]) => [code, {
+    code, ids, sources, point, char: String.fromCodePoint(parseInt(point.slice(2), 16)),
+  }]))
+}
+
+/**
+ * The row a code has a Unicode 18.0 character for, or null.
+ * @param {Map<string, { code: string, ids: string, sources: string[], point: string, char: string }>} index
+ * @param {string} text
+ */
+export function byEncodedPua(index, text) {
+  const code = parsePuaQuery(text)
+  return (code && index.get(code)) || null
+}

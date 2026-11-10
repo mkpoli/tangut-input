@@ -3,7 +3,7 @@
 import { searchTibetan } from './tibetan.js'
 import { byIdentifier as byStoredIdentifier } from './identifiers.js'
 import { byTibetanSeta as byStoredSeta } from './seta.js'
-import { byTangutPua as byStoredPua } from './pua.js'
+import { byTangutPua as byStoredPua, byUnencodedPua as byStoredUnencodedPua, byEncodedPua as byStoredEncodedPua } from './pua.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
 import { searchShapeNames, searchShapeSpellings } from './names.js'
@@ -287,3 +287,9 @@ export const byTibetanSeta = text => byStoredSeta(ix.setaIndex, text)
 
 /** Characters a Tangut Yinchuan PUA variant code names. @param {string} text */
 export const byTangutPua = text => byStoredPua(ix.puaIndex, text)
+
+/** The PUA row a code names when no encoded character owns it. @param {string} text */
+export const byUnencodedPua = text => byStoredUnencodedPua(ix.puaUnencodedIndex, text)
+
+/** The character a PUA code has had since Unicode 18.0, when the source table predates it. @param {string} text */
+export const byEncodedPua = text => byStoredEncodedPua(ix.puaEncodedIndex, text)

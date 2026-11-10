@@ -2,7 +2,7 @@
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { indexTibetan, foldScript } from './tibetan.js'
 import { indexTibetanSeta } from './seta.js'
-import { indexTangutPua } from './pua.js'
+import { indexTangutPua, indexUnencodedPua, indexEncodedPua } from './pua.js'
 import { indexIdentifiers } from './identifiers.js'
 import { englishGloss } from './gloss.js'
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua, loadZzz } from './data.js'
@@ -86,6 +86,10 @@ export const ix = {
   /** Tangut Yinchuan PUA variants by encoded base character. @type {Map<string, [string, string, string[]][]>} */ pua: new Map(),
   /** The base characters each PUA code names. @type {Map<string, string[]>} */ puaIndex: new Map(),
   /** The PUA table and its source record. @type {import('./data.js').TangutPua | null} */ puaSource: null,
+  /** PUA rows without an encoded base character: [code, IDS, sources][]. @type {[string, string, string[]][]} */ puaUnencoded: [],
+  /** The same rows by code. @type {Map<string, { code: string, ids: string, sources: string[] }>} */ puaUnencodedIndex: new Map(),
+  /** PUA rows that Unicode 18.0 gives a character. @type {[string, string, string[], string][]} */ puaEncoded: [],
+  /** The same rows by code. @type {Map<string, { code: string, ids: string, sources: string[], point: string, char: string }>} */ puaEncodedIndex: new Map(),
   /** Alan Downes's English gloss by character. @type {Map<string, string>} */ downes: new Map(),
   /** The Chinese words the Tangut 類林 uses for a character. @type {Map<string, [string, number][]>} */ leilin: new Map(),
   /** How often each character occurs in the corpus. @type {Map<string, number>} */ frequency: new Map(),
@@ -125,6 +129,10 @@ export async function load() {
     ix.pua = new Map(Object.entries(pua?.chars ?? {}))
     ix.puaIndex = indexTangutPua(pua?.chars ?? {})
     ix.puaSource = pua
+    ix.puaUnencoded = pua?.unencoded ?? []
+    ix.puaUnencodedIndex = indexUnencodedPua(ix.puaUnencoded)
+    ix.puaEncoded = pua?.encodedInUnicode18 ?? []
+    ix.puaEncodedIndex = indexEncodedPua(ix.puaEncoded)
     const recorded = supplement?.characters ?? []
     ix.supplementComponents = recorded.filter(record => record.block === 'components').map(record => record.char)
     const known = new Set(entries.map(entry => entry.char))
