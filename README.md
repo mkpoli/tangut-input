@@ -8,10 +8,11 @@ it into your text. <https://tangut.mkpo.li/>
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
   lists code points, and `L0009`, `L55.172`, `M202-84B2`, `XXZT-A-764F`, `U+F5C0` or `U+F02BB` open the character a
-  number, legacy code, Tibetan Set A code or Tangut PUA variant names. Tangut components also answer
-  to their Japanese shape names, such as くノ, ノメ or くくノ; a character whose parts all have
-  names answers to the names run together: コくノノノメ names 𘄳. A description is read against the
-  records' own: `⿰𘤊𘠡` names 𗾇, and cut after its opening part it lists the characters that open
+  number, legacy code, Tibetan Set A code or Tangut PUA variant names, including the 23 codes
+  without an encoded base. Tangut components also answer to their Japanese shape names, such as
+  くノ, ノメ or くくノ; a character whose parts all have names answers to the names run together:
+  コくノノノメ names 𘄳. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut
+  after its opening part it lists the characters that open
   that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
   MiCA, with its passages, characters, source and first line. Read opens the text passage by
@@ -78,8 +79,10 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   `L0009`, `L62.221`, `M202-84B2` and `XXZT-A-764F`.
 - `app/data/tangut-pua.json.gz`: 2,814 Tangut Yinchuan variant forms in Supplementary Private
   Use Area-A, U+F0000–U+F1613; 2,775 attach to 2,257 encoded characters and 39 have no base.
-  Each variant keeps its IDS and source; built by `scripts/build_tangut_pua.py` from
-  `data/tangut-pua-variants.tsv`.
+  Unicode 18.0 gives 16 of those a character, and Find reads the old PUA code for the new character;
+  the 23 left are listed on the Variants page with their glyph, IDS and source. Each variant keeps
+  its IDS and source; built by
+  `scripts/build_tangut_pua.py` from `data/tangut-pua-variants.tsv`.
 - `app/data/tangut-tibetan-seta.json.gz`: the 1,536 precomposed Tibetan Extension-A characters
   (U+F300–F8FF), each paired with the Unicode sequence it stands for; built by
   `scripts/build_tibetan_seta.py` from `data/tibetan-seta.tsv`. A spelling that matches one shows

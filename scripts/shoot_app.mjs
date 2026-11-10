@@ -31,6 +31,9 @@ function browserPath() {
 const SCREENS = [
   { name: 'find', path: '/' },
   { name: 'find-text', path: '/?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6%F0%97%A4%B6%F0%97%9C%88%F0%97%A7%AF%F0%98%94%BC&c=172D5' },
+  { name: 'find-pua', path: '/?q=U%2BF00CF' },
+  { name: 'find-pua-encoded', path: '/?q=U%2BF00FE' },
+  { name: 'variants', path: '/variants' },
   { name: 'cangjie', path: '/cangjie', act: async page => { await page.locator('input.code-input').pressSequentially('msb', { delay: 40 }) } },
   { name: 'reading', path: '/reading?q=ndzi' },
   { name: 'draw', path: '/draw', act: draw },

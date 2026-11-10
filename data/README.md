@@ -704,13 +704,16 @@ characters across BabelStone's index and the hand-class tables.
 The 2,814 Tangut Yinchuan PUA variant forms in Supplementary Private Use Area-A, U+F0000–U+F1613,
 from `data/tangut-pua-variants.tsv`: the encoded base character, the PUA code, the variant's IDS and
 the source that attests it. 2,775 rows attach to 2,257 encoded characters; 39 rows have no base
-character and are kept in `unassigned`. One PUA code, F023C, appears twice with two IDS. The page
+character and are kept in `unassigned`. The Unicode 18.0 proposals give 16 of those a code point
+(`encodedInUnicode18`); the 23 without one are `unencoded` and the site lists them on the Variants
+page. One PUA code, F023C, appears twice with two IDS. The page
 states no licence; the font terms are on the BabelStone Yinchuan page. A PUA code names a glyph
 variant, not a different character.
 
 Format: `format`, `source` (the variants page), `font`, `version` (16.0.4), `retrieved`, `sha256` of
-the TSV, `note`, `counts`, `chars` (character → `[code, IDS, sources]`) and `unassigned`. Rebuild with
-`python3 scripts/build_tangut_pua.py`.
+the TSV, `note`, `counts`, `chars` (character → `[code, IDS, sources]`), `unassigned`,
+`encodedInUnicode18` (`[code, IDS, sources, code point]`) and `unencoded` (`[code, IDS, sources]`).
+Rebuild with `python3 scripts/build_tangut_pua.py`.
 
 Two rows print a base glyph that does not match the row's code point (U+179D0 and U+17FE9); the
 code point is kept, as the table's identifier.

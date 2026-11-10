@@ -34,9 +34,12 @@
  *   counts: Record<string, number>, characters: SupplementCharacter[] }} Supplement */
 /** Tangut Yinchuan PUA variants, by encoded base character. @typedef {{ format: string, source: string,
  *   font: string, version: string, retrieved: string, sha256: string, note: string,
- *   counts: { rows: number, assigned: number, characters: number, codes: number, unassigned: number },
+ *   counts: { rows: number, assigned: number, characters: number, codes: number, unassigned: number,
+ *     encodedInUnicode18: number, unencoded: number },
  *   chars: Record<string, [code: string, ids: string, sources: string[]][]>,
- *   unassigned: [code: string, ids: string, sources: string[]][] }} TangutPua */
+ *   unassigned: [code: string, ids: string, sources: string[]][],
+ *   encodedInUnicode18: [code: string, ids: string, sources: string[], point: string][],
+ *   unencoded: [code: string, ids: string, sources: string[]][] }} TangutPua */
 /** Tibetan Extension-A code points and the Unicode sequences they stand for. @typedef {{ format: string,
  *   standard: string, source: string, original: string, author: string, retrieved: string, sha256: string, note: string,
  *   map: [code: string, script: string, sequence: string][] }} TibetanSeta */

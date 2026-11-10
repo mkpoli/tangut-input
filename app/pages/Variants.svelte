@@ -9,11 +9,14 @@
   import { choose, ui } from '../lib/ui.svelte.js'
   import { route } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
+  import { copy } from '../lib/clip.svelte.js'
+  import { puaCharacter } from '../lib/pua.js'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
 
   const ready = $derived(db.status === 'ready')
   const possible = $derived(ready ? ix.variantPairs : [])
+  const puaUnencoded = $derived(ready ? ix.puaUnencoded : [])
   const positions = $derived(ready ? componentPositions(ix.entries) : new Map())
   // The groups a pair list cannot show: a character reached through another form, and the pair
   // reported by hand. Every other pair is in the tables below, one record to a row.
@@ -51,6 +54,24 @@
     <h1 class="ui-page-title"><Icon name="link" size={22}/><span>{t('card.variants')}</span></h1>
     <p class="ui-page-intro">{t('variants.intro')}</p>
   </header>
+
+  {#if puaUnencoded.length}
+    <section class="ui-section pua-section" id="pua">
+      {@render heading('pua-heading', t('card.puaVariants'), puaUnencoded.length)}
+      <p class="ui-hint">{t('variants.puaHint')}</p>
+      <ul class="pua-grid">
+        {#each puaUnencoded as [code, ids, sources] (code)}
+          <li class="pua-card" id={`pua-${code.slice(2)}`}>
+            <span class="pua-glyph" lang="txg" aria-hidden="true">{puaCharacter(code)}</span>
+            <button class="identifier ui-mono" type="button" title={t('card.copyIdentifier', { id: code })} onclick={() => copy(code, code)}>{code}</button>
+            <span class="ui-formula pua-ids" title={ids}>{ids}</span>
+            <span class="ui-hint pua-source">{sources.length ? sources.join(' · ') : t('variants.puaNoSource')}</span>
+          </li>
+        {/each}
+      </ul>
+      <p class="ui-hint pua-note">{t('card.puaNote', { version: ix.puaSource?.version ?? '' })}</p>
+    </section>
+  {/if}
 
   <section class="ui-section" id="linked">
     {@render heading('linked-heading', t('variants.linked'), linked.length)}
@@ -153,6 +174,19 @@
 
 <style>
   .variants{gap:var(--ui-space-xl);padding-bottom:var(--ui-space-5xl)}
+  .pua-section{scroll-margin-block-start:calc(var(--topbar-h, 54px) + var(--ui-space-md))}
+  .pua-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--ui-space-sm);margin:0;padding:0;list-style:none}
+  .pua-card{display:flex;flex-direction:column;align-items:flex-start;gap:var(--ui-space-2xs);padding:var(--ui-space-sm) var(--ui-space-md);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface)}
+  .pua-glyph{font-family:'Tangut PUA',var(--tg-font);font-size:44px;line-height:1.15;color:var(--ui-color-ink)}
+  .pua-ids{font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+  .pua-source{font-size:var(--ui-text-2xs);line-height:1.45}
+  .pua-note{margin:0}
+  @media (max-width:600px){
+    .pua-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--ui-space-xs)}
+    .pua-card{padding:var(--ui-space-xs) var(--ui-space-sm)}
+    .pua-glyph{font-size:36px}
+    .pua-ids{font-size:14px}
+  }
   .heading{display:flex;align-items:center;gap:var(--ui-space-sm)}
   .char{padding:0 2px;border:0;border-radius:var(--ui-radius-sm);background:none;color:inherit;font:inherit;cursor:pointer}
   .char :global(.ui-script){font-size:30px;line-height:1.2}
