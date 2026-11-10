@@ -84,6 +84,12 @@ source, and loads its first line into Transcribe. Read opens the text passage by
 toggle puts Chinese and English glosses under each character, and every character opens its card.
 The counts come from the attestation, not from a separate text table.
 
+**Convert** (`/convert`) turns text set in the Tangut Yinchuan PUA variants back into the encoded
+characters those codes name. The editors show the original text and the conversion side by side;
+the table below lists every recorded code with its base, IDS and source, marks the 16 codes Unicode
+18.0 assigned, and shows the 23 without a character. A code is a variant form, so the conversion
+keeps the character and drops the form.
+
 **Cangjie** (`/cangjie`) is for the expert and the learner. It behaves like an input method: the
 code box takes letters, candidates are numbered 1–9, `Space` or a digit commits into the text,
 `←`/`→` move the highlight, `↑`/`↓` page, `Esc` clears and `Backspace` in an empty box deletes

@@ -15,6 +15,7 @@ export const GROUPS = /** @type {const} */ ([
     pages: [
       { path: 'texts', label: 'nav.texts', icon: 'book', hint: 'nav.texts.hint' },
       { path: 'transcribe', label: 'nav.transcribe', icon: 'transcribe', hint: 'nav.transcribe.hint' },
+      { path: 'convert', label: 'nav.convert', icon: 'convert', hint: 'nav.convert.hint' },
     ],
   },
   {

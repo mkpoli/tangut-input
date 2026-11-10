@@ -12,7 +12,7 @@
 import { seoOf } from './lib/seo.js'
 
 // The paths that answer with a head of their own: `PAGES` in `app/lib/route.svelte.js`, About, the introduction, the variants page and the Gyalrongic reading list.
-const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'chart', 'eras', 'transcribe', 'draw', 'parts', 'variants', 'intro', 'gyalrongic', 'about'])
+const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'chart', 'eras', 'transcribe', 'convert', 'draw', 'parts', 'variants', 'intro', 'gyalrongic', 'about'])
 
 // A drawing of a few hundred points is a few kilobytes; anything past this is not a reader's pen.
 const LIMIT = 60_000

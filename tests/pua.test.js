@@ -3,7 +3,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
-import { parsePuaQuery, indexTangutPua, byTangutPua, indexUnencodedPua, byUnencodedPua, indexEncodedPua, byEncodedPua } from '../app/lib/pua.js'
+import { parsePuaQuery, indexTangutPua, byTangutPua, indexUnencodedPua, byUnencodedPua, indexEncodedPua, byEncodedPua, tangutPuaTable, convertTangutPua } from '../app/lib/pua.js'
 
 const pua = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-pua.json.gz', import.meta.url))).toString())
 const isTangut = char => /^[\u{17000}-\u{18D7F}]$/u.test(char)
@@ -87,4 +87,55 @@ test('a code Unicode 18.0 has given a character names that row', () => {
   expect(byEncodedPua(encoded, 'U+F1025')?.char).toBe('𘴠')
   expect(byEncodedPua(encoded, 'U+F00CF')).toBeNull()
   expect(byEncodedPua(encoded, 'U+17000')).toBeNull()
+})
+
+test('the conversion table lists every code with its character or its gap', () => {
+  const table = tangutPuaTable(pua)
+  expect(table).toHaveLength(2814)
+  expect(table.filter(row => row.status === 'variant')).toHaveLength(2775)
+  expect(table.filter(row => row.status === 'new')).toHaveLength(16)
+  expect(table.filter(row => row.status === 'unencoded')).toHaveLength(23)
+  expect(table[0]).toEqual({ code: 'U+F0000', char: '𗀏', ids: '⿰⿱𘠀⿰𘠒𘡃𘡆', sources: [], status: 'variant' })
+  expect(table.find(row => row.code === 'U+F00FE')).toMatchObject({ char: '𘴌', status: 'new' })
+  expect(table.find(row => row.code === 'U+F00CF')).toMatchObject({ char: '', ids: '⿰⿱𘥄𘠒𘢌', status: 'unencoded' })
+  const codes = table.map(row => parseInt(row.code.slice(2), 16))
+  expect(codes).toEqual([...codes].sort((a, b) => a - b))
+})
+
+test('a text converts every recorded PUA character and leaves the rest', () => {
+  const char = code => String.fromCodePoint(parseInt(code.slice(2), 16))
+  const text = `${char('U+F02BB')}𗀂${char('U+F023C')}x${char('U+F00FE')}${char('U+F00CF')}${char('U+E000')}`
+  expect(convertTangutPua(text, index, encoded, unencoded)).toEqual({
+    text: `𗀀𗀂𘉜x𘴌${char('U+F00CF')}${char('U+E000')}`,
+    converted: 3, remaining: 2, unencoded: 1, otherPua: 1, ambiguous: 0, unicode18: 1,
+  })
+})
+
+test('plain text passes through a conversion unchanged', () => {
+  expect(convertTangutPua('𗀀 and text\n', index, encoded, unencoded)).toEqual({
+    text: '𗀀 and text\n', converted: 0, remaining: 0, unencoded: 0, otherPua: 0, ambiguous: 0, unicode18: 0,
+  })
+  expect(convertTangutPua('', index, encoded, unencoded)).toEqual({
+    text: '', converted: 0, remaining: 0, unencoded: 0, otherPua: 0, ambiguous: 0, unicode18: 0,
+  })
+})
+
+test('a code with two bases is left as it is and counted as ambiguous', () => {
+  const char = String.fromCodePoint(0xF0000)
+  const twoBases = new Map([['U+F0000', ['𗀀', '𗀁']]])
+  expect(convertTangutPua(char, twoBases, new Map(), new Map())).toEqual({
+    text: char, converted: 0, remaining: 1, unencoded: 0, otherPua: 0, ambiguous: 1, unicode18: 0,
+  })
+})
+
+test('every recorded code with a character converts', () => {
+  const table = tangutPuaTable(pua)
+  const puaChar = code => String.fromCodePoint(parseInt(code.slice(2), 16))
+  const text = table.filter(row => row.char).map(row => puaChar(row.code)).join('')
+  const converted = convertTangutPua(text, index, encoded, unencoded)
+  expect(converted.converted).toBe(2791)
+  expect(converted.remaining).toBe(0)
+  expect(converted.ambiguous).toBe(0)
+  expect([...converted.text]).toHaveLength(2791)
+  expect([...converted.text][0]).toBe('𗀏')
 })

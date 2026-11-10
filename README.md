@@ -18,6 +18,9 @@ it into your text. <https://tangut.mkpo.li/>
   MiCA, with its passages, characters, source and first line. Read opens the text passage by
   passage; a Glosses toggle puts Chinese and English glosses under each character, and each
   character opens its card. Transcribe still loads the first line.
+- **Convert**: paste text set in the Tangut Yinchuan PUA variants and get the encoded characters.
+  The table lists every recorded code with its IDS and source, including the 23 that still have no
+  character.
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
@@ -80,8 +83,8 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-pua.json.gz`: 2,814 Tangut Yinchuan variant forms in Supplementary Private
   Use Area-A, U+F0000–U+F1613; 2,775 attach to 2,257 encoded characters and 39 have no base.
   Unicode 18.0 gives 16 of those a character, and Find reads the old PUA code for the new character;
-  the 23 left are listed on the Variants page with their glyph, IDS and source. Each variant keeps
-  its IDS and source; built by
+  the 23 left are listed on the Variants page with their glyph, IDS and source. Convert turns a
+  text set in these codes back into characters. Each variant keeps its IDS and source; built by
   `scripts/build_tangut_pua.py` from `data/tangut-pua-variants.tsv`.
 - `app/data/tangut-tibetan-seta.json.gz`: the 1,536 precomposed Tibetan Extension-A characters
   (U+F300–F8FF), each paired with the Unicode sequence it stands for; built by
