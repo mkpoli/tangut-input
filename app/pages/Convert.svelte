@@ -5,7 +5,6 @@
   import { convertTangutPua, tangutPuaTable, puaCharacter, PUA_SOURCE, PUA_FONT } from '../lib/pua.js'
   import { choose, autofocus } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
-  import { setQuery } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
   import Icon from '../ui/Icon.svelte'
 
@@ -27,12 +26,10 @@
   /** @param {Event & { currentTarget: HTMLTextAreaElement }} event */
   function typed(event) {
     input = event.currentTarget.value
-    setQuery(input)
   }
 
   function clear() {
     input = ''
-    setQuery('')
   }
 </script>
 
