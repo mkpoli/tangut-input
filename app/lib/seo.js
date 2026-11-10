@@ -36,6 +36,10 @@ export const PAGE_SEO = {
     title: 'Texts — Tangut Input',
     description: 'Browse the texts behind the attested corpus, with their passages, characters and sources, and load a first passage into Transcribe.',
   },
+  convert: {
+    title: 'PUA conversion — Tangut Input',
+    description: 'Turn Tangut Yinchuan private-use code points back into Unicode Tangut characters, and browse every recorded variant.',
+  },
   transcribe: {
     title: 'Transcribe Tangut text — every character’s reading',
     description: 'Paste a line of Tangut and read every character: its reconstruction in any of eight systems, its rhyme and tone, and a table of all eight for copying.',

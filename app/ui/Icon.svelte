@@ -30,6 +30,7 @@
     prev: '<path d="M12 5l-5 5 5 5"/>',
     next: '<path d="M8 5l5 5-5 5"/>',
     code: '<path d="M7.5 3.5 6 16.5M14 3.5l-1.5 13M3.5 7.5h13M3 12.5h13"/>',
+    convert: '<path d="M3 7h11M11 4l3 3-3 3M17 13H6M9 10l-3 3 3 3"/>',
     layers: '<path d="M10 3 3 7l7 4 7-4z"/><path d="M3 11l7 4 7-4"/><path d="M3 15l7 4 7-4"/>',
     globe: '<circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c3 3 3 11 0 14M10 3c-3 3-3 11 0 14"/>',
     palette: '<path d="M10 3s5 5.5 5 9a5 5 0 0 1-10 0c0-3.5 5-9 5-9z"/>',

@@ -36,6 +36,9 @@
     ],
     "derivedKeys": [
       "{key}.{plural}"
+    ],
+    "keysInUse": [
+      "core:nav.convert.hint"
     ]
   },
   "checks": {

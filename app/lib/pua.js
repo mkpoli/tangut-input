@@ -98,3 +98,66 @@ export function byEncodedPua(index, text) {
   const code = parsePuaQuery(text)
   return (code && index.get(code)) || null
 }
+
+/**
+ * One row of the conversion table: a recorded PUA code, the character it converts to, and what
+ * records the variant.
+ * @typedef {{ code: string, char: string, ids: string, sources: string[], status: 'variant' | 'new' | 'unencoded' }} PuaRow
+ */
+
+/**
+ * Every recorded PUA code, in code order, with the character it converts to. The 16 codes Unicode
+ * 18.0 assigned carry their new character; the 23 still without one carry the empty string.
+ * @param {{ chars: Record<string, [string, string, string[]][]>, encodedInUnicode18: [string, string, string[], string][], unencoded: [string, string, string[]][] }} pua
+ * @returns {PuaRow[]}
+ */
+export function tangutPuaTable(pua) {
+  /** @type {PuaRow[]} */
+  const rows = []
+  for (const [char, variants] of Object.entries(pua.chars)) {
+    for (const [code, ids, sources] of variants) rows.push({ code, char, ids, sources, status: 'variant' })
+  }
+  for (const [code, ids, sources, point] of pua.encodedInUnicode18) {
+    rows.push({ code, char: String.fromCodePoint(parseInt(point.slice(2), 16)), ids, sources, status: 'new' })
+  }
+  for (const [code, ids, sources] of pua.unencoded) rows.push({ code, char: '', ids, sources, status: 'unencoded' })
+  // A stable sort keeps the source's order for the two rows that share U+F023C.
+  return rows.sort((a, b) => parseInt(a.code.slice(2), 16) - parseInt(b.code.slice(2), 16))
+}
+
+/**
+ * @typedef {{ text: string, converted: number, remaining: number, unencoded: number, otherPua: number, ambiguous: number, unicode18: number }} PuaConversion
+ */
+
+/**
+ * Convert every Yinchuan PUA character in a text to the character it names. A code with more than
+ * one base is left as it is and counted as ambiguous; any other private-use character stays too.
+ * @param {string} text
+ * @param {{ get(code: string): string[] | undefined }} assigned
+ * @param {{ get(code: string): { char: string } | undefined }} encoded
+ * @param {{ has(code: string): boolean }} unencoded
+ * @returns {PuaConversion}
+ */
+export function convertTangutPua(text, assigned, encoded, unencoded) {
+  let output = ''
+  let converted = 0
+  let remaining = 0
+  let unencodedCount = 0
+  let otherPua = 0
+  let ambiguous = 0
+  let unicode18 = 0
+  for (const char of text) {
+    if (!/\p{Co}/u.test(char)) { output += char; continue }
+    const code = `U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, '0')}`
+    const bases = assigned.get(code)
+    if (bases?.length === 1) { output += bases[0]; converted++; continue }
+    if (bases?.length) { output += char; remaining++; ambiguous++; continue }
+    const row = encoded.get(code)
+    if (row) { output += row.char; converted++; unicode18++; continue }
+    output += char
+    remaining++
+    if (unencoded.has(code)) unencodedCount++
+    else otherPua++
+  }
+  return { text: output, converted, remaining, unencoded: unencodedCount, otherPua, ambiguous, unicode18 }
+}
