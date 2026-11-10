@@ -134,8 +134,37 @@ test('every recorded code with a character converts', () => {
   const text = table.filter(row => row.char).map(row => puaChar(row.code)).join('')
   const converted = convertTangutPua(text, index, encoded, unencoded)
   expect(converted.converted).toBe(2791)
+  expect(converted.unicode18).toBe(16)
   expect(converted.remaining).toBe(0)
   expect(converted.ambiguous).toBe(0)
   expect([...converted.text]).toHaveLength(2791)
   expect([...converted.text][0]).toBe('𗀏')
+})
+
+test('all 23 codes without a character pass through', () => {
+  const puaChar = code => String.fromCodePoint(parseInt(code.slice(2), 16))
+  const text = pua.unencoded.map(([code]) => puaChar(code)).join('')
+  expect(convertTangutPua(text, index, encoded, unencoded)).toEqual({
+    text, converted: 0, remaining: 23, unencoded: 23, otherPua: 0, ambiguous: 0, unicode18: 0,
+  })
+})
+
+test('the duplicate U+F023C row keeps both IDS strings and converts once per occurrence', () => {
+  const puaChar = code => String.fromCodePoint(parseInt(code.slice(2), 16))
+  const rows = tangutPuaTable(pua).filter(row => row.code === 'U+F023C')
+  expect(rows.map(row => row.ids)).toEqual(['⿲𘥷𘣌𘣈', '⿲𘥷𘣾𘣈'])
+  expect(new Set(tangutPuaTable(pua).map(row => `${row.code}-${row.ids}`)).size).toBe(2814)
+  const converted = convertTangutPua(puaChar('U+F023C').repeat(2), index, encoded, unencoded)
+  expect(converted.text).toBe('𘉜𘉜')
+  expect(converted.converted).toBe(2)
+})
+
+test('the 16 Unicode 18.0 codes convert to their new characters', () => {
+  const puaChar = code => String.fromCodePoint(parseInt(code.slice(2), 16))
+  const text = pua.encodedInUnicode18.map(([code]) => puaChar(code)).join('')
+  const converted = convertTangutPua(text, index, encoded, unencoded)
+  expect(converted.converted).toBe(16)
+  expect(converted.unicode18).toBe(16)
+  expect(converted.remaining).toBe(0)
+  expect(converted.text).toBe(pua.encodedInUnicode18.map(([, , , point]) => String.fromCodePoint(parseInt(point.slice(2), 16))).join(''))
 })
