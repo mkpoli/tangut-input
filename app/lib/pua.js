@@ -121,7 +121,8 @@ export function tangutPuaTable(pua) {
     rows.push({ code, char: String.fromCodePoint(parseInt(point.slice(2), 16)), ids, sources, status: 'new' })
   }
   for (const [code, ids, sources] of pua.unencoded) rows.push({ code, char: '', ids, sources, status: 'unencoded' })
-  return rows.sort((a, b) => parseInt(a.code.slice(2), 16) - parseInt(b.code.slice(2), 16) || a.ids.localeCompare(b.ids))
+  // A stable sort keeps the source's order for the two rows that share U+F023C.
+  return rows.sort((a, b) => parseInt(a.code.slice(2), 16) - parseInt(b.code.slice(2), 16))
 }
 
 /**

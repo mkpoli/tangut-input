@@ -152,7 +152,7 @@ test('all 23 codes without a character pass through', () => {
 test('the duplicate U+F023C row keeps both IDS strings and converts once per occurrence', () => {
   const puaChar = code => String.fromCodePoint(parseInt(code.slice(2), 16))
   const rows = tangutPuaTable(pua).filter(row => row.code === 'U+F023C')
-  expect(rows.map(row => row.ids)).toEqual(['⿲𘥷𘣌𘣈', '⿲𘥷𘣾𘣈'])
+  expect(rows.map(row => row.ids)).toEqual(['⿲𘥷𘣾𘣈', '⿲𘥷𘣌𘣈'])
   expect(new Set(tangutPuaTable(pua).map(row => `${row.code}-${row.ids}`)).size).toBe(2814)
   const converted = convertTangutPua(puaChar('U+F023C').repeat(2), index, encoded, unencoded)
   expect(converted.text).toBe('𘉜𘉜')
