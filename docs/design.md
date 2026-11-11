@@ -129,6 +129,10 @@ by stroke count, then by use, and can be filtered by Cangjie code or Japanese sh
 part also opens it in the card. A card's “Characters with these parts” link opens Parts with that
 character's parts chosen.
 
+**Code chart** (`/codes`) lists every character and component in code order, 16 columns to a row
+and 256 positions to a page, with each block's occupancy and the components' use above the chart.
+A click copies the character.
+
 **Fanqie** (`/fanqie`) goes the other way: it takes the upper and lower characters a rhyme book
 spells a word with and lists what they spell. The two characters can be typed, or picked from a
 compact panel beside the field that keeps the Find, Meaning, Cangjie, Four-corner, Reading, Draw
@@ -329,5 +333,6 @@ worker) mode.
 - `reading`: `ndzi` across systems.
 - `draw`: a seven-stroke sketch and its closest glyphs.
 - `parts`: two parts chosen, seven characters, the narrowed palette.
+- `codes`: the four blocks' occupancy, the components' use, and the first page of each chart.
 - `card`, `card-attested`: the card of 𗋕, and its structure and three attested lines.
 - `sources`: the Sources page.

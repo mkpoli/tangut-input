@@ -30,6 +30,7 @@ it into your text. <https://tangut.mkpo.li/>
   Parts in miniature.
 - **Draw**: a drawing pad ranked by glyph shape against bundled Tangut faces. Choose parts to
   narrow the candidates.
+- **Code chart**: every character and component in code order, with block occupancy and component use.
 - **Parts**: choose parts, components or character-sized, from the palette or by drawing them;
   each choice narrows the characters and the remaining parts. The filter takes a Cangjie code or a Japanese shape name, and hovering a
   part shows its code point, component number, strokes, uses, Cangjie codes and name; a part with no

@@ -26,6 +26,7 @@ export const GROUPS = /** @type {const} */ ([
       { path: 'sijiao', label: 'nav.sijiao', icon: 'sijiao', hint: 'nav.sijiao.hint' },
       { path: 'draw', label: 'nav.draw', icon: 'draw', hint: 'nav.draw.hint' },
       { path: 'parts', label: 'nav.parts', icon: 'parts', hint: 'nav.parts.hint' },
+      { path: 'codes', label: 'nav.codes', icon: 'code', hint: 'nav.codes.hint' },
     ],
   },
   {
