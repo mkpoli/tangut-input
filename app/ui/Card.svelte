@@ -30,6 +30,8 @@
   import { setaCode } from '../lib/seta.js'
   import { identifierGroups, editionName } from '../lib/identifiers.js'
 
+  let { sheetVisible = false } = $props()
+
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
   /** @type {{ entries: Record<string, { position: string, parts: [string, string | null][] }> }} */
@@ -189,7 +191,7 @@
   /** @param {PointerEvent & { currentTarget: HTMLElement }} event */
   function grab(event) {
     if (pull || /** @type {Element} */ (event.target).closest('button')) return
-    const drawer = event.currentTarget.closest('aside')
+    const drawer = event.currentTarget.closest('dialog')
     if (!drawer) return
     // A press that began a text selection would turn the next one into a native drag.
     event.preventDefault()
@@ -217,7 +219,7 @@
   $effect(() => { if (!ui.sheet) release() })
 </script>
 
-{#if ui.sheet}
+{#if sheetVisible}
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class="sheetbar" onpointerdown={grab} onpointermove={drag} onpointerup={drop} onpointercancel={drop} onlostpointercapture={drop}>
     <span class="handle" aria-hidden="true"></span>
