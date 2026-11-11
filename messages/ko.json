@@ -248,7 +248,7 @@
   "card.puaVariants": "PUA 이체자",
   "card.puaVariant": "PUA 이체자",
   "card.puaNoBase": "이 코드를 가진 Unicode 문자가 없습니다. 자형은 이체입니다.",
-  "card.puaSource": "Tangut Yinchuan 이체자, 버전 {version}",
+  "card.puaBase": "본자:",
   "card.puaNote": "Tangut Yinchuan {version}: PUA 코드는 이체자 자형을 가리키며 다른 문자가 아닙니다.",
   "card.component": "부품",
   "card.radical": "부수",

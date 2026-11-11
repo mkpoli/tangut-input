@@ -3,7 +3,7 @@
 import { searchTibetan } from './tibetan.js'
 import { byIdentifier as byStoredIdentifier } from './identifiers.js'
 import { byTibetanSeta as byStoredSeta } from './seta.js'
-import { byTangutPua as byStoredPua, byUnencodedPua as byStoredUnencodedPua, byEncodedPua as byStoredEncodedPua, byPuaIds as byStoredPuaIds } from './pua.js'
+import { byTangutPua as byStoredPua, byUnencodedPua as byStoredUnencodedPua, byEncodedPua as byStoredEncodedPua, byPuaIds as byStoredPuaIds, byPuaCode as byStoredPuaCode } from './pua.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
 import { searchShapeNames, searchShapeSpellings } from './names.js'
@@ -296,3 +296,6 @@ export const byEncodedPua = text => byStoredEncodedPua(ix.puaEncodedIndex, text)
 
 /** The unencoded PUA row whose IDS is the query. @param {string} text */
 export const byPuaIds = text => byStoredPuaIds(ix.puaIdsIndex, text)
+
+/** The PUA row a code names when an encoded character owns it. @param {string} text */
+export const byPuaCode = text => byStoredPuaCode(ix.puaByCode, text)

@@ -2,7 +2,7 @@
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { indexTibetan, foldScript } from './tibetan.js'
 import { indexTibetanSeta } from './seta.js'
-import { indexTangutPua, indexUnencodedPua, indexEncodedPua, indexPuaIds } from './pua.js'
+import { indexTangutPua, indexUnencodedPua, indexEncodedPua, indexPuaIds, indexPuaByCode } from './pua.js'
 import { indexIdentifiers } from './identifiers.js'
 import { englishGloss } from './gloss.js'
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua, loadZzz } from './data.js'
@@ -85,6 +85,7 @@ export const ix = {
   /** Characters whose Tibetan spelling has each Set A code. @type {Map<string, Map<string, string>>} */ setaIndex: new Map(),
   /** Tangut Yinchuan PUA variants by encoded base character. @type {Map<string, [string, string, string[]][]>} */ pua: new Map(),
   /** The base characters each PUA code names. @type {Map<string, string[]>} */ puaIndex: new Map(),
+  /** The PUA row for every code with an encoded base. @type {Map<string, { code: string, ids: string, sources: string[], char: string }>} */ puaByCode: new Map(),
   /** The PUA table and its source record. @type {import('./data.js').TangutPua | null} */ puaSource: null,
   /** PUA rows without an encoded base character: [code, IDS, sources][]. @type {[string, string, string[]][]} */ puaUnencoded: [],
   /** The same rows by code. @type {Map<string, { code: string, ids: string, sources: string[] }>} */ puaUnencodedIndex: new Map(),
@@ -129,6 +130,7 @@ export async function load() {
     ix.setaIndex = indexTibetanSeta(ix.seta, ix.tibetan, ix.tibetanHands)
     ix.pua = new Map(Object.entries(pua?.chars ?? {}))
     ix.puaIndex = indexTangutPua(pua?.chars ?? {})
+    ix.puaByCode = indexPuaByCode(pua?.chars ?? {})
     ix.puaSource = pua
     ix.puaUnencoded = pua?.unencoded ?? []
     ix.puaUnencodedIndex = indexUnencodedPua(ix.puaUnencoded)

@@ -248,7 +248,7 @@
   "card.puaVariants": "PUA variants",
   "card.puaVariant": "PUA variant",
   "card.puaNoBase": "No Unicode character owns this code. The glyph is a variant form.",
-  "card.puaSource": "Tangut Yinchuan variants, version {version}",
+  "card.puaBase": "Variant of",
   "card.puaNote": "Tangut Yinchuan {version}: a PUA code names a variant glyph, not another character.",
   "card.component": "component",
   "card.radical": "radical",
