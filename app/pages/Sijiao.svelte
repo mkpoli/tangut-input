@@ -63,8 +63,8 @@
     setCode('')
     input?.focus()
   }
-  /** @param {string} digit */
-  function press(digit) {
+  /** @param {string} digit @param {MouseEvent} event */
+  function press(digit, event) {
     if (digit === 'space') { if (code) commit(active); return }
     if (!input) return
     const start = input.selectionStart ?? code.length
@@ -72,7 +72,7 @@
     if (digit === 'back') input.setRangeText('', start === end ? Math.max(0, start - 1) : start, end, 'end')
     else input.setRangeText(digit, start, end, 'end')
     readField(input)
-    if (!touch) input.focus()
+    if (!touch || event.detail > 0) input.focus({ preventScroll: true })
   }
   /** @param {number} delta */
   function turn(delta) {
@@ -133,16 +133,16 @@
       {#each ROWS as row (row)}
         <div class="ui-key-row">
           {#each [...row] as letter (letter)}
-            <button type="button" class="ui-key digit-key" data-dead={!KEYS[letter] ? '' : undefined} disabled={!KEYS[letter]} onclick={() => press(KEYS[letter])}
+            <button type="button" class="ui-key digit-key" data-dead={!KEYS[letter] ? '' : undefined} disabled={!KEYS[letter]} onclick={event => press(KEYS[letter], event)}
               aria-label={KEYS[letter] ? t('sijiao.digitKey', { digit: KEYS[letter] }) : t('sijiao.unusedKey', { letter })}>
               <span class="digit ui-mono">{KEYS[letter] ?? ''}</span>
               <span class="letter ui-mono">{letter}</span>
             </button>
           {/each}
-          {#if row === 'zxcvbnm'}<button type="button" class="ui-key" data-wide onclick={() => press('back')} aria-label={t('common.backspace')}>⌫</button>{/if}
+          {#if row === 'zxcvbnm'}<button type="button" class="ui-key" data-wide onclick={event => press('back', event)} aria-label={t('common.backspace')}>⌫</button>{/if}
         </div>
       {/each}
-      <div class="ui-key-row"><button type="button" class="ui-key" data-space onclick={() => press('space')} disabled={!code}>{#if shown[active]}{t('cangjie.spaceAdds')} <span class="ui-script">{shown[active].char}</span>{:else}{t('cangjie.space')}{/if}</button></div>
+      <div class="ui-key-row"><button type="button" class="ui-key" data-space onclick={event => press('space', event)} disabled={!code}>{#if shown[active]}{t('cangjie.spaceAdds')} <span class="ui-script">{shown[active].char}</span>{:else}{t('cangjie.space')}{/if}</button></div>
     </div>
   </section>
 

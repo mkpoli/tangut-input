@@ -147,10 +147,12 @@ try {
       assert.equal(await field.inputValue(), expected)
       assert.equal(new URL(phone.url()).searchParams.get('q') ?? '', expected)
       assert.deepEqual(await field.evaluate(el => [el.selectionStart, el.selectionEnd]), [caret, caret])
+      assert.equal(await field.evaluate(el => document.activeElement === el), true, 'touch pad keeps the caret visible')
     }
-    assert.equal(await field.getAttribute('inputmode'), 'none', 'coarse pointer uses the on-screen keyboard')
+    assert.equal(await field.getAttribute('inputmode'), 'none', 'coarse pointer requests no system keyboard')
     await field.fill('1234')
     await choose(1)
+    await field.evaluate(el => el.blur())
     await digit.tap()
     await check('19234', 2)
     await field.fill('1234')
@@ -173,6 +175,11 @@ try {
     await choose(1, 3)
     await digit.tap()
     await check('19456', 2)
+    await field.fill('12')
+    await digit.focus()
+    await phone.keyboard.press('Enter')
+    assert.equal(await field.inputValue(), '129', 'keyboard activation still operates a pad key')
+    assert.equal(await digit.evaluate(el => document.activeElement === el), true, 'keyboard activation keeps focus on the key')
   } finally {
     await mobile.close()
   }
