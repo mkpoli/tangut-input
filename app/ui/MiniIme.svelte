@@ -146,10 +146,11 @@
   /** @param {KeyboardEvent} event */
   function panelKeys(event) {
     if (!(event.target instanceof Element) || !event.target.closest('[role="option"]')) return
-    if (event.key === 'Enter' || event.key === ' ') event.stopPropagation()
-    if (event.key === 'Escape') {
-      event.stopPropagation()
+    event.stopPropagation()
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') event.preventDefault()
+    if (event.key === 'Escape' || event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       keys(event)
+      if (event.key !== 'Escape' && event.defaultPrevented) box?.focus()
     }
   }
 
