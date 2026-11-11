@@ -1,7 +1,7 @@
 <script>
   // The frame: the bar with the finders, the text being written, the finder of the page, and the
   // card of the open character beside it (a sheet over it on a phone).
-  import { tick } from 'svelte'
+  import { tick, untrack } from 'svelte'
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES, GROUPS, MORE, PRIMARY } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, setReading } from './lib/ui.svelte.js'
@@ -64,6 +64,10 @@
   let cardClosing = $state(false)
   let cardVisible = $state(false)
   let cardCloseGeneration = 0
+  // A transferred message stays readable but should not be announced a second time.
+  let cardBoundary = $state(0)
+  let toastBoundary = $derived.by(() => { void toast.id; return untrack(() => cardBoundary) })
+  let toastLive = $derived(toastBoundary === cardBoundary)
   /** @type {HTMLElement | null} */
   let cardOpeningTrigger = null
   /** The control that opened the menu, so closing it puts the keyboard back there. @type {HTMLElement | null} */
@@ -106,6 +110,7 @@
       cardVisible = true
       cardClosing = false
       if (!dialog.open) {
+        ++cardBoundary
         if (cardOpeningTrigger?.isConnected) cardOpeningTrigger.focus()
         cardOpeningTrigger = null
         dialog.showModal()
@@ -123,6 +128,7 @@
         clearTimeout(timer)
         if (generation !== cardCloseGeneration || !dialog.isConnected || ui.sheet) return
         dialog.close()
+        ++cardBoundary
         cardClosing = false
         cardVisible = false
       })
@@ -151,11 +157,22 @@
   // Pages that are read rather than searched: they take the full width and carry no character card.
   const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic', 'dataset', 'codes'])
 
+  // A layout or page change removes the dialog without waiting for its exit animation.
+  function resetCard() {
+    ++cardCloseGeneration
+    if (cardDialog?.open) {
+      cardDialog.close()
+      ++cardBoundary
+    }
+    cardClosing = false
+    cardVisible = false
+    cardBackdropPressed = false
+    ui.sheet = false
+  }
+
   // A reading page removes the card; do not reopen its old sheet on history navigation.
   $effect.pre(() => {
-    if (!READING_PAGES.includes(route.page)) return
-    if (cardDialog?.open) cardDialog.close()
-    ui.sheet = false
+    if (READING_PAGES.includes(route.page)) resetCard()
   })
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page @returns {boolean} whether the page changes */
@@ -263,8 +280,7 @@
   $effect(() => {
     const query = matchMedia('(min-width: 901px)')
     const sync = () => {
-      if (query.matches && cardDialog?.open) cardDialog.close()
-      ui.sheet = false
+      resetCard()
       wide = query.matches
       menu = null
     }
@@ -439,6 +455,7 @@
             onpointerdown={event => { cardBackdropPressed = outsideCard(event) }}
             onpointerup={event => { if (cardBackdropPressed && outsideCard(event)) ui.sheet = false; cardBackdropPressed = false }}>
             <Card sheetVisible={ui.sheet || cardVisible} />
+            <div class="toast" role="status" aria-live={toastLive ? 'polite' : 'off'}>{#if cardVisible && toast.message}{#key toast.id}<span class="ui-toast">{toast.message}</span>{/key}{/if}</div>
           </dialog>
         {/if}
       {/if}
@@ -497,7 +514,7 @@
 
   <SponsorDialog bind:open={sponsorOpen} />
 
-  <div class="toast" role="status" aria-live="polite">{#if toast.message}<span class="ui-toast">{toast.message}</span>{/if}</div>
+  <div class="toast" role="status" aria-live={toastLive ? 'polite' : 'off'}>{#if !cardVisible && toast.message}{#key toast.id}<span class="ui-toast">{toast.message}</span>{/key}{/if}</div>
 </div>
 
 <style>
