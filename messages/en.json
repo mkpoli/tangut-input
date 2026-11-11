@@ -121,7 +121,7 @@
   "sijiao.placeholder": "type six digits, e.g. 214122",
   "sijiao.none": "no code begins so",
   "sijiao.noCode": "No character begins with {code}.",
-  "sijiao.keys": "Six digits, read from the four corners: <kbd>Space</kbd> adds the highlighted candidate · <kbd>←</kbd><kbd>→</kbd> highlight · <kbd>↑</kbd><kbd>↓</kbd> page · <kbd>Esc</kbd> clears",
+  "sijiao.keys": "Six digits, read from the four corners: <kbd>Space</kbd> adds the highlighted candidate · <kbd>↑</kbd><kbd>↓</kbd> highlight · <kbd>Page Up</kbd> / <kbd>Page Down</kbd> page · <kbd>Esc</kbd> clears",
   "sijiao.padLabel": "Number pad",
   "sijiao.digits": "Digits",
   "sijiao.digitsHint": "The letter each digit is typed on.",

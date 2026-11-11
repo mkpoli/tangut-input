@@ -121,7 +121,7 @@
   "sijiao.placeholder": "输入六位数字，如214122",
   "sijiao.none": "无此开头的号码",
   "sijiao.noCode": "没有以{code}开头的字。",
-  "sijiao.keys": "取自四角的六位数字：<kbd>Space</kbd>将高亮候选加入正文 · <kbd>←</kbd><kbd>→</kbd>移动高亮 · <kbd>↑</kbd><kbd>↓</kbd>翻页 · <kbd>Esc</kbd>清空",
+  "sijiao.keys": "取自四角的六位数字：<kbd>Space</kbd>将高亮候选加入正文 · <kbd>↑</kbd><kbd>↓</kbd>移动高亮 · <kbd>Page Up</kbd>／<kbd>Page Down</kbd>翻页 · <kbd>Esc</kbd>清空",
   "sijiao.padLabel": "数字键区",
   "sijiao.digits": "数字",
   "sijiao.digitsHint": "各数字对应的字母键。",

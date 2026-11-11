@@ -39,16 +39,21 @@
     setQuery(code)
   }
 
-  /** Read the box once a composition is over, and show what the code kept with the caret in place.
-   * @param {(InputEvent | CompositionEvent) & { currentTarget: HTMLInputElement }} event */
-  function typed(event) {
-    if (event instanceof InputEvent && event.isComposing) return
-    const field = event.currentTarget
-    const caret = clean(field.value.slice(0, field.selectionStart ?? 0)).length
-    setCode(field.value)
+  /** Keep the suffix when filtering or limiting an insertion. @param {HTMLInputElement} field */
+  function readField(field) {
+    const position = field.selectionStart ?? field.value.length
+    const suffix = clean(field.value.slice(position))
+    const prefix = clean(field.value.slice(0, position)).slice(0, 6 - suffix.length)
+    setCode(prefix + suffix)
     if (field.value === code) return
     field.value = code
-    field.setSelectionRange(caret, caret)
+    field.setSelectionRange(prefix.length, prefix.length)
+  }
+
+  /** @param {(InputEvent | CompositionEvent) & { currentTarget: HTMLInputElement }} event */
+  function typed(event) {
+    if (event instanceof InputEvent && event.isComposing) return
+    readField(event.currentTarget)
   }
   /** @param {number} index */
   function commit(index) {
@@ -60,10 +65,14 @@
   }
   /** @param {string} digit */
   function press(digit) {
-    if (digit === 'back') { if (code) setCode(code.slice(0, -1)); return }
     if (digit === 'space') { if (code) commit(active); return }
-    setCode(code + digit)
-    if (!touch) input?.focus()
+    if (!input) return
+    const start = input.selectionStart ?? code.length
+    const end = input.selectionEnd ?? start
+    if (digit === 'back') input.setRangeText('', start === end ? Math.max(0, start - 1) : start, end, 'end')
+    else input.setRangeText(digit, start, end, 'end')
+    readField(input)
+    if (!touch) input.focus()
   }
   /** @param {number} delta */
   function turn(delta) {
@@ -72,17 +81,15 @@
   }
   /** @param {KeyboardEvent} event */
   function keys(event) {
-    if (event.ctrlKey || event.metaKey || event.altKey) return
+    if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || event.isComposing) return
     const k = event.key
-    if (k === 'Backspace' && code) { event.preventDefault(); setCode(code.slice(0, -1)); return }
     if (k === 'Escape' && code) { event.preventDefault(); setCode(''); return }
-    if (/^[0-9]$/.test(k)) { event.preventDefault(); setCode(code + k); return }
     if (!code) return
     if (k === ' ' || k === 'Enter') { event.preventDefault(); commit(active) }
-    else if (k === 'ArrowRight') { event.preventDefault(); if (active < shown.length - 1) active++; else if (page < pages - 1) turn(1) }
-    else if (k === 'ArrowLeft') { event.preventDefault(); if (active > 0) active--; else if (page > 0) { turn(-1); active = PAGE - 1 } }
-    else if (k === 'ArrowDown' || k === 'PageDown') { event.preventDefault(); turn(1) }
-    else if (k === 'ArrowUp' || k === 'PageUp') { event.preventDefault(); turn(-1) }
+    else if (k === 'ArrowDown') { event.preventDefault(); if (active < shown.length - 1) active++; else if (page < pages - 1) turn(1) }
+    else if (k === 'ArrowUp') { event.preventDefault(); if (active > 0) active--; else if (page > 0) { turn(-1); active = PAGE - 1 } }
+    else if (k === 'PageDown') { event.preventDefault(); turn(1) }
+    else if (k === 'PageUp') { event.preventDefault(); turn(-1) }
   }
 </script>
 
