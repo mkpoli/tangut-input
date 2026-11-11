@@ -121,7 +121,7 @@
   "sijiao.placeholder": "6桁の数字を入力、例：214122",
   "sijiao.none": "該当する番号なし",
   "sijiao.noCode": "{code}で始まる文字はありません。",
-  "sijiao.keys": "四隅から取る6桁の数字：<kbd>Space</kbd>で選択中の候補を追加 · <kbd>←</kbd><kbd>→</kbd>で選択 · <kbd>↑</kbd><kbd>↓</kbd>でページ切替 · <kbd>Esc</kbd>で消去",
+  "sijiao.keys": "四隅から取る6桁の数字：<kbd>Space</kbd>で選択中の候補を追加 · <kbd>↑</kbd><kbd>↓</kbd>で選択 · <kbd>Page Up</kbd>／<kbd>Page Down</kbd>でページ切替 · <kbd>Esc</kbd>で消去",
   "sijiao.padLabel": "数字キー",
   "sijiao.digits": "数字",
   "sijiao.digitsHint": "各数字に対応する英字キー。",
