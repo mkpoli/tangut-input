@@ -246,7 +246,7 @@
   "card.puaVariants": "PUA异体字",
   "card.puaVariant": "PUA异体字",
   "card.puaNoBase": "没有Unicode字符拥有这个码位。字形是异体。",
-  "card.puaSource": "西夏文Yinchuan异体字，版本{version}",
+  "card.puaBase": "本字：",
   "card.puaNote": "西夏文Yinchuan {version}：PUA码位指异体字形，不是另一个字。",
   "card.component": "部件",
   "card.radical": "部首",

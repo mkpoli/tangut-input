@@ -117,3 +117,29 @@ export function byPuaIds(index, text) {
   const ids = text.trim()
   return ids ? index.get(ids) ?? null : null
 }
+
+/**
+ * The row for every PUA code that has an encoded base character.
+ * @param {Record<string, [string, string, string[]][]>} chars
+ * @returns {Map<string, { code: string, ids: string, sources: string[], char: string }>}
+ */
+export function indexPuaByCode(chars) {
+  /** @type {Map<string, { code: string, ids: string, sources: string[], char: string }>} */
+  const index = new Map()
+  for (const [char, rows] of Object.entries(chars)) {
+    for (const [code, ids, sources] of rows) {
+      if (!index.has(code)) index.set(code, { code, ids, sources, char })
+    }
+  }
+  return index
+}
+
+/**
+ * The PUA row a code names when an encoded character owns it, or null.
+ * @param {Map<string, { code: string, ids: string, sources: string[], char: string }>} index
+ * @param {string} text
+ */
+export function byPuaCode(index, text) {
+  const code = parsePuaQuery(text)
+  return (code && index.get(code)) || null
+}

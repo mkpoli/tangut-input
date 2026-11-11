@@ -34,7 +34,17 @@ const SCREENS = [
   { name: 'find-pua', path: '/?q=U%2BF00CF' },
   { name: 'find-pua-encoded', path: '/?q=U%2BF00FE' },
   { name: 'find-pua-ids', path: '/?q=%E2%BF%B0%E2%BF%B1%F0%98%A5%84%F0%98%A0%92%F0%98%A2%8C' },
+  { name: 'find-pua-assigned', path: '/?q=U%2BF02BB' },
   { name: 'card-pua', path: '/?c=F00CF' },
+  { name: 'card-pua-assigned', path: '/?c=F02BB' },
+  { name: 'card-base-pua', path: '/?c=17000', act: async page => {
+    await page.waitForTimeout(400)
+    await page.evaluate(() => {
+      const card = document.querySelector('.card')
+      const section = document.querySelector('.pua-tile')?.closest('section')
+      if (card && section) card.scrollTop += section.getBoundingClientRect().top - card.getBoundingClientRect().top - 18
+    })
+  } },
   { name: 'variants-pua', path: '/variants#pua' },
   { name: 'variants', path: '/variants' },
   { name: 'cangjie', path: '/cangjie', act: async page => { await page.locator('input.code-input').pressSequentially('msb', { delay: 40 }) } },

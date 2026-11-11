@@ -145,11 +145,13 @@ recorded with the fanqie it was made for.
   click-to-copy, each system linked to its source.
 - A Tibetan spelling's tooltip adds its Tibetan Extension-A code when the precomposed table has
   the exact sequence.
-- **PUA variants**: the Tangut Yinchuan variant codes of a character, each with its IDS and source,
-  click-to-copy; a code names a variant glyph, not another character. Find maps a code that Unicode
-  18.0 has since given a character to that character; a code that remains unowned opens its PUA
-  card (glyph, code, IDS, source), and its IDS finds the same record. The 23 are listed at the
-  bottom of the Variants page.
+- **PUA variants**: a row of glyph tiles in the Variant forms section; each opens its PUA card,
+  where the code, IDS and source are listed. A code names a variant glyph, not another character.
+  Find maps a code that Unicode
+  18.0 has since given a character to that character. Every other PUA code opens its PUA card
+  (glyph, code, IDS, source); a code with a base character links to it, and a code without one sits
+  with the other unencoded rows at the bottom of the Variants page. The unencoded rows' IDS find the
+  same record.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).

@@ -3,13 +3,14 @@
   // first, then what helps a reader confirm it is the one they mean (meaning, readings, structure,
   // where it stands in a text), then the characters near it.
   import { db, ix, codePoint, gloss, isComponent, readingOf } from '../lib/db.svelte.js'
-  import { onMount } from 'svelte'
+  import { onMount, tick } from 'svelte'
   import G from './G.svelte'
   import TileNote from './TileNote.svelte'
   import Icon from './Icon.svelte'
   import { route, link } from '../lib/route.svelte.js'
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
+  import { puaCharacter } from '../lib/pua.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { derivedDescriptions } from '../lib/variants.js'
   import { byDescription } from '../lib/search.js'
@@ -39,8 +40,22 @@
   /** @param {string | null} part */
   const partTerm = part => part ? (PART_TERMS[/** @type {keyof typeof PART_TERMS} */ (part)] ?? part) : ''
   const entry = $derived(ready && char ? ix.byChar.get(char) : undefined)
-  // A private-use glyph has no character record; its PUA row is the whole card.
-  const puaVariant = $derived(ready && char ? ix.puaUnencodedIndex.get(`U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase()}`) : null)
+  // A private-use glyph has no character record; its PUA row is the whole card. A code with a
+  // base character still gets this card, with the base as a link.
+  const puaVariant = $derived(ready && char
+    ? /** @type {{ code: string, ids: string, sources: string[], char?: string } | null} */ (
+      ix.puaUnencodedIndex.get(`U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase()}`)
+      ?? ix.puaByCode.get(`U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase()}`)
+      ?? null)
+    : null)
+  // Opening a variant replaces the tile that had focus; move focus to the card it opens.
+  let focusPua = $state(false)
+  /** @type {HTMLElement | null} */
+  let puaArticle = $state(null)
+  $effect(() => {
+    if (!focusPua || !puaVariant) return
+    tick().then(() => { puaArticle?.focus(); focusPua = false })
+  })
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const identifiers = $derived(ready && char ? identifierGroups(ix.identifiers.get(char) ?? []) : [])
   const pua = $derived(ready && char ? ix.pua.get(char) ?? [] : [])
@@ -217,19 +232,27 @@
     <p class="ui-hint">{@html t('card.blankKeys')}</p>
   </div>
 {:else if puaVariant}
-  <article class="record pua-record">
+  {@const base = puaVariant.char}
+  <article class="record pua-record" tabindex="-1" bind:this={puaArticle}>
     <header class="head">
       <div class="glyph-frame pua-glyph-frame"><span class="pua-card-glyph" lang="txg" aria-hidden="true">{char}</span></div>
       <div class="facts">
         <button class="cp ui-mono" type="button" title={t('card.copyIdentifier', { id: puaVariant.code })} onclick={() => copy(puaVariant.code, puaVariant.code)}>{puaVariant.code}</button>
         <p class="gloss">{t('card.puaVariant')}</p>
-        <p class="meta">{t('card.puaNoBase')}</p>
+        {#if base}
+          <p class="meta">{t('card.puaBase')} <button class="inline pua-base-link" type="button" title={t('find.openCharacter')} onclick={() => choose(base)}><G char={base} /> <span class="ui-mono">{codePoint(base)}</span></button></p>
+        {:else}
+          <p class="meta">{t('card.puaNoBase')}</p>
+        {/if}
       </div>
     </header>
 
     <div class="use">
+      {#if base}<button class="ui-button" data-variant="primary" data-size="sm" type="button" onclick={() => put(base)}><Icon name="add" size={14}/>{t('card.add')}</button>{/if}
+      {#if base}<button class="ui-button" data-size="sm" type="button" onclick={() => copy(base)}><Icon name="copy" size={14}/>{t('common.copy')} <span class="ui-script copy-glyph">{base}</span></button>{/if}
       <button class="ui-button" data-size="sm" type="button" onclick={() => copy(puaVariant.code, puaVariant.code)}><Icon name="copy" size={14}/>{t('common.copy')} <span class="ui-mono">{puaVariant.code}</span></button>
       <button class="ui-button" data-size="sm" type="button" onclick={() => copy(address, t('card.link'))}><Icon name="link" size={14}/>{t('card.copyLink')}</button>
+      {#if base}<button class="ui-button" data-size="sm" type="button" onclick={() => choose(base)}><Icon name="book" size={14}/>{t('find.openCharacter')}</button>{/if}
     </div>
 
     <section>
@@ -280,27 +303,6 @@
             </dd>
           {/each}
         </dl>
-      </section>
-    {/if}
-
-    {#if pua.length}
-      <section class="pua-variants">
-        <h3 class="ui-label">
-          {#if ix.puaSource?.source}
-            <a href={ix.puaSource.source} target="_blank" rel="noopener noreferrer" title={t('card.puaSource', { version: ix.puaSource.version ?? '' })}>{t('card.puaVariants')}</a>
-          {:else}{t('card.puaVariants')}{/if}
-          <span class="ui-count">{pua.length}</span>
-        </h3>
-        <ul class="pua-list">
-          {#each pua as [code, ids, sources] (code + ids)}
-            <li>
-              <button class="identifier ui-mono" type="button" title={t('card.copyIdentifier', { id: code })} onclick={() => copy(code, code)}>{code}</button>
-              <span class="ui-formula pua-ids" title={ids}>{ids}</span>
-              {#if sources.length}<span class="ui-hint pua-source">{sources.join(' · ')}</span>{/if}
-            </li>
-          {/each}
-        </ul>
-        <p class="ui-hint pua-note">{t('card.puaNote', { version: ix.puaSource?.version ?? '' })}</p>
       </section>
     {/if}
 
@@ -369,7 +371,7 @@
       </section>
     {/if}
 
-    {#if variants || derivedForms.length}
+    {#if variants || derivedForms.length || pua.length}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
         {#if variants}
@@ -393,6 +395,16 @@
               <p class="ui-hint">{t(block.source)}</p>
             {/if}
           {/each}
+        {/if}
+        {#if pua.length}
+          <p class="ui-hint">{t('card.puaVariants')} <span class="ui-count">{pua.length}</span></p>
+          <div class="ui-tiles" style:--ui-tile-size="48px">
+            {#each pua as [code, ids, sources] (code + ids)}
+              <button class="ui-tile pua-tile" type="button" title={`${code} · ${ids}${sources.length ? ` · ${sources.join(' · ')}` : ''}`} aria-label={`${t('find.openVariant')} · ${code}`} onclick={() => { focusPua = true; choose(puaCharacter(code)) }}>
+                <span class="pua-tile-glyph" lang="txg" aria-hidden="true">{puaCharacter(code)}</span>
+              </button>
+            {/each}
+          </div>
         {/if}
         {#if derivedForms.length}
           <p class="ui-hint">{t('card.variantDerived')}</p>
@@ -657,6 +669,9 @@
   .glyph-frame :global(.ui-script){position:relative;z-index:1;font-size:88px}
   .pua-glyph-frame :global(.pua-card-glyph){position:relative;z-index:1;font-family:'Tangut PUA',var(--tg-font);font-size:82px;line-height:1}
   .pua-card-ids{font-size:24px;line-height:1.5;overflow-wrap:anywhere}
+  .pua-base-link{display:inline-flex;align-items:center;gap:4px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+  .pua-base-link :global(.ui-script){font-size:30px;line-height:1}
+  .pua-base-link:hover,.pua-base-link:focus-visible{background:var(--ui-color-accent-soft)}
   .glyph-frame :global(.ui-nog){position:relative;z-index:1;font-size:var(--ui-text-sm);inline-size:3.4em;block-size:3.4em}
   .facts{display:grid;gap:var(--ui-space-2xs);min-inline-size:0}
   .cp{display:inline-flex;align-items:center;justify-self:start;min-block-size:24px;margin-inline-start:-6px;padding:2px 6px;border:0;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
@@ -666,13 +681,9 @@
   .inline{padding:0 3px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font-size:17px;vertical-align:-2px}
   .inline:hover{background:var(--ui-color-surface-hover)}
   .use{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);padding-bottom:var(--ui-space-xl)}
-  .pua-variants .ui-label{flex-wrap:wrap}
-  .pua-variants .ui-label a{display:inline-flex;align-items:center;gap:2px;color:inherit;text-underline-offset:2px}
-  .pua-list{display:grid;gap:var(--ui-space-2xs);margin:0;padding:0;list-style:none}
-  .pua-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--ui-space-xs)}
-  .pua-ids{font-size:16px;line-height:1.5}
-  .pua-source{font-size:var(--ui-text-2xs);line-height:1.45}
-  .pua-note{margin:0;font-size:var(--ui-text-2xs);line-height:1.45}
+  .pua-tile{content-visibility:auto;contain-intrinsic-size:48px 48px}
+  .pua-tile .pua-tile-glyph{font-family:'Tangut PUA',var(--tg-font);font-size:30px;line-height:1}
+  .pua-record:focus-visible{outline:2px solid var(--ui-color-focus);outline-offset:-2px}
   .identifiers dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-2xs) var(--ui-space-lg);margin:0}
   .identifiers dt{display:flex;align-items:baseline;gap:var(--ui-space-2xs);color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);white-space:nowrap}
   .identifiers dt a{display:inline-flex;align-items:center;gap:1px;color:inherit;text-underline-offset:2px}

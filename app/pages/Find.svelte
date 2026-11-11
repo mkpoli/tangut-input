@@ -10,7 +10,7 @@
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
-  import { byCode, byName, byShapeSpelling, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byTangutPua, byUnencodedPua, byEncodedPua, byPuaIds, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byShapeSpelling, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byUnencodedPua, byEncodedPua, byPuaIds, byPuaCode, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
   import { parseIdentifier } from '../lib/identifiers.js'
@@ -50,9 +50,9 @@
     // A Tangut PUA code is a five-digit private-use code; the encoded block is not in its range.
     const puaQuery = parsePuaQuery(text)
     if (puaQuery) {
-      const pua = byTangutPua(text).sort((a, b) => (ix.frequency.get(b.char) ?? 0) - (ix.frequency.get(a.char) ?? 0) || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
-      if (pua.length) out.push({ key: 'pua', title: `${t('find.group.pua')} · ${puaQuery}`, total: pua.length,
-        items: pua.slice(0, 24).map(hit => ({ char: hit.char, sub: gloss(hit.char) })) })
+      const assigned = byPuaCode(text)
+      // The base character stays a normal candidate, so arrows preview it and Enter adds it.
+      if (assigned) out.push({ key: 'pua-assigned', title: `${t('find.group.pua')} · ${puaQuery}`, total: 1, shown: 1, items: assigned.char ? [{ char: assigned.char, sub: assigned.code }] : [], pua: assigned })
       const unencoded = byUnencodedPua(text)
       if (unencoded) out.push({ key: 'pua-unencoded', title: `${t('find.group.pua')} · ${puaQuery}`, total: 1, shown: 1, items: [], pua: unencoded })
       const encoded = byEncodedPua(text)
@@ -232,6 +232,21 @@
               </span>
             </div>
           </div>
+        {:else if group.key === 'pua-assigned' && group.pua}
+          {@const pua = group.pua}
+          <div class="pua-hit">
+            <span class="pua-hit-glyph" lang="txg" aria-hidden="true">{puaCharacter(pua.code)}</span>
+            <div class="pua-hit-text">
+              <span class="pua-hit-code ui-mono">{pua.code}</span>
+              <span class="ui-formula pua-hit-ids" title={pua.ids}>{pua.ids}</span>
+              <span class="ui-hint">{pua.sources.length ? pua.sources.join(' · ') : t('variants.puaNoSource')}</span>
+              {#if pua.char}<span class="pua-hit-base">{t('card.puaBase')} <button class="pua-base-open" type="button" title={t('find.openCharacter')} aria-label={`${t('find.openCharacter')} · ${codePoint(pua.char)}`} onclick={() => choose(pua.char ?? '')}><G char={pua.char} /></button> <span class="ui-mono">{codePoint(pua.char)}</span></span>{/if}
+              <span class="pua-hit-actions">
+                <button class="ui-more-link" type="button" onclick={() => choose(puaCharacter(pua.code))}>{t('find.openVariant')}<Icon name="arrow" size={13}/></button>
+                {#if pua.char}<button class="ui-more-link" type="button" onclick={() => choose(pua.char ?? '')}>{t('find.openCharacter')}<Icon name="arrow" size={13}/></button>{/if}
+              </span>
+            </div>
+          </div>
         {:else if group.key === 'pua-encoded' && group.pua}
           <div class="pua-hit">
             <span class="pua-hit-glyph"><G char={group.pua.char ?? ''} /></span>
@@ -279,6 +294,10 @@
   .pua-hit-code{color:var(--ui-color-accent-ink)}
   .pua-hit-ids{font-size:18px;line-height:1.5}
   .pua-hit-actions{display:flex;flex-wrap:wrap;gap:var(--ui-space-sm)}
+  .pua-hit-base{display:flex;align-items:center;gap:var(--ui-space-2xs);font-size:var(--ui-text-xs);color:var(--ui-color-ink-soft)}
+  .pua-base-open{padding:0 2px;border:0;border-radius:var(--ui-radius-sm);background:none;color:inherit;cursor:pointer}
+  .pua-base-open:hover,.pua-base-open:focus-visible{background:var(--ui-color-accent-soft)}
+  .pua-base-open :global(.ui-script){font-size:24px;line-height:1.1}
   .pua-hit .ui-more-link{border:0;background:none;padding:0;font:inherit;font-size:var(--ui-text-xs);color:var(--ui-color-accent-ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   .ui-tile-sound[lang='bo']{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:14px;line-height:1.7;overflow:visible;text-overflow:clip;flex:none}
 </style>
