@@ -24,8 +24,9 @@ function fixture(path, name) {
   const hit = { char: '𗀀' }
   const sandbox = {
     isImeKey, flat: [hit, hit], shown: [hit, hit], hits: [hit, hit], active: -1, code: 'a', query: 'water',
-    page: 0, pages: 2, PAGE: 9, digitsPick: true, list: null,
-    document: { querySelector: () => null },
+    page: 0, pages: 2, PAGE: 9, digitsPick: true, list: null, id: 'test',
+    tick: () => Promise.resolve(),
+    document: { querySelector: () => null, getElementById: () => null },
     preview: action, put: action, pick: action, close: action, setQuery: action, setCode: action, backspace: action, commit: action, turn: action,
   }
   runInNewContext(`${source.slice(node.start, node.end)}\nglobalThis.handler = ${name}`, sandbox)
