@@ -251,10 +251,10 @@ local storage; no address and no account.
 The app queues events in local storage and sends them in one batch, so a page served without the
 worker — `vite` in development — behaves the same, and an offline reader's events go out on the next
 load. Outgoing batches omit query fields from picks queued by older versions. A failed send can leave
-those fields in local storage until the queue is next rewritten. Requests omit the referrer, which
-can contain the search query. A refused endpoint is not tried again until the page reloads. The quiz
-sends each saved drawing
-to the same endpoint, so a round is reviewable from one place. `bun run records` reads the tables
+those fields in local storage until the queue is next rewritten. Recording requests omit the referrer,
+which can contain the search query. Finder URLs can still carry queries to the origin. A refused
+endpoint is not tried again until the page reloads. The quiz sends each saved drawing to the same
+endpoint, so a round is reviewable from one place. `bun run records` reads the tables
 back; nothing serves them to a visitor.
 
 The worker handles `/api/*` and finder pages (`run_worker_first`); other assets are served directly.
