@@ -109,7 +109,7 @@
 <section class="writing" bind:this={strip} aria-label={t('writing.label')}>
   <label class="ui-label writing-label" for="writing">{t('writing.text')}</label>
   <textarea id="writing" bind:this={field} class="ui-input writing-field ui-script" rows="1" spellcheck="false" autocomplete="off"
-    value={text.value} placeholder={t('writing.placeholder')}
+    aria-label={t('writing.text')} value={text.value} placeholder={t('writing.placeholder')}
     oninput={event => { setText(event.currentTarget.value); remember() }}
     onkeyup={remember} onclick={caret} onselect={remember} onblur={remember}></textarea>
   <div class="actions">

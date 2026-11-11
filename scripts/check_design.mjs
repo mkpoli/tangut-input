@@ -602,6 +602,27 @@ const PHONE_APP = await browser.newContext({ viewport: { width: 390, height: 844
 const phone = await PHONE_APP.newPage()
 await phone.goto(`${APP}/meaning?q=water`)
 await phone.locator('main.finder').waitFor()
+await step('the phone writing field has an accessible name', async () => {
+  const client = await PHONE_APP.newCDPSession(phone)
+  try {
+    const { root } = await client.send('DOM.getDocument')
+    const { nodeId } = await client.send('DOM.querySelector', { nodeId: root.nodeId, selector: '#writing' })
+    const name = async () => (await client.send('Accessibility.getPartialAXTree', { nodeId, fetchRelatives: false })).nodes[0].name?.value
+    assert.equal(await name(), 'Text')
+    await phone.locator('.settings > button').click()
+    await phone.locator('.settings-sheet select').first().selectOption('ja')
+    await phone.keyboard.press('Escape')
+    await phone.locator('.settings-sheet').waitFor({ state: 'hidden' })
+    assert.equal(await name(), '本文')
+    await phone.locator('.settings > button').click()
+    await phone.locator('.settings-sheet select').first().selectOption('en')
+    await phone.keyboard.press('Escape')
+    await phone.locator('.settings-sheet').waitFor({ state: 'hidden' })
+    assert.equal(await name(), 'Text')
+  } finally {
+    await client.detach()
+  }
+})
 await step('the phone settings sheet opens and closes', async () => {
   const trigger = phone.getByRole('button', { name: 'Settings', exact: true })
   await trigger.click()
