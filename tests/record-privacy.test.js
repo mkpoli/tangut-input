@@ -46,6 +46,36 @@ describe('pick privacy in the outbox', () => {
     expect(optionsSeen[0].referrerPolicy).toBe('no-referrer')
   })
 
+  test('a later record rewrites legacy queued picks without query text', async () => {
+    storage.set(OUTBOX, JSON.stringify([{ type: 'pick', char: '𗀀', query: 'old secret' }]))
+    flush()
+    await settled()
+    expect(JSON.parse(storage.get(OUTBOX))[0].query).toBe('old secret')
+    record({ type: 'pick', char: '𗀁', query: 'new secret', finder: 'find' })
+    await settled()
+    const queued = JSON.parse(storage.get(OUTBOX))
+    expect(queued[0]).toEqual({ type: 'pick', char: '𗀀' })
+    expect(queued[1]).toMatchObject({ type: 'pick', char: '𗀁', finder: 'find' })
+    expect(queued[1]).not.toHaveProperty('query')
+    expect(requests[1]).toEqual(queued)
+  })
+
+  test('a rejected batch leaves a scrubbed remainder for the next send', async () => {
+    const queued = Array.from({ length: 21 }, (_, i) => ({ type: 'pick', char: '𗀀', place: i, query: `secret ${i}` }))
+    storage.set(OUTBOX, JSON.stringify(queued))
+    globalThis.fetch = async (_url, options) => {
+      requests.push(JSON.parse(options.body))
+      return new Response('', { status: requests.length === 1 ? 400 : 429 })
+    }
+    flush()
+    await settled()
+    expect(requests).toHaveLength(2)
+    expect(requests[0]).toHaveLength(20)
+    expect(requests[0].every(event => !('query' in event))).toBe(true)
+    expect(requests[1]).toEqual([{ type: 'pick', char: '𗀀', place: 20 }])
+    expect(JSON.parse(storage.get(OUTBOX))).toEqual(requests[1])
+  })
+
   test('successful sends preserve events queued during the request', async () => {
     let resolveFirst
     globalThis.fetch = (_url, options) => {
