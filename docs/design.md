@@ -244,18 +244,22 @@ does not lose a shape it was given. Real hands differ far more, as the table abo
 (`migrations/0001_records.sql`). Two tables. `drawings` holds the strokes of a pad drawing with the
 character the reader then chose from the results, or, from a quiz round, the prompt that was asked
 for along with the pen's timing and pressure. `picks` holds a character chosen from any finder, with
-the page, the query that produced it and its place in the list. A record carries a random id kept in
-the browser's local storage; no address and no account.
+the page and its place in the list. New picks omit search queries; the worker ignores queries sent by
+older clients. Existing D1 rows may retain queries. A record carries a random id kept in the browser's
+local storage; no address and no account.
 
 The app queues events in local storage and sends them in one batch, so a page served without the
 worker — `vite` in development — behaves the same, and an offline reader's events go out on the next
-load. A refused endpoint is not tried again until the page reloads. The quiz sends each saved drawing
+load. Outgoing batches omit query fields from picks queued by older versions. A failed send can leave
+those fields in local storage until the queue is next rewritten. Requests omit the referrer, which
+can contain the search query. A refused endpoint is not tried again until the page reloads. The quiz
+sends each saved drawing
 to the same endpoint, so a round is reviewable from one place. `bun run records` reads the tables
 back; nothing serves them to a visitor.
 
-The worker only wakes for `/api/*` (`run_worker_first`), so a page view is still served straight from
-the assets. It refuses a body over 60 KB, more than 400 strokes in one drawing, a character outside
-the Tangut block, and anything that is not a pick or a drawing.
+The worker handles `/api/*` and finder pages (`run_worker_first`); other assets are served directly.
+It refuses a body over 60 KB, more than 400 strokes in one drawing, a character outside the Tangut
+block, and anything that is not a pick or a drawing.
 
 ## Decisions taken without asking
 

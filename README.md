@@ -159,9 +159,10 @@ and any seal or cursive forms.
 
 The deployed site keeps what readers drew and picked in a D1 database: `drawings` holds a pad
 drawing with the character chosen from its results, or a quiz round's prompt with the pen's timing
-and pressure; `picks` holds a character chosen from any finder with the page and the query behind it.
-A record carries a random id from the browser's local storage, no address and no account.
-`POST /api/record` is the only thing the worker answers; every page is still served from the assets.
+and pressure; `picks` holds a character chosen from any finder with the page and its place in the list.
+New pick records omit search queries; older D1 records may retain them. A record carries a random id
+from the browser's local storage, no address and no account. The worker also serves finder pages with
+page-specific metadata.
 
 ```sh
 bun run records                      # counts, the last drawings and the last picks
