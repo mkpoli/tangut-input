@@ -29,6 +29,7 @@
   import Transcribe from './pages/Transcribe.svelte'
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
+  import Codes from './pages/Codes.svelte'
   import About from './pages/About.svelte'
   import Intro from './pages/Intro.svelte'
   import Gyalrongic from './pages/Gyalrongic.svelte'
@@ -75,9 +76,8 @@
     if ((!menu || wide) && sheet.open) sheet.close()
   })
 
-  // The pages that are read, full width and without the character card.
   // Pages that are read rather than searched: they take the full width and carry no character card.
-  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic', 'dataset'])
+  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic', 'dataset', 'codes'])
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page @returns {boolean} whether the page changes */
   function nav(event, page) {
@@ -335,6 +335,7 @@
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
+        {:else if route.page === 'codes'}<Codes />
         {:else if route.page === 'intro'}<Intro />
         {:else if route.page === 'gyalrongic'}<Gyalrongic />
         {:else}<About />{/if}

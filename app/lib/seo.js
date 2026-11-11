@@ -56,6 +56,10 @@ export const PAGE_SEO = {
     title: 'Draw — Tangut Input',
     description: 'Sketch a Tangut character on the pad and see the glyphs closest to it in shape, compared against five Tangut fonts.',
   },
+  codes: {
+    title: 'Code chart — Tangut Input',
+    description: 'Every Tangut character and component in code order, with block occupancy, component use and a copy-on-click grid.',
+  },
   parts: {
     title: 'Parts — Tangut Input',
     description: 'Choose the components you can see in a Tangut character and narrow the list to the characters built with them.',
