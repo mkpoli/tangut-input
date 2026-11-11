@@ -15,9 +15,10 @@
    *  `always` is the standalone picker: no button, no closing, the panel in the flow. */
   let { align = 'end', always = false, strokes = /** @type {[number, number][][] | null} */ (null) } = $props()
 
+  const id = $props.id()
   let open = $state(always)
   let query = $state('')
-  let active = $state(-1)
+  let active = $state(0)
   /** @type {HTMLButtonElement | null} */
   let trigger = $state(null)
   /** @type {HTMLInputElement | null} */
@@ -63,7 +64,7 @@
     const unique = new Map()
     for (const [, list] of lists) for (const hit of list) if (!unique.has(hit.char)) unique.set(hit.char, hit)
     // A whole Tibetan spelling keeps a place at the end, past the codes and readings a short query
-    // fills the list with; those stay where they are, so the number keys still pick the same ones.
+    // fills the list with.
     const list = [...unique.values()]
     const kept = list.slice(0, 48)
     const whole = byTibetan(text).filter(hit => hit.tier === 0 && !kept.some(other => other.char === hit.char)).slice(0, 24)
@@ -71,12 +72,16 @@
   })
 
   const hits = $derived(found.list)
-  /** Whether the number keys pick a candidate: not before anything is typed, and not while the
-   *  query is one that takes digits, a four-corner code or a code point. */
-  const digitsPick = $derived(!!text && !/^(u|u\+[0-9a-f]*|u[0-9a-f]*[0-9][0-9a-f]*|[0-9]+)$/i.test(text))
   const kinds = $derived(found.kinds)
 
-  $effect(() => { void text; active = -1 })
+  $effect(() => {
+    void text
+    active = 0
+    void tick().then(() => {
+      const list = box?.closest('.panel')?.querySelector('.hits')
+      if (list) list.scrollTop = 0
+    })
+  })
 
   // A picker takes the keys at once; beside a field it waits to be opened.
   $effect(() => { if (always) queueMicrotask(() => box?.focus()) })
@@ -94,7 +99,7 @@
     recent = [char, ...recent.filter(other => other !== char)].slice(0, 32)
     try { localStorage.setItem('tangut-input:recent', JSON.stringify(recent)) } catch { /* the list lives this visit */ }
     query = ''
-    active = -1
+    active = 0
     box?.focus()
   }
 
@@ -114,31 +119,38 @@
   /** @param {boolean} [restore] */
   function close(restore = true) {
     open = false
-    active = -1
+    active = 0
     if (restore) trigger?.focus()
   }
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
+    if (event.isComposing || (event.key === 'Enter' && event.keyCode === 229) || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
     if (event.key === 'Escape') {
       event.preventDefault()
       close()
       return
     }
-    // The number keys take the candidate at that place, as an input method does.
-    if (digitsPick && /^[1-9]$/.test(event.key) && hits.length >= Number(event.key)) {
-      event.preventDefault()
-      put(hits[Number(event.key) - 1].char)
-      return
-    }
-    const step = { ArrowDown: 4, ArrowUp: -4, ArrowRight: 1, ArrowLeft: -1 }[event.key]
     if (!hits.length) return
-    if (step) {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
-      active = (Math.max(0, active) + step + hits.length) % hits.length
-    } else if (event.key === 'Enter' || event.key === ' ') {
+      const step = event.key === 'ArrowDown' ? 1 : -1
+      active = active < 0 ? (step > 0 ? 0 : hits.length - 1) : (active + step + hits.length) % hits.length
+      void tick().then(() => document.getElementById(`${id}-hit-${active}`)?.scrollIntoView({ block: 'nearest' }))
+    } else if (event.key === 'Enter') {
       event.preventDefault()
       put((hits[Math.max(0, active)] ?? hits[0]).char)
+    }
+  }
+
+  /** @param {KeyboardEvent} event */
+  function panelKeys(event) {
+    if (!(event.target instanceof Element) || !event.target.closest('[role="option"]')) return
+    event.stopPropagation()
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') event.preventDefault()
+    if (event.key === 'Escape' || event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      keys(event)
+      if (event.key !== 'Escape' && event.defaultPrevented) box?.focus()
     }
   }
 
@@ -168,21 +180,25 @@
   {#if open}
     <div class="panel ui-menu" class:start={align === 'start'} role="dialog" aria-label={t('ime.label')}>
       <input class="ui-input" data-size="sm" bind:this={box} bind:value={query} onkeydown={keys}
-        aria-label={t('ime.label')} placeholder={t('ime.placeholder')} spellcheck="false" autocomplete="off" autocapitalize="off" />
+        role="combobox" aria-label={t('ime.label')} aria-autocomplete="list" aria-expanded={!!hits.length}
+        aria-controls={hits.length ? `${id}-hits` : undefined}
+        aria-activedescendant={active >= 0 && active < hits.length ? `${id}-hit-${active}` : undefined}
+        aria-describedby={hits.length ? `${id}-keys` : undefined}
+        placeholder={t('ime.placeholder')} spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" />
       {#if text && !hits.length}
         <p class="ui-hint">{ready ? t('ime.none') : t('common.loading')}</p>
       {:else if hits.length}
         <p class="ui-hint">
           {#if !text}{t('ime.recent')}{:else}{kinds.map(kind => t(`ime.kind.${kind}`)).join(' · ')}{/if}
+          <span id={`${id}-keys`} class="keys"><kbd>↑</kbd><kbd>↓</kbd> · <kbd>Enter</kbd></span>
         </p>
-        <div class="hits" role="listbox" aria-label={t('ime.label')}>
+        <div id={`${id}-hits`} class="hits" role="listbox" aria-label={t('ime.label')}>
           {#each hits as hit, i (hit.char)}
             {@const sound = readingOf(hit.char, ui.reading)}
-            <button type="button" role="option" class="ui-tile" aria-selected={i === active} title={[sound, hit.note].filter(Boolean).join(' · ')}
-              onclick={() => put(hit.char)} onmouseenter={() => { active = i }}>
+            <button id={`${id}-hit-${i}`} type="button" role="option" tabindex="-1" class="ui-tile" aria-selected={i === active} title={[sound, hit.note].filter(Boolean).join(' · ')}
+              onclick={() => put(hit.char)} onkeydown={panelKeys} onmouseenter={() => { active = i }}>
               <G char={hit.char} />
               {#if sound}<span class="ui-tile-sound">{sound}</span>{/if}
-              {#if digitsPick && i < 9}<span class="n">{i + 1}</span>{/if}
             </button>
           {/each}
         </div>
@@ -201,6 +217,6 @@
   .hits{display:grid;grid-template-columns:repeat(8, 1fr);gap:2px;max-block-size:220px;overflow:auto}
   .hits .ui-tile{min-block-size:42px;padding:2px 1px;font-size:22px;position:relative;gap:0}
   .hits .ui-tile-sound{font-size:9px;line-height:1.1}
-  .hits .n{position:absolute;bottom:1px;left:2px;font:9px var(--ui-font-mono);color:var(--ui-color-ink-muted)}
+  .keys{float:right}
   .hits .ui-tile[aria-selected='true']{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
 </style>
