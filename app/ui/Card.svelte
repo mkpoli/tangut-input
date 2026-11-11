@@ -39,6 +39,8 @@
   /** @param {string | null} part */
   const partTerm = part => part ? (PART_TERMS[/** @type {keyof typeof PART_TERMS} */ (part)] ?? part) : ''
   const entry = $derived(ready && char ? ix.byChar.get(char) : undefined)
+  // A private-use glyph has no character record; its PUA row is the whole card.
+  const puaVariant = $derived(ready && char ? ix.puaUnencodedIndex.get(`U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase()}`) : null)
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const identifiers = $derived(ready && char ? identifierGroups(ix.identifiers.get(char) ?? []) : [])
   const pua = $derived(ready && char ? ix.pua.get(char) ?? [] : [])
@@ -214,6 +216,30 @@
     <p class="blank-line">{t('card.blank')}</p>
     <p class="ui-hint">{@html t('card.blankKeys')}</p>
   </div>
+{:else if puaVariant}
+  <article class="record pua-record">
+    <header class="head">
+      <div class="glyph-frame pua-glyph-frame"><span class="pua-card-glyph" lang="txg" aria-hidden="true">{char}</span></div>
+      <div class="facts">
+        <button class="cp ui-mono" type="button" title={t('card.copyIdentifier', { id: puaVariant.code })} onclick={() => copy(puaVariant.code, puaVariant.code)}>{puaVariant.code}</button>
+        <p class="gloss">{t('card.puaVariant')}</p>
+        <p class="meta">{t('card.puaNoBase')}</p>
+      </div>
+    </header>
+
+    <div class="use">
+      <button class="ui-button" data-size="sm" type="button" onclick={() => copy(puaVariant.code, puaVariant.code)}><Icon name="copy" size={14}/>{t('common.copy')} <span class="ui-mono">{puaVariant.code}</span></button>
+      <button class="ui-button" data-size="sm" type="button" onclick={() => copy(address, t('card.link'))}><Icon name="link" size={14}/>{t('card.copyLink')}</button>
+    </div>
+
+    <section>
+      <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.builtFrom')}</h3>
+      <p class="ui-formula pua-card-ids" title={puaVariant.ids}>{puaVariant.ids}</p>
+      {#if puaVariant.sources.length}<p class="ui-hint">{puaVariant.sources.join(' · ')}</p>{:else}<p class="ui-hint">{t('variants.puaNoSource')}</p>{/if}
+      <p class="ui-hint">{t('card.puaNote', { version: ix.puaSource?.version ?? '' })}</p>
+      <p class="more"><a href={link('variants') + '#pua'}><Icon name="arrow" size={13}/>{t('card.puaVariants')}</a></p>
+    </section>
+  </article>
 {:else}
   <article class="record">
     <header class="head">
@@ -629,6 +655,8 @@
   .glyph-frame::before{left:50%;top:9px;bottom:9px;width:1px}
   .glyph-frame::after{top:50%;left:9px;right:9px;height:1px}
   .glyph-frame :global(.ui-script){position:relative;z-index:1;font-size:88px}
+  .pua-glyph-frame :global(.pua-card-glyph){position:relative;z-index:1;font-family:'Tangut PUA',var(--tg-font);font-size:82px;line-height:1}
+  .pua-card-ids{font-size:24px;line-height:1.5;overflow-wrap:anywhere}
   .glyph-frame :global(.ui-nog){position:relative;z-index:1;font-size:var(--ui-text-sm);inline-size:3.4em;block-size:3.4em}
   .facts{display:grid;gap:var(--ui-space-2xs);min-inline-size:0}
   .cp{display:inline-flex;align-items:center;justify-self:start;min-block-size:24px;margin-inline-start:-6px;padding:2px 6px;border:0;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
@@ -728,6 +756,8 @@
     .head{gap:var(--ui-space-lg)}
     .glyph-frame{inline-size:96px;block-size:96px}
     .glyph-frame :global(.ui-script){font-size:72px}
+    .pua-glyph-frame :global(.pua-card-glyph){font-size:68px}
+    .pua-card-ids{font-size:20px}
     .gloss{font-size:var(--ui-text-lg)}
   }
 </style>

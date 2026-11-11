@@ -98,3 +98,22 @@ export function byEncodedPua(index, text) {
   const code = parsePuaQuery(text)
   return (code && index.get(code)) || null
 }
+
+/**
+ * The unencoded PUA rows by their exact IDS.
+ * @param {[code: string, ids: string, sources: string[]][]} rows
+ * @returns {Map<string, { code: string, ids: string, sources: string[] }>}
+ */
+export function indexPuaIds(rows) {
+  return new Map(rows.map(([code, ids, sources]) => [ids, { code, ids, sources }]))
+}
+
+/**
+ * The unencoded PUA row whose IDS is the query, or null.
+ * @param {Map<string, { code: string, ids: string, sources: string[] }>} index
+ * @param {string} text
+ */
+export function byPuaIds(index, text) {
+  const ids = text.trim()
+  return ids ? index.get(ids) ?? null : null
+}

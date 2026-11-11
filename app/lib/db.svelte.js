@@ -2,7 +2,7 @@
 // The indexes are plain (not reactive) objects; only the load status is state.
 import { indexTibetan, foldScript } from './tibetan.js'
 import { indexTibetanSeta } from './seta.js'
-import { indexTangutPua, indexUnencodedPua, indexEncodedPua } from './pua.js'
+import { indexTangutPua, indexUnencodedPua, indexEncodedPua, indexPuaIds } from './pua.js'
 import { indexIdentifiers } from './identifiers.js'
 import { englishGloss } from './gloss.js'
 import { loadCodes, loadEntries, loadStrokes, loadAttestation, loadSamples, loadSijiao, loadRhymes, loadCcamcIndex, loadTibetan, loadTibetanRhymes, loadGongRhymes, loadChineseRhymes, loadTibetanHands, loadDownes, loadLeilin, loadTangutNames, loadPartNames, loadShapeHints, loadFrequency, loadSupplement, loadReadingSources, loadIdentifiers, loadTibetanSeta, loadTangutPua, loadZzz } from './data.js'
@@ -88,6 +88,7 @@ export const ix = {
   /** The PUA table and its source record. @type {import('./data.js').TangutPua | null} */ puaSource: null,
   /** PUA rows without an encoded base character: [code, IDS, sources][]. @type {[string, string, string[]][]} */ puaUnencoded: [],
   /** The same rows by code. @type {Map<string, { code: string, ids: string, sources: string[] }>} */ puaUnencodedIndex: new Map(),
+  /** The same rows by their exact IDS. @type {Map<string, { code: string, ids: string, sources: string[] }>} */ puaIdsIndex: new Map(),
   /** PUA rows that Unicode 18.0 gives a character. @type {[string, string, string[], string][]} */ puaEncoded: [],
   /** The same rows by code. @type {Map<string, { code: string, ids: string, sources: string[], point: string, char: string }>} */ puaEncodedIndex: new Map(),
   /** Alan Downes's English gloss by character. @type {Map<string, string>} */ downes: new Map(),
@@ -131,6 +132,7 @@ export async function load() {
     ix.puaSource = pua
     ix.puaUnencoded = pua?.unencoded ?? []
     ix.puaUnencodedIndex = indexUnencodedPua(ix.puaUnencoded)
+    ix.puaIdsIndex = indexPuaIds(ix.puaUnencoded)
     ix.puaEncoded = pua?.encodedInUnicode18 ?? []
     ix.puaEncodedIndex = indexEncodedPua(ix.puaEncoded)
     const recorded = supplement?.characters ?? []

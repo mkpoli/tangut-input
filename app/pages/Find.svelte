@@ -10,7 +10,7 @@
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
-  import { byCode, byName, byShapeSpelling, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byTangutPua, byUnencodedPua, byEncodedPua, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byShapeSpelling, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byTangutPua, byUnencodedPua, byEncodedPua, byPuaIds, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
   import { parseIdentifier } from '../lib/identifiers.js'
@@ -26,6 +26,14 @@
     if (!ready || !text) return []
     /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, shown?: number, items: { char: string, sub: string, extra?: string, sound?: string, tibetan?: boolean }[], pua?: { code: string, ids: string, sources: string[], point?: string, char?: string } }[]} */
     const out = []
+    // A PUA variant's IDS is its own record; it is not in the description index because there is
+    // no character to attach it to. Check it before the recorded descriptions so its exact string
+    // always names the variant.
+    const puaIds = byPuaIds(text)
+    if (puaIds) {
+      out.push({ key: 'pua-ids', title: t('find.group.pua'), total: 1, shown: 1, items: [], pua: puaIds })
+      return out
+    }
     // A whole description or its opening is read against both recorded and editorial forms.
     const described = byDescription(text)
     if (described.length) {
@@ -210,14 +218,18 @@
               </li>
             {/each}
           </ol>
-        {:else if group.key === 'pua-unencoded' && group.pua}
+        {:else if (group.key === 'pua-unencoded' || group.key === 'pua-ids') && group.pua}
+          {@const pua = group.pua}
           <div class="pua-hit">
-            <span class="pua-hit-glyph" lang="txg" aria-hidden="true">{puaCharacter(group.pua.code)}</span>
+            <span class="pua-hit-glyph" lang="txg" aria-hidden="true">{puaCharacter(pua.code)}</span>
             <div class="pua-hit-text">
-              <span class="pua-hit-code ui-mono">{group.pua.code}</span>
-              <span class="ui-formula pua-hit-ids" title={group.pua.ids}>{group.pua.ids}</span>
-              <span class="ui-hint">{group.pua.sources.length ? group.pua.sources.join(' · ') : t('variants.puaNoSource')}</span>
-              <a class="ui-more-link" href={link('variants') + '#pua'} onclick={async event => { event.preventDefault(); go('variants'); await tick(); location.hash = 'pua' }}>{t('card.puaVariants')}<Icon name="arrow" size={13}/></a>
+              <span class="pua-hit-code ui-mono">{pua.code}</span>
+              <span class="ui-formula pua-hit-ids" title={pua.ids}>{pua.ids}</span>
+              <span class="ui-hint">{pua.sources.length ? pua.sources.join(' · ') : t('variants.puaNoSource')}</span>
+              <span class="pua-hit-actions">
+                <button class="ui-more-link" type="button" onclick={() => choose(puaCharacter(pua.code))}>{t('find.openVariant')}<Icon name="arrow" size={13}/></button>
+                <a class="ui-more-link" href={link('variants') + '#pua'} onclick={async event => { event.preventDefault(); go('variants'); await tick(); location.hash = 'pua' }}>{t('card.puaVariants')}<Icon name="arrow" size={13}/></a>
+              </span>
             </div>
           </div>
         {:else if group.key === 'pua-encoded' && group.pua}
@@ -266,6 +278,7 @@
   .pua-hit-text{display:flex;flex-direction:column;align-items:flex-start;gap:var(--ui-space-2xs);min-width:0}
   .pua-hit-code{color:var(--ui-color-accent-ink)}
   .pua-hit-ids{font-size:18px;line-height:1.5}
+  .pua-hit-actions{display:flex;flex-wrap:wrap;gap:var(--ui-space-sm)}
   .pua-hit .ui-more-link{border:0;background:none;padding:0;font:inherit;font-size:var(--ui-text-xs);color:var(--ui-color-accent-ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   .ui-tile-sound[lang='bo']{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:14px;line-height:1.7;overflow:visible;text-overflow:clip;flex:none}
 </style>
