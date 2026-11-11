@@ -86,7 +86,7 @@ export function attachPad(source) {
 export function put(char, context = {}) {
   const drawing = pad?.(char, context.place ?? null)
   if (!drawing) {
-    record({ type: 'pick', char, finder: route.page || 'find', query: route.q || null, place: context.place ?? null, locale: i18n.locale })
+    record({ type: 'pick', char, finder: route.page || 'find', place: context.place ?? null, locale: i18n.locale })
   }
   insert(char)
   say(t('toast.added', { char }))
