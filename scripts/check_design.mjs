@@ -540,7 +540,7 @@ await step('the bar keeps one row at 1280 and two at 901', async () => {
 })
 await DESKTOP_APP.close()
 
-await step('the input method takes the digits of a code and picks after letters', async () => {
+await step('the input method types digits and picks with arrows and Enter', async () => {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
   const page = await context.newPage()
   await page.goto(`${APP}/`)
@@ -560,7 +560,12 @@ await step('the input method takes the digits of a code and picks after letters'
   assert.equal(await text(), '')
   await box.fill('msb')
   await page.keyboard.press('1')
-  assert.notEqual(await text(), '', 'a digit picks after a Cangjie code')
+  assert.equal(await box.inputValue(), 'msb1', 'digits remain available after letters')
+  await box.fill('msb')
+  await page.locator('.ime [role=option]').first().waitFor()
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('Enter')
+  assert.notEqual(await text(), '', 'arrows and Enter pick a candidate')
   await context.close()
 })
 
