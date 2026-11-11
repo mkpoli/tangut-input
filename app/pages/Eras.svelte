@@ -1,4 +1,5 @@
 <script>
+  import { isImeKey } from '../lib/keyboard.js'
   // The era names of the Western Xia in order, each with its Tangut form where one is recorded and
   // what the form rests on: a coin, a Tangut text, only the calendar the list is built from, or a post.
   // The data is `app/data/tangut-eras.json`, built by `scripts/build_tangut_eras.py`. Below them, the
@@ -233,7 +234,7 @@
         if (!preview.pinned && (rect.bottom < 0 || rect.top > innerHeight)) closePreview()
       })
     }
-    const onKey = (/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && preview) closePreview() }
+    const onKey = (/** @type {KeyboardEvent} */ event) => { if (!isImeKey(event) && event.key === 'Escape' && preview) closePreview() }
     const onPointerDown = (/** @type {PointerEvent} */ event) => {
       if (!preview?.pinned) return
       const target = event.target

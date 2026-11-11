@@ -2,6 +2,7 @@
   // The frame: the bar with the finders, the text being written, the finder of the page, and the
   // card of the open character beside it (a sheet over it on a phone).
   import { tick } from 'svelte'
+  import { isImeKey } from './lib/keyboard.js'
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES, GROUPS, MORE, PRIMARY } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, setReading } from './lib/ui.svelte.js'
@@ -107,6 +108,7 @@
 
   /** `/` focuses the page's input from anywhere outside a field. @param {KeyboardEvent} event */
   function keys(event) {
+    if (isImeKey(event)) return
     const target = /** @type {HTMLElement} */ (event.target)
     const typing = target.closest('input, textarea, [contenteditable]')
     if (event.key === '/' && !typing) {

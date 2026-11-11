@@ -1,4 +1,5 @@
 <script>
+  import { isImeKey } from '../lib/keyboard.js'
   // A short way into the finders from the Fanqie field. The full pages are laid out for their own
   // input; this panel keeps only the input and the candidates, so two characters can be chosen
   // without leaving the spelling they belong to. A pick goes into the fanqie, never into the text.
@@ -271,7 +272,7 @@
 
   /** `/` focuses this panel's field while the panel is open. @param {KeyboardEvent} event */
   function panelKeys(event) {
-    if (event.isComposing || event.key !== '/' || event.defaultPrevented) return
+    if (isImeKey(event) || event.key !== '/' || event.defaultPrevented) return
     const target = /** @type {HTMLElement} */ (event.target)
     if (target.closest('input, textarea, [contenteditable]')) return
     event.preventDefault()
@@ -303,9 +304,24 @@
     clearDraw()
   }
 
+  /** @param {Event & { currentTarget: HTMLInputElement }} event */
+  function typedCode(event) {
+    if (event instanceof InputEvent && event.isComposing) return
+    const field = event.currentTarget
+    const clean = mode === 'cangjie'
+      ? (/** @type {string} */ value) => value.toLowerCase().replace(/[^a-z]/g, '').slice(0, 12)
+      : (/** @type {string} */ value) => value.replace(/[^0-9]/g, '').slice(0, 6)
+    const caret = clean(field.value.slice(0, field.selectionStart ?? 0)).length
+    const value = clean(field.value)
+    queries[mode] = value
+    if (field.value === value) return
+    field.value = value
+    field.setSelectionRange(caret, caret)
+  }
+
   /** @param {KeyboardEvent} event */
   function searchKey(event) {
-    if (event.isComposing) return
+    if (isImeKey(event)) return
     if (event.key === 'Enter' && hits.length) {
       event.preventDefault()
       pick(hits[0], 0)
@@ -436,7 +452,7 @@
       close(false)
     }
     const key = (/** @type {KeyboardEvent} */ event) => {
-      if (event.isComposing) return
+      if (isImeKey(event)) return
       if (event.key === 'Escape') {
         event.preventDefault()
         close()
@@ -506,21 +522,11 @@
         {:else if mode === 'cangjie'}
           <input class="ui-input ui-mono" data-size="lg" value={queries.cangjie} spellcheck="false" autocomplete="off" autocapitalize="off"
             aria-label={t('cangjie.label')} placeholder={t('cangjie.placeholder')}
-            oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => {
-              const value = event.currentTarget.value.toLowerCase().replace(/[^a-z]/g, '').slice(0, 12)
-              event.currentTarget.value = value
-              queries.cangjie = value
-            }}
-            onkeydown={searchKey} />
+            oninput={typedCode} oncompositionend={typedCode} onkeydown={searchKey} />
         {:else if mode === 'sijiao'}
           <input class="ui-input ui-mono" data-size="lg" value={queries.sijiao} spellcheck="false" autocomplete="off" inputmode="numeric"
             aria-label={t('sijiao.label')} placeholder={t('sijiao.placeholder')}
-            oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => {
-              const value = event.currentTarget.value.replace(/[^0-9]/g, '').slice(0, 6)
-              event.currentTarget.value = value
-              queries.sijiao = value
-            }}
-            onkeydown={searchKey} />
+            oninput={typedCode} oncompositionend={typedCode} onkeydown={searchKey} />
         {:else if mode === 'reading'}
           <input class="ui-input reading-field" data-size="lg" value={queries.reading} spellcheck="false" autocomplete="off" autocapitalize="off"
             aria-label={t('reading.label')} placeholder={t('reading.placeholder')}
