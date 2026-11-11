@@ -1,7 +1,7 @@
 <script>
   // The frame: the bar with the finders, the text being written, the finder of the page, and the
   // card of the open character beside it (a sheet over it on a phone).
-  import { tick } from 'svelte'
+  import { tick, untrack } from 'svelte'
   import { db, load } from './lib/db.svelte.js'
   import { route, go, PAGES, GROUPS, MORE, PRIMARY } from './lib/route.svelte.js'
   import { ui, applyTangut, applyTheme, setReading } from './lib/ui.svelte.js'
@@ -58,6 +58,18 @@
   let wide = $state(matchMedia('(min-width: 901px)').matches)
   /** @type {HTMLDialogElement | null} */
   let sheet = $state(null)
+  /** @type {HTMLDialogElement | null} */
+  let cardDialog = $state(null)
+  let cardBackdropPressed = false
+  let cardClosing = $state(false)
+  let cardVisible = $state(false)
+  let cardCloseGeneration = 0
+  // A transferred message stays readable but should not be announced a second time.
+  let cardBoundary = $state(0)
+  let toastBoundary = $derived.by(() => { void toast.id; return untrack(() => cardBoundary) })
+  let toastLive = $derived(toastBoundary === cardBoundary)
+  /** @type {HTMLElement | null} */
+  let cardOpeningTrigger = null
   /** The control that opened the menu, so closing it puts the keyboard back there. @type {HTMLElement | null} */
   let menuTrigger = $state(null)
   /** Whether closing the menu should return focus to its button; a link that opens a page keeps the page's focus. */
@@ -76,8 +88,92 @@
     if ((!menu || wide) && sheet.open) sheet.close()
   })
 
+  // A touch click does not necessarily focus its button before the dialog opens.
+  $effect(() => {
+    const capture = (/** @type {MouseEvent} */ event) => {
+      if (wide || ui.sheet || !(event.target instanceof Element)) return
+      const trigger = /** @type {HTMLElement | null} */ (event.target.closest('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+      cardOpeningTrigger = trigger
+      setTimeout(() => { if (cardOpeningTrigger === trigger) cardOpeningTrigger = null }, 0)
+    }
+    addEventListener('click', capture, true)
+    return () => removeEventListener('click', capture, true)
+  })
+
+  // Keep the dialog modal until its exit finishes, so the background cannot receive focus beneath it.
+  $effect(() => {
+    const dialog = cardDialog
+    const opening = ui.sheet
+    const generation = ++cardCloseGeneration
+    if (!dialog) return
+    if (opening) {
+      cardVisible = true
+      cardClosing = false
+      if (!dialog.open) {
+        ++cardBoundary
+        if (cardOpeningTrigger?.isConnected) cardOpeningTrigger.focus()
+        cardOpeningTrigger = null
+        dialog.showModal()
+      }
+    } else if (dialog.open) {
+      cardClosing = true
+      tick().then(async () => {
+        const animations = dialog.getAnimations().filter(animation =>
+          animation instanceof CSSTransition && animation.transitionProperty === 'transform')
+        let timer
+        await Promise.race([
+          Promise.allSettled(animations.map(animation => animation.finished)),
+          new Promise(resolve => { timer = setTimeout(resolve, 1000) }),
+        ])
+        clearTimeout(timer)
+        if (generation !== cardCloseGeneration || !dialog.isConnected || ui.sheet) return
+        dialog.close()
+        ++cardBoundary
+        cardClosing = false
+        cardVisible = false
+      })
+    }
+  })
+
+  // A character link can disappear when its destination replaces the card contents.
+  $effect(() => {
+    void route.c
+    if (!ui.sheet || !cardDialog) return
+    const dialog = cardDialog
+    tick().then(() => {
+      if (dialog.open && !dialog.contains(document.activeElement)) {
+        dialog.querySelector('button')?.focus()
+      }
+    })
+  })
+
+  /** @param {PointerEvent} event */
+  function outsideCard(event) {
+    if (!cardDialog) return false
+    const rect = cardDialog.getBoundingClientRect()
+    return event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom
+  }
+
   // Pages that are read rather than searched: they take the full width and carry no character card.
   const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic', 'dataset', 'codes'])
+
+  // A layout or page change removes the dialog without waiting for its exit animation.
+  function resetCard() {
+    ++cardCloseGeneration
+    if (cardDialog?.open) {
+      cardDialog.close()
+      ++cardBoundary
+    }
+    cardClosing = false
+    cardVisible = false
+    cardBackdropPressed = false
+    ui.sheet = false
+  }
+
+  // A reading page removes the card; do not reopen its old sheet on history navigation.
+  $effect.pre(() => {
+    if (READING_PAGES.includes(route.page)) resetCard()
+  })
 
   /** @param {MouseEvent} event @param {import('./lib/route.svelte.js').Page} page @returns {boolean} whether the page changes */
   function nav(event, page) {
@@ -115,7 +211,6 @@
     }
     if (event.key === 'Escape') {
       if (menu) closeMenu()
-      else if (ui.sheet) ui.sheet = false
       if (settingsOpen) closeSettings()
     }
   }
@@ -184,7 +279,11 @@
   // A menu belongs to the layout it was opened in: a breakpoint change takes it with it.
   $effect(() => {
     const query = matchMedia('(min-width: 901px)')
-    const sync = () => { wide = query.matches; menu = null }
+    const sync = () => {
+      resetCard()
+      wide = query.matches
+      menu = null
+    }
     query.addEventListener('change', sync)
     return () => query.removeEventListener('change', sync)
   })
@@ -348,10 +447,17 @@
         {/if}
       </main>
       {#if !READING_PAGES.includes(route.page)}
-        {#if ui.sheet}<button type="button" class="scrim" tabindex="-1" aria-hidden="true" onclick={() => { ui.sheet = false }}></button>{/if}
-        <aside class="card" class:open={ui.sheet} aria-label={t('card.label')}>
-          <Card />
-        </aside>
+        {#if wide}
+          <aside class="card" aria-label={t('card.label')}><Card /></aside>
+        {:else}
+          <dialog class="card" bind:this={cardDialog} data-closing={cardClosing ? '' : undefined} aria-label={t('card.label')}
+            oncancel={event => { event.preventDefault(); ui.sheet = false }}
+            onpointerdown={event => { cardBackdropPressed = outsideCard(event) }}
+            onpointerup={event => { if (cardBackdropPressed && outsideCard(event)) ui.sheet = false; cardBackdropPressed = false }}>
+            <Card sheetVisible={ui.sheet || cardVisible} />
+            <div class="toast" role="status" aria-live={toastLive ? 'polite' : 'off'}>{#if cardVisible && toast.message}{#key toast.id}<span class="ui-toast">{toast.message}</span>{/key}{/if}</div>
+          </dialog>
+        {/if}
       {/if}
     </div>
   {/if}
@@ -408,7 +514,7 @@
 
   <SponsorDialog bind:open={sponsorOpen} />
 
-  <div class="toast" role="status" aria-live="polite">{#if toast.message}<span class="ui-toast">{toast.message}</span>{/if}</div>
+  <div class="toast" role="status" aria-live={toastLive ? 'polite' : 'off'}>{#if !cardVisible && toast.message}{#key toast.id}<span class="ui-toast">{toast.message}</span>{/key}{/if}</div>
 </div>
 
 <style>
@@ -464,7 +570,6 @@
   .body{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 400px;align-items:start}
   .body.full{grid-template-columns:minmax(0,1fr)}
   .finder{min-inline-size:0;padding:var(--ui-space-3xl) var(--ui-space-4xl) 72px}
-  .scrim{display:none}
   .card{position:sticky;top:var(--topbar-h);block-size:calc(100dvh - var(--topbar-h));overflow:auto;border-inline-start:1px solid var(--ui-color-border);background:var(--ui-color-surface);overscroll-behavior:contain}
   .fault{margin:64px auto;max-inline-size:36em;color:var(--ui-color-danger)}
   .foot{margin-top:var(--ui-space-4xl);font-size:var(--ui-text-2xs);color:var(--ui-color-ink-soft)}
@@ -509,9 +614,8 @@
     .reading :global(.ui-select){inline-size:142px;font-size:var(--ui-text-2xs)}
     .body{grid-template-columns:minmax(0,1fr)}
     .finder{padding:var(--ui-space-xl) var(--ui-space-lg) 96px}
-    .scrim{display:block;position:fixed;inset:0;z-index:var(--ui-z-modal);padding:0;border:0;background:var(--ui-color-overlay)}
-    .card{position:fixed;inset:auto 0 0;block-size:min(76dvh,calc(100dvh - 96px));z-index:var(--ui-z-modal);border:0;border-start-start-radius:var(--ui-radius-lg);border-start-end-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow-2);transform:translateY(100%);transition:transform var(--ui-duration) var(--ui-ease);visibility:hidden}
-    .card.open{transform:none;visibility:visible}
+    dialog.card{position:fixed;inset:auto 0 0;margin:0;padding:0;inline-size:100%;max-inline-size:none;block-size:min(76dvh,calc(100dvh - 96px));max-block-size:none;border:0;border-start-start-radius:var(--ui-radius-lg);border-start-end-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow-2);color:var(--ui-color-ink)}
+    dialog.card::backdrop{background:var(--ui-color-overlay);overflow:hidden;overscroll-behavior:contain}
     .name{display:none}
     .tabs{position:fixed;inset-inline:0;bottom:0;z-index:var(--ui-z-chrome);display:flex;gap:2px;padding:var(--ui-space-xs) var(--ui-space-sm) calc(var(--ui-space-xs) + env(safe-area-inset-bottom));background:var(--ui-color-surface);border-top:1px solid var(--ui-color-border)}
     .tabs .tab{flex:1 1 0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:7px 3px;border:0;border-radius:var(--ui-radius-sm);color:var(--ui-color-ink-soft);background:none;text-decoration:none;font-family:inherit;font-size:var(--ui-text-xs);font-weight:var(--ui-weight-medium);white-space:nowrap;cursor:pointer}
@@ -519,5 +623,9 @@
     .tabs .tab.on{background:var(--ui-color-accent-soft);color:var(--ui-color-accent-ink)}
     .toast{bottom:calc(76px + env(safe-area-inset-bottom))}
   }
-  @media (prefers-reduced-motion:reduce){.card{transition:none}}
+  @media (prefers-reduced-motion:no-preference){
+    dialog.card{transition:transform var(--ui-duration) var(--ui-ease)}
+    dialog.card[data-closing]{transform:translateY(100%)}
+    @starting-style{dialog.card[open]{transform:translateY(100%)}}
+  }
 </style>
