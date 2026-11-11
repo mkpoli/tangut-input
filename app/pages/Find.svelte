@@ -4,6 +4,7 @@
   // tried as a Cangjie code, a reading and an English meaning at once, each in its own group; a
   // code point opens its range; Chinese or Japanese is read as a meaning.
   import { tick } from 'svelte'
+  import { isImeKey } from '../lib/keyboard.js'
   import { db, ix, gloss, codePoint, readingOf } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import TileNote from '../ui/TileNote.svelte'
@@ -118,7 +119,7 @@
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
-    if (!flat.length) return
+    if (isImeKey(event) || !flat.length) return
     const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key]
     if (step && !(event.key.startsWith('ArrowL') || event.key.startsWith('ArrowR')) || (step && active >= 0)) {
       event.preventDefault()
