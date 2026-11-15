@@ -84,6 +84,9 @@ decomposition, not a decomposition algorithm. Two layers are missing:
 2. **The elision.** A bare source may be any part, and only the head says which. The code is
    complete only when the elided terms are supplied by a reader or by the head's glyph.
 
+The input question is separate: [`wenhai-input.md`](wenhai-input.md) records the code-space
+measurement and why the construction is not a keyboard.
+
 BabelStone's own warning applies to the result: the 文海 analysis "does not always make sense", and
 whether it reflects the script's design or a later rationalisation is open. The 60 rows are
 BabelStone's transcription of 文海研究 (1983), not the manuscript, and none of them carries a

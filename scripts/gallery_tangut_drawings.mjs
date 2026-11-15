@@ -31,6 +31,7 @@ for (const session of readdirSync(DATA).sort()) {
     drawings.push({
       session,
       name,
+      author: record.author ?? (record.label === 'picked' ? 'live reader' : 'quiz writer'),
       char: record.char,
       at: record.at ?? '',
       kind: record.kind ?? '',
@@ -68,16 +69,17 @@ const html = `<!doctype html>
 </style>
 </head>
 <body>
-<h1>Drawings made by hand</h1>
-<p class="lead">Every drawing the pad kept, beside the character it was made for. The red line is what
-the reader drew; the black glyph is the printed form it was matched against. Rounds are the pad's own
-sessions; a quiz round draws each character until it is found.</p>
+<h1>Drawings made on the pad</h1>
+<p class="lead">Every drawing in the corpus, beside the character it was made for: quiz rounds with the
+answer known, drawings from the live pad with the character its reader picked, and the reviewer's own.
+Strokes were drawn with a mouse, a trackpad or a stylus at one width, by visitors rather than by
+calligraphers, to test recognition for a search box.</p>
 <p class="summary"><span>${drawings.length} drawings</span><span>${sessions.size} rounds</span>
 <span>${new Set(drawings.map(drawing => drawing.char)).size} characters</span></p>
 <div class="grid">
 ${drawings.map(drawing => `<figure>
   <div class="pair"><span class="drawn">${drawing.svg}</span><span class="target" lang="txg">${drawing.char}</span></div>
-  <figcaption><span>${drawing.session.slice(-8)} · ${drawing.count} strokes</span><span>${drawing.at.slice(11, 16)}</span></figcaption>
+  <figcaption><span>${drawing.author}</span><span>${drawing.count} strokes · ${drawing.at.slice(5, 10)}</span></figcaption>
 </figure>`).join('\n')}
 </div>
 </body>
