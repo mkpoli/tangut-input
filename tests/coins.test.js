@@ -81,3 +81,23 @@ test('coin labels and uncertainty notes exist in every interface language', () =
   }
   for (const id of ['fusheng', 'zhenguan', 'zhengde']) expect(en[`eras.coins.note.${id}`]).toBeTruthy()
 })
+
+test('preview images stay on West’s server and keep photographs apart from drawings', () => {
+  const kinds = Object.fromEntries(COINS.coins.map(coin => [coin.id, coin.images.map(image => image.kind)]))
+  expect(kinds).toEqual({
+    fusheng: ['photograph', 'drawing', 'drawing'],
+    daan: ['drawing'],
+    zhenguan: ['photograph', 'drawing'],
+    zhengde: ['photograph', 'drawing'],
+    qianyou: ['drawing'],
+    tianqing: ['photograph', 'drawing'],
+  })
+  for (const coin of COINS.coins) for (const image of coin.images) {
+    expect(image.src).toMatch(/^https:\/\/www\.babelstone\.co\.uk\/Tangut\/Images\/[A-Za-z]+\.jpg$/)
+    expect(image.width).toBeGreaterThan(0)
+    expect(image.height).toBeGreaterThan(0)
+    expect(['photograph', 'drawing']).toContain(image.kind)
+    if (image.kind === 'drawing') expect(coin.interpretations.map(row => row.name)).toContain(image.label)
+  }
+  expect(COINS.coins[0].images.slice(1).map(image => image.label)).toEqual(['福聖寶錢', '稟德寶錢'])
+})

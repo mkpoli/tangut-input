@@ -27,6 +27,11 @@
         {"name": "福聖寶錢", "tangut": "𗼃𗼕𘏨𘔭"},
         {"name": "稟德寶錢", "tangut": "𗣼𗧯𘏨𘔭"}
       ],
+      "images": [
+        {"kind": "photograph", "label": "Zeno #16068", "width": 272, "height": 271, "src": "https://www.babelstone.co.uk/Tangut/Images/FushengBaoqian.jpg"},
+        {"kind": "drawing", "label": "福聖寶錢", "width": 232, "height": 232, "src": "https://www.babelstone.co.uk/Tangut/Images/FushengBaoqianCoin.jpg"},
+        {"kind": "drawing", "label": "稟德寶錢", "width": 232, "height": 232, "src": "https://www.babelstone.co.uk/Tangut/Images/BingdeBaoqianCoin.jpg"}
+      ],
       "example": {"label": "Zeno #16068", "url": "http://www.zeno.ru/showphoto.php?photo=16068"}
     },
     {
@@ -35,6 +40,9 @@
       "kind": "clear",
       "interpretations": [
         {"name": "大安寶錢", "tangut": "𘜶𗵐𘏨𘔭"}
+      ],
+      "images": [
+        {"kind": "drawing", "label": "大安寶錢", "width": 232, "height": 232, "src": "https://www.babelstone.co.uk/Tangut/Images/DaanBaoqianCoin.jpg"}
       ],
       "example": {"label": "Zeno #1084", "url": "http://www.zeno.ru/showphoto.php?photo=1084"}
     },
@@ -46,6 +54,10 @@
         {"name": "貞觀寶錢", "tangut": "𗣼𘝯𘏨𘔭"},
         {"name": "觀德寶錢", "tangut": "𗣼𘝯𘏨𘔭"}
       ],
+      "images": [
+        {"kind": "photograph", "label": "Coin forum (hqcoin.com)", "width": 290, "height": 291, "src": "https://www.babelstone.co.uk/Tangut/Images/ZhenguanBaoqian.jpg"},
+        {"kind": "drawing", "label": "觀德寶錢", "width": 232, "height": 232, "src": "https://www.babelstone.co.uk/Tangut/Images/ZhenguanBaoqianCoin.jpg"}
+      ],
       "example": {"label": "Zeno #78", "url": "http://www.zeno.ru/showphoto.php?photo=78"}
     },
     {
@@ -56,6 +68,10 @@
         {"name": "正德寶錢", "tangut": "𗣼𘇚𘏨𘔭"},
         {"name": "治德寶錢", "tangut": "𗣼𘇚𘏨𘔭"}
       ],
+      "images": [
+        {"kind": "photograph", "label": "Coin forum (hqcoin.com)", "width": 300, "height": 311, "src": "https://www.babelstone.co.uk/Tangut/Images/ZhengdeBaoqian.jpg"},
+        {"kind": "drawing", "label": "治德寶錢", "width": 232, "height": 232, "src": "https://www.babelstone.co.uk/Tangut/Images/ZhengdeBaoqianCoin.jpg"}
+      ],
       "example": null
     },
     {
@@ -65,6 +81,9 @@
       "interpretations": [
         {"name": "乾祐寶錢", "tangut": "𘀗𘑨𘏨𘔭"}
       ],
+      "images": [
+        {"kind": "drawing", "label": "乾祐寶錢", "width": 232, "height": 232, "src": "https://www.babelstone.co.uk/Tangut/Images/QianyouBaoqianCoin.jpg"}
+      ],
       "example": {"label": "Zeno #16071", "url": "http://www.zeno.ru/showphoto.php?photo=16071"}
     },
     {
@@ -73,6 +92,10 @@
       "kind": "clear",
       "interpretations": [
         {"name": "天慶寶錢", "tangut": "𘓺𘅝𘏨𘔭"}
+      ],
+      "images": [
+        {"kind": "photograph", "label": "Zeno #1332", "width": 300, "height": 295, "src": "https://www.babelstone.co.uk/Tangut/Images/TianqingBaoqian.jpg"},
+        {"kind": "drawing", "label": "天慶寶錢", "width": 232, "height": 232, "src": "https://www.babelstone.co.uk/Tangut/Images/TianqingBaoqianCoin.jpg"}
       ],
       "example": {"label": "Zeno #1332", "url": "http://www.zeno.ru/showphoto.php?photo=1332"}
     }

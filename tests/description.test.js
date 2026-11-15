@@ -59,7 +59,8 @@ test('recorded and editorial descriptions and their prefixes find the source cha
   const data = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-entries.json.gz', import.meta.url))).toString())
   const source = data.rows.map(row => ({ char: row[0], composition: row[1] ?? undefined }))
   const sourceIndex = indexDescriptions(source, indexIdsDescriptions(source))
-  for (const query of ['⿱𘠀⿲𘨷𘨷𘠢', '⿱𘠀⿲𘘤𘘤𘠢', '⿱𘠀⿲𘨷', '⿱𘠀⿲𘘤']) {
+  // The recorded tree and the editorial two-part cut, each whole and as an opening.
+  for (const query of ['⿱𘠀⿲𘨷𘨷𘠢', '⿱𘠀⿰𘙌𘠢', '⿱𘠀⿲𘨷', '⿱𘠀⿰𘙌']) {
     expect(describedBy(sourceIndex, query)).toContain('𗀮')
   }
 })

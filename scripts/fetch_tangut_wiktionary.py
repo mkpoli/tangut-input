@@ -6,8 +6,8 @@
 
 The five reconstruction tables are Lua modules under ``Module:txg/data/``; fetching the module
 instead of 6,144 pages gives the same values with one request each. The Japanese definitions come
-from the ja.wiktionary pages themselves, in batches of 50 titles. Chinese Wiktionary defines few
-Tangut characters (118 in its dump of 2026-11-01), so the site links to CCAMC for meanings in Chinese rather than copying them.
+from the ja.wiktionary pages themselves, in batches of 50 titles. Chinese definitions are extracted
+from the pinned dump by ``scripts/extract_tangut_chinese.py``.
 
     uv run scripts/fetch_tangut_wiktionary.py
 
