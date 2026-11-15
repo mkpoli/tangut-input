@@ -1,0 +1,30 @@
+# canvas 40 (folio 35), band 1, both leaves; 6 entry groups, 24 columns; index 1 = rightmost column of the right leaf, running right to left across the opening; columns 1-12 right leaf, 13-24 left leaf
+40	1	1	transcription	日能裴責		side=r; certain; small 知 printed beside 日, small circle ｡ beside 能 裴 責
+40	1	2	tangut		U+1725B U+17DEB U+17182 U+17211	side=r; 日(知)→𗉛 音示（日知）, 能→𗷫 音能, 裴→𗆂 音裴, 責→𗈑 音自（尼則）; each confirmed against the print at 3x; certain
+40	1	3	gloss	煩惱纏縛		side=r; certain
+40	1	4	spelling		U+173C6 U+18567 U+17291 U+17951	side=r; 煩→𗏆 音梵 certain (sole candidate, shape identical), 惱→𘕧 音納、腦 certain, 纏→𗊑 音贊 probable (shape is a clean match, top of 6047 by shape, but the reading does not fit 纏; no 闡/禪/纏-reading candidate matches the printed form), 縛→𗥑 音富 certain
+-
+40	1	5	transcription	斡娘你荅		side=r; certain; 1st char has 斗 on the right, so 斡 not 幹; small circle ｡ beside 你
+40	1	6	tangut		U+17D7A U+17149 U+17936 U+176FB	side=r; 斡→𗵺 音斡 certain, 娘→𗅉 音娘 probable (𗅾 U+1717E, 娘羅切, is the competing shape; 𗅉 scores higher against the print and its 直音 matches), 你→𗤶 音你 certain, 荅→𗛻 音達 certain
+40	1	7	gloss	逐物心動		side=r; certain
+40	1	8	spelling		U+172D0 U+1825D U+17C69 U+17E58	side=r; 逐→𗋐 音逐 certain; 物→𘉝 音那 probable (best shape of all 6047 by a wide margin, but the reading does not fit 物; no 勿/物-reading candidate matches); 心→𗱩 音寧 probable (𘛦 U+186E6 音心 fits the gloss, but its structure is ⿰ while 𗱩 and the print are ⿱, with the top stroke spanning the whole width; the reading does not fit 心); 動→𗹘 音動 certain. The 動 slot holds a second, smaller character to the right of 𗹘, left open — see row 8b
+-
+40	1	9	transcription	路怛張皮		side=r; certain; 2nd char is 忄+旦
+40	1	10	tangut		U+1852B U+17DFA U+17406 U+177FB	side=r; 路→𘔫 音路 certain (𗘝 U+1761D shares the reading but not the form), 怛→𗷺 名怛切 音馬 probable, 張→𗐆 音章 certain, 皮→𗟻 音皮 certain
+40	1	11	gloss	以貧為醜		side=r; certain
+40	1	12	spelling		U+18625 U+17B21 U+180E1 U+18064	side=r; 以→𘘥 音夷 probable (𘘣 U+18623 is all but identical in both fonts; the two differ only in their first component), 貧→𗬡 比賓切 音頻 certain, 為→𘃡 音為 probable (𘐞 U+1841E and 𘎃 U+18383 score alike; 𘃡 has the matching 直音), 醜→𘁤 音醜 certain
+-
+40	1	13	transcription	桑娘屈割		side=l; clean impression; no small characters or circles
+40	1	14	tangut		U+18555 U+18284 U+17232 U+1721C	side=l; 桑→𘕕 西當切 音桑, 娘→𘊄 音娘, 屈→𗈲 枯擦切 音屈, 割→𗈜 隔操切 音割; each left component checked against the competing shapes (𘚒 U+18692 for 桑, 𘔼 U+1853C for 娘, 𗈔 U+17214 for 割) at 8x; shape and reading agree in all four; certain
+40	1	15	gloss	遠離三塗		side=l; clean impression
+40	1	16	spelling	𗤩𘄊𘋅𘊴	U+17929 U+1810A U+182C5 U+182B4	side=l; 遠→𗤩 乙鵑切 音鴛, 離→𘄊 勒石切 音離, 三→𘋅 蘇蘭切 音三, 塗→𘊴 體路切 音土; readings differ from the gloss only in tone, which this transcription system does not keep; certain
+-
+40	1	17	transcription	羅勤盖精		side=l; small 尼 beside 盖, with a small circle above it, marking a voiced or nasal initial on the third syllable
+40	1	18	tangut		U+18470 U+178ED U+184C2 U+17A24	side=l; 勤→𗣭 妻因切 音秦 is a shape and reading match, certain; the other three are shape matches whose dictionary readings do not fit the transcription; 羅→𘑰 音瀆, printed ⿰ [乛 over 冂 with legs] [殳], a clean match but 𘄍 U+1810D 音播 scores level and neither reading fits 羅; 盖(尼)→𘓂 音力, the printed left is 丰 with three horizontals and no lower sweep, which separates it from 𘏢 U+183E2 音根 (the only velar-initial shape that comes close and the one the reading would favour); 精→𗨤 捷勞切 音族, printed ⿲ [幺] [乛 over horizontals] [hooked 乚], matching 𗨤 well but reading dzjo2 does not fit 精; no character with a 羅, 盖 or 精 reading matches these forms anywhere in the 6144-character corpus; open
+40	1	19	gloss	十地菩薩		side=l; clean impression
+40	1	20	spelling	𗶷𗶩𗩙𗖚	U+17DB7 U+17DA9 U+17A59 U+1759A	side=l; 地→𗶩 音體、地, 菩→𗩙 披路切 音普, 薩→𗖚 音薩, all shape and reading matches; 十→𗶷 叔勒切 音施, the printed lower half is 乂 beside a hooked vertical, which fits 𗶷 better than 𗶼 U+17DBC 音虱 or 𗶹 U+17DB9 音室, but the three are near-identical and all three readings would suit 十; probable
+-
+40	1	21	transcription	盈為壞他		side=l; small circle beside 盈; a small 口-shaped ink mark sits at the left edge of the column beside 壞 (x 422-443, y 400-427), possibly show-through
+40	1	22	tangut		U+18775 U+1839A U+18334 U+178B3	side=l; 盈→𘝵 夷根切 音盈, 為→𘎚 韋竭切 音畏, 壞→𘌴 虎根切 音懷, 他→𗢳 突位切 音他; the 盈 slot was checked against 𗲒 U+17C92 音英 and the 壞 slot against 𗽪 U+17F6A 音懷, both rejected on the lower component; certain
+40	1	23	gloss	自受用佛		side=l; clean impression
+40	1	24	spelling	𘂖𗱭𗒥𘒶	U+18096 U+17C6D U+174A5 U+184B6	side=l; keyed from full39.jpg x 931-1037, because the band crop clips about 8 px off the left of this column; 自→𘂖 卒悉切 音子, 受→𗱭 音壽, 用→𗒥 音雍, 佛→𘒶 傅施切 音佛; the 自 slot was checked against 𗁣 U+17063 音自, whose right component is 攵 and does not match; certain

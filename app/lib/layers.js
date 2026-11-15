@@ -56,10 +56,10 @@ export const firstSense = text => (text ?? '').split(/[;,；，、。]/)[0].trim
  * What a layer says about a character, and the fuller text for its hover.
  * @param {Layer} layer
  * @param {string} char
- * @param {{ entry?: { definitions?: { en?: string[], ja?: string[], zh?: string[] }, pronunciations?: Record<string, string> },
+ * @param {{ entry?: { definitions?: { en?: string[], ja?: string[], zh?: string[] }, pronunciations?: Record<string, string>, wiktionary_zh?: string[] },
  *   reading: string, downes?: string, rhyme?: [number | null, number | null, ...unknown[]],
  *   leilin?: [string, number][], hands?: { tibetan?: [string, string, number, string, ...string[]][] }, glosses?: [string, string, unknown][] }} data
- * @returns {{ text: string, title: string }}
+ * @returns {{ text: string, title: string, source?: 'keyed' | 'wiktionary' }}
  */
 export function layerValue(layer, char, data) {
   const definitions = data.entry?.definitions ?? {}
@@ -71,7 +71,11 @@ export function layerValue(layer, char, data) {
       const value = data.entry?.pronunciations?.[layer.system === CURRENT || !layer.system ? data.reading : layer.system]?.trim() ?? ''
       return { text: value, title: value }
     }
-    case 'sinograph': return hanGloss(data.leilin)
+    case 'sinograph': {
+      const gloss = hanGloss(data.leilin, definitions.zh, data.entry?.wiktionary_zh)
+      const source = gloss.source === 'wiktionary' ? 'wiktionary' : gloss.source === 'keyed' ? 'keyed' : undefined
+      return { text: gloss.text, title: gloss.title, source }
+    }
     case 'japanese': return sense(definitions.ja)
     case 'wiktionary': return sense(definitions.en)
     case 'downes': return { text: firstSense(data.downes), title: data.downes ?? '' }

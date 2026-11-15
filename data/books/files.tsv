@@ -1,0 +1,11 @@
+path	work_id	md5	bytes	pages	px	route	alt	status
+zhangzhongzhu/jia.pdf	zhangzhongzhu	1ce581c7adcdddead1a1258ba2cbb7d8	1137293	75	800x1200	https://upload.wikimedia.org/wikipedia/commons/9/9f/番漢合時掌中珠_甲本.pdf		acquired
+zhangzhongzhu/yi.pdf	zhangzhongzhu	44d2dc76292f1ab97939f860fa7a8cbb	987116	75	800x1200	https://upload.wikimedia.org/wikipedia/commons/6/6d/番漢合時掌中珠_乙本.pdf		acquired
+zhangzhongzhu/jia-yi.pdf	zhangzhongzhu	14894b095edb3e175632c5db4927e360	1824809	38	1237x1752	https://upload.wikimedia.org/wikipedia/commons/4/4a/番漢合時掌中珠_甲乙本.pdf		acquired
+xiahan-zidian/xiahan-zidian-1997.pdf	xiahan-zidian	eeedf15b7dfb6e7b52deb190f7bd4f1a	181265725	1361	1056x1472	libgen:eeedf15b7dfb6e7b52deb190f7bd4f1a	ipfs:bafykbzacebqf765sszz2kxxuua2gu3gcgrl3ayt3piqdim3c2coa334foputm	acquired
+wenhai-yanjiu/wenhai-yanjiu-1983.pdf	wenhai-yanjiu	c4554a5fa6a9ed622eb527d3080a776c	32642964	877	2242x3136	libgen:c4554a5fa6a9ed622eb527d3080a776c	ipfs:bafykbzaceawqxmceiwc6qbscfszwcid5edkixby5ucvoflz2wyy5euao5ygsw	acquired
+nevsky-1960/b_nevsky_1960_1_tangutskaya_filologiya.pdf	nevsky-1960	6f59360aeee43c90648967411f34d991	127471396	609	2580x3271	https://www.orientalstudies.ru/rus/images/pdf/add1/b_nevsky_1960_1_tangutskaya_filologiya.pdf		acquired
+nevsky-1960/b_nevsky_1960_2_tangutskaya_filologiya.pdf	nevsky-1960	215d06eee209b296a6caa0c9ef416012	147820088	686	2580x3271	https://www.orientalstudies.ru/rus/images/pdf/add1/b_nevsky_1960_2_tangutskaya_filologiya.pdf		acquired
+arakawa-tsuin/arakawa-tsuin-jiten-1999.pdf	arakawa-tsuin	d41b746bffa85b23aaa167bc61e117e7	6534336	149	2149x3035	libgen:d41b746bffa85b23aaa167bc61e117e7	ipfs:bafykbzacedog7x43q5ppaey6qe2lldysx6sfrr2j4k53jygu3jcqnzisun5um	acquired
+ghc-xi-xia/gong-2002-tangut-lunwenji.pdf	ghc-2002	50cff5bd837c080678659608811d46dd	23926169	468	2557x3583	libgen:50cff5bd837c080678659608811d46dd	ipfs:bafykbzacecxuhaabd3fareo55p2uje7n3dmhrd5n5e5erhon2cjgd24phmewk	acquired
+ghc-han-zang/gong-2005-xi-xia-yuyan-wenzi-yanjiu-lunji.pdf	ghc-2005	b29cf19d3d5604bda6fe601098e5a341	11454942	644	1184x1680	libgen:b29cf19d3d5604bda6fe601098e5a341	ipfs:bafykbzacecz47ssh5jpcfsxuxcmy2svxrfoqyqhq3mba5rsamqfvrpnhgo5qs	acquired

@@ -1,6 +1,6 @@
 // Editorial character-sized descriptions retain the source tree and replace only complete,
 // unambiguous proper subtrees with the character whose recorded description matches them.
-import { leavesOf, OPERATORS, readDescription, writeDescription } from './composition.js'
+import { binaryDescription, leavesOf, OPERATORS, readDescription, writeDescription } from './composition.js'
 
 /** @typedef {{ op: string, parts: Node[], cut?: boolean } | string} Node */
 
@@ -34,7 +34,8 @@ export function indexIdsDescriptions(entries) {
  * @returns {{ recorded: string, editorial: string, showEditorial: boolean, recordedParts: string[], editorialParts: string[] }}
  */
 export function idsViews(char, recorded, index) {
-  const { roots, complete } = readDescription(recorded)
+  // The same two-part cut the parts finder reads, so the card and the finder never disagree.
+  const { roots, complete } = binaryDescription(readDescription(recorded), text => [...(index.get(text) ?? [])].filter(other => other !== char))
   /** @param {Node} node @param {boolean} top @returns {string} */
   function render(node, top) {
     const text = writeDescription(node)

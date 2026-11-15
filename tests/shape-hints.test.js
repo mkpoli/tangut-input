@@ -3,14 +3,16 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { createHash } from 'node:crypto'
+import { readNames } from '../src/core/names.js'
 
 const hints = JSON.parse(gunzipSync(readFileSync(new URL('../data/tangut-component-shape-hints.json.gz', import.meta.url))).toString())
 const exemplars = new Set(hints.exemplars.map(row => row.char))
+const named = new Set(readNames(readFileSync(new URL('../data/tangut-component-names.tsv', import.meta.url), 'utf8')).map(row => row.char))
 
 test('the hint file covers every component and every attested example', () => {
   expect(hints.format).toBe('tangut-input/component-shape-hints')
   expect(hints.editorial).toBe(true)
-  expect(hints.counts).toEqual({ components: 768, exemplars: 18 })
+  expect(hints.counts).toEqual({ components: 768, exemplars: 19 })
   expect(hints.components.length).toBe(768)
   expect(hints.components[0].codepoint).toBe('U+18800')
   expect(hints.components.at(-1).codepoint).toBe('U+18AFF')
@@ -25,6 +27,10 @@ test('candidates point at attested examples, with scores', () => {
       expect(candidate.score).toBeLessThanOrEqual(1)
     }
   }
+})
+
+test('the exemplars are the named components', () => {
+  expect(exemplars).toEqual(named)
 })
 
 test('a named component never offers itself', () => {

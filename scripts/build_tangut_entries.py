@@ -11,6 +11,7 @@ Displayable fields come from sources the site can republish:
   character);
 - the English definitions in Wiktionary's Tangut entries, through Kaikki's extract;
 - the Japanese definitions on ja.wiktionary (CC BY-SA 4.0);
+- the Chinese definitions in the pinned zhwiktionary snapshot (CC BY-SA 4.0);
 - BabelStone's Tangut IDS (public domain);
 - the 文海's Chinese entry text (12th century, public domain);
 - Unicode's TangutSources radical and stroke data.
@@ -25,7 +26,11 @@ The ``--ccamc`` file must be a copy of the old Open Tangut/CCAMC records, made b
 replaces ``app/data/tangut-entries.json.gz``. It is only read here; the index it produces holds
 folded readings and lower-cased terms, not the records.
 
+Keyed readings come from ``data/readings/readings.tsv`` unless ``--readings`` names another file; a
+rebuild without them drops every keyed value, so the default is the table itself.
+
 Writes ``app/data/tangut-entries.json.gz`` and ``app/data/tangut-ccamc-index.json.gz``.
+The keyed readings' citations go to ``app/data/tangut-reading-sources.json.gz``.
 """
 import argparse
 import gzip
@@ -37,8 +42,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENTRIES = ROOT / 'app/data/tangut-entries.json.gz'
 INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
-FORMAT = 'tangut-input/entries/4'
-SYSTEMS = ['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov', 'nishida']
+SOURCES = ROOT / 'app/data/tangut-reading-sources.json.gz'
+FORMAT = 'tangut-input/entries/6'
+SYSTEMS = ['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
+           'nishida', 'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'tibetan']
+READINGS = ROOT / 'data/readings/readings.tsv'
 CCAMC_SYSTEMS = ['arakawa_shintaro']
 
 LETTERS = {
@@ -64,6 +72,28 @@ def plain(value):
     text = re.sub(r'[\u3000\s]+', ' ', text)
     text = re.sub(r'[^\w]+', ' ', text)
     return re.sub(r'\s+', ' ', text).strip()
+
+
+def keyed(path):
+    """The readings keyed from the books, per character: {char: {field: [[value, work, locator], ...]}}.
+
+    Two witnesses to one value are both kept and joined at build time; a row still marked uncertain
+    is held back until a second reading lifts it.
+    """
+    out = {}
+    if not path or not path.exists():
+        return out
+    lines = path.read_text(encoding='utf-8').splitlines()
+    head = lines[0].split('\t')
+    for line in lines[1:]:
+        if not line.strip():
+            continue
+        row = dict(zip(head, line.split('\t')))
+        if row.get('status') == 'uncertain':
+            continue
+        out.setdefault(row['char'], {}).setdefault(row['field'], []).append(
+            [row['value'], row['work'], row['locator'], row.get('note', '')])
+    return out
 
 
 def gz(path):
@@ -129,7 +159,11 @@ def hidden(entries, systems, index):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ccamc', type=Path, help='a copy of the old Open Tangut/CCAMC records')
+    parser.add_argument('--readings', type=Path, default=READINGS,
+                        help='keyed readings (default data/readings/readings.tsv)')
     args = parser.parse_args()
+    if args.readings and not args.readings.exists():
+        raise SystemExit(f"{args.readings}: no such readings file, so no keyed value would be built")
 
     old = gz(ENTRIES)
     systems = old['systems']
@@ -137,27 +171,43 @@ def main():
     ids = babelstone()
     en = kaikki()
     ja = gz(ROOT / 'data/wiktionary/definitions-ja.json.gz')['pages']
+    zh = gz(ROOT / 'data/wiktionary/definitions-zh.json.gz')['pages']
     readings = gz(ROOT / 'data/wiktionary/txg-readings.json.gz')['systems']
     gong_hwang = gz(ROOT / 'data/gong-xun/ghc.json.gz')['readings']
     gong_xun = gz(ROOT / 'data/gong-xun/gx202411.json.gz')['readings']
     wenhai = gz(ROOT / 'data/wenhai/entry-text.json.gz')['entries']
+    keyed_readings = keyed(args.readings)
+    citations = {}
 
     out = []
     for row in rows:
         char, composition, strokes, radical = row[0], row[1], row[2], row[3]
         definitions_en = en.get(char, [])
         definitions_ja = ja.get(char, {}).get('definitions') or []
-        definitions_zh = []
+        keyed_fields = keyed_readings.get(char, {})
+        definitions_zh = [value[0] for value in keyed_fields.get('gloss_zh', [])]
+        wiktionary_page = zh.get(char, {})
+        wiktionary_zh = wiktionary_page.get('definitions') or []
         pron = [
             readings['li_fanwen'].get(char, ''),
-            gong_hwang.get(char, ''),
+            '；'.join(value[0] for value in keyed_fields.get('gong_huangcheng', []))
+            or gong_hwang.get(char, ''),
             gong_xun.get(char, ''),
             readings['miyake'].get(char, ''),
             readings['kychanov'].get(char, ''),
             readings['sofronov'].get(char, ''),
             readings['nishida'].get(char, ''),
+            *('；'.join(dict.fromkeys(value[0] for value in keyed_fields.get(key, [])))
+              for key in SYSTEMS[7:]),
         ]
+        if keyed_fields:
+            citations[char] = {
+                key: [{'work': value[1], 'locator': value[2], 'note': value[3]} for value in values]
+                for key, values in keyed_fields.items()
+            }
         text = wenhai.get(char, {})
+        text = {'en': text.get('en', ''),
+                'zh': keyed_fields['wenhai_zh'][0][0] if 'wenhai_zh' in keyed_fields else text.get('zh', '')}
         out.append([
             char,
             ids.get(char) or composition,
@@ -168,12 +218,19 @@ def main():
             definitions_zh,
             pron,
             text.get('zh', ''),
+            wiktionary_zh,
+            wiktionary_page.get('url') or '',
         ])
 
     data = {'format': FORMAT, 'systems': SYSTEMS, 'rows': out}
     with gzip.GzipFile(ENTRIES, 'wb', mtime=0) as f:
         f.write(json.dumps(data, ensure_ascii=False, separators=(',', ':')).encode())
     print(f'{len(out)} characters -> {ENTRIES.relative_to(ROOT)}')
+
+    with gzip.GzipFile(SOURCES, 'wb', mtime=0) as f:
+        f.write(json.dumps({'format': 'tangut-input/reading-sources', 'citations': citations},
+                           ensure_ascii=False, separators=(',', ':')).encode())
+    print(f'{len(citations)} characters with a keyed citation -> {SOURCES.relative_to(ROOT)}')
 
     if args.ccamc:
         index = {}

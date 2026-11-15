@@ -1,0 +1,25 @@
+# canvas 41 band 2, the middle register of the opening; five four-column entry groups, twenty columns, right leaf x 2890-4950 then left leaf x 760-2890 of the source page, band y 2240-2860 on the right leaf and y 2330-3100 on the left; the two large colophon columns at the far left of the left leaf (Chinese 竟, one oversized Tangut character) stand outside the entry grid and are not keyed
+41	2	1	transcription	娘似責謀		side=r; x 4570-4700; small circle after 娘; small 尼 printed to the right of 責; char 2 is 亻 plus 以
+41	2	2	tangut		U+1758F U+173F4 U+1851F U+175B5	side=r; x 4405-4550; 娘→𗖏 音娘, shapes match, certain; 似→𗏴 音術, open, three-part print with a final hook, 𘆬 U+181AC 音施 and 𗪘 U+17A98 音世 are the rivals and none matches the printed left element; 責→𘔟 音示, probable, reading is given as 示 with the 尼責 notation that the printed 責 plus small 尼 spells, but 𘝭 U+1876D is near-identical in shape; 謀→𗖵 音謀, certain
+41	2	3	gloss	昔因行願		side=r; x 4264-4366; certain
+41	2	4	spelling		U+18782 U+180FB U+17E71 U+17929	side=r; x 4132-4226; 昔→𘞂 音賊, probable, shape clean, reading reaches 昔 only through the 習 in its gloss; 因→𘃻 音因, certain, sole close shape and exact reading; 行→𗹱 音欣, probable, shape clean, reading 性 fits 行; 願→𗤩 音鴛, probable, shape clean, reading is the near-homophone 鴛
+-
+41	2	5	transcription	精罨嘌青		side=r; x 3998-4115; char 2 read as 罨, cursive top; char 3 is 口 plus 票
+41	2	6	tangut		U+1852D U+174A7 U+17A08 U+183AA	side=r; x 3822-3962; 精→𘔭 音精, probable, shape clean, dictionary writes the reading as 尼精 while the print has plain 精; 罨→𗒧 音罨, probable, right element is a clear 攵 as in the candidate; 嘌→𗨈 音并, probable, shape matches stroke for stroke and the initial class is labial, but the rhyme does not fit 嘌; 青→𘎪 音青, probable, shape and reading agree, scored well clear of the field
+41	2	7	gloss	演說法門		side=r; x 3663-3762
+41	2	8	spelling		U+184FE U+17262 U+183A7 U+1743A	side=r; x 3513-3620; 演→𘓾 音筵, probable; 說→𗉢 音說, probable, 𗗹 U+175F9 音說 is nearly the same shape; 法→𘎧 音窪, open, the only candidate with a fa reading and its shape does not match the print, which carries two horizontal bars above a left 爻 and a right 夂; best shapes by ink alone are 𘎛 U+1839B 音稅 and 𘕲 U+18572 音估, neither of which fits 法; 門→𗐺 音門, probable, shape and reading agree
+-
+41	2	9	transcription	播丁涅盤		side=r; x 3407-3482
+41	2	10	tangut		U+178EB U+17F17 U+1822C U+179BA	side=r; x 3238-3355; 播→𗣫 音栽, probable, the right element is the three-stroke form the print shows, but the reading does not fit 播; the reading-fitting 𗣧 U+178E7 音波 carries a different right element; 丁→𗼗 音定, probable, shape good, 𗤘 U+17918 matches as well but has no recorded reading; 涅→𘈬 音涅, certain; 盤→𗦺 音盤, certain
+41	2	11	gloss	菩提涅盤		side=r; x 3077-3171; certain
+41	2	12	spelling		U+17A59 U+17DA9 U+1822C U+179BA	side=r; x 2920-3020; 菩→𗩙 音普, probable; 提→𗶩 音體, probable, the wide 丗 foot of the print is the candidate's own bottom element and the reading 地 fits 提; 涅→𘈬 音涅, certain, same character as column 10 slot 3; 盤→𗦺 音盤, certain, same character as column 10 slot 4
+-
+41	2	13	transcription	知截沒嘴		side=l; x 2500-2602; small circle after 沒; 嘴 written with the 口 radical set low and left
+41	2	14	tangut		U+17E70 U+17C71 U+187E5 U+180F0	side=l; x 2350-2487; 知→𗹰 音桎, probable, shape clean and the left element is the same one the print shows in column 4 slot 3; 截→𗱱 音截, certain; 沒→𘟥 音沒, certain; 嘴→𘃰 音罪, probable, shape clean and 罪 is the near-homophone
+41	2	15	gloss	苦報無量		side=l; x 2191-2304; certain
+41	2	16	spelling		U+17BD6 U+17FCB U+17C94 U+177BA	side=l; x 2056-2168; 苦→𗯖 音苦, probable; 報→𗿋 音抱, probable, 抱 matches 報 in sound, shape is good but 𗨽 U+17A3D 音報 remains a rival; 無→𗲔 音吾, probable; 量→𗞺 音量, probable, the 艹 head and the 井 foot both match
+-
+41	2	17	transcription	聖折六力		side=l; x 1906-1979; small circle after 六; 力 printed smaller than the other three
+41	2	18	tangut		U+17F03 U+17AB5 U+17B3E U+1772C	side=l; x 1754-1888; 聖→𗼃 音聖, certain, two-part print matched exactly; 折→𗪵 音折, probable; 六→𗬾 音六, certain, enclosing structure and reading both match; 力→𗜬 音老, probable, structure matches and the initial is l-, but 老 is not 力
+41	2	19	gloss	得達聖道		side=l; x 1601-1702; certain
+41	2	20	spelling		U+17DCC U+179C6 U+17F03 U+183B0	side=l; x 1465-1551; 得→𗷌 音得, certain, highest shape score in the band and an exact reading; 達→𗧆 音怛, probable, 怛 matches 達 in sound; 聖→𗼃 音聖, certain, same character as column 18 slot 1; 道→𘎰 音道, probable, shape good and the reading is exact
