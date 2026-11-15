@@ -8,9 +8,12 @@ it into your text. <https://tangut.mkpo.li/>
 - **Find**: one box for anything. Pasted Tangut is listed character by character with meanings and
   readings; Latin letters are tried as a Cangjie code, a reading and a meaning at once; `U+17…`
   lists code points, and `L0009`, `L55.172`, `M202-84B2`, `XXZT-A-764F`, `U+F5C0` or `U+F02BB` open the character a
-  number, legacy code, Tibetan Set A code or Tangut PUA variant names. Tangut components also answer to their Japanese shape names, such as くノ,
-  ノメ or くくノ. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut after its
-  opening part it lists the characters that open that way.
+  number, legacy code, Tibetan Set A code or Tangut PUA variant names, including the 23 codes
+  without an encoded base. Tangut components also answer to their Japanese shape names, such as
+  くノ, ノメ or くくノ; a character whose parts all have names answers to the names run together:
+  コくノノノメ names 𘄳. A description is read against the records' own: `⿰𘤊𘠡` names 𗾇, and cut
+  after its opening part it lists the characters that open
+  that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
   MiCA, with its passages, characters, source and first line. Read opens the text passage by
   passage; a Glosses toggle puts Chinese and English glosses under each character, and each
@@ -30,6 +33,7 @@ it into your text. <https://tangut.mkpo.li/>
   the 同音 and the rhyme divisions expose.
 - **Draw**: a drawing pad ranked by glyph shape against bundled Tangut faces. Choose parts to
   narrow the candidates.
+- **Code chart**: every character and component in code order, with block occupancy and component use.
 - **Parts**: choose parts, components or character-sized, from the palette or by drawing them;
   each choice narrows the characters and the remaining parts. The filter takes a Cangjie code or a Japanese shape name, and hovering a
   part shows its code point, component number, strokes, uses, Cangjie codes and name; a part with no
@@ -39,8 +43,9 @@ it into your text. <https://tangut.mkpo.li/>
 The card of a character shows its code point, its Li Fanwen 2008 number, 文海 position and fanqie
 chains, Mojikyo and XXZT code points, its Tangut Yinchuan PUA variants, the Set A code of a Tibetan
 spelling, Cangjie codes, meanings in English, Japanese and Chinese,
-readings, structure, the lines of the recorded corpus where it stands with the scribe's form from
-the facsimile, and related characters. The 文海's own entry text is shown where it carries one;
+readings, the 對音 it carries (the Chinese character the 掌中珠 transcribes it with, and any
+Tibetan gloss), structure, the lines of the recorded corpus where it stands with the scribe's form from
+the facsimile, related characters, and the variant forms no character has yet. The 文海's own entry text is shown where it carries one;
 further readings and meanings are linked to CCAMC's page for the character.
 Character tiles show the chosen reconstruction above the glyph, then a Chinese gloss and the
 finder's note. Chinese glosses come from keyed dictionary senses, then Wiktionary, then
@@ -61,6 +66,11 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   `data/wenhai/`.
 - `app/data/tangut-ccamc-index.json.gz`: normalized terms from CCAMC's records, used only to answer
   the reading and meaning searches. No page renders them; the card links to CCAMC.
+- `app/data/tangut-zzz.json.gz`: the Chinese character 《番漢合時掌中珠》 transcribes each Tangut
+  character with, and the entry it stands in; built by `scripts/build_tangut_zzz.mjs` from the
+  keyed columns of the NIJL scan. Empty until the keying reaches the Tangut headwords.
+- `app/data/tangut-tibetan.json`: Tibetan phonetic glosses of 197 characters in five British
+  Library manuscripts, from [BabelStone](https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html).
 - `app/data/tangut-cangjie.json.gz`: Cangjie codes, from
   [rime_tangutcjkk](https://github.com/Hulenkius/rime_tangutcjkk) by Hulenkius, after the scheme of
   Kawasaki Keigo (2016). The table warns that some characters are wrongly encoded; the repository
@@ -73,8 +83,10 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   `L0009`, `L62.221`, `M202-84B2` and `XXZT-A-764F`.
 - `app/data/tangut-pua.json.gz`: 2,814 Tangut Yinchuan variant forms in Supplementary Private
   Use Area-A, U+F0000–U+F1613; 2,775 attach to 2,257 encoded characters and 39 have no base.
-  Each variant keeps its IDS and source; built by `scripts/build_tangut_pua.py` from
-  `data/tangut-pua-variants.tsv`.
+  Unicode 18.0 gives 16 of those a character, and Find reads the old PUA code for the new character;
+  the 23 left are listed on the Variants page with their glyph, IDS and source. Each variant keeps
+  its IDS and source; built by
+  `scripts/build_tangut_pua.py` from `data/tangut-pua-variants.tsv`.
 - `app/data/tangut-wenhai.json.gz`: the 3,085 head positions of the 文海, the fanqie statement that
   governs each position, its 同音 class, its initial and rhyme chain identifiers, and the 173
   initial and 321 rhyme chains with their members, direct links, eight cross-同音 and thirteen
@@ -150,8 +162,8 @@ them; `docs/handwriting.md` describes the fields.
 ## Materials
 
 `docs/materials.md` lists every source the site draws on — what each actually gives, the terms it
-comes under, and what is still missing: 掌中珠's entries, a per-character 藏文對音 table, and any
-seal or cursive forms.
+comes under, and what is still missing: 掌中珠's entries, 藏文對音 beyond five manuscripts,
+and any seal or cursive forms.
 
 ## Records
 

@@ -104,10 +104,12 @@ export function binaryDescription(parsed, charactersAt) {
  * that character, whose own parts stand under it in turn, so a part is found however deep it lies.
  * A leaf that spells several characters keeps its written component as the character's direct part,
  * but each candidate remains a part of it. A description short of an operand keeps its components.
+ * A surrounding form first in ⿺ answers ⿰ as well, since the hook belongs to the part.
  * @param {{ char: string, composition?: string }[]} entries
- * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, layoutOf: Map<string, string>, partGroups: Map<string, PartGroup[]> }}
+ * @param {string[][]} [surrounding] the component pairs whose hooked form wraps what follows
+ * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, layoutOf: Map<string, string>, layoutsOf: Map<string, Set<string>>, partGroups: Map<string, PartGroup[]> }}
  */
-export function buildPartIndex(entries) {
+export function buildPartIndex(entries, surrounding = []) {
   /** @type {Map<string, string[]>} */
   const byDescription = new Map()
   for (const entry of entries) {
@@ -271,13 +273,26 @@ export function buildPartIndex(entries) {
   const directPartsOf = new Map()
   /** @type {Map<string, string>} */
   const layoutOf = new Map()
+  /** @type {Map<string, Set<string>>} */
+  const layoutsOf = new Map()
   for (const entry of entries) {
     const char = entry.char
     const parts = collect(char, new Set())
     partsOf.set(char, parts)
     directPartsOf.set(char, directParts(char))
-    const root = read.get(char)?.roots[0]
-    if (root !== undefined) layoutOf.set(char, typeof root === 'string' ? '' : root.op)
+    const parsed = read.get(char)
+    const root = parsed?.roots[0]
+    if (root !== undefined) {
+      const op = typeof root === 'string' ? '' : root.op
+      layoutOf.set(char, op)
+      /** @type {Set<string>} */
+      const answers = new Set([op])
+      if (parsed && parsed.complete && parsed.roots.length === 1 && op === '⿺' && typeof root !== 'string') {
+        const first = root.parts[0]
+        if (typeof first === 'string' && surrounding.some(pair => pair[1] === first)) answers.add('⿰')
+      }
+      layoutsOf.set(char, answers)
+    }
     for (const part of parts.keys()) {
       let users = usedBy.get(part)
       if (!users) usedBy.set(part, users = new Set())
@@ -293,7 +308,7 @@ export function buildPartIndex(entries) {
       directPartsOf.set(part, root.parts.map(child => editorialNode(child, part)).filter(child => isTangut(child) || isDescriptionPart(child)))
     }
   }
-  return { partsOf, usedBy, directPartsOf, layoutOf, partGroups: groupCache }
+  return { partsOf, usedBy, directPartsOf, layoutOf, layoutsOf, partGroups: groupCache }
 }
 
 /**

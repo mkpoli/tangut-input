@@ -16,3 +16,4 @@ docs/handwriting-gallery.html
 model.pt
 model.onnx
 app/public/dataset
+publish/out

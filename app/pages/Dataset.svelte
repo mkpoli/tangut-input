@@ -4,6 +4,13 @@
    * The files themselves are static beside this page under /dataset/.
    */
   import { counts } from '../lib/dataset-counts.js'
+  import { leaderboard } from '../lib/leaderboard.js'
+  import { history } from '../lib/benchmark-history.js'
+
+  /** @type {{ name: string, version?: string, top1: number, top5: number, top24: number, mrr: number }[]} */
+  const entries = Object.entries(leaderboard)
+    .map(([name, result]) => ({ name, ...result }))
+    .sort((a, b) => b.top1 - a.top1)
 
   const example = `{"id": "2026-11-01T14-42-08/001", "char": "𗀀", "kind": "glyph", "label": "answer",
  "strokes": [[[0.13, 0.44], [0.51, 0.4]], …],
@@ -63,6 +70,44 @@
     </tbody>
   </table>
 
+  <h2>Benchmark</h2>
+  <p>A fixed split, a scorer and a baseline. Rank up to 24 characters per drawing and score it:
+    <code>bun benchmark/score.mjs --name you submissions/you.jsonl</code>.</p>
+  <h3>How the baseline got here</h3>
+  <table class="board">
+    <thead><tr><th>Version</th><th>First</th><th>In five</th><th>In 24</th><th>MRR</th></tr></thead>
+    <tbody>
+      {#each history as row (row.version)}
+        <tr><th>{row.version}</th><td>{(row.top1 * 100).toFixed(1)}%</td><td>{(row.top5 * 100).toFixed(1)}%</td>
+          <td>{(row.top24 * 100).toFixed(1)}%</td><td>{row.mrr.toFixed(3)}</td></tr>
+      {/each}
+    </tbody>
+  </table>
+  <ul class="changes">
+    {#each history as row (row.version)}
+      <li><b>{row.version}</b> — {row.change}</li>
+    {/each}
+  </ul>
+
+  <h3>Entries</h3>
+  <table class="board">
+    <thead><tr><th>Entry</th><th>First</th><th>In five</th><th>In 24</th><th>MRR</th></tr></thead>
+    <tbody>
+      {#each entries as entry (entry.name)}
+        <tr><th>{entry.name}{entry.version ? ` ${entry.version}` : ''}</th><td>{(entry.top1 * 100).toFixed(1)}%</td><td>{(entry.top5 * 100).toFixed(1)}%</td>
+          <td>{(entry.top24 * 100).toFixed(1)}%</td><td>{entry.mrr.toFixed(3)}</td></tr>
+      {/each}
+    </tbody>
+  </table>
+  <p class="note">Protocol and submission format:
+    <a href="https://github.com/mkpoli/tangut-input/blob/main/benchmark/README.md">benchmark/README.md</a>.</p>
+
+  <h2>Where else it lives</h2>
+  <ul class="files">
+    <li><a href="https://huggingface.co/datasets/mkpoli/tangut-strokes">Hugging Face</a> — the records, the split and the baseline, loadable with <code>load_dataset</code></li>
+    <li><a href="https://www.kaggle.com/datasets/mkpoli/tangut-strokes">Kaggle</a> — the same files, with notebooks beside them</li>
+  </ul>
+
   <h2>Licence</h2>
   <p>The drawings are released under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cite
     “Tangut stroke dataset, tangut.mkpo.li” with the date you downloaded it. The printed characters are not
@@ -78,6 +123,8 @@
   h1{font-size:1.9rem;font-weight:500;letter-spacing:-0.01em;margin:0 0 var(--ui-space-xs)}
   .lead{color:var(--ui-color-ink-soft);margin:0 0 var(--ui-space-sm);max-inline-size:36em}
   .counts{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-md);font:500 0.8125rem/1.4 var(--ui-font-mono);color:var(--ui-color-ink-soft);margin:0 0 var(--ui-space-lg)}
+  h3{font:500 0.8125rem/1.4 var(--ui-font-mono);color:var(--ui-color-ink-soft);margin:var(--ui-space-md) 0 var(--ui-space-2xs)}
+  ul.changes{margin:0 0 var(--ui-space-md);padding-inline-start:1.1em;font-size:0.9375rem;color:var(--ui-color-ink-soft)}
   h2{font:500 0.6875rem/1.4 var(--ui-font-mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--ui-color-ink-soft);margin:var(--ui-space-lg) 0 var(--ui-space-2xs)}
   ul.files{margin:0;padding-inline-start:1.1em}
   ul.files li{margin-block:0.25em}
