@@ -129,6 +129,10 @@ by stroke count, then by use, and can be filtered by Cangjie code or Japanese sh
 part also opens it in the card. A card's “Characters with these parts” link opens Parts with that
 character's parts chosen.
 
+**Code chart** (`/codes`) lists every character and component in code order, 16 columns to a row
+and 256 positions to a page, with each block's occupancy and the components' use above the chart.
+A click copies the character.
+
 **Fanqie** (`/fanqie`) goes the other way: it takes the upper and lower characters a rhyme book
 spells a word with and lists what they spell. The two characters can be typed, or picked from a
 compact panel beside the field that keeps the Find, Meaning, Cangjie, Four-corner, Reading, Draw
@@ -145,8 +149,13 @@ recorded with the fanqie it was made for.
   click-to-copy, each system linked to its source.
 - A Tibetan spelling's tooltip adds its Tibetan Extension-A code when the precomposed table has
   the exact sequence.
-- **PUA variants**: the Tangut Yinchuan variant codes of a character, each with its IDS and source,
-  click-to-copy; a code names a variant glyph, not another character.
+- **PUA variants**: a row of glyph tiles in the Variant forms section; each opens its PUA card,
+  where the code, IDS and source are listed. A code names a variant glyph, not another character.
+  Find maps a code that Unicode
+  18.0 has since given a character to that character. Every other PUA code opens its PUA card
+  (glyph, code, IDS, source); a code with a base character links to it, and a code without one sits
+  with the other unencoded rows at the bottom of the Variants page. The unencoded rows' IDS find the
+  same record.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).
@@ -326,5 +335,6 @@ worker) mode.
 - `reading`: `ndzi` across systems.
 - `draw`: a seven-stroke sketch and its closest glyphs.
 - `parts`: two parts chosen, seven characters, the narrowed palette.
+- `codes`: the four blocks' occupancy, the components' use, and the first page of each chart.
 - `card`, `card-attested`: the card of 𗋕, and its structure and three attested lines.
 - `sources`: the Sources page.

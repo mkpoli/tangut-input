@@ -93,6 +93,12 @@ record names its source, licence, line ids and the exact text; the thirteen famo
 `scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the Wikisource
 texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausanne Corpus.
 
+## Hanzi correspondences
+
+[`tangut-hanzi.json`](<../app/data/tangut-hanzi.json>) contains character glosses from Guillaume Jacques’s [Leilin database](<https://www.academia.edu/25078937/Leilin_database>) and whole-name pairs from the era, title, state-name and posthumous-name tables. Each pair carries its source, evidence type and available passage reference; the source records preserve attribution and caveats from the [Names bibliography](<../app/lib/era-sources.js>). The 類林 glosses retain their occurrence counts and the [pinned intermediary](<https://github.com/tinbreaker/tangut-text/tree/820fe592c8c0b1512867c70e5c84395a042667f3>); no licence is stated.
+
+Rebuild from the local source tables with `bun scripts/build_tangut_hanzi.mjs`. The [Hanzi library](<../app/lib/hanzi.js>) indexes character glosses separately from whole names: 大白高國 corresponds to 𗴂𗹭𗂧𘜶 as a phrase, whose word order differs from the Chinese. Search uses the recorded spelling, with every alternative and its evidence available in the result.
+
 ## `tangut-era-evidence.tsv`
 
 What each Tangut era form rests on, one row per form and source: the era and its first year as the
@@ -705,13 +711,16 @@ characters across BabelStone's index and the hand-class tables.
 The 2,814 Tangut Yinchuan PUA variant forms in Supplementary Private Use Area-A, U+F0000–U+F1613,
 from `data/tangut-pua-variants.tsv`: the encoded base character, the PUA code, the variant's IDS and
 the source that attests it. 2,775 rows attach to 2,257 encoded characters; 39 rows have no base
-character and are kept in `unassigned`. One PUA code, F023C, appears twice with two IDS. The page
+character and are kept in `unassigned`. The Unicode 18.0 proposals give 16 of those a code point
+(`encodedInUnicode18`); the 23 without one are `unencoded` and the site lists them on the Variants
+page. One PUA code, F023C, appears twice with two IDS. The page
 states no licence; the font terms are on the BabelStone Yinchuan page. A PUA code names a glyph
 variant, not a different character.
 
 Format: `format`, `source` (the variants page), `font`, `version` (16.0.4), `retrieved`, `sha256` of
-the TSV, `note`, `counts`, `chars` (character → `[code, IDS, sources]`) and `unassigned`. Rebuild with
-`python3 scripts/build_tangut_pua.py`.
+the TSV, `note`, `counts`, `chars` (character → `[code, IDS, sources]`), `unassigned`,
+`encodedInUnicode18` (`[code, IDS, sources, code point]`) and `unencoded` (`[code, IDS, sources]`).
+Rebuild with `python3 scripts/build_tangut_pua.py`.
 
 Two rows print a base glyph that does not match the row's code point (U+179D0 and U+17FE9); the
 code point is kept, as the table's identifier.
@@ -1448,3 +1457,29 @@ The values keyed out of those books, one printed value per row with the page it 
 citations the site shows beside a reading. `scripts/check_readings.py` holds the columns, the field
 names, the work each field may come from and the locator shape; a row's content is a reader's
 judgement. [The README](readings/README.md) gives the fields and how a locator is written.
+
+## `tangut-zzz.json.gz`
+
+The 掌中珠 read as a concordance: each Tangut character with the Chinese character the glossary
+transcribes it by, and the entry that character stands in. The print sets one Chinese character
+under each Tangut character, so an entry is joined only where both columns name the same positions.
+An entry with both columns keyed but unequal or offset is counted as `unpairedEntries`, a finding;
+an entry with only one column keyed is counted as `incompleteEntries`, the keying still in progress.
+
+Cells are published only where both are `ok`. The other statuses keep their own counts:
+`uncertainCells` awaits a second witness, `illegibleCells` cannot be read, and `absentCells` means
+the print has no character at that position, which is a reading rather than a gap. `text` is the
+printed transcription; the Tangut key is the standard form from `glyph_norm` where the table has
+one. The table is empty until the keying reaches the Tangut headwords. Rebuild with
+`bun scripts/build_tangut_zzz.mjs` from `data/zhangzhongzhu/entries.tsv` and `cells.tsv`; the source
+record and licence are the `zhangzhongzhu/` ones above.
+
+## `tangut-tibetan.json`
+
+Tibetan phonetic glosses of 197 Tangut characters, from Andrew West's
+[BabelStone index](https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html) of five British
+Library manuscripts (Or.12380/1842, 3495, 3909, 3910, 3911), 2011-12-19. Each gloss is its Wylie
+reading, its Tibetan spelling, and the manuscripts it stands in with a count for each. The page
+omits some incomplete glosses and warns that some readings are uncertain; a `[?]` in the Wylie
+marks a letter that could not be read. No licence is stated upstream. Refresh with
+`uv run --with beautifulsoup4 python scripts/fetch_babelstone_tibetan.py`.

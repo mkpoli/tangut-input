@@ -34,9 +34,12 @@
  *   counts: Record<string, number>, characters: SupplementCharacter[] }} Supplement */
 /** Tangut Yinchuan PUA variants, by encoded base character. @typedef {{ format: string, source: string,
  *   font: string, version: string, retrieved: string, sha256: string, note: string,
- *   counts: { rows: number, assigned: number, characters: number, codes: number, unassigned: number },
+ *   counts: { rows: number, assigned: number, characters: number, codes: number, unassigned: number,
+ *     encodedInUnicode18: number, unencoded: number },
  *   chars: Record<string, [code: string, ids: string, sources: string[]][]>,
- *   unassigned: [code: string, ids: string, sources: string[]][] }} TangutPua */
+ *   unassigned: [code: string, ids: string, sources: string[]][],
+ *   encodedInUnicode18: [code: string, ids: string, sources: string[], point: string][],
+ *   unencoded: [code: string, ids: string, sources: string[]][] }} TangutPua */
 /** Tibetan Extension-A code points and the Unicode sequences they stand for. @typedef {{ format: string,
  *   standard: string, source: string, original: string, author: string, retrieved: string, sha256: string, note: string,
  *   map: [code: string, script: string, sequence: string][] }} TibetanSeta */
@@ -134,6 +137,14 @@ export const loadSijiao = () => once('sijiao', () => readJson(new URL('../data/t
 /** The rhyme books' class for each character, with its fanqie. @returns {Promise<Rhymes>} */
 export const loadRhymes = () => once('rhymes', () => readJson(new URL('../data/tangut-rhymes.json.gz', import.meta.url)))
 
+/** The Chinese character the 掌中珠 transcribes each Tangut character with, and the entry it stands
+ * in. An entry is paired only where its two columns have the same number of positions.
+ * @typedef {{ text: string, entry: string }} ZzzPair
+ * @typedef {{ format: string, built: string, source: { name: string, date: string, edition: string, doi: string, url: string, licence: string },
+ *   counts: Record<string, number>, pairs: Record<string, ZzzPair[]> }} Zzz */
+/** @returns {Promise<Zzz>} */
+export const loadZzz = () => once('zzz', () => readJson(new URL('../data/tangut-zzz.json.gz', import.meta.url)))
+
 /** Tibetan phonetic glosses by character, from BabelStone's index of five British Library manuscripts:
  * each gloss is [Wylie, Tibetan script, [[shelfmark, count]…]].
  * @returns {Promise<{ format: string, source: string, author: string, modified: string | null, retrieved: string, note: string, glosses: Record<string, [string, string, [string, number][]][]> }>} */
@@ -152,6 +163,9 @@ export const loadDownes = () => once('downes', () => readJson(new URL('../data/t
 /** The Chinese words the Tangut 類林 uses for a character, the commonest first. @returns {Promise<{ glosses: Record<string, [string, number][]> } | null>} */
 export const loadLeilin = () => once('leilin', () => readJson(new URL('../data/tangut-leilin.json', import.meta.url)))
 export const loadTibetan = () => once('tibetan', () => readJson(new URL('../data/tangut-tibetan.json', import.meta.url)))
+
+/** Source-labelled Hanzi glosses and whole names. @returns {Promise<import('./hanzi.js').HanziLibrary>} */
+export const loadHanzi = () => once('hanzi', () => readJson(new URL('../data/tangut-hanzi.json', import.meta.url)))
 
 /** Stroke counts of ideographs and components. @returns {Promise<Record<string, number>>} */
 export const loadStrokes = () => once('strokes', async () => (await readJson(new URL('../data/tangut-strokes.json.gz', import.meta.url))).values)

@@ -3,11 +3,15 @@
 import { searchTibetan } from './tibetan.js'
 import { byIdentifier as byStoredIdentifier } from './identifiers.js'
 import { byTibetanSeta as byStoredSeta } from './seta.js'
-import { byTangutPua as byStoredPua } from './pua.js'
+import { byTangutPua as byStoredPua, byUnencodedPua as byStoredUnencodedPua, byEncodedPua as byStoredEncodedPua, byPuaIds as byStoredPuaIds, byPuaCode as byStoredPuaCode } from './pua.js'
 import { ix, isTangut, OPERATORS } from './db.svelte.js'
 import { matchByParts } from './composition.js'
 import { searchShapeNames, searchShapeSpellings } from './names.js'
 import { describedBy } from './description.js'
+import { searchHanziGlosses, searchHanziNames } from './hanzi.js'
+
+/** Whole recorded names matching a Hanzi query. @param {string} query */
+export const byHanziName = query => searchHanziNames(ix.hanzi, query)
 
 /** @typedef {{ char: string, code: string, near?: boolean }} CodeHit */
 
@@ -104,7 +108,7 @@ export const MEANING_LANGUAGES = /** @type {const} */ (['en', 'ja', 'zh'])
  * but a result that only CCAMC answers carries no sense: the card links to CCAMC instead.
  * @param {string} query
  * @param {{ languages?: string[] }} [options]
- * @returns {{ char: string, tier: number, sense: string, lang: string, via?: 'ccamc' }[]}
+ * @returns {{ char: string, tier: number, sense: string, lang: string, via?: 'ccamc' | 'hanzi', correspondence?: import('./hanzi.js').HanziRecord }[]}
  */
 export function byMeaning(query, options = {}) {
   const needle = query.trim().toLowerCase()
@@ -117,7 +121,7 @@ export function byMeaning(query, options = {}) {
     const senses = lower.split(/[;；,，。、]\s*/)
     return senses.some(/** @param {string} part */ part => part.trim() === needle) ? 0 : word.test(lower) ? 1 : lower.includes(needle) ? 2 : 9
   }
-  /** @type {{ char: string, tier: number, sense: string, lang: string, via?: 'ccamc' }[]} */
+  /** @type {{ char: string, tier: number, sense: string, lang: string, via?: 'ccamc' | 'hanzi', correspondence?: import('./hanzi.js').HanziRecord }[]} */
   const hits = []
   /** @type {Set<string>} */
   const seen = new Set()
@@ -142,6 +146,12 @@ export function byMeaning(query, options = {}) {
       if (t + 3 < tier) { tier = t + 3; sense = value; lang = key }
     }
     if (tier < 9) { hits.push({ char: entry.char, tier, sense, lang }); seen.add(entry.char) }
+  }
+  // Literary glosses retain the character alignment and citation given by their source.
+  if (languages.includes('zh')) for (const { char, tier, record } of searchHanziGlosses(ix.hanzi, query)) {
+    if (seen.has(char)) continue
+    hits.push({ char, tier: tier + 3, sense: record.hanzi, lang: 'zh', via: 'hanzi', correspondence: record })
+    seen.add(char)
   }
   // Downes's glosses answer below Wiktionary's, for the characters it did not find.
   if (languages.includes('en')) {
@@ -287,3 +297,15 @@ export const byTibetanSeta = text => byStoredSeta(ix.setaIndex, text)
 
 /** Characters a Tangut Yinchuan PUA variant code names. @param {string} text */
 export const byTangutPua = text => byStoredPua(ix.puaIndex, text)
+
+/** The PUA row a code names when no encoded character owns it. @param {string} text */
+export const byUnencodedPua = text => byStoredUnencodedPua(ix.puaUnencodedIndex, text)
+
+/** The character a PUA code has had since Unicode 18.0, when the source table predates it. @param {string} text */
+export const byEncodedPua = text => byStoredEncodedPua(ix.puaEncodedIndex, text)
+
+/** The unencoded PUA row whose IDS is the query. @param {string} text */
+export const byPuaIds = text => byStoredPuaIds(ix.puaIdsIndex, text)
+
+/** The PUA row a code names when an encoded character owns it. @param {string} text */
+export const byPuaCode = text => byStoredPuaCode(ix.puaByCode, text)

@@ -25,7 +25,11 @@ for (const session of readdirSync(DATA).sort()) {
   for (const name of readdirSync(dir).filter(name => name.endsWith('.json')).sort()) {
     const record = JSON.parse(readFileSync(join(dir, name), 'utf8'))
     if (!record.char || !record.strokes?.length) continue
-    drawings.push({ id: `${session}/${name}`, session, name, char: record.char, at: record.at ?? '', strokes: record.strokes })
+    drawings.push({
+      id: `${session}/${name}`, session, name, char: record.char, at: record.at ?? '', strokes: record.strokes,
+      // 'picked' where the character is only what the reader chose on the live pad.
+      label: record.label ?? 'answer',
+    })
   }
 }
 
@@ -256,11 +260,17 @@ const html = `<!doctype html>
   const KEY = 'tangut-input:annotations'
   let notes = {}
   try { notes = JSON.parse(localStorage.getItem(KEY) ?? '{}') } catch { notes = {} }
+  // The server's file is what every save writes to, so it leads: a page holding an older copy in
+  // this browser takes the server's record for each drawing it has, and keeps the rest.
   fetch('/api/annotations').then(response => response.ok ? response.json() : null).then(data => {
     if (!data?.notes) return
-    const stored = Object.keys(notes).length
-    const fromServer = Object.keys(data.notes).length
-    if (fromServer > stored) { notes = data.notes; save(); paint() }
+    let changed = false
+    for (const [id, record] of Object.entries(data.notes)) {
+      if (JSON.stringify(notes[id]) === JSON.stringify(record)) continue
+      notes[id] = record
+      changed = true
+    }
+    if (changed) { try { localStorage.setItem(KEY, JSON.stringify(notes)) } catch {} ; paint() }
   }).catch(() => {})
 
   const stage = document.getElementById('stage')
@@ -281,9 +291,11 @@ const html = `<!doctype html>
    */
   function needsWork(drawing) {
     const note = notes[drawing.id]
+    if (note?.skipped) return false
     if (!note?.verdict) return true
-    if (note.verdict === 'good' || note.verdict === 'bad') return false
-    return !note.correct
+    // Only a wrong character waits for its correction; the other verdicts settle the drawing.
+    if (note.verdict === 'wrong') return !note.correct
+    return false
   }
   function queue() { return drawings.filter(needsWork) }
   function current() { return queue()[Math.min(index, Math.max(0, queue().length - 1))] }
@@ -314,7 +326,7 @@ const html = `<!doctype html>
   function paint() {
     const pending = queue().length
     const done = drawings.length - pending
-    count.textContent = done + ' / ' + drawings.length
+    count.textContent = pending === 1 ? '1 left' : pending + ' left'
     bar.style.width = (done / drawings.length * 100).toFixed(1) + '%'
 
     const drawing = current()
@@ -408,7 +420,8 @@ const html = `<!doctype html>
     if (!drawing) return
     if (verdict === 'wrong') { picking = true; paint(); return }
     history.push(drawing.id)
-    if (verdict !== 'skip') noteOf(drawing.id).verdict = verdict
+    if (verdict === 'skip') noteOf(drawing.id).skipped = true
+    else noteOf(drawing.id).verdict = verdict
     save()
     picking = false
     index = 0
@@ -440,7 +453,7 @@ const html = `<!doctype html>
     const id = history.pop()
     if (!id) return
     // Going back takes the judgement back whole, or an undone pick would still be exported.
-    if (notes[id]) { notes[id].verdict = undefined; notes[id].correct = '' }
+    if (notes[id]) { notes[id].verdict = undefined; notes[id].skipped = undefined; notes[id].correct = '' }
     save()
     index = Math.max(0, queue().findIndex(drawing => drawing.id === id))
     paint()
@@ -466,11 +479,24 @@ const html = `<!doctype html>
   addEventListener('message', event => {
     if (event.source !== picker.contentWindow) return
     const data = event.data
+    // The picker is up: hand it the drawing on screen, if there is one.
+    if (data?.type === 'tangut-ready') { const drawing = current(); if (drawing) picker.contentWindow?.postMessage({ type: 'tangut-preseed', strokes: drawing.strokes }, '*'); return }
+    // A key pressed inside the picker, so the verdicts stay one press away after a stroke.
+    if (data?.type === 'tangut-key') {
+      decide(data.key === ' ' ? 'skip' : ['good', 'wrong', 'bad', 'unclear', 'unattested'][Number(data.key) - 1])
+      return
+    }
     if (!data || data.type !== 'tangut-pick' || typeof data.char !== 'string' || !data.char) return
     const drawing = current()
     if (!drawing) return
     const note = noteOf(drawing.id)
     note.correct = data.char
+    if (Array.isArray(data.strokes) && data.strokes.length) {
+      fetch('/api/reviewer', { method: 'POST', body: JSON.stringify({ char: data.char, strokes: data.strokes, for: drawing.id }) })
+        .then(response => response.ok ? response.json() : null)
+        .then(saved => { if (saved?.file) { note.reviewer = saved.file; save() } })
+        .catch(() => {})
+    }
     if (note.verdict === 'good' || note.verdict === 'bad' || !note.verdict) note.verdict = 'wrong'
     // A corrected drawing leaves the queue, so Back has to know the way to it.
     history.push(drawing.id)

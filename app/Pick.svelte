@@ -1,6 +1,7 @@
 <script>
   // The input method on its own: the site's own box, always open, for a tool that embeds this page
   // as its picker. A pick is posted to the window that embedded it.
+  import { onMount } from 'svelte'
   import MiniIme from './ui/MiniIme.svelte'
   import { db, ix, load, gloss } from './lib/db.svelte.js'
   import { loadShapes, SHAPE_FACES } from './lib/data.js'
@@ -136,6 +137,29 @@
     try { window.parent?.postMessage({ type: 'tangut-pick', char, strokes: plain }, '*') } catch { /* a closed window */ }
   }
 
+  // A tool that embeds this page can hand over the strokes it is asking about: the reviewer then
+  // nudges the drawing rather than starting from an empty square.
+  // The page is up and can take a drawing; a tool embedding it may send one now.
+  onMount(() => { window.parent?.postMessage({ type: 'tangut-ready' }, '*') })
+
+  addEventListener('message', event => {
+    const data = event.data
+    if (!data || data.type !== 'tangut-preseed' || !Array.isArray(data.strokes) || !data.strokes.length) return
+    strokes = /** @type {[number, number][][]} */ (data.strokes)
+    void ensureIndexes().then(() => { fit(); paint(); rank() })
+  })
+
+  // Keys pressed while the pointer is in this page still reach the tool around it, so its verdict
+  // shortcuts keep working after a stroke.
+  addEventListener('keydown', (/** @type {KeyboardEvent} */ event) => {
+    if (event.metaKey || event.ctrlKey || event.altKey) return
+    const target = /** @type {HTMLElement | null} */ (event.target)
+    if (target && /^(INPUT|TEXTAREA)$/.test(target.tagName)) return
+    if (!/^[1-5 ]$/.test(event.key)) return
+    event.preventDefault()
+    window.parent?.postMessage({ type: 'tangut-key', key: event.key }, '*')
+  })
+
   // The language follows the reader's, as on the site.
   if (typeof navigator !== 'undefined') {
     const wanted = navigator.language.startsWith('zh') ? 'zh-Hant' : navigator.language.startsWith('ja') ? 'ja' : navigator.language.startsWith('ko') ? 'ko' : 'en'
@@ -152,7 +176,8 @@
   <p class="ui-hint">{#if loading}{t('pick.loadingPad')}{:else}{t('pick.drawHint')}{/if}</p>
   <div class="pad">
     <canvas bind:this={canvas} use:fitCanvas onpointerdown={down} onpointermove={move} onpointerup={up} onpointerleave={up}
-      aria-label={t('pick.drawHint')}></canvas>
+      aria-label={t('pick.drawHint')}
+      oncontextmenu={(/** @type {MouseEvent} */ event) => { event.preventDefault(); undo() }}></canvas>
     <div class="pad-actions">
       <button type="button" class="ui-button" data-variant="quiet" data-size="sm" onclick={undo} disabled={!strokes.length}>{t('pick.undo')}</button>
       <button type="button" class="ui-button" data-variant="quiet" data-size="sm" onclick={clear} disabled={!strokes.length}>{t('pick.clear')}</button>
@@ -174,7 +199,7 @@
   .pick{display:grid;gap:8px;padding:10px;align-content:start;background:var(--ui-color-surface)}
   .pad{display:grid;gap:6px;justify-items:start}
   .pad{justify-items:stretch}
-  canvas{inline-size:100%;aspect-ratio:1;max-block-size:300px;border:1px solid #d8d1c4;
+  canvas{inline-size:100%;aspect-ratio:1;max-block-size:400px;border:1px solid #d8d1c4;
     border-radius:var(--ui-radius-md);background:#faf7f1;touch-action:none;cursor:crosshair}
   .pad-actions{display:flex;align-items:center;gap:6px}
   .hits{display:grid;grid-template-columns:repeat(6, 1fr);gap:2px}
