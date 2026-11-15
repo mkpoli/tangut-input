@@ -1,0 +1,633 @@
+{
+ "saved": "2026-11-07T12:06:39.502Z",
+ "notes": {
+  "2026-11-01T14-53-08/024-17805.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗷦",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-42-08/001-17fa3.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/001-17925.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/002-179bf.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗊜",
+   "verdict": "unattested"
+  },
+  "2026-11-01T14-53-08/003-177a7.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/004-17786.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗞏",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/005-18054.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/006-17c69.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗵚",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/007-180de.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/008-18585.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/009-17eb5.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/010-17eb0.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗵶",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/011-17842.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/012-1784b.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗡁",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/013-1723a.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/014-17bd8.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗈶",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/015-17f3f.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/016-17f33.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/017-186bb.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/018-1869e.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𘚝",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/019-185c9.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/020-185ca.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𘗍",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/021-17dd0.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/022-17dc4.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗒢",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/023-17df6.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/025-17d02.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/026-183dd.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗳿",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/027-17711.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/028-1778f.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗛕",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/029-18211.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/030-187bf.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𘈎",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/031-17401.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "unattested"
+  },
+  "2026-11-01T14-53-08/032-17402.json": {
+   "tags": [],
+   "note": "A glyph no character has: ⿲𘫺𘦳⿱𘠛𘥷, one stroke short at the end of 𗐂 (U+17402) and 𗐁. The search still ranks 𗐂 first and 𗐁 second for it, so the correction is on the first page.",
+   "correct": "𗐂",
+   "verdict": "unattested"
+  },
+  "2026-11-01T14-53-08/033-173d7.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/034-17d8d.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗢛",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/035-18451.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/036-18662.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗽸",
+   "verdict": "wrong"
+  },
+  "2026-11-01T14-53-08/037-171e2.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/038-1742e.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/039-1812b.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T14-53-08/040-1766e.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𘉟",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T18-30-29-970Z-1825f.json"
+  },
+  "2026-11-01T15-31-29/001-183a0.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T15-31-29/002-1839d.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𘑀",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T18-45-56-113Z-18430.json"
+  },
+  "2026-11-01T15-31-29/003-173c0.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T15-31-29/004-17166.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T15-31-29/005-17a9e.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T15-31-29/006-17a9d.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗪤",
+   "verdict": "wrong"
+  },
+  "2026-11-01T15-31-29/007-181bc.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T15-40-30/001-177b1.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  },
+  "2026-11-01T15-42-30/001-1762f.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  },
+  "2026-11-01T15-44-00/001-183a0.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  },
+  "2026-11-01T15-44-00/002-17f11.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  },
+  "2026-11-01T17-42-18/001-17f11.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-32-09/001-17f11.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  },
+  "2026-11-01T19-43-14/001-17f11.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  },
+  "2026-11-01T19-43-14/002-173c0.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  },
+  "2026-11-01T19-43-14/003-17a9e.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/004-18685.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/005-17a9c.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗪤",
+   "verdict": "wrong"
+  },
+  "2026-11-01T19-43-14/006-177d8.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/007-179d1.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗨍",
+   "verdict": "wrong"
+  },
+  "2026-11-01T19-43-14/008-181e1.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/009-179ec.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗨍",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T18-48-12-472Z-17a0d.json"
+  },
+  "2026-11-01T19-43-14/010-17512.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/011-179f0.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/012-17226.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/013-179ec.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/014-18673.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/015-1798e.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗦎",
+   "verdict": "wrong"
+  },
+  "2026-11-01T19-43-14/016-1743a.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/017-17ac9.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗧬",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T18-48-56-485Z-179ec.json"
+  },
+  "2026-11-01T19-43-14/018-1820c.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/019-1798e.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/020-17982.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/021-17a9c.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗧬",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T18-49-11-922Z-179ec.json"
+  },
+  "2026-11-01T19-43-14/022-180f7.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/023-17a0d.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/024-1847b.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/025-179ec.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗧰",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T18-49-38-251Z-179f0.json"
+  },
+  "2026-11-01T19-43-14/026-185a8.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/027-17991.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗧑",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T18-50-00-902Z-179d1.json"
+  },
+  "2026-11-01T19-43-14/028-1747b.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/029-17a0d.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗧰",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T19-04-11-834Z-179f0.json"
+  },
+  "2026-11-01T19-43-14/030-182f6.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/031-179ec.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗧰",
+   "verdict": "wrong"
+  },
+  "2026-11-01T19-43-14/032-17ed8.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/033-179d1.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/034-1859d.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/035-18159.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗨍",
+   "verdict": "wrong",
+   "reviewer": "2026-11-05T19-04-25-643Z-17a0d.json"
+  },
+  "2026-11-01T19-43-14/036-177fb.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/037-18524.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𘅧",
+   "verdict": "wrong"
+  },
+  "2026-11-01T19-43-14/038-185b4.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/039-18159.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-01T19-43-14/040-1807b.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "2026-11-02T05-10-32/001-17cfb.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  },
+  "live-2026-11-05/001-184d0.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "live-2026-11-05/002-1700b.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "live-2026-11-05/003-1729c.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "live-2026-11-05/004-17cff.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "good"
+  },
+  "live-2026-11-05/005-17252.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "unattested"
+  },
+  "live-2026-11-05/006-183f7.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "unclear"
+  },
+  "live-2026-11-07/001-17a74.json": {
+   "tags": [],
+   "note": "",
+   "correct": "𗩴",
+   "verdict": "wrong",
+   "reviewer": "2026-11-07T12-06-11-108Z-17a74.json"
+  },
+  "live-2026-11-07/002-17108.json": {
+   "tags": [],
+   "note": "",
+   "correct": "",
+   "verdict": "bad"
+  }
+ }
+}

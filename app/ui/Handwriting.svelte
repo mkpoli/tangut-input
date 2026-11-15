@@ -267,6 +267,9 @@
       </details>
     {/if}
     <p class="ui-notice">{@html t('draw.note')}</p>
+    {#if !componentsOnly}
+      <p class="ui-hint dataset-link"><a href="/dataset" title={t('draw.dataset.hint')}>{t('draw.dataset')}</a></p>
+    {/if}
   </section>
 
   <section class="results" aria-label={t('draw.resultsLabel')}>
