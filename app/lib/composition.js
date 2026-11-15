@@ -106,12 +106,13 @@ export function binaryDescription(parsed, charactersAt) {
  * but each candidate remains a part of it. A description short of an operand keeps its components.
  * Other descriptions (aliases) read beside the record: a character is found from the parts they
  * name, matches a layout they open with, and keeps the record's structure as the one it draws and
- * splits into.
+ * splits into. A surrounding form first in ⿺ answers ⿰ as well, since the hook belongs to the part.
  * @param {{ char: string, composition?: string }[]} entries
  * @param {{ char: string, ids: string }[]} [aliases]
- * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, descriptionGroups: Map<string, { op: string, groups: PartGroup[] }[]> }}
+ * @param {string[][]} [surrounding] the component pairs whose hooked form wraps what follows
+ * @returns {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, directPartsOf: Map<string, string[]>, layoutOf: Map<string, string>, layoutsOf: Map<string, Set<string>>, descriptionGroups: Map<string, { op: string, groups: PartGroup[], answers: Set<string> }[]> }}
  */
-export function buildPartIndex(entries, aliases = []) {
+export function buildPartIndex(entries, aliases = [], surrounding = []) {
   /** @type {Map<string, string[]>} */
   const byDescription = new Map()
   for (const entry of entries) {
@@ -198,7 +199,7 @@ export function buildPartIndex(entries, aliases = []) {
     return typeof node === 'string' ? node : node.op + node.parts.map(part => editorialNode(part, self)).join('')
   }
 
-  /** @type {Map<string, { op: string, groups: PartGroup[] }[]>} */
+  /** @type {Map<string, { op: string, groups: PartGroup[], answers: Set<string> }[]>} */
   const descriptionGroups = new Map()
 
   /** @type {Map<string, PartGroup[]>} */
@@ -242,15 +243,29 @@ export function buildPartIndex(entries, aliases = []) {
    * the first, as the layout filter always read it. @param {{ roots: Node[] } | null | undefined} parsed */
   const openingOf = parsed => (parsed && parsed.roots[0] !== undefined && typeof parsed.roots[0] !== 'string' ? parsed.roots[0].op : '')
 
+  /** The layouts one description answers: its opening, and ⿰ for a surrounding form first in ⿺.
+   * @param {{ roots: Node[], complete: boolean } | null | undefined} parsed */
+  function answersOf(parsed) {
+    const op = openingOf(parsed)
+    /** @type {Set<string>} */
+    const answers = new Set([op])
+    const root = parsed?.roots[0]
+    if (parsed && parsed.complete && parsed.roots.length === 1 && op === '⿺' && root !== undefined && typeof root !== 'string') {
+      const first = root.parts[0]
+      if (typeof first === 'string' && surrounding.some(pair => pair[1] === first)) answers.add('⿰')
+    }
+    return answers
+  }
+
   // Every description of a character, the record first, read once so the part counts and the
   // search descend through all of them at any depth.
   for (const entry of entries) {
     if (!entry.composition) continue
-    /** @type {{ op: string, groups: PartGroup[] }[]} */
-    const views = [{ op: openingOf(read.get(entry.char)), groups: groupsOf(entry.char) }]
+    /** @type {{ op: string, groups: PartGroup[], answers: Set<string> }[]} */
+    const views = [{ op: openingOf(read.get(entry.char)), groups: groupsOf(entry.char), answers: answersOf(read.get(entry.char)) }]
     for (const text of aliasesOf.get(entry.char) ?? []) {
       const parsed = binaryView(readDescription(text), entry.char)
-      views.push({ op: openingOf(parsed), groups: groupsFor(entry.char, parsed) })
+      views.push({ op: openingOf(parsed), groups: groupsFor(entry.char, parsed), answers: answersOf(parsed) })
     }
     descriptionGroups.set(entry.char, views)
   }
@@ -317,11 +332,23 @@ export function buildPartIndex(entries, aliases = []) {
   const usedBy = new Map()
   /** @type {Map<string, string[]>} */
   const directPartsOf = new Map()
+  /** @type {Map<string, string>} */
+  const layoutOf = new Map()
+  /** @type {Map<string, Set<string>>} */
+  const layoutsOf = new Map()
   for (const entry of entries) {
     const char = entry.char
     const parts = collect(char, new Set())
     partsOf.set(char, parts)
     directPartsOf.set(char, directParts(char))
+    const views = descriptionGroups.get(char) ?? []
+    if (views.length) {
+      layoutOf.set(char, views[0].op)
+      /** @type {Set<string>} */
+      const answers = new Set()
+      for (const view of views) for (const answer of view.answers) answers.add(answer)
+      layoutsOf.set(char, answers)
+    }
     for (const part of parts.keys()) {
       let users = usedBy.get(part)
       if (!users) usedBy.set(part, users = new Set())
@@ -337,13 +364,13 @@ export function buildPartIndex(entries, aliases = []) {
       directPartsOf.set(part, root.parts.map(child => editorialNode(child, part)).filter(child => isTangut(child) || isDescriptionPart(child)))
     }
   }
-  return { partsOf, usedBy, directPartsOf, descriptionGroups }
+  return { partsOf, usedBy, directPartsOf, layoutOf, layoutsOf, descriptionGroups }
 }
 
 /**
  * The characters that hold every part, as often as asked, at any layer. The smallest set of
  * holders of one part is scanned, never the whole table.
- * @param {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, descriptionGroups: Map<string, { op: string, groups: PartGroup[] }[]> }} index
+ * @param {{ partsOf: Map<string, Map<string, number>>, usedBy: Map<string, Set<string>>, descriptionGroups: Map<string, { op: string, groups: PartGroup[], answers?: Set<string> }[]> }} index
  * @param {string[]} parts
  * @param {string} [layout] an IDS operator, matched against the description the parts are read in
  * @returns {string[]}
@@ -447,7 +474,7 @@ export function matchByParts(index, parts, layout = '') {
     if (need.size && ![...need].every(([part, count]) => (have?.get(part) ?? 0) >= count)) continue
     // The layout and the parts are read from one description: a part of the record does not pair
     // with an operator only an alias opens with.
-    const views = (index.descriptionGroups?.get(char) ?? []).filter(view => !layout || view.op === layout)
+    const views = (index.descriptionGroups?.get(char) ?? []).filter(view => !layout || (view.answers?.has(layout) ?? view.op === layout))
     if (!views.length) continue
     if (!need.size) { hits.push(char); continue }
     // Per-part maxima are exact for a single distinct part, and exact for a character whose one

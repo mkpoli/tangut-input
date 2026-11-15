@@ -4,6 +4,9 @@
 import VARIANTS from '../data/tangut-variants.json' with { type: 'json' }
 import { readDescription, writeDescription } from './composition.js'
 
+/** The component pairs whose hooked form wraps what follows. @type {string[][]} */
+export const SURROUNDING = VARIANTS.surrounding ?? []
+
 /** @typedef {{ char: string, composition?: string, definitions?: { en?: string[], ja?: string[] }, pronunciations?: Record<string, string> }} VariantEntry */
 
 // Lines that say how a character is used, which two unrelated characters can share.

@@ -37,9 +37,15 @@ score is comparable with everyone else's.
 The site's own matcher, in `app/lib/shape.js`, ranked against all 6,136 characters across five
 typefaces: `bun benchmark/baseline.mjs` then `bun benchmark/score.mjs --name baseline benchmark/baseline.jsonl`.
 
-| | First | In five | In 24 | MRR |
-| --- | ---: | ---: | ---: | ---: |
-| Baseline, site matcher | 32.1% | 57.5% | 75.5% | 0.440 |
+| Version | Change | First | In five | In 24 | MRR |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 0.1.0 | Position only: chamfer distance, no direction, no stroke count | 20.8% | 44.3% | 60.4% | 0.315 |
+| 0.2.0 | Direction weight 2, stroke 0.35, block re-rank 150 at 0.5 | 32.1% | 57.5% | 75.5% | 0.440 |
+| 0.3.0 | Direction weight 1, so position counts for more | 34.0% | 60.4% | 76.4% | 0.459 |
+| 0.3.1 | Same matcher, a larger reviewed corpus behind the figures | 34.4% | 60.9% | 75.8% | 0.461 |
+
+All three rows are measured on the same 106 test drawings; `benchmark/history.json` holds them and says
+what changed between each pair.
 
 ## Rules
 

@@ -123,10 +123,15 @@ matching characters sit in two panes side by side, stacked on a narrow screen, e
 own, so a new match never pushes the palette out of reach. Each chosen part keeps only the
 characters that hold it anywhere in their description (twice if chosen twice), and the palette keeps
 only the parts that still occur, with a count on each, so the next choice always leads somewhere. An
-outer layout (side by side, above and below, three across …) narrows further. The palette is ordered
+outer layout (side by side, above and below, three across …) narrows further; a hooked form recorded
+first in ⿺ answers the side-by-side layout, because the hook belongs to the part. The palette is ordered
 by stroke count, then by use, and can be filtered by Cangjie code or Japanese shape name. Choosing a
 part also opens it in the card. A card's “Characters with these parts” link opens Parts with that
 character's parts chosen.
+
+**Code chart** (`/codes`) lists every character and component in code order, 16 columns to a row
+and 256 positions to a page, with each block's occupancy and the components' use above the chart.
+A click copies the character.
 
 **Fanqie** (`/fanqie`) goes the other way: it takes the upper and lower characters a rhyme book
 spells a word with and lists what they spell. The two characters can be typed, or picked from a
@@ -144,8 +149,13 @@ recorded with the fanqie it was made for.
   click-to-copy, each system linked to its source.
 - A Tibetan spelling's tooltip adds its Tibetan Extension-A code when the precomposed table has
   the exact sequence.
-- **PUA variants**: the Tangut Yinchuan variant codes of a character, each with its IDS and source,
-  click-to-copy; a code names a variant glyph, not another character.
+- **PUA variants**: a row of glyph tiles in the Variant forms section; each opens its PUA card,
+  where the code, IDS and source are listed. A code names a variant glyph, not another character.
+  Find maps a code that Unicode
+  18.0 has since given a character to that character. Every other PUA code opens its PUA card
+  (glyph, code, IDS, source); a code with a base character links to it, and a code without one sits
+  with the other unencoded rows at the bottom of the Variants page. The unencoded rows' IDS find the
+  same record.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).
@@ -326,5 +336,6 @@ worker) mode.
 - `reading`: `ndzi` across systems.
 - `draw`: a seven-stroke sketch and its closest glyphs.
 - `parts`: two parts chosen, seven characters, the narrowed palette.
+- `codes`: the four blocks' occupancy, the components' use, and the first page of each chart.
 - `card`, `card-attested`: the card of 𗋕, and its structure and three attested lines.
 - `sources`: the Sources page.

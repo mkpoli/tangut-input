@@ -47,6 +47,16 @@
   unicode-range: U+17000-18AFF, U+18D00-18DFF;
 }
 
+/* The Yinchuan PUA glyphs, served from the same unmodified font as the selectable face above but
+   claimed for the private-use range, which that face leaves out. Only the variants without an
+   encoded base use it. */
+@font-face {
+  font-family: 'Tangut PUA';
+  src: url('/fonts/TangutYinchuan.ttf') format('truetype');
+  font-display: swap;
+  unicode-range: U+F0000-F1613;
+}
+
 @font-face {
   font-family: 'BabelStone Wenhai';
   src: url('/fonts/BabelStoneTangutWenhai.ttf') format('truetype');

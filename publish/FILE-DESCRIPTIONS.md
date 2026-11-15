@@ -7,7 +7,7 @@ Strokes drawn with a mouse, for recognising Tangut characters
 
 - **tangut-strokes.jsonl** — 211 drawings, one JSON record per line: the character, the polylines drawn for it in the unit square, and when.
 - **split.json** — the fixed 84 dev and 106 test drawings; scores are only comparable against this split.
-- **baseline-submission.jsonl** — the site's own matcher, ranking 24 characters per test drawing: 32.1% first, 57.5% in five, MRR 0.440.
+- **baseline-submission.jsonl** — the site's own matcher, ranking 24 characters per test drawing: 34.0% first, 60.4% in five, MRR 0.459.
 - **submission-template.csv** — the shape a competition submission takes: one row per test drawing, 24 rank columns.
 - **annotations.json** — a reviewer's verdict on 103 drawings, and the character 32 of them should have been.
 

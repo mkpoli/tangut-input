@@ -3,13 +3,14 @@
   // first, then what helps a reader confirm it is the one they mean (meaning, readings, structure,
   // where it stands in a text), then the characters near it.
   import { db, ix, codePoint, gloss, isComponent, readingOf } from '../lib/db.svelte.js'
-  import { onMount } from 'svelte'
+  import { onMount, tick } from 'svelte'
   import G from './G.svelte'
   import TileNote from './TileNote.svelte'
   import Icon from './Icon.svelte'
   import { route, link } from '../lib/route.svelte.js'
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
+  import { puaCharacter } from '../lib/pua.js'
   import { SYSTEMS, systemName, systemTitle } from '../lib/reading.js'
   import { derivedDescriptions } from '../lib/variants.js'
   import { byDescription } from '../lib/search.js'
@@ -24,6 +25,8 @@
   import Spelling from './Spelling.svelte'
   import { i18n, t } from '../lib/i18n.svelte.js'
   import { ccamcUrl } from '../lib/ccamc.js'
+  import { tibetanShown, tibetanWhere } from '../lib/tibetan.js'
+  import { hasCardReadings } from '../lib/card-readings.js'
   import { bookTitle } from '../lib/books.js'
   import { setaCode } from '../lib/seta.js'
   import { identifierGroups, editionName } from '../lib/identifiers.js'
@@ -38,6 +41,22 @@
   /** @param {string | null} part */
   const partTerm = part => part ? (PART_TERMS[/** @type {keyof typeof PART_TERMS} */ (part)] ?? part) : ''
   const entry = $derived(ready && char ? ix.byChar.get(char) : undefined)
+  // A private-use glyph has no character record; its PUA row is the whole card. A code with a
+  // base character still gets this card, with the base as a link.
+  const puaVariant = $derived(ready && char
+    ? /** @type {{ code: string, ids: string, sources: string[], char?: string } | null} */ (
+      ix.puaUnencodedIndex.get(`U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase()}`)
+      ?? ix.puaByCode.get(`U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase()}`)
+      ?? null)
+    : null)
+  // Opening a variant replaces the tile that had focus; move focus to the card it opens.
+  let focusPua = $state(false)
+  /** @type {HTMLElement | null} */
+  let puaArticle = $state(null)
+  $effect(() => {
+    if (!focusPua || !puaVariant) return
+    tick().then(() => { puaArticle?.focus(); focusPua = false })
+  })
   const codes = $derived(ready && char ? ix.codes.get(char) ?? [] : [])
   const identifiers = $derived(ready && char ? identifierGroups(ix.identifiers.get(char) ?? []) : [])
   const pua = $derived(ready && char ? ix.pua.get(char) ?? [] : [])
@@ -74,6 +93,7 @@
   const rhymeClass = $derived(rhyme?.[0] ? String(rhyme[0]) : '')
   // Tibetan and Sanskrit spellings from a study known only through a repost: see the sources page.
   const hands = $derived(ready && char ? ix.tibetanHands[char] : undefined)
+  const tibetanGlosses = $derived(ready && char ? ix.tibetan.get(char) ?? [] : [])
   const toneName = $derived(
     rhyme?.[1] === 1 ? 'card.tone.level'
       : rhyme?.[1] === 2 ? 'card.tone.rising'
@@ -225,6 +245,38 @@
     <p class="blank-line">{t('card.blank')}</p>
     <p class="ui-hint">{@html t('card.blankKeys')}</p>
   </div>
+{:else if puaVariant}
+  {@const base = puaVariant.char}
+  <article class="record pua-record" tabindex="-1" bind:this={puaArticle}>
+    <header class="head">
+      <div class="glyph-frame pua-glyph-frame"><span class="pua-card-glyph" lang="txg" aria-hidden="true">{char}</span></div>
+      <div class="facts">
+        <button class="cp ui-mono" type="button" title={t('card.copyIdentifier', { id: puaVariant.code })} onclick={() => copy(puaVariant.code, puaVariant.code)}>{puaVariant.code}</button>
+        <p class="gloss">{t('card.puaVariant')}</p>
+        {#if base}
+          <p class="meta">{t('card.puaBase')} <button class="inline pua-base-link" type="button" title={t('find.openCharacter')} onclick={() => choose(base)}><G char={base} /> <span class="ui-mono">{codePoint(base)}</span></button></p>
+        {:else}
+          <p class="meta">{t('card.puaNoBase')}</p>
+        {/if}
+      </div>
+    </header>
+
+    <div class="use">
+      {#if base}<button class="ui-button" data-variant="primary" data-size="sm" type="button" onclick={() => put(base)}><Icon name="add" size={14}/>{t('card.add')}</button>{/if}
+      {#if base}<button class="ui-button" data-size="sm" type="button" onclick={() => copy(base)}><Icon name="copy" size={14}/>{t('common.copy')} <span class="ui-script copy-glyph">{base}</span></button>{/if}
+      <button class="ui-button" data-size="sm" type="button" onclick={() => copy(puaVariant.code, puaVariant.code)}><Icon name="copy" size={14}/>{t('common.copy')} <span class="ui-mono">{puaVariant.code}</span></button>
+      <button class="ui-button" data-size="sm" type="button" onclick={() => copy(address, t('card.link'))}><Icon name="link" size={14}/>{t('card.copyLink')}</button>
+      {#if base}<button class="ui-button" data-size="sm" type="button" onclick={() => choose(base)}><Icon name="book" size={14}/>{t('find.openCharacter')}</button>{/if}
+    </div>
+
+    <section>
+      <h3 class="ui-label"><Icon name="parts" size={15}/>{t('card.builtFrom')}</h3>
+      <p class="ui-formula pua-card-ids" title={puaVariant.ids}>{puaVariant.ids}</p>
+      {#if puaVariant.sources.length}<p class="ui-hint">{puaVariant.sources.join(' · ')}</p>{:else}<p class="ui-hint">{t('variants.puaNoSource')}</p>{/if}
+      <p class="ui-hint">{t('card.puaNote', { version: ix.puaSource?.version ?? '' })}</p>
+      <p class="more"><a href={link('variants') + '#pua'}><Icon name="arrow" size={13}/>{t('card.puaVariants')}</a></p>
+    </section>
+  </article>
 {:else}
   <article class="record">
     <header class="head">
@@ -265,27 +317,6 @@
             </dd>
           {/each}
         </dl>
-      </section>
-    {/if}
-
-    {#if pua.length}
-      <section class="pua-variants">
-        <h3 class="ui-label">
-          {#if ix.puaSource?.source}
-            <a href={ix.puaSource.source} target="_blank" rel="noopener noreferrer" title={t('card.puaSource', { version: ix.puaSource.version ?? '' })}>{t('card.puaVariants')}</a>
-          {:else}{t('card.puaVariants')}{/if}
-          <span class="ui-count">{pua.length}</span>
-        </h3>
-        <ul class="pua-list">
-          {#each pua as [code, ids, sources] (code + ids)}
-            <li>
-              <button class="identifier ui-mono" type="button" title={t('card.copyIdentifier', { id: code })} onclick={() => copy(code, code)}>{code}</button>
-              <span class="ui-formula pua-ids" title={ids}>{ids}</span>
-              {#if sources.length}<span class="ui-hint pua-source">{sources.join(' · ')}</span>{/if}
-            </li>
-          {/each}
-        </ul>
-        <p class="ui-hint pua-note">{t('card.puaNote', { version: ix.puaSource?.version ?? '' })}</p>
       </section>
     {/if}
 
@@ -354,7 +385,7 @@
       </section>
     {/if}
 
-    {#if variants || derivedForms.length}
+    {#if variants || derivedForms.length || pua.length}
       <section>
         <h3 class="ui-label"><Icon name="link" size={15}/>{t('card.variants')}</h3>
         {#if variants}
@@ -378,6 +409,16 @@
               <p class="ui-hint">{t(block.source)}</p>
             {/if}
           {/each}
+        {/if}
+        {#if pua.length}
+          <p class="ui-hint">{t('card.puaVariants')} <span class="ui-count">{pua.length}</span></p>
+          <div class="ui-tiles" style:--ui-tile-size="48px">
+            {#each pua as [code, ids, sources] (code + ids)}
+              <button class="ui-tile pua-tile" type="button" title={`${code} · ${ids}${sources.length ? ` · ${sources.join(' · ')}` : ''}`} aria-label={`${t('find.openVariant')} · ${code}`} onclick={() => { focusPua = true; choose(puaCharacter(code)) }}>
+                <span class="pua-tile-glyph" lang="txg" aria-hidden="true">{puaCharacter(code)}</span>
+              </button>
+            {/each}
+          </div>
         {/if}
         {#if derivedForms.length}
           <p class="ui-hint">{t('card.variantDerived')}</p>
@@ -407,7 +448,7 @@
       </section>
     {/if}
 
-    {#if readings.length || keyed.length || rhymeClass}
+    {#if hasCardReadings({ readings, keyed, rhymeClass, spelling, hands, glosses: tibetanGlosses })}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
         <table class="readings">
@@ -440,11 +481,35 @@
             {#if spelling}
               <tr><th scope="row">{t('card.fanqie')}</th><td class="cjk"><span class="ui-script spelling">{spelling}</span></td></tr>
             {/if}
-            {#if hands?.tibetan?.length}
-              <tr><th scope="row" title={t('card.handsTitle')}>{t('card.tibetanHands')}</th><td class="hands">
-                {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
-                  <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone pua={setaCode(ix.seta, script)} />
-                {/each}
+            {#if hands?.tibetan?.length || tibetanGlosses.length}
+              <tr><th scope="row">{t('card.tibetanHands')}</th><td>
+                <div class="tibetan-sources">
+                  {#if hands?.tibetan?.length}
+                    <div class="tibetan-source">
+                      <a class="source-label ui-hint" href="https://zhuanlan.zhihu.com/p/272058247" target="_blank" rel="noopener noreferrer" title={t('card.handsTitle')}>{t('card.spellingSource')}<span aria-hidden="true">↗</span></a>
+                      <div class="hands">
+                        {#each hands.tibetan as [hand, printed, count, script, wylie, ipa] (hand + script + count + wylie)}
+                          <Spelling {script} transcription={wylie} {ipa} lang="bo" {printed} {hand} {count} babelstone pua={setaCode(ix.seta, script)} />
+                        {/each}
+                      </div>
+                    </div>
+                  {/if}
+                  {#if tibetanGlosses.length}
+                    <div class="tibetan-source">
+                      <a class="source-label ui-hint" href="https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html" target="_blank" rel="noopener noreferrer">{t('card.transcriptionTibetan')}<span aria-hidden="true">↗</span></a>
+                      <div class="tibetan-glosses">
+                        {#each tibetanGlosses as [wylie, script, where], i (i)}
+                          <span class="tibetan-gloss">
+                            <span lang="bo" class="tibetan-script">{tibetanShown(script)}</span>
+                            <span class="ui-mono wylie">{wylie}</span>
+                            <span class="ui-hint">{tibetanWhere(where)}</span>
+                          </span>
+                        {/each}
+                        <span class="source-note ui-hint">{t('card.transcriptionTibetanNote')}</span>
+                      </div>
+                    </div>
+                  {/if}
+                </div>
               </td></tr>
             {/if}
             {#if hands?.sanskrit?.length}
@@ -456,6 +521,21 @@
             {/if}
           </tbody>
         </table>
+      </section>
+    {/if}
+
+    {#if ready && ix.zzz.has(char)}
+      <section>
+        <h3 class="ui-label"><Icon name="sound" size={15}/>{t('card.transcriptions')}</h3>
+        <dl class="transcriptions">
+          {#if ix.zzz.has(char)}
+            <dt><a href="https://kokusho.nijl.ac.jp/biblio/100354804" target="_blank" rel="noopener noreferrer">{t('card.transcriptionZzz')}<span aria-hidden="true">↗</span></a></dt>
+            <dd class="zzz">
+              {#each ix.zzz.get(char) ?? [] as pair, i (pair.entry + pair.text)}{#if i}<span class="sep" aria-hidden="true">·</span>{/if}<span class="zzz-pair"><span lang="zh-Hant" title={pair.entry}>{pair.text}</span><span class="entry-ref ui-hint">{t('card.transcriptionEntry', { id: (pair.entry.split(':').pop() ?? '') })}</span></span>{/each}
+              <span class="source-note ui-hint">{t('card.transcriptionZzzNote')}</span>
+            </dd>
+          {/if}
+        </dl>
       </section>
     {/if}
 
@@ -614,6 +694,11 @@
   .glyph-frame::before{left:50%;top:9px;bottom:9px;width:1px}
   .glyph-frame::after{top:50%;left:9px;right:9px;height:1px}
   .glyph-frame :global(.ui-script){position:relative;z-index:1;font-size:88px}
+  .pua-glyph-frame :global(.pua-card-glyph){position:relative;z-index:1;font-family:'Tangut PUA',var(--tg-font);font-size:82px;line-height:1}
+  .pua-card-ids{font-size:24px;line-height:1.5;overflow-wrap:anywhere}
+  .pua-base-link{display:inline-flex;align-items:center;gap:4px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+  .pua-base-link :global(.ui-script){font-size:30px;line-height:1}
+  .pua-base-link:hover,.pua-base-link:focus-visible{background:var(--ui-color-accent-soft)}
   .glyph-frame :global(.ui-nog){position:relative;z-index:1;font-size:var(--ui-text-sm);inline-size:3.4em;block-size:3.4em}
   .facts{display:grid;gap:var(--ui-space-2xs);min-inline-size:0}
   .cp{display:inline-flex;align-items:center;justify-self:start;min-block-size:24px;margin-inline-start:-6px;padding:2px 6px;border:0;border-radius:var(--ui-radius-xs);background:none;color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
@@ -623,13 +708,9 @@
   .inline{padding:0 3px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font-size:17px;vertical-align:-2px}
   .inline:hover{background:var(--ui-color-surface-hover)}
   .use{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);padding-bottom:var(--ui-space-xl)}
-  .pua-variants .ui-label{flex-wrap:wrap}
-  .pua-variants .ui-label a{display:inline-flex;align-items:center;gap:2px;color:inherit;text-underline-offset:2px}
-  .pua-list{display:grid;gap:var(--ui-space-2xs);margin:0;padding:0;list-style:none}
-  .pua-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--ui-space-xs)}
-  .pua-ids{font-size:16px;line-height:1.5}
-  .pua-source{font-size:var(--ui-text-2xs);line-height:1.45}
-  .pua-note{margin:0;font-size:var(--ui-text-2xs);line-height:1.45}
+  .pua-tile{content-visibility:auto;contain-intrinsic-size:48px 48px}
+  .pua-tile .pua-tile-glyph{font-family:'Tangut PUA',var(--tg-font);font-size:30px;line-height:1}
+  .pua-record:focus-visible{outline:2px solid var(--ui-color-focus);outline-offset:-2px}
   .identifiers dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-2xs) var(--ui-space-lg);margin:0}
   .identifiers dt{display:flex;align-items:baseline;gap:var(--ui-space-2xs);color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);white-space:nowrap}
   .identifiers dt a{display:inline-flex;align-items:center;gap:1px;color:inherit;text-underline-offset:2px}
@@ -664,10 +745,27 @@
   .readings th{inline-size:46%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-phonetic);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
-  .readings td.hands{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--ui-space-xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
+  .readings .hands{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px var(--ui-space-xs);font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
+  .tibetan-sources{display:grid;gap:var(--ui-space-sm)}
+  .tibetan-source{display:grid;gap:2px}
+  .source-label{width:fit-content;text-underline-offset:2px}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
   .cite{display:block;margin-block-start:2px;font-family:var(--ui-font-sans);font-size:var(--ui-text-xs);color:var(--ui-color-ink-muted)}
   .spelling{font-size:18px}
+  .transcriptions{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:var(--ui-space-xs) var(--ui-space-lg);margin:0;align-items:baseline}
+  .transcriptions dt{color:var(--ui-color-ink-muted);font-size:var(--ui-text-sm)}
+  .transcriptions dt a{display:inline-flex;align-items:center;gap:3px;color:inherit;text-underline-offset:2px}
+  .transcriptions dd{margin:0;min-inline-size:0}
+  .transcriptions .zzz{font-size:var(--ui-text-xl);line-height:1.3}
+  .zzz-pair{display:inline-flex;align-items:baseline;gap:var(--ui-space-xs)}
+  .zzz-pair .entry-ref{font-size:var(--ui-text-2xs)}
+  .transcriptions .sep{margin-inline:0.4em;color:var(--ui-color-ink-muted)}
+  .tibetan-glosses{display:grid;gap:2px}
+  .tibetan-gloss{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--ui-space-2xs) var(--ui-space-sm)}
+  .tibetan-script{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:var(--ui-text-lg);line-height:1.35}
+  .tibetan-gloss .wylie{font-size:var(--ui-text-sm);color:var(--ui-color-ink)}
+  .tibetan-gloss .ui-hint{font-size:var(--ui-text-2xs)}
+  .source-note{display:block;margin-top:2px;font-size:var(--ui-text-2xs);line-height:1.35}
   .pos{display:flex;flex-wrap:wrap;gap:var(--ui-space-2xs)}
   .pos-tag{text-transform:none;font-family:var(--ui-font-sans);font-size:var(--ui-text-2xs)}
   .ids-view{display:grid;gap:var(--ui-space-xs);min-inline-size:0}
@@ -696,6 +794,8 @@
     .head{gap:var(--ui-space-lg)}
     .glyph-frame{inline-size:96px;block-size:96px}
     .glyph-frame :global(.ui-script){font-size:72px}
+    .pua-glyph-frame :global(.pua-card-glyph){font-size:68px}
+    .pua-card-ids{font-size:20px}
     .gloss{font-size:var(--ui-text-lg)}
   }
 </style>
