@@ -3,13 +3,15 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
-import { parsePuaQuery, indexTangutPua, byTangutPua, indexUnencodedPua, byUnencodedPua, indexEncodedPua, byEncodedPua, tangutPuaTable, convertTangutPua } from '../app/lib/pua.js'
+import { parsePuaQuery, indexTangutPua, byTangutPua, indexUnencodedPua, byUnencodedPua, indexEncodedPua, byEncodedPua, tangutPuaTable, convertTangutPua, indexPuaIds, byPuaIds, indexPuaByCode, byPuaCode } from '../app/lib/pua.js'
 
 const pua = JSON.parse(gunzipSync(readFileSync(new URL('../app/data/tangut-pua.json.gz', import.meta.url))).toString())
 const isTangut = char => /^[\u{17000}-\u{18D7F}]$/u.test(char)
 const index = indexTangutPua(pua.chars)
 const unencoded = indexUnencodedPua(pua.unencoded)
 const encoded = indexEncodedPua(pua.encodedInUnicode18)
+const byIds = indexPuaIds(pua.unencoded)
+const byCode = indexPuaByCode(pua.chars)
 
 test('the shipped table has the Yinchuan counts and ranges', () => {
   expect(pua.format).toBe('tangut-input/tangut-pua')
@@ -167,4 +169,18 @@ test('the 16 Unicode 18.0 codes convert to their new characters', () => {
   expect(converted.unicode18).toBe(16)
   expect(converted.remaining).toBe(0)
   expect(converted.text).toBe(pua.encodedInUnicode18.map(([, , , point]) => String.fromCodePoint(parseInt(point.slice(2), 16))).join(''))
+})
+
+test('an unencoded PUA variant is found by its IDS', () => {
+  expect(byPuaIds(byIds, '⿰⿱𘥄𘠒𘢌')).toEqual({ code: 'U+F00CF', ids: '⿰⿱𘥄𘠒𘢌', sources: [] })
+  expect(byPuaIds(byIds, '⿰𘧇𘪗')).toBeNull()
+  expect(byPuaIds(byIds, '')).toBeNull()
+})
+
+test('a PUA code with a base row names the base character', () => {
+  expect(byPuaCode(byCode, 'U+F02BB')).toEqual({
+    code: 'U+F02BB', ids: '⿰𘣩𘠆', sources: ['Zazi Or.12380/1843 (K)'], char: '𗀀',
+  })
+  expect(byPuaCode(byCode, 'F00CF')).toBeNull()
+  expect(byPuaCode(byCode, 'U+17000')).toBeNull()
 })
