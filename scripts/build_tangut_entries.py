@@ -11,6 +11,7 @@ Displayable fields come from sources the site can republish:
   character);
 - the English definitions in Wiktionary's Tangut entries, through Kaikki's extract;
 - the Japanese definitions on ja.wiktionary (CC BY-SA 4.0);
+- the Chinese definitions in the pinned zhwiktionary snapshot (CC BY-SA 4.0);
 - BabelStone's Tangut IDS (public domain);
 - the 文海's Chinese entry text (12th century, public domain);
 - Unicode's TangutSources radical and stroke data.
@@ -42,7 +43,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ENTRIES = ROOT / 'app/data/tangut-entries.json.gz'
 INDEX = ROOT / 'app/data/tangut-ccamc-index.json.gz'
 SOURCES = ROOT / 'app/data/tangut-reading-sources.json.gz'
-FORMAT = 'tangut-input/entries/4'
+FORMAT = 'tangut-input/entries/6'
 SYSTEMS = ['li_fanwen', 'gong_huangcheng', 'gong_xun_202411', 'miyake', 'kychanov', 'sofronov',
            'nishida', 'sound_li_fanwen', 'sound_nie_lishan', 'arakawa_shintaro', 'tibetan']
 READINGS = ROOT / 'data/readings/readings.tsv'
@@ -170,6 +171,7 @@ def main():
     ids = babelstone()
     en = kaikki()
     ja = gz(ROOT / 'data/wiktionary/definitions-ja.json.gz')['pages']
+    zh = gz(ROOT / 'data/wiktionary/definitions-zh.json.gz')['pages']
     readings = gz(ROOT / 'data/wiktionary/txg-readings.json.gz')['systems']
     gong_hwang = gz(ROOT / 'data/gong-xun/ghc.json.gz')['readings']
     gong_xun = gz(ROOT / 'data/gong-xun/gx202411.json.gz')['readings']
@@ -184,6 +186,8 @@ def main():
         definitions_ja = ja.get(char, {}).get('definitions') or []
         keyed_fields = keyed_readings.get(char, {})
         definitions_zh = [value[0] for value in keyed_fields.get('gloss_zh', [])]
+        wiktionary_page = zh.get(char, {})
+        wiktionary_zh = wiktionary_page.get('definitions') or []
         pron = [
             readings['li_fanwen'].get(char, ''),
             '；'.join(value[0] for value in keyed_fields.get('gong_huangcheng', []))
@@ -214,6 +218,8 @@ def main():
             definitions_zh,
             pron,
             text.get('zh', ''),
+            wiktionary_zh,
+            wiktionary_page.get('url') or '',
         ])
 
     data = {'format': FORMAT, 'systems': SYSTEMS, 'rows': out}

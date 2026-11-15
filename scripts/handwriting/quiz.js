@@ -10,7 +10,7 @@
 // The app screenshots are made with `shapes` (the drawing pad), so a formal test uses the same
 // pad as the site. The capture page here differs in two ways: it never shows the answer, and it
 // exports the strokes as JSON.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
 import { parseShapes, indexShapes, distanceField, SIZE } from '../../app/lib/shape.js'
 import page from './page.html' with { type: 'text' }
@@ -22,7 +22,9 @@ for (let i = 2; i < process.argv.length; i += 2) args.set(process.argv[i].replac
 // A round's length; the last prompt is always asked for rather than prefetched, so it is not missed.
 const rounds = Math.max(10, Number(args.get('size') ?? 40))
 let seed = Number(args.get('seed') ?? Date.now() % 100000)
-const out = args.get('out') ?? `data/handwriting/${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}`
+const stamp = () => new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)
+let out = args.get('out') ?? `data/handwriting/${stamp()}`
+const fixedOut = args.has('out')
 const port = Number(args.get('port') ?? 5411)
 // A drawing is also sent to the site's record, so everything the pad has seen can be read back from
 // one place. `--upload ''` keeps a round on this machine only.
@@ -58,6 +60,12 @@ function thin(source) {
 }
 
 const shapes = parseShapes(gunzipSync(readFileSync(new URL('../../app/data/tangut-shapes.bin.gz', import.meta.url))))
+// The components the entries are built from, so a round can ask for one on its own: a reader can
+// recognise a piece of a character long before they can name the whole of it.
+const entries = JSON.parse(gunzipSync(readFileSync(new URL('../../app/data/tangut-entries.json.gz', import.meta.url))).toString())
+const componentChars = [...new Set(
+  entries.rows.flatMap(row => [...String(row[1] ?? '')].filter(char => /[\u{18800}-\u{18AFF}]/u.test(char))),
+)]
 const index = indexShapes(shapes)
 /** Ideographs with a glyph, in code point order. */
 const ideographs = index.chars.map((char, i) => [char, i]).filter(([char]) => /[\u{17000}-\u{187FF}]/u.test(String(char)))
@@ -151,7 +159,17 @@ img.save(out)
   return readFileSync(png)
 }
 
-const session = { started: new Date().toISOString(), size: rounds, seed, items: [] }
+let session = { started: new Date().toISOString(), size: rounds, seed, items: [] }
+
+/** Start another round in a new directory, so a reader can keep drawing past the end of one. */
+function nextRound() {
+  if (!fixedOut) out = `data/handwriting/${stamp()}`
+  seed = (seed * 7 + 13) % 2147483648
+  session = { started: new Date().toISOString(), size: rounds, seed, items: [] }
+  mkdirSync(out, { recursive: true })
+  writeFileSync(`${out}/session.json`, JSON.stringify(session, null, 2))
+  return out
+}
 
 /** Send a saved drawing to the site's record. The drawing is already on disk, so a failure is only
  *  logged. @param {any} record */
@@ -176,20 +194,13 @@ async function uploadDrawing(record) {
 }
 mkdirSync(out, { recursive: true })
 
-const prompts = new Map()
-function promptId(item) {
-  if (!item.id) {
-    item.id = crypto.randomUUID()
-    prompts.set(item.id, item)
-    writeFileSync(`${out}/prompt-${item.id}.json`, JSON.stringify(item))
-  }
-  return item.id
-}
 let current = null
 /** The prompt fetched ahead with `/api/peek`, shown by the next `/api/next`. */
 let pending = null
+let prompted = 0
 const makeItem = async () => {
   if (session.items.length >= rounds) return null
+  prompted++
   const previous = session.items.at(-1)
   if (previous && session.items.length % 2 === 1) {
     const options = lookalikes(previous.char, 5)
@@ -197,6 +208,11 @@ const makeItem = async () => {
       const answer = options[Math.floor(random() * options.length)]
       return { kind: 'lookalike', char: answer, options: [answer, ...options.filter(other => other !== answer)], images: await Promise.all(options.map(glyphImage)) }
     }
+  }
+  // One prompt in four is a component on its own, drawn where a reader meets it in the palette.
+  if (componentChars.length && prompted % 4 === 2) {
+    const char = componentChars[Math.floor(random() * componentChars.length)]
+    return { kind: 'component', char, image: await glyphImage(char) }
   }
   const char = ideographs[Math.floor(random() * ideographs.length)][0]
   return { kind: 'glyph', char, image: await glyphImage(char) }
@@ -213,7 +229,7 @@ const server = Bun.serve({
       if (!current) return Response.json({ done: true })
       // The answer never reaches the page: it gets the picture to copy and nothing that names it.
       const image = current.kind === 'lookalike' ? current.images[current.options.indexOf(current.char)] : current.image
-      return Response.json({ prompt: promptId(current), kind: current.kind, index: session.items.length, total: rounds, image: image ?? null })
+      return Response.json({ kind: current.kind, index: session.items.length, total: rounds, image: image ?? null })
     }
     if (url.pathname === '/api/peek') {
       // The prompt after the current one, so the page can fetch it while the reader draws.
@@ -223,7 +239,7 @@ const server = Bun.serve({
       const image = ahead.kind === 'lookalike' ? ahead.images[ahead.options.indexOf(ahead.char)] : ahead.image
       // The answer stays on the server.
       return Response.json({
-        prompt: promptId(ahead), index: session.items.length, total: rounds, kind: ahead.kind, image: image ?? null,
+        index: session.items.length, total: rounds, kind: ahead.kind, image: image ?? null,
       })
     }
     if (url.pathname === '/api/claim' && request.method === 'POST') {
@@ -232,21 +248,6 @@ const server = Bun.serve({
       if (pending) current = pending
       pending = null
       return Response.json({ ok: true, has: Boolean(current) })
-    }
-    if (url.pathname === '/api/capture' && request.method === 'POST') {
-      const body = await request.json()
-      const stored = typeof body.prompt === 'string' && /^[0-9a-f-]{36}$/.test(body.prompt) ? `${out}/prompt-${body.prompt}.json` : null
-      const prompt = prompts.get(body.prompt) ?? (stored && existsSync(stored) ? JSON.parse(readFileSync(stored, 'utf8')) : null)
-      if (!prompt || !Array.isArray(body.strokes) || !body.strokes.length) return Response.json({ error: 'no drawing' }, { status: 400 })
-      const record = { ...body, char: prompt.char, kind: prompt.kind, lookalikes: prompt.options ?? null, at: new Date().toISOString() }
-      if (typeof body.captureId !== 'string' || !/^[0-9a-f-]{36}$/.test(body.captureId)) return Response.json({ error: 'bad id' }, { status: 400 })
-      const name = `capture-${body.captureId}.json`
-      if (!existsSync(`${out}/${name}`)) {
-        writeFileSync(`${out}/${name}`, JSON.stringify(record))
-        void uploadDrawing(record)
-        try { buildDataset() } catch (error) { console.warn(`dataset: ${error}`) }
-      }
-      return Response.json({ saved: name })
     }
     if (url.pathname === '/api/save' && request.method === 'POST') {
       const body = await request.json()
@@ -278,6 +279,12 @@ const server = Bun.serve({
       return Response.json({ skipped: true })
     }
     if (url.pathname === '/api/session') return Response.json({ out, count: session.items.length, total: rounds })
+    // A finished round can be followed by another, in a directory of its own.
+    if (url.pathname === '/api/round' && request.method === 'POST') {
+      current = null
+      pending = null
+      return Response.json({ out: nextRound(), total: rounds })
+    }
     // The prompt images are the session's own files, made on first use.
     const asked = /^\/glyph-([0-9a-f]+)\.png$/i.exec(url.pathname)
     if (asked && !(await Bun.file(`${out}/glyph-${asked[1]}.png`).exists())) await glyphImage(String.fromCodePoint(parseInt(asked[1], 16)))
