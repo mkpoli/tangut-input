@@ -17,6 +17,32 @@ snapshot and writes the corpus into `app/data/tangut-attestation.json.gz`.
 Licence: **CC BY-SA 4.0**, Wikisource contributors. The attribution, revision ids and the
 underlying editions are in `wikisource/README.md` and in the source records of the built file.
 
+## `wiktionary/definitions-zh.json.gz`
+
+Chinese Wiktionary's Tangut definitions from the [2026-11-01 dump](https://dumps.wikimedia.org/zhwiktionary/20261101/),
+SHA1 `bd139bae2c7c9f5fad6d6a347d07296bf9bcabdc`, checked against Wikimedia's
+[checksum list](https://dumps.wikimedia.org/zhwiktionary/20261101/zhwiktionary-20261101-sha1sums.txt).
+Each page retains its revision, timestamp, latest editor, contributor-history URL and original wikitext.
+The snapshot contains 152 displayable senses for 110 characters; unresolved markup and three
+identified source inconsistencies remain in its rejected records.
+
+Licence: **CC BY-SA 4.0**, Chinese Wiktionary contributors, under the
+[recorded copyright notice](https://zh.wiktionary.org/w/index.php?title=Wiktionary:%E7%89%88%E6%9D%83%E4%BF%A1%E6%81%AF&oldid=8368252).
+The latest editor is one contributor; the linked page history provides the others.
+The primary dictionaries were not checked, and some reference templates link to CCAMC.
+[Coverage and source limitations](../docs/han-glosses.md).
+
+```sh
+uv run scripts/extract_tangut_chinese.py --dump /path/to/zhwiktionary-20261101-pages-articles.xml.bz2 --retrieved 2026-11-07
+uv run scripts/build_tangut_entries.py
+```
+
+## `cursive/`
+
+The 108 characters on [BabelStone's Cursive Tangut](https://www.babelstone.co.uk/Tangut/CursiveTangut.html)
+page, its 210 crops and the outlines traced from them. [`cursive/README.md`](cursive/README.md) gives
+the fields, the sources and their terms.
+
 ## `mica/`
 
 Two texts the Mi Corpus Annotation Group transcribed itself: 華嚴經 juan 77, from the images in 荒川慎太郎
@@ -39,6 +65,21 @@ volumes are CC BY 4.0; the other texts keep the terms of the editions cited in `
 `scripts/build_tangut_attestation.py` reads the manifest and adds the 21 texts as one source,
 `lcdtt`.
 
+## `babelstone/`
+
+The parallel Tangut and Chinese text of T599 on Andrew West's
+[BabelStone page](https://www.babelstone.co.uk/Tangut/DragonKing.html), read 2026-11-07:
+`dragon-king.tsv` holds the 26 line pairs, Tangut first, and
+`scripts/fetch_babelstone_dragon_king.py` refetches them. The Chinese is 義淨's
+*佛為海龍王説法印經* as the page prints it; the Tangut column only aligns each Chinese line with the
+LCDTT transcription of the same text, which the corpus already holds. The page states no licence;
+the Chinese is a public-domain translation, and the Tangut transcription and alignment are West's.
+`scripts/build_tangut_attestation.py` reads the checked-in table and adds the Chinese to the
+`lcdtt:dragon-king` lines and to the Wikisource transcription, which holds the same Tangut as one
+line; it stops if the table's Tangut no longer matches either text. The table is a snapshot, not a
+check on the live page: refetch it with the script and rebuild to bring in a page change. See
+`babelstone/README.md`.
+
 ## `tangut-samples.json`
 
 Eighteen passages copied from `app/data/tangut-attestation.json.gz` for the Samples picker: three
@@ -51,6 +92,12 @@ record names its source, licence, line ids and the exact text; the thirteen famo
 `famous: true`. Built by
 `scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the Wikisource
 texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausanne Corpus.
+
+## Hanzi correspondences
+
+[`tangut-hanzi.json`](<../app/data/tangut-hanzi.json>) contains character glosses from Guillaume Jacques’s [Leilin database](<https://www.academia.edu/25078937/Leilin_database>) and whole-name pairs from the era, title, state-name and posthumous-name tables. Each pair carries its source, evidence type and available passage reference; the source records preserve attribution and caveats from the [Names bibliography](<../app/lib/era-sources.js>). The 類林 glosses retain their occurrence counts and the [pinned intermediary](<https://github.com/tinbreaker/tangut-text/tree/820fe592c8c0b1512867c70e5c84395a042667f3>); no licence is stated.
+
+Rebuild from the local source tables with `bun scripts/build_tangut_hanzi.mjs`. The [Hanzi library](<../app/lib/hanzi.js>) indexes character glosses separately from whole names: 大白高國 corresponds to 𗴂𗹭𗂧𘜶 as a phrase, whose word order differs from the Chinese. Search uses the recorded spelling, with every alternative and its evidence available in the result.
 
 ## `tangut-era-evidence.tsv`
 
@@ -88,6 +135,16 @@ West warns about wear and forgeries and leaves three types disputed: 福聖/稟�
 questioned era attribution. No reuse licence is stated; photographs remain linked at the source.
 The citation key `west2007` resolves in `app/lib/era-sources.js`.
 
+Each coin also lists the images West prints, shown when a reader hovers the row or opens its
+images button. `kind` is `photograph` for a photograph of one specimen or `drawing` for his
+reconstruction of the inscription as he reads it; `label` is the specimen number or the
+interpretation the drawing sets. Four types have a photograph (福聖, 貞觀, 正德 and 天慶), all six a
+drawing, and 福聖 two drawings for its two readings. The files stay on BabelStone’s server: the
+preview loads them from there and does not copy them. Zeno, the source of two photographs, grants
+reuse with a link to the image number ([terms](https://www.zeno.ru/rules.php)); the 貞觀 and 正德
+photographs come from a [archived coin forum thread](http://web.archive.org/web/20251007194858/http://www.hqcoin.com/bbs/TopicOther.asp?t=5&BoardID=356&id=26449) (the live host no longer answers)
+linked by West, and BabelStone states no terms of its own.
+
 ## `tangut-posthumous.tsv`
 
 Posthumous, temple and tomb names, one row per emperor or empress: `kind`, the names, an empress's `relation` to a ruler, Tangut with its
@@ -114,12 +171,18 @@ What English and Chinese Wiktionary state about Tangut variant forms (CC BY-SA 4
 2026-11-01: `form`, `base`, `kind` (`variant` or `synonym`), `scope` (`partial` when the page has several
 etymologies and the statement covers one word) and each page's revision as `wiki:revision`. Rebuild with
 `uv run scripts/extract_tangut_variants.py en=<dump> zh=<dump>`. `tangut-component-variants.tsv` holds
-component pairs used to find possible variants, from NGWU YOH's table, and `tangut-variants-reported.tsv`
-holds pairs from NGWU YOH's messages. `tangut-component-groups.tsv` holds the groups of their table with more
+component pairs used to find possible variants, from NGWU YOH's table and the screenshots of 2026-11-07, and
+`tangut-variants-reported.tsv` holds pairs from NGWU YOH's messages. Which code points the screenshots show is
+the site's reading of them against the Noto Serif Tangut and Tangut Yinchuan glyphs.
+`tangut-component-groups.tsv` holds the groups of their table with more
 than one member, each marked `apart` when its members mostly stand in different places or `shared` when
 they stand in the same ones. `kind_source` says who says so: NGWU YOH for 𘠣𘡍𘠅, the site's reading of the counts
-for the rest. The parts palette keeps them together and the variants page lists them. `uv run scripts/build_tangut_variants.py` writes
-`app/data/tangut-variants.json`, which `app/lib/variants.js` reads.
+for the rest. The build marks a pair `surrounding` when one member stands only first in ⿺ in the recorded
+descriptions and the other never stands there: the app then reads ⿰ beside that member as ⿺ with the hooked
+form, and the other way, including the Parts finder's side-by-side layout filter. `uv run scripts/build_tangut_variants.py` writes
+`app/data/tangut-variants.json`, which `app/lib/variants.js` reads. The parts palette keeps the groups together
+and the variants page lists them. A component substitution whose description no recorded character carries is
+written out on the card as a derived form; it names no character and no reading.
 
 
 ## `shouling/`
@@ -366,15 +429,15 @@ rows), each row naming its source.
 The names, words and readings people use for components, for the parts finder's search: 絞絲 and
 绞丝 for 糸, ノ文 and のぶん for 攵, ノ木 and のぎ for 禾, 宝盖 and 寶蓋 for 宀, 倒八 for 丷,
 卷字头 for 龹, and water, silk, みず, shui, mizu, jiaosipang, 수, thủy, Bộ Thủy, Kangxi radical 120
-for the same components. 6,660 rows, 298 KB (58 KB gzipped), built by
+for the same components. 6,661 rows, 298 KB (58 KB gzipped), built by
 `scripts/build_component_names.py`. Format: `name`, `char`, `source`, `detail`, one name for one
 component per row; comments start with `#`.
 
-Eighteen rows name Tangut components by the kana their strokes resemble: the five base names
+Nineteen rows name Tangut components by the kana their strokes resemble: the five base names
 くノ, ノメ, ノノメ, ノメメ and くくノ, the five A-class variants くノ﹅, ノくノ﹅, くくノ﹅,
-コくノ﹅ and くノ﹅ノメ, and the eight B-class variants ノ匕﹅, ノノ匕﹅, 一匕﹅, 二匕﹅,
-ソ一匕﹅, ラ匕﹅, コ匕﹅ and コ一匕﹅. Their source is `data/tangut-component-names.tsv`, which the build
-merges in; the naming convention and its limits are in
+コくノ﹅ and くノ﹅ノメ, the eight B-class variants ノ匕﹅, ノノ匕﹅, 一匕﹅, 二匕﹅,
+ソ一匕﹅, ラ匕﹅, コ匕﹅ and コ一匕﹅, and コくノ for 𘫿, read from the plain form. Their source is
+`data/tangut-component-names.tsv`, which the build merges in; the naming convention and its limits are in
 [`docs/tangut-component-names.md`](../docs/tangut-component-names.md).
 
 The search folds a query and a name (NFKC, katakana as hiragana, Latin accents off, spaces and
@@ -444,11 +507,11 @@ again and rewrites them, and also rebuilds the folds.
 
 ## tangut-component-names.tsv
 
-Eighteen Japanese shape names for Tangut components, the rows the build adds to
-`component-names.tsv`: the five base names, five A-class variants and eight B-class variants. The names describe the
-kana a component's strokes resemble; they are not an official nomenclature, and the wider
-vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-names.md). Format:
-`name`, `char`, `source`, `detail`; comments start with `#`.
+Nineteen Japanese shape names for Tangut components, the rows the build adds to
+`component-names.tsv`: the five base names, five A-class variants, eight B-class variants and コくノ.
+The names describe the kana a component's strokes resemble; they are not an official nomenclature,
+and the wider vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-names.md).
+Format: `name`, `char`, `source`, `detail`; comments start with `#`.
 
 - Source `arakawa-2023`: 荒川慎太郎「西夏文字における「点」の出現環境と機能」『言語研究』164
   (2023): 39–66, §1.4, §3.2 and n. 21
@@ -460,18 +523,21 @@ vocabulary is in [`docs/tangut-component-names.md`](../docs/tangut-component-nam
 - Source `arakawa-2020`: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回
   大会予稿集 (<https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf>):
   the distinction between the two forms.
+- Source `NGWU YOH, chat message, 2026-11-10`: コくノ for 𘫿, the plain form of Arakawa's dotted
+  A3 コくノ﹅. The code point is this project's reading of the glyph.
 - Licence: **CC BY-SA 4.0** for the Wikipedia rows; the Arakawa rows are short shape names.
 
 `app/data/tangut-component-names.json` is the copy the site's Find page and the part cards read;
-`tests/names.test.js` keeps it equal to this table. `app/data/tangut-part-names.json` is the eighteen-row
+`tests/names.test.js` keeps it equal to this table. `app/data/tangut-part-names.json` is the nineteen-row
 comparison on Parts: Japanese shape names, the English abstract's wording for くノ and ノメ, and
 empty cells where the sources read record no name.
 
 ## tangut-component-shape-hints.json.gz
 
 An editorial ranking, not a name table. Each of the 768 Tangut components U+18800–18AFF is compared
-with the eighteen components that have an attested Japanese shape name, and the three nearest names
-are kept with a cosine score and whether the stroke count agrees. 16 KB gzipped, built by
+with the nineteen components that have a Japanese shape name, eighteen attested and コくノ read
+from the glyph, and the three nearest names are kept with a cosine score and whether the stroke
+count agrees. 16 KB gzipped, built by
 `uv run scripts/rank_component_shapes.py` from `app/public/fonts/TangutYinchuan.ttf`.
 
 The score says the ink resembles an attested component's ink; it does not say the two are the same
@@ -620,6 +686,55 @@ parts', which covers the 6,107 descriptions in 4 to 22 strokes. Rebuild with
 (`ae440bd9bba89b2610cfe6b498ac462d2763dd32bfead8ac30d32988b5b67a27`). Unicode data is
 distributed under the Unicode License v3.
 
+## `tangut-identifiers.json.gz`
+
+The number or code each of 6,482 characters has in four systems besides Unicode: the Li Fanwen
+2008 dictionary index (`L0009`, or `L0042/4537` where a merged character carries two), the 文海 page
+and entry from BabelStone's lookup (`L55.172`, `M10.131`, 3,069 characters), and the Mojikyo
+4.50/4.60 and XXZT A/B code points from BabelStone's conversion table (6,061 and 6,455 characters).
+A Mojikyo or XXZT code is a CJK code point, not a private-use one, and the same code can name two
+characters where the converter prints a choice.
+
+Format: `format`, `retrieved`, `sources` (name, URL, terms) and `chars`, each a list of
+`[scheme, value, edition?]`. The editions are `4.50`/`4.60` for Mojikyo and `A`/`B` for XXZT; a Li
+Fanwen number and a 文海 position carry none. Rebuild with
+`node scripts/build_tangut_identifiers.mjs`, which pins all three source digests. Unicode data is
+under the Unicode License v3; the two BabelStone pages state no licence, and only the factual
+numbers are kept.
+
+## `tangut-tibetan-seta.json.gz`
+
+The 1,536 precomposed characters of Tibetan Extension-A (藏文编码字符集（扩充集A）), U+F300–U+F8FF,
+each with the Unicode Tibetan sequence it stands for. The source is `data/tibetan-seta.tsv`, read from
+Andrew West's archived mapping table on 2026-11-08; the live page now returns 404. The page states no
+licence, and only the code points and sequences are kept. Set B, announced for the Supplementary
+Private Use Area, was never published.
+
+Format: `format`, `standard`, `source` (the archived URL), `original`, `author`, `retrieved`, `note`
+and `map`, each row `[code, script, sequence]`. Rebuild with `python3 scripts/build_tibetan_seta.py`.
+A spelling matches only when its folded script is exactly one of the sequences; 119 codes cover 213
+characters across BabelStone's index and the hand-class tables.
+
+## `tangut-pua.json.gz`
+
+The 2,814 Tangut Yinchuan PUA variant forms in Supplementary Private Use Area-A, U+F0000–U+F1613,
+from `data/tangut-pua-variants.tsv`: the encoded base character, the PUA code, the variant's IDS and
+the source that attests it. 2,775 rows attach to 2,257 encoded characters; 39 rows have no base
+character and are kept in `unassigned`. The Unicode 18.0 proposals give 16 of those a code point
+(`encodedInUnicode18`); the 23 without one are `unencoded` and the site lists them on the Variants
+page. One PUA code, F023C, appears twice with two IDS. The page
+states no licence; the font terms are on the BabelStone Yinchuan page. A PUA code names a glyph
+variant, not a different character.
+
+Format: `format`, `source` (the variants page), `font`, `version` (16.0.4), `retrieved`, `sha256` of
+the TSV, `note`, `counts`, `chars` (character → `[code, IDS, sources]`), `unassigned`,
+`encodedInUnicode18` (`[code, IDS, sources, code point]`) and `unencoded` (`[code, IDS, sources]`).
+Rebuild with `python3 scripts/build_tangut_pua.py`.
+
+Two rows print a base glyph that does not match the row's code point (U+179D0 and U+17FE9); the
+code point is kept, as the table's identifier.
+The page's introduction ends the range at U+F1612; its table has one more row at U+F1613, kept here.
+
 ## `tangut-layers.json.gz`
 
 The largest character split of 2,408 Tangut descriptions, 16 KB gzipped. BabelStone describes every
@@ -666,15 +781,32 @@ modules behind Wiktionary's Tangut pronunciation template (Li Fanwen 2008, Miyak
 Sofronov 1968, Nishida 1966), Gong Hwang-cherng's GHC and Gong Xun's GX202411 from the Tangut
 Pronunciation Database, English
 meanings from Kaikki's extract of English Wiktionary, Japanese meanings from ja.wiktionary,
+Chinese meanings from the pinned zhwiktionary snapshot and Chinese glosses keyed from the editions,
 BabelStone's IDS description, the 文海's Chinese entry text for the six characters it carries in
 this snapshot, and the Unicode radical and stroke count. The Wiktionary readings and
 meanings are CC BY-SA 4.0; GHC and GX202411 are cited from the Tangut Pronunciation Database under
 its Limited Public Use licence; the description is public domain; the radical and stroke data are
 Unicode License v3. 6,144 characters. Rebuild with `uv run scripts/build_tangut_entries.py` from
 `data/wiktionary/txg-readings.json.gz`, `data/wiktionary/definitions-ja.json.gz`,
-`data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
+`data/wiktionary/definitions-zh.json.gz`, `data/gong-xun/ghc.json.gz`, `data/gong-xun/gx202411.json.gz`,
 `data/wenhai/entry-text.json.gz`, `data/readings/readings.tsv` and the files above. The keyed
 readings and their citations are the builder's own input and come from the editions.
+
+The parts finder indexes complete subtrees of these IDS descriptions as selectable shapes. Where a
+subtree matches a single character's complete description, the editorial form can use that
+character; this is a shape comparison, not a documented historical derivation. A description of
+three columns or three rows is read as two parts when exactly one pair of adjacent operands spells a
+character: 𗆫 (`⿲𘠐𘧘𘣩`) reads as 𘠐 and 𘓔 (`⿰𘧘𘣩`), 633 of the 1,707 complete single-root three-operand
+descriptions. When both pairs spell a character, or neither does, the three operands stay as the
+source writes them. The cut is editorial and comes from the shapes alone; the recorded description
+is unchanged. The card's structure view reads the same cut, so the two show one description.
+
+The suggestion to retain intermediate parts, including `⿱𘡊𗎘`, and to keep a whole character such as
+𘓔 as one base, came from a private communication shared on 2026-11-07 (name withheld); it gives
+examples rather than a complete decomposition authority. The underlying IDS data is Andrew West's
+[Tangut IDS](https://www.babelstone.co.uk/Tangut/TangutIDS.txt), as recorded above. The distinction
+between IDS containment and the 文海's cuts is discussed in
+[the construction note](../docs/wenhai-composition.md).
 
 `app/data/tangut-ccamc-index.json.gz` holds the search-only counterpart: folded readings for the
 one system the site does not show (Arakawa Shintarō) and normalized English and Chinese glosses from
@@ -1334,3 +1466,29 @@ The values keyed out of those books, one printed value per row with the page it 
 citations the site shows beside a reading. `scripts/check_readings.py` holds the columns, the field
 names, the work each field may come from and the locator shape; a row's content is a reader's
 judgement. [The README](readings/README.md) gives the fields and how a locator is written.
+
+## `tangut-zzz.json.gz`
+
+The 掌中珠 read as a concordance: each Tangut character with the Chinese character the glossary
+transcribes it by, and the entry that character stands in. The print sets one Chinese character
+under each Tangut character, so an entry is joined only where both columns name the same positions.
+An entry with both columns keyed but unequal or offset is counted as `unpairedEntries`, a finding;
+an entry with only one column keyed is counted as `incompleteEntries`, the keying still in progress.
+
+Cells are published only where both are `ok`. The other statuses keep their own counts:
+`uncertainCells` awaits a second witness, `illegibleCells` cannot be read, and `absentCells` means
+the print has no character at that position, which is a reading rather than a gap. `text` is the
+printed transcription; the Tangut key is the standard form from `glyph_norm` where the table has
+one. The table is empty until the keying reaches the Tangut headwords. Rebuild with
+`bun scripts/build_tangut_zzz.mjs` from `data/zhangzhongzhu/entries.tsv` and `cells.tsv`; the source
+record and licence are the `zhangzhongzhu/` ones above.
+
+## `tangut-tibetan.json`
+
+Tibetan phonetic glosses of 197 Tangut characters, from Andrew West's
+[BabelStone index](https://www.babelstone.co.uk/Tangut/TangutTibetanIndex.html) of five British
+Library manuscripts (Or.12380/1842, 3495, 3909, 3910, 3911), 2011-12-19. Each gloss is its Wylie
+reading, its Tibetan spelling, and the manuscripts it stands in with a count for each. The page
+omits some incomplete glosses and warns that some readings are uncertain; a `[?]` in the Wylie
+marks a letter that could not be read. No licence is stated upstream. Refresh with
+`uv run --with beautifulsoup4 python scripts/fetch_babelstone_tibetan.py`.

@@ -22,7 +22,8 @@ test('a description is read as a tree, and an operator short of an operand is re
 
 test('a character part stands at its own layer, and its parts stand below it', () => {
   // 𗁼 is ⿰𘠁𗢪; 𗢪 is ⿰𗢨𘠨; 𗢨 is 𘢌. Searching 𗢨 must still find 𗁼.
-  expect(index.directPartsOf.get('𗁼')).toEqual(['𘠁', '𘠨', '𗢪'])
+  expect(index.directPartsOf.get('𗁼')).toEqual(['𘠁', '⿰𘠨𗢪'])
+  expect(index.directPartsOf.get('⿰𘠨𗢪')).toEqual(['𘠨', '𗢪'])
   expect(index.directPartsOf.get('𗢪')).toEqual(['𗢨', '𘠨'])
   expect(index.partsOf.get('𗁼')?.get('𗢪')).toBe(1)
   expect(index.partsOf.get('𗁼')?.get('𗢨')).toBe(1)
@@ -43,6 +44,100 @@ test('every component written in a description is held at least its written coun
   }
 })
 
+test('complete unencoded subtrees are searchable in editorial form', () => {
+  const shape = '⿱𘡊𗎘'
+  expect(index.partsOf.get('𗁛')?.get(shape)).toBe(1)
+  expect(index.usedBy.get(shape)?.has('𗁛')).toBe(true)
+  expect(index.directPartsOf.get('𗁛')).toEqual(['𘠁', shape])
+  expect(index.directPartsOf.get(shape)).toEqual(['𘡊', '𗎘'])
+  expect(matchByParts(index, [shape, '𗎘', '𘠳', '𘠢'])).toContain('𗁛')
+})
+
+test('a subtree that spells a character is that character, not a shape of its own', () => {
+  // 𘒛 is ⿱𘧉⿰𘧘𘣩, and ⿰𘧘𘣩 is 𘓔: the base of the larger character is 𘓔.
+  expect(byChar.get('𘓔')?.composition).toBe('⿰𘧘𘣩')
+  expect(index.directPartsOf.get('𘒛')).toEqual(['𘧉', '𘓔'])
+  expect(index.directPartsOf.get('𘓔')).toEqual(['𘧘', '𘣩'])
+  expect(index.usedBy.get('⿰𘧘𘣩')).toBeUndefined()
+  expect(index.usedBy.get('𘓔')?.has('𘒛')).toBe(true)
+})
+
+test('a character of three columns reads as one part beside a character of two', () => {
+  // 𗆫 is ⿲𘠐𘧘𘣩, and ⿰𘧘𘣩 is 𘓔: the base 𘓔 is kept, not split into its components.
+  expect(byChar.get('𗆫')?.composition).toBe('⿲𘠐𘧘𘣩')
+  expect(index.directPartsOf.get('𗆫')).toEqual(['𘠐', '𘓔'])
+  expect(index.partsOf.get('𗆫')?.get('𘓔')).toBe(1)
+  expect(index.partsOf.get('𗆫')?.get('𘧘')).toBe(1)
+  expect(index.usedBy.get('𘓔')?.has('𗆫')).toBe(true)
+  expect(matchByParts(index, ['𘠐', '𘓔'])).toContain('𗆫')
+})
+
+test('the outermost operator is the editorial one, for the layout filter', () => {
+  // 𗆫 is recorded as ⿲𘠐𘧘𘣩 and read as two parts, so its layout is ⿰.
+  expect(index.layoutOf.get('𗆫')).toBe('⿰')
+  // 𗁋 is ⿲𘠁𘦢𘠅 with both pairs spelling a character, so it stays three.
+  expect(index.layoutOf.get('𗁋')).toBe('⿲')
+})
+
+test('a complete subtree under a truncated node is regrouped too', () => {
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: '⿱𘠂𘠄' },
+    { char: '𗀂', composition: '⿲𘠃⿳𘠁𘠂𘠄' },
+  ])
+  // The outer ⿲ is short of an operand, but the ⿳ it kept reads as 𘠁 and 𗀁.
+  expect(synthetic.directPartsOf.get('𗀂')).toEqual(['𘠃', '⿱𘠁𗀁'])
+})
+
+test('three operands stay three when both pairs spell characters or neither does', () => {
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: '⿰𘠀𘠁' },
+    { char: '𗀂', composition: '⿰𘠁𘠂' },
+    { char: '𗀃', composition: '⿲𘠀𘠁𘠂' },
+    { char: '𗀄', composition: '⿲𘠃𘠄𘠅' },
+    { char: '𗀅', composition: '⿱𘠁𘠂' },
+    { char: '𗀆', composition: '⿳𘠀𘠁𘠂' },
+  ])
+  expect(synthetic.directPartsOf.get('𗀃')).toEqual(['𘠀', '𘠁', '𘠂'])
+  expect(synthetic.directPartsOf.get('𗀄')).toEqual(['𘠃', '𘠄', '𘠅'])
+  expect(synthetic.directPartsOf.get('𗀆')).toEqual(['𘠀', '𗀅'])
+})
+
+test('subtree shapes preserve multiplicity, branches, and incomplete roots', () => {
+  const shape = '⿰𘠀𘠁'
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: `⿱${shape}${shape}` },
+    { char: '𗀂', composition: `⿲${shape}𘠂` },
+    { char: '𗀃', composition: shape },
+    { char: '𗀄', composition: `⿱${shape}𘠃` },
+    { char: '𗀅', composition: `⿱${shape}𘠃` },
+    { char: '𗀆', composition: `⿰⿱${shape}𘠃𘠄` },
+  ])
+  // The encoded shape is represented by its character; use another unencoded shape below.
+  expect(synthetic.partsOf.get('𗀁')?.has(shape)).toBe(false)
+  expect(synthetic.partsOf.get('𗀂')?.has('⿲⿰𘠀𘠁𘠂')).toBe(false)
+  expect(synthetic.partsOf.get('𗀃')?.has(shape)).toBe(false)
+  const unencoded = '⿰𘠅𘠆'
+  const repeated = buildPartIndex([{ char: '𗀇', composition: `⿱${unencoded}${unencoded}` }])
+  expect(repeated.partsOf.get('𗀇')?.get(unencoded)).toBe(2)
+  expect(matchByParts(repeated, [unencoded, unencoded, '𘠅', '𘠆'])).toContain('𗀇')
+  expect(matchByParts(repeated, [unencoded, unencoded, unencoded])).not.toContain('𗀇')
+  expect(matchByParts(synthetic, ['𗀄', '𗀅'])).not.toContain('𗀆')
+  const malformed = buildPartIndex([{ char: '𗀈', composition: `⿲${unencoded}𘠂` }])
+  expect(matchByParts(malformed, [unencoded, '𘠅'])).toContain('𗀈')
+  expect(malformed.partsOf.get('𗀈')?.has(`⿲${unencoded}𘠂`)).toBe(false)
+})
+
+test('shape matches follow the same alternative branch as characters', () => {
+  const shape = '⿰𘠅𘠆'
+  const synthetic = buildPartIndex([
+    { char: '𗀁', composition: `⿱${shape}𘠃` },
+    { char: '𗀂', composition: `⿱${shape}𘠃` },
+    { char: '𗀃', composition: `⿰⿱${shape}𘠃𘠄` },
+  ])
+  expect(matchByParts(synthetic, [shape, '𗀁', '𘠅'])).toContain('𗀃')
+  expect(matchByParts(synthetic, [shape, '𗀁', '𗀂'])).not.toContain('𗀃')
+})
+
 test('a part written twice is held twice, at any layer', () => {
   // 𗀌 is ⿱𘠀⿰𘡰𘡰.
   expect(index.partsOf.get('𗀌')?.get('𘡰')).toBe(2)
@@ -55,7 +150,8 @@ test('a description short of an operand keeps its complete subtrees', () => {
   expect(readDescription(byChar.get('𗆽')?.composition ?? '').complete).toBe(false)
   expect(index.partsOf.get('𗆽')?.get('𗂍')).toBe(1)
   expect(index.partsOf.get('𗆽')?.get('𘠁')).toBe(1)
-  expect(index.directPartsOf.get('𗆽')).toEqual(['𘠐', '𘠙', '𗂍'])
+  expect(index.directPartsOf.get('𗆽')).toEqual(['𘠐', '⿱𘠙𗂍'])
+  expect(index.directPartsOf.get('⿱𘠙𗂍')).toEqual(['𘠙', '𗂍'])
   // 𗱋 is ⿰𘢷𘢣⿱⿺𘠔𘢌: it loses an operand too, but ⿺𘠔𘢌 is 𗇅.
   expect(index.partsOf.get('𗱋')?.get('𗇅')).toBe(1)
 })

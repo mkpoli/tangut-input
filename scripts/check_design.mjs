@@ -275,7 +275,7 @@ async function noSideScroll(page) {
   assert.ok(overflow.scroll <= overflow.view + 1, `the page scrolls sideways (${overflow.scroll} > ${overflow.view})`)
 }
 
-const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chart', '/eras', '/texts', '/texts?q=wikisource-tongyin-preface', '/gyalrongic', '/transcribe?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6', '/draw', '/parts', '/variants', '/intro', '/about']
+const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chart', '/eras', '/texts', '/texts?q=wikisource-tongyin-preface', '/gyalrongic', '/transcribe?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6', '/draw', '/parts', '/codes', '/variants', '/intro', '/about']
 
 /** Visits every page at one viewport and checks it renders without script errors or side scroll. */
 async function checkPages(viewport, scheme) {
@@ -490,7 +490,7 @@ await step('a wide-screen group opens its finders in a menu that closes on Escap
   const menu = desktop.locator('.nav-menu')
   await menu.waitFor()
   assert.equal(await shape.getAttribute('aria-expanded'), 'true', 'the button reports the menu open')
-  assert.equal(await menu.getByRole('link').count(), 4, 'the menu lists the group finders')
+  assert.equal(await menu.getByRole('link').count(), 5, 'the menu lists the group finders')
   assert.equal(await menu.getByRole('link', { name: /^Cangjie/ }).getAttribute('aria-current'), 'page', 'the open finder is marked')
   await desktop.keyboard.press('Tab')
   assert.equal(await desktop.evaluate(() => document.activeElement?.textContent?.includes('Cangjie')), true, 'Tab enters the menu')

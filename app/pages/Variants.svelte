@@ -10,15 +10,23 @@
   import { choose, ui } from '../lib/ui.svelte.js'
   import { route } from '../lib/route.svelte.js'
   import { t } from '../lib/i18n.svelte.js'
+  import { copy } from '../lib/clip.svelte.js'
+  import { puaCharacter } from '../lib/pua.js'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
 
   const ready = $derived(db.status === 'ready')
   const possible = $derived(ready ? ix.variantPairs : [])
+  const puaUnencoded = $derived(ready ? ix.puaUnencoded : [])
   const positions = $derived(ready ? componentPositions(ix.entries) : new Map())
   // The groups a pair list cannot show: a character reached through another form, and the pair
   // reported by hand. Every other pair is in the tables below, one record to a row.
   const linked = $derived(ready ? ix.variantGroups.filter(family => family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) : [])
+  // A URL that points into this page has to wait for the records, or its target is still absent.
+  $effect(() => {
+    if (!ready || location.hash !== '#pua') return
+    tick().then(() => document.getElementById('pua')?.scrollIntoView())
+  })
   // A reader who follows the card's link should land on the character, once.
   let arrived = false
   $effect(() => {
@@ -150,7 +158,6 @@
       </table>
     </div>
   </section>
-
   {#if SCRIPT_FORMS.length}
     <section class="ui-section" id="scripts">
       {@render heading('scripts-heading', t('variants.scripts'), SCRIPT_FORMS.length)}
@@ -169,10 +176,43 @@
     </section>
   {/if}
 
+  {#if puaUnencoded.length}
+    <section class="ui-section pua-section" id="pua">
+      {@render heading('pua-heading', t('card.puaVariants'), puaUnencoded.length)}
+      <p class="ui-hint">{t('variants.puaHint')}</p>
+      <ul class="pua-grid">
+        {#each puaUnencoded as [code, ids, sources] (code)}
+          <li class="pua-card" id={`pua-${code.slice(2)}`}>
+            <button class="pua-open" type="button" title={t('find.openVariant')} aria-label={`${t('find.openVariant')} · ${code}`} onclick={() => choose(puaCharacter(code))}><span class="pua-glyph" lang="txg" aria-hidden="true">{puaCharacter(code)}</span></button>
+            <button class="identifier ui-mono" type="button" title={t('card.copyIdentifier', { id: code })} onclick={() => copy(code, code)}>{code}</button>
+            <span class="ui-formula pua-ids" title={ids}>{ids}</span>
+            <span class="ui-hint pua-source">{sources.length ? sources.join(' · ') : t('variants.puaNoSource')}</span>
+          </li>
+        {/each}
+      </ul>
+      <p class="ui-hint pua-note">{t('card.puaNote', { version: ix.puaSource?.version ?? '' })}</p>
+    </section>
+  {/if}
+
 </article>
 
 <style>
   .variants{gap:var(--ui-space-xl);padding-bottom:var(--ui-space-5xl)}
+  .pua-section{scroll-margin-block-start:calc(var(--topbar-h, 54px) + var(--writing-h, 62px) + var(--ui-space-md))}
+  .pua-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--ui-space-sm);margin:0;padding:0;list-style:none}
+  .pua-card{display:flex;flex-direction:column;align-items:flex-start;gap:var(--ui-space-2xs);padding:var(--ui-space-sm) var(--ui-space-md);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface)}
+  .pua-open{padding:0;border:0;border-radius:var(--ui-radius-sm);background:none;color:inherit;cursor:pointer;text-align:start}
+  .pua-open:hover,.pua-open:focus-visible{background:var(--ui-color-accent-soft)}
+  .pua-glyph{font-family:'Tangut PUA',var(--tg-font);font-size:44px;line-height:1.15;color:var(--ui-color-ink)}
+  .pua-ids{font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+  .pua-source{font-size:var(--ui-text-2xs);line-height:1.45}
+  .pua-note{margin:0}
+  @media (max-width:600px){
+    .pua-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--ui-space-xs)}
+    .pua-card{padding:var(--ui-space-xs) var(--ui-space-sm)}
+    .pua-glyph{font-size:36px}
+    .pua-ids{font-size:14px}
+  }
   .heading{display:flex;align-items:center;gap:var(--ui-space-sm)}
   .char{padding:0 2px;border:0;border-radius:var(--ui-radius-sm);background:none;color:inherit;font:inherit;cursor:pointer}
   .char :global(.ui-script){font-size:30px;line-height:1.2}
