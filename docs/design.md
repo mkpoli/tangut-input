@@ -115,17 +115,23 @@ number of strokes drawn; another adds components to the search. On a phone, resu
 after the pad and the note follows them.
 
 **Parts** (`/parts`) builds a character from parts, as the script is built. A part can be a
-component or a character that the description spells whole, at any layer of the description: a
-subtree that spells a character stands for it, and its own parts are followed in turn. The palette
-and the matching characters sit in two panes side by side, stacked on a narrow screen, each
-scrolling on its own, so a new match never pushes the palette out of reach. Each chosen part keeps
-only the characters that hold it anywhere in their description (twice if chosen twice), and the
-palette keeps only the parts that still occur, with a count on each, so the next choice always
-leads somewhere. An outer layout (side by side, above and below, three across …) narrows
-further. The palette is ordered by stroke
-count, then by use, and can be filtered by Cangjie code or Japanese shape name. Choosing a part
-also opens it in the card. A card's “Characters with these parts” link opens Parts with that
+component, a character that the description spells whole, or an unencoded tree of either (𗁛 breaks
+into 𘠁 and `⿱𘡊𗎘`), at any layer of the description: a subtree that spells a character stands for it,
+and its own parts are followed in turn. A description of three columns or three rows is read as two
+parts when exactly one adjacent pair spells a character, so 𗆫 is 𘠐 and 𘓔. The palette and the
+matching characters sit in two panes side by side, stacked on a narrow screen, each scrolling on its
+own, so a new match never pushes the palette out of reach. Each chosen part keeps only the
+characters that hold it anywhere in their description (twice if chosen twice), and the palette keeps
+only the parts that still occur, with a count on each, so the next choice always leads somewhere. An
+outer layout (side by side, above and below, three across …) narrows further; a hooked form recorded
+first in ⿺ answers the side-by-side layout, because the hook belongs to the part. The palette is ordered
+by stroke count, then by use, and can be filtered by Cangjie code or Japanese shape name. Choosing a
+part also opens it in the card. A card's “Characters with these parts” link opens Parts with that
 character's parts chosen.
+
+**Code chart** (`/codes`) lists every character and component in code order, 16 columns to a row
+and 256 positions to a page, with each block's occupancy and the components' use above the chart.
+A click copies the character.
 
 **Fanqie** (`/fanqie`) goes the other way: it takes the upper and lower characters a rhyme book
 spells a word with and lists what they spell. The two characters can be typed, or picked from a
@@ -143,12 +149,20 @@ recorded with the fanqie it was made for.
   click-to-copy, each system linked to its source.
 - A Tibetan spelling's tooltip adds its Tibetan Extension-A code when the precomposed table has
   the exact sequence.
+- **PUA variants**: a row of glyph tiles in the Variant forms section; each opens its PUA card,
+  where the code, IDS and source are listed. A code names a variant glyph, not another character.
+  Find maps a code that Unicode
+  18.0 has since given a character to that character. Every other PUA code opens its PUA card
+  (glyph, code, IDS, source); a code with a base character links to it, and a code without one sits
+  with the other unencoded rows at the bottom of the Variants page. The unencoded rows' IDS find the
+  same record.
 - Cangjie codes, short and full, each click-to-copy, and “Type it” into the Cangjie page.
 - Meaning in English (numbered senses), Japanese and Chinese.
 - Readings in eight systems and the two sound glosses (Li Fanwen, Nie Lishan).
 - 文海 gloss where the records have one (twelve entries).
 - **Built from**: the description drawn as nested frames that follow its layout (a row for ⿰, a
-  column for ⿱, and so on), every part a button to its own card; the raw IDS string, click to copy.
+column for ⿱, and so on), every part a button to its own card; the raw IDS string, click to copy.
+The editorial view reads the same two-part cut the parts finder uses, beside the recorded tree.
   Two links leave the frame: the characters with these parts, and the characters that begin like
   this description.
 - **In a text**: for each place in the corpus, the passage with the character marked (other
@@ -164,9 +178,10 @@ recorded with the fanqie it was made for.
 ## Addresses
 
 Every state worth sharing is in the URL: the finder in the path, the open character as `?c=17E39`
-(hex code point), the finder's query as `?q=`. A link to `/parts?q=𘠀𘠆` opens Parts with those two
-parts chosen; `/?q=…` opens Find with the text. Cloudflare's single-page fallback serves the app
-for every path.
+(hex code point), the finder’s query as `?q=`. A link to `/parts?q=𘠀𘠆` opens Parts with those two
+parts chosen; the page writes its own state back as a JSON pair of parts and layout,
+`?q=[["𘠐","𘓔"],"⿰"]`, so an unencoded part and the chosen layout survive the link. `/?q=…` opens
+Find with the text. Cloudflare’s single-page fallback serves the app for every path.
 
 ## Visual identity
 
@@ -320,5 +335,6 @@ worker) mode.
 - `reading`: `ndzi` across systems.
 - `draw`: a seven-stroke sketch and its closest glyphs.
 - `parts`: two parts chosen, seven characters, the narrowed palette.
+- `codes`: the four blocks' occupancy, the components' use, and the first page of each chart.
 - `card`, `card-attested`: the card of 𗋕, and its structure and three attested lines.
 - `sources`: the Sources page.

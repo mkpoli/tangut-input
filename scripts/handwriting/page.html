@@ -112,7 +112,7 @@
       if (stroke.length === 1) context.lineTo(stroke[0][0] * ratio + 0.1, stroke[0][1] * ratio)
       context.stroke()
     }
-    done.disabled = !strokes.length || (item?.kind === 'lookalike' && !chosen)
+    done.disabled = !strokes.length
   }
 
   function point(event) {
@@ -120,7 +120,7 @@
     return [event.clientX - box.left, event.clientY - box.top]
   }
   pad.addEventListener('pointerdown', event => {
-    if (!item || (item.kind === 'lookalike' && !chosen)) return
+    if (!item) return
     pad.setPointerCapture(event.pointerId)
     first = event.pointerId
     pointer = event.pointerType || 'mouse'
@@ -205,7 +205,16 @@
     current = null; first = null
     strokes = strokes.slice(0, -1); times = times.slice(0, -1); pressure = pressure.slice(0, -1); paint()
   }
-  document.getElementById('clear').onclick = () => { capture(); current = null; first = null; strokes = []; times = []; pressure = []; paint() }
+  document.getElementById('clear').onclick = () => {
+    capture()
+    if (first !== null && pad.hasPointerCapture(first)) pad.releasePointerCapture(first)
+    current = null
+    first = null
+    strokes = []
+    times = []
+    pressure = []
+    paint()
+  }
 
   /** A prompt as the page shows it: the image to copy, and one line of instruction. */
   function show(body) {
@@ -221,7 +230,9 @@
     chosen = body.kind
     instruction.textContent = body.kind === 'lookalike'
       ? 'This character has several lookalikes. Draw this one in the square below.'
-      : 'Draw this whole character in the square below, as large as it fits.'
+      : body.kind === 'component'
+        ? 'Draw this component on its own, as large as it fits.'
+        : 'Draw this whole character in the square below, as large as it fits.'
     paint()
   }
 

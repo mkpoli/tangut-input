@@ -3,18 +3,20 @@
   // its gloss and reading, so a pasted line can be read character by character. Latin letters are
   // tried as a Cangjie code, a reading and an English meaning at once, each in its own group; a
   // code point opens its range; Chinese or Japanese is read as a meaning.
+  import { tick } from 'svelte'
   import { db, ix, gloss, codePoint, readingOf } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import TileNote from '../ui/TileNote.svelte'
   import Icon from '../ui/Icon.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus, ui } from '../lib/ui.svelte.js'
-  import { byCode, byName, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byHanziName, tangutIn } from '../lib/search.js'
+  import { byCode, byName, byShapeSpelling, byMeaning, byCodePoint, byDescription, byTibetan, byIdentifier, byTibetanSeta, byUnencodedPua, byEncodedPua, byPuaIds, byPuaCode, byHanziName, tangutIn } from '../lib/search.js'
   import { searchReadings, SYSTEMS } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
   import { parseIdentifier } from '../lib/identifiers.js'
   import { parseSetaQuery } from '../lib/seta.js'
   import HanziNames from '../ui/HanziNames.svelte'
+  import { parsePuaQuery, puaCharacter } from '../lib/pua.js'
 
   let query = $state(route.q)
   let active = $state(-1)
@@ -24,8 +26,16 @@
 
   const groups = $derived.by(() => {
     if (!ready || !text) return []
-    /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, items: { char: string, sub: string, extra?: string, sound?: string, tibetan?: boolean }[] }[]} */
+    /** @type {{ key: string, title: string, page?: import('../lib/route.svelte.js').Page, total: number, shown?: number, items: { char: string, sub: string, extra?: string, sound?: string, tibetan?: boolean }[], pua?: { code: string, ids: string, sources: string[], point?: string, char?: string } }[]} */
     const out = []
+    // A PUA variant's IDS is its own record; it is not in the description index because there is
+    // no character to attach it to. Check it before the recorded descriptions so its exact string
+    // always names the variant.
+    const puaIds = byPuaIds(text)
+    if (puaIds) {
+      out.push({ key: 'pua-ids', title: t('find.group.pua'), total: 1, shown: 1, items: [], pua: puaIds })
+      return out
+    }
     // A whole description or its opening is read against both recorded and editorial forms.
     const described = byDescription(text)
     if (described.length) {
@@ -37,6 +47,18 @@
     if (chars.length) {
       out.push({ key: 'text', title: chars.length === 1 ? t('find.group.character') : t('find.group.text'), total: chars.length,
         items: chars.map(char => ({ char, sub: gloss(char), extra: firstReading(char) })) })
+      return out
+    }
+    // A Tangut PUA code is a five-digit private-use code; the encoded block is not in its range.
+    const puaQuery = parsePuaQuery(text)
+    if (puaQuery) {
+      const assigned = byPuaCode(text)
+      // The base character stays a normal candidate, so arrows preview it and Enter adds it.
+      if (assigned) out.push({ key: 'pua-assigned', title: `${t('find.group.pua')} · ${puaQuery}`, total: 1, shown: 1, items: assigned.char ? [{ char: assigned.char, sub: assigned.code }] : [], pua: assigned })
+      const unencoded = byUnencodedPua(text)
+      if (unencoded) out.push({ key: 'pua-unencoded', title: `${t('find.group.pua')} · ${puaQuery}`, total: 1, shown: 1, items: [], pua: unencoded })
+      const encoded = byEncodedPua(text)
+      if (encoded) out.push({ key: 'pua-encoded', title: `${t('find.group.pua')} · ${puaQuery}`, total: 1, shown: 1, items: [], pua: encoded })
       return out
     }
     // A Set A code is a whole answer: its digits and Latin letters are not also a reading.
@@ -62,6 +84,8 @@
     if (points.length) out.push({ key: 'cp', title: t('find.group.codepoint'), total: points.length, items: points.slice(0, 48).map(char => ({ char, sub: codePoint(char) })) })
     const named = byName(text)
     if (named.length) out.push({ key: 'shape', title: t('find.group.shape'), total: named.length, items: named.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.name })) })
+    const shapeSpelled = byShapeSpelling(text)
+    if (shapeSpelled.length) out.push({ key: 'spelling', title: t('find.group.spelling'), total: shapeSpelled.length, items: shapeSpelled.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.spelling })) })
     if (/^[a-z]+$/i.test(text)) {
       const codes = byCode(text)
       if (codes.length) out.push({ key: 'code', title: t('find.group.cangjie'), page: 'cangjie', total: codes.length, items: codes.slice(0, 24).map(hit => ({ char: hit.char, sub: hit.code })) })
@@ -137,6 +161,7 @@
     { value: 'U+1736', mono: true },
     { value: 'L0009', mono: true },
     { value: 'U+F5C0', mono: true },
+    { value: 'U+F02BB', mono: true },
     { value: '⿰𘤊', ids: true },
   ]
 </script>
@@ -179,11 +204,12 @@
   {:else}
     {#each groups as group, g (group.key)}
       {@const offset = groups.slice(0, g).reduce((sum, other) => sum + other.items.length, 0)}
+      {@const shown = group.shown ?? group.items.length}
       <section class="ui-section" aria-label={group.title}>
         <header class="ui-section-head">
           <h2 class="ui-label">{group.title}</h2>
-          <span class="ui-count">{group.total > group.items.length ? t('common.of', { shown: group.items.length, total: group.total }) : group.total}</span>
-          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(`nav.${group.page}`) })}</a>{/if}
+          <span class="ui-count">{group.total > shown ? t('common.of', { shown, total: group.total }) : group.total}</span>
+          {#if group.page}<a class="ui-more-link" href={link(group.page, route.c, text)} onclick={event => { event.preventDefault(); const page = /** @type {import('../lib/route.svelte.js').Page} */ (group.page); go(page); setQuery(text) }}>{t('find.continue', { page: t(group.page === 'cangjie' ? 'nav.cangjie' : 'nav.reading') })}<Icon name="arrow" size={13}/></a>{/if}
         </header>
         {#if group.key === 'text'}
           <ol class="ui-rows">
@@ -198,6 +224,45 @@
               </li>
             {/each}
           </ol>
+        {:else if (group.key === 'pua-unencoded' || group.key === 'pua-ids') && group.pua}
+          {@const pua = group.pua}
+          <div class="pua-hit">
+            <span class="pua-hit-glyph" lang="txg" aria-hidden="true">{puaCharacter(pua.code)}</span>
+            <div class="pua-hit-text">
+              <span class="pua-hit-code ui-mono">{pua.code}</span>
+              <span class="ui-formula pua-hit-ids" title={pua.ids}>{pua.ids}</span>
+              <span class="ui-hint">{pua.sources.length ? pua.sources.join(' · ') : t('variants.puaNoSource')}</span>
+              <span class="pua-hit-actions">
+                <button class="ui-more-link" type="button" onclick={() => choose(puaCharacter(pua.code))}>{t('find.openVariant')}<Icon name="arrow" size={13}/></button>
+                <a class="ui-more-link" href={link('variants') + '#pua'} onclick={async event => { event.preventDefault(); go('variants'); await tick(); location.hash = 'pua' }}>{t('card.puaVariants')}<Icon name="arrow" size={13}/></a>
+              </span>
+            </div>
+          </div>
+        {:else if group.key === 'pua-assigned' && group.pua}
+          {@const pua = group.pua}
+          <div class="pua-hit">
+            <span class="pua-hit-glyph" lang="txg" aria-hidden="true">{puaCharacter(pua.code)}</span>
+            <div class="pua-hit-text">
+              <span class="pua-hit-code ui-mono">{pua.code}</span>
+              <span class="ui-formula pua-hit-ids" title={pua.ids}>{pua.ids}</span>
+              <span class="ui-hint">{pua.sources.length ? pua.sources.join(' · ') : t('variants.puaNoSource')}</span>
+              {#if pua.char}<span class="pua-hit-base">{t('card.puaBase')} <button class="pua-base-open" type="button" title={t('find.openCharacter')} aria-label={`${t('find.openCharacter')} · ${codePoint(pua.char)}`} onclick={() => choose(pua.char ?? '')}><G char={pua.char} /></button> <span class="ui-mono">{codePoint(pua.char)}</span></span>{/if}
+              <span class="pua-hit-actions">
+                <button class="ui-more-link" type="button" onclick={() => choose(puaCharacter(pua.code))}>{t('find.openVariant')}<Icon name="arrow" size={13}/></button>
+                {#if pua.char}<button class="ui-more-link" type="button" onclick={() => choose(pua.char ?? '')}>{t('find.openCharacter')}<Icon name="arrow" size={13}/></button>{/if}
+              </span>
+            </div>
+          </div>
+        {:else if group.key === 'pua-encoded' && group.pua}
+          <div class="pua-hit">
+            <span class="pua-hit-glyph"><G char={group.pua.char ?? ''} /></span>
+            <div class="pua-hit-text">
+              <span class="pua-hit-code ui-mono">{group.pua.code} → {group.pua.point}</span>
+              <span class="ui-formula pua-hit-ids" title={group.pua.ids}>{group.pua.ids}</span>
+              <span class="ui-hint">{group.pua.sources.length ? group.pua.sources.join(' · ') : t('variants.puaNoSource')}</span>
+              <button class="ui-more-link" type="button" onclick={() => choose(group.pua?.char ?? '')}>{t('find.openCharacter')}<Icon name="arrow" size={13}/></button>
+            </div>
+          </div>
         {:else}
           <div class="ui-tiles" role="listbox" aria-label={group.title} style:--ui-tile-size="72px">
             {#each group.items as item, i (item.char)}
@@ -230,5 +295,16 @@
     .gloss-row{grid-template-columns:38px 6.5rem minmax(0,1fr);gap:var(--ui-space-sm)}
     .gloss-row :global(.ui-script){font-size:28px}
   }
+  .pua-hit{display:flex;max-width:720px;align-items:flex-start;gap:var(--ui-space-md);padding:var(--ui-space-md);border:1px solid var(--ui-color-border);border-radius:var(--ui-radius-md);background:var(--ui-color-surface)}
+  .pua-hit-glyph{font-family:'Tangut PUA',var(--tg-font);font-size:64px;line-height:1;color:var(--ui-color-ink)}
+  .pua-hit-text{display:flex;flex-direction:column;align-items:flex-start;gap:var(--ui-space-2xs);min-width:0}
+  .pua-hit-code{color:var(--ui-color-accent-ink)}
+  .pua-hit-ids{font-size:18px;line-height:1.5}
+  .pua-hit-actions{display:flex;flex-wrap:wrap;gap:var(--ui-space-sm)}
+  .pua-hit-base{display:flex;align-items:center;gap:var(--ui-space-2xs);font-size:var(--ui-text-xs);color:var(--ui-color-ink-soft)}
+  .pua-base-open{padding:0 2px;border:0;border-radius:var(--ui-radius-sm);background:none;color:inherit;cursor:pointer}
+  .pua-base-open:hover,.pua-base-open:focus-visible{background:var(--ui-color-accent-soft)}
+  .pua-base-open :global(.ui-script){font-size:24px;line-height:1.1}
+  .pua-hit .ui-more-link{border:0;background:none;padding:0;font:inherit;font-size:var(--ui-text-xs);color:var(--ui-color-accent-ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   .ui-tile-sound[lang='bo']{font-family:'Noto Serif Tibetan','Noto Sans Tibetan',Kailasa,'Microsoft Himalaya','Jomolhari',serif;font-size:14px;line-height:1.7;overflow:visible;text-overflow:clip;flex:none}
 </style>
