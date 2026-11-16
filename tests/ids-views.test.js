@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { gunzipSync } from 'node:zlib'
-import { indexIdsDescriptions, idsViews } from '../app/lib/ids-views.js'
+import { editorialDescription, indexIdsDescriptions, idsViews } from '../app/lib/ids-views.js'
 
 const entries = [
   { char: '𗀀', composition: '⿰𘠀𘠁' },
@@ -69,4 +69,12 @@ test('source data keeps the recorded ternary tree and reads the editorial cut as
   expect(rootResult.recorded).toBe('⿲𘠐𘧘𘣩')
   expect(rootResult.editorial).toBe('⿰𘠐𘓔')
   expect(rootResult.editorialParts).toEqual(['𘠐', '𘓔'])
+})
+
+test('a description on its own reads as one cut or one character', () => {
+  // ⿰𘠀𘠁 is 𗀀, so the three columns read as 𗀀 beside 𘠂.
+  expect(editorialDescription('⿲𘠀𘠁𘠂', index)).toBe('⿰𗀀𗀁')
+  expect(editorialDescription('⿱𘠀𘠁', index)).toBe('⿱𘠀𘠁')
+  expect(editorialDescription('𘠂', index)).toBe('𘠂')
+  expect(editorialDescription('⿰', index)).toBe('')
 })

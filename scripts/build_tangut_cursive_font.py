@@ -86,8 +86,8 @@ def main() -> None:
             bases[form['codepoint']] = (name, form)
         else:
             alternates.setdefault(form['codepoint'], []).append((name, form))
-    if len(bases) != 108:
-        raise SystemExit(f'expected 108 base forms, read {len(bases)}')
+    if len(bases) < 108:
+        raise SystemExit(f'expected at least the 108 base forms, read {len(bases)}')
 
     order = ['.notdef']
     drawings = {'.notdef': NOTDEF}
@@ -127,9 +127,9 @@ def main() -> None:
         'version': 'Version 1.000',
         'psName': 'CursiveTangut-Regular',
         'designer': 'Traced for the Tangut Input project',
-        'description': '108 cursive Tangut characters from BabelStone’s Cursive Tangut page. '
-                       'Each character has one form at its code point; the page’s other forms are '
-                       'in the stylistic sets ss01–ss07.',
+        'description': f'{len(bases)} cursive Tangut characters, traced from the sources in '
+                       'data/cursive/README.md. Each character has one form at its code point; the '
+                       'other forms are in the stylistic sets ss01–ss07.',
         'licenseDescription': 'The source page states no licence for the reproductions. '
                               'The outlines are provided for study and citation, not for resale.',
         'licenseInfoURL': 'https://github.com/mkpoli/tangut-input/blob/main/data/cursive/README.md',
