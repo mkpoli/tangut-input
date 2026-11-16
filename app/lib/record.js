@@ -1,6 +1,6 @@
 // What a reader drew and what they picked, sent to the worker so it can be read back later. The
 // events are the quiz's own fields: a drawing with its strokes and, when one came of it, the
-// character the reader chose; a pick with the finder it came from and what had been typed.
+// character the reader chose; a pick with the finder it came from.
 //
 // Everything is best effort. A site served without the worker answers nothing at `/api/record`, and
 // a reader's page must behave the same whether the record is kept or not, so a failed send is
@@ -33,11 +33,18 @@ function session() {
   }
 }
 
+/** Remove query text from new picks and picks queued by older versions. @param {any} event */
+function withoutPickQuery(event) {
+  if (!event || event.type !== 'pick') return event
+  const { query, ...pick } = event
+  return pick
+}
+
 /** @returns {any[]} */
 function outbox() {
   try {
     const stored = JSON.parse(localStorage.getItem(OUTBOX) ?? '[]')
-    return Array.isArray(stored) ? stored : []
+    return Array.isArray(stored) ? stored.map(withoutPickQuery) : []
   } catch {
     return []
   }
@@ -82,6 +89,7 @@ async function send() {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(batch),
+        referrerPolicy: 'no-referrer',
         keepalive: true,
       })
       if (response.ok) {
@@ -111,7 +119,7 @@ async function send() {
  */
 export function record(event) {
   const events = outbox()
-  events.push({ ...event, session: session(), at: new Date().toISOString() })
+  events.push(withoutPickQuery({ ...event, session: session(), at: new Date().toISOString() }))
   keep(events)
   void send()
 }

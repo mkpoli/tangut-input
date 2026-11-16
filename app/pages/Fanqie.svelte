@@ -47,7 +47,7 @@
     const chars = [...text]
     const next = chars.length >= 2 ? `${chars[0]}${char}` : `${chars.join('')}${char}`
     // The candidate's rank belongs to the mini finder's list, not to this page's list.
-    record({ type: 'pick', char, finder: 'fanqie', query: route.q || null, locale: i18n.locale })
+    record({ type: 'pick', char, finder: 'fanqie', locale: i18n.locale })
     query = next
     setQuery(next)
     return [...next].length >= 2
