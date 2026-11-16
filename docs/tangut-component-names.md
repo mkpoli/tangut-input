@@ -24,7 +24,7 @@ shorthand for a shape: 𘡃 is ノメ and 𘫺 is くノ, and the two are told a
 | ラ匕﹅ | 𘣭 U+188ED | Arakawa 2023, table 5 B8 |
 | コ匕﹅ | 𘤾 U+1893E | Arakawa 2023, table 5 B9 |
 | コ一匕﹅ | 𘦺 U+189BA | Arakawa 2023, table 5 B11 |
-| コくノ | 𘫿 U+18AFF | NGWU YOH, chat message, 2026-11-10; Arakawa 2023 names the shape |
+| コくノ | 𘫿 U+18AFF | NGWU YOH, personal communication, 2026-11-10; Arakawa 2023 names the shape |
 
 The hover card takes a component's stroke count from the site's Unicode-derived data, which can
 differ from a count in the source.
@@ -36,7 +36,7 @@ Lotus Sutra; Arakawa 2023 adds ノくノ, コくノ, くノメ, くノノメ, �
 component, and they are not a list of names for the 768 Tangut components.
 
 The nineteen rows above are the five base names, the thirteen variants that the cited sources tie
-to a code point, and コくノ for 𘫿. The last is NGWU YOH's reading of the plain form (chat message,
+to a code point, and コくノ for 𘫿. The last is NGWU YOH's reading of the plain form (personal communication,
 2026-11-10): Arakawa 2023 names コくノ and its dotted A3 コくノ﹅, and the plain form has no
 entry of its own in table 4. The rows are kept in `data/tangut-component-names.tsv` and merged into
 `data/component-names.tsv` by `scripts/build_component_names.py`, so a search for くノ or ノメ

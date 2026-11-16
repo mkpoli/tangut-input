@@ -56,7 +56,7 @@ test('each page is sixteen rows of sixteen positions, starting on a row boundary
 })
 
 test('the components the records use, unused and most-used, fill the distribution', () => {
-  const index = buildPartIndex(entries, SURROUNDING)
+  const index = buildPartIndex(entries, [], SURROUNDING)
   const use = componentUse(components, index.usedBy)
   expect(use.total).toBe(883)
   expect(use.buckets.reduce((sum, bucket) => sum + bucket.count, 0)).toBe(883)
