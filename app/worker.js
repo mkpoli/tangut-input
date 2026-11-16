@@ -6,7 +6,7 @@
 //   POST /api/record   one event, or an array of them
 //   GET  /<finder>     the app's page, with its head written for that finder
 //
-// An event is either a pick, `{ type: 'pick', char, finder, query, place, locale, session }`, or a
+// An event is either a pick, `{ type: 'pick', char, finder, place, locale, session }`, or a
 // drawing, `{ type: 'drawing', strokes, picked?, place?, origin?, answer?, kind?, times?, … }`. The
 // rows land in D1 (`migrations/0001_records.sql`); `bun run records` reads them back.
 import { seoOf } from './lib/seo.js'
@@ -26,7 +26,7 @@ const TANGUT = /^[\u{17000}-\u{18AFF}\u{18D00}-\u{18D1F}]$/u
 
 // The columns each table takes, in the order `row` builds its values.
 const COLUMNS = {
-  picks: ['at', 'session', 'char', 'finder', 'query', 'place', 'locale'],
+  picks: ['at', 'session', 'char', 'finder', 'place', 'locale'],
   drawings: ['at', 'session', 'origin', 'answer', 'kind', 'picked', 'place', 'strokes', 'stroke_count', 'times', 'pressure', 'pointer', 'writer', 'device', 'width', 'height'],
 }
 
@@ -72,7 +72,7 @@ function row(event, at) {
   if (event.type === 'pick') {
     const char = character(event.char)
     if (!char) return null
-    return { table: 'picks', values: [at, session, char, text(event.finder), text(event.query), number(event.place), text(event.locale)] }
+    return { table: 'picks', values: [at, session, char, text(event.finder), number(event.place), text(event.locale)] }
   }
   if (event.type === 'drawing') {
     const strokes = event.strokes
