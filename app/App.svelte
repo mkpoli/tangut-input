@@ -28,6 +28,7 @@
   import Variants from './pages/Variants.svelte'
   import Texts from './pages/Texts.svelte'
   import Transcribe from './pages/Transcribe.svelte'
+  import Convert from './pages/Convert.svelte'
   import Meaning from './pages/Meaning.svelte'
   import Parts from './pages/Parts.svelte'
   import Codes from './pages/Codes.svelte'
@@ -335,6 +336,7 @@
         {:else if route.page === 'dataset'}<Dataset />
         {:else if route.page === 'texts'}<Texts />
         {:else if route.page === 'transcribe'}<Transcribe />
+        {:else if route.page === 'convert'}<Convert />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'parts'}<Parts />
         {:else if route.page === 'codes'}<Codes />
