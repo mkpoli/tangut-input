@@ -33,8 +33,8 @@ const TANGUT = [
   ['コ匕﹅', '𘤾'],
   ['コ一匕﹅', '𘦺'],
   ['コくノ', '𘫿'],
-  ['ノくノ', '𘪷'],
-  ['ノくノ', '𘫙'],
+  ['冂ノくノ一', '𘪷'],
+  ['冂ノくノ一', '𘫙'],
 ]
 
 test('the twenty-one Tangut components are named by their Japanese shapes', () => {
@@ -61,9 +61,9 @@ test('the site copy holds the same rows as the source table', () => {
     .filter(line => line && !line.startsWith('#'))
     .map(line => {
       const [name, char, from, detail] = line.split('\t')
-      return [name, { char, source: from, detail, credit: from === 'arakawa-2023' ? 'Arakawa 2023' : from === 'ja-wikipedia-tangut' ? 'Arakawa 2020 · Japanese Wikipedia' : from.split(',')[0] }]
+      return [char, { name, source: from, detail, credit: from === 'arakawa-2023' ? 'Arakawa 2023' : from === 'ja-wikipedia-tangut' ? 'Arakawa 2020 · Japanese Wikipedia' : from.split(',')[0] }]
     }))
-  const site = new Map(app.map(row => [row.name, { char: row.char, source: row.source, detail: row.detail, credit: row.credit }]))
+  const site = new Map(app.map(row => [row.char, { name: row.name, source: row.source, detail: row.detail, credit: row.credit }]))
   expect(site).toEqual(source)
 })
 

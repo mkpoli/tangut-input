@@ -424,8 +424,8 @@ for the same components. 6,663 rows, 298 KB (58 KB gzipped), built by
 component per row; comments start with `#`.
 
 Twenty-one rows name Tangut components by the kana their strokes resemble: the five base names
-くノ, ノメ, ノノメ, ノメメ and くくノ, the seven A-class variants くノ﹅, ノくノ﹅, くくノ﹅,
-コくノ﹅, くノ﹅ノメ, ノくノ for A6 and ノくノ for A7, the eight B-class variants ノ匕﹅,
+くノ, ノメ, ノノメ, ノメメ and くくノ, the seven A-class entries くノ﹅, ノくノ﹅, くくノ﹅,
+コくノ﹅, くノ﹅ノメ, and 冂ノくノ一 at A6 and at A7, the eight B-class variants ノ匕﹅,
 ノノ匕﹅, 一匕﹅, 二匕﹅, ソ一匕﹅, ラ匕﹅, コ匕﹅ and コ一匕﹅, and コくノ for 𘫿, read from
 the plain form. Their source is `data/tangut-component-names.tsv`, which the build merges in; the
 naming convention and its limits are in

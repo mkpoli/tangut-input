@@ -24,8 +24,8 @@ shorthand for a shape: 𘡃 is ノメ and 𘫺 is くノ, and the two are told a
 | ラ匕﹅ | 𘣭 U+188ED | Arakawa 2023, table 5 B8 |
 | コ匕﹅ | 𘤾 U+1893E | Arakawa 2023, table 5 B9 |
 | コ一匕﹅ | 𘦺 U+189BA | Arakawa 2023, table 5 B11 |
-| ノくノ | 𘪷 U+18AB7 | Arakawa 2023, table 4 A6 |
-| ノくノ | 𘫙 U+18AD9 | Arakawa 2023, table 4 A7 |
+| 冂ノくノ一 | 𘪷 U+18AB7 | Arakawa 2023, table 4 A6 |
+| 冂ノくノ一 | 𘫙 U+18AD9 | Arakawa 2023, table 4 A7 |
 | コくノ | 𘫿 U+18AFF | NGWU YOH, chat message, 2026-11-10; Arakawa 2023 names the shape |
 
 The hover card takes a component's stroke count from the site's Unicode-derived data, which can
@@ -42,7 +42,9 @@ to a code point, and コくノ for 𘫿. The last is NGWU YOH's reading of the p
 2026-11-10): Arakawa 2023 names コくノ and its dotted A3 コくノ﹅, and the plain form has no
 entry of its own in table 4. The rows are kept in `data/tangut-component-names.tsv` and merged into
 `data/component-names.tsv` by `scripts/build_component_names.py`, so a search for くノ or ノメ
-reaches 𘫺 or 𘡃. The site's Find page reads the same twenty-one rows from
+reaches 𘫺 or 𘡃. A6 and A7 are the 冂ノくノ一 element, the ノくノ inside a 冂 frame with a final
+short horizontal; Arakawa places the same element at different positions, so both encoded forms
+carry the name. The site's Find page reads the same twenty-one rows from
 `app/data/tangut-component-names.json` and shows them in a shape-name group. When every part of
 a character has a name, the names run together name the character: コくノノノメ finds 𘄳, in
 katakana or hiragana alike. The Parts filter accepts the names too, and the part card on Parts and the Cangjie palette
