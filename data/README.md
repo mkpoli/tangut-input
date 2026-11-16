@@ -93,6 +93,12 @@ record names its source, licence, line ids and the exact text; the thirteen famo
 `scripts/build_tangut_samples.py`. The rights are the sources': CC BY-SA 4.0 for the Wikisource
 texts, CC BY 4.0 for the Bodhicaryāvatāra edition and permission for the Lausanne Corpus.
 
+## Hanzi correspondences
+
+[`tangut-hanzi.json`](<../app/data/tangut-hanzi.json>) contains character glosses from Guillaume Jacques’s [Leilin database](<https://www.academia.edu/25078937/Leilin_database>) and whole-name pairs from the era, title, state-name and posthumous-name tables. Each pair carries its source, evidence type and available passage reference; the source records preserve attribution and caveats from the [Names bibliography](<../app/lib/era-sources.js>). The 類林 glosses retain their occurrence counts and the [pinned intermediary](<https://github.com/tinbreaker/tangut-text/tree/820fe592c8c0b1512867c70e5c84395a042667f3>); no licence is stated.
+
+Rebuild from the local source tables with `bun scripts/build_tangut_hanzi.mjs`. The [Hanzi library](<../app/lib/hanzi.js>) indexes character glosses separately from whole names: 大白高國 corresponds to 𗴂𗹭𗂧𘜶 as a phrase, whose word order differs from the Chinese. Search uses the recorded spelling, with every alternative and its evidence available in the result.
+
 ## `tangut-era-evidence.tsv`
 
 What each Tangut era form rests on, one row per form and source: the era and its first year as the
@@ -178,6 +184,16 @@ form, and the other way, including the Parts finder's side-by-side layout filter
 and the variants page lists them. A component substitution whose description no recorded character carries is
 written out on the card as a derived form; it names no character and no reading.
 
+
+## `shouling/`
+
+The sixteen seal-script characters of 大白高國護城聖德至懿皇帝壽陵誌文, from the front plate of
+李范文《夏漢字典》 (1997), 「西夏文篆書仁孝陵出土篆額殘碑 / 篆額復原圖」; the 2008 edition prints
+it at p. 90. The plate states no licence. `README.md` here records the grid's order and the
+licence position: the crops are quoted for identification, and are a modern tracing of the broken
+碑額. `scripts/build_tangut_script_forms.py` cuts a 300 dpi render of the plate and writes
+`app/public/seal/shouling/<code point>.png` and `app/data/tangut-script-forms.json`.
+
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or
@@ -188,6 +204,18 @@ source's key in `app/lib/era-sources.js`; a `place` when a text in this reposito
 and `backs`, whether the work supports the Tangut or the Chinese. Compiled by hand.
 `scripts/build_tangut_titles.py` stops if a title does not occur in its place, and marks each title
 `text`, `reported` or `chinese` by what its Tangut rests on. The build sets `kind`: `city` (城號) when the title has 城 or 𗍁, otherwise `honorific`.
+
+## `tangut-names.tsv`
+
+Surnames, administrative offices and place names, one row per name and citing work: `kind`
+(`surname`, `office`, `place`), the Tangut, the `reading` as the work writes it, the Chinese and
+English where a work identifies the name, a `modern` location for a place, the source's key in
+`app/lib/name-sources.js`, and a `note` shown under the row. Rows for one name from several works
+are merged by `scripts/build_tangut_names.py`, which stops on an unknown kind, a character outside
+the Tangut block, or a source the page cannot number, and writes `app/data/tangut-names.json` for
+the surnames, offices and places on the names page at `/eras`. The place names are West's reading of Or. 12380/2249 and his index; the
+surnames are the forms his two family posts and his character tweets print, with 嵬名 also from
+Chinese Wikipedia. The full surname lists in 雜字 and 碎金 are not keyed here.
 
 ## `tangut-frequency.json.gz`
 
@@ -836,6 +864,18 @@ one is pinned, its digest or commit.
 `data/tangut-supplement-ids.tsv` transcribes the 24 descriptions from the four proposals, whose
 glyph columns are set in private-use fonts; the code points, characters and source document are
 written out.
+
+## Newest ideograph descriptions
+
+`app/data/tangut-newest-ids.json` holds the description of each ideograph at U+187F8–U+187FF. Their
+entries come from Wiktionary and carry no description, because BabelStone's Tangut IDS stops at
+U+187F7. Table 2 of WG2 N5217R2 assigns each of the eight a description; `data/tangut-newest-ids.tsv`
+transcribes it, and the builder checks that every description reads as complete trees of assigned
+Tangut characters. A page merges the description into the entry when the entry has none, so the
+card, the part search and the parts palette see the structure.
+
+Format: `format`, `source` (name, author, date, URL) and `characters` (character to description).
+Rebuild with `uv run scripts/build_tangut_newest_ids.py`.
 
 ## Bopomofo outlines
 

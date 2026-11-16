@@ -4,6 +4,7 @@
   import { db, isTangut } from '../lib/db.svelte.js'
   import { setText } from '../lib/text.svelte.js'
   import { route, go, setQuery } from '../lib/route.svelte.js'
+  import { tick } from 'svelte'
   import { t } from '../lib/i18n.svelte.js'
   import Icon from '../ui/Icon.svelte'
   import GlossedLine from '../ui/GlossedLine.svelte'
@@ -21,7 +22,7 @@
     : key === 'mica' ? t('texts.mica')
     : t('texts.wikisource')
 
-  /** @typedef {{ label: string, text: string, chinese?: string, chineseUrl?: string, chineseCredit?: string }} Passage */
+  /** @typedef {{ id: string, label: string, text: string, chinese?: string, chineseUrl?: string, chineseCredit?: string }} Passage */
 
   /**
    * One entry per text: a Wikisource page or edition is one text; the Lausanne source is split by
@@ -60,13 +61,15 @@
         entries.set(key, entry)
       }
       entry.passages += 1
-      entry.lines.push({ label: line.label, text: line.text, chinese: line.chinese, chineseUrl: line.chineseUrl, chineseCredit: line.chineseCredit })
+      entry.lines.push({ id: lineId, label: line.label, text: line.text, chinese: line.chinese, chineseUrl: line.chineseUrl, chineseCredit: line.chineseCredit })
       for (const char of line.text) if (isTangut(char)) entry.characters += 1
     }
     return [...entries.values()]
   })
 
-  const selected = $derived(texts.find(text => text.key === route.q))
+  const target = $derived(route.p ? texts.find(text => text.lines.some(line => line.id === route.p)) : undefined)
+  const selected = $derived(target ?? texts.find(text => text.key === route.q))
+  let from = $state(0)
   const GLOSSES = 'tangut-input:texts-glosses'
   const kept = typeof localStorage !== 'undefined' ? localStorage.getItem(GLOSSES) : null
   let glosses = $state(kept !== 'off')
@@ -77,8 +80,31 @@
   }
   let shown = $state(12)
   $effect(() => {
-    route.q
-    shown = 12
+    const entry = selected
+    const at = entry && route.p ? entry.lines.findIndex(line => line.id === route.p) : -1
+    if (at >= 0 && entry) {
+      from = Math.max(0, at - 6)
+      shown = Math.min(entry.lines.length, Math.max(from + 12, at + 1))
+    } else {
+      from = 0
+      shown = 12
+    }
+  })
+  let scrolled = ''
+  $effect(() => {
+    const line = route.p
+    shown
+    if (!line) {
+      scrolled = ''
+      return
+    }
+    if (line === scrolled) return
+    tick().then(() => {
+      const element = document.getElementById(`line-${line}`)
+      if (!element) return
+      scrolled = line
+      element.scrollIntoView({ block: 'center' })
+    })
   })
 
   const sections = $derived.by(() => {
@@ -136,9 +162,14 @@
       <h1 class="ui-page-title"><Icon name="book" size={22}/><span>{selected.title}</span></h1>
       <p class="ui-page-intro">{t(selected.passages === 1 ? 'texts.countOne' : 'texts.count', { passages: selected.passages.toLocaleString(), characters: selected.characters.toLocaleString() })} · {selected.licence} · <a class="source ui-more-link" href={selected.url} target="_blank" rel="noreferrer">{t('texts.source')}</a></p>
     </header>
+    {#if from > 0}
+      <div class="more">
+        <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => { from = Math.max(0, from - 12) }}>{t('texts.earlier')}</button>
+      </div>
+    {/if}
     <ol class="passages">
-      {#each selected.lines.slice(0, shown) as passage, index (index)}
-        <li class="passage">
+      {#each selected.lines.slice(from, shown) as passage, index (from + index)}
+        <li class="passage" class:target={passage.id === route.p} id={`line-${passage.id}`}>
           <div class="passage-head">
             <span class="label">{passage.label}</span>
             <button class="ui-button" data-variant="quiet" data-size="sm" type="button" onclick={() => start(passage.text)}>{t('texts.transcribeLine')}</button>
@@ -152,7 +183,7 @@
     </ol>
     {#if shown < selected.lines.length}
       <div class="more">
-        <button class="ui-button" data-size="sm" type="button" onclick={() => shown += 12}>{t('texts.more', { count: Math.min(12, selected.lines.length - shown).toLocaleString() })}</button>
+        <button class="ui-button" data-size="sm" type="button" onclick={() => { shown = Math.min(selected.lines.length, shown + 12) }}>{t('texts.more', { count: Math.min(12, selected.lines.length - shown).toLocaleString() })}</button>
       </div>
     {/if}
   {:else}
@@ -219,6 +250,7 @@
   .source{display:inline-flex;align-items:center;min-block-size:24px}
   .passages{list-style:none;margin:0;padding:0;display:grid;gap:var(--ui-space-lg)}
   .passage{display:grid;gap:var(--ui-space-xs);padding-block:var(--ui-space-md);border-top:1px solid var(--ui-color-border)}
+  .passage.target{background:var(--ui-color-accent-soft);box-shadow:0 0 0 var(--ui-space-xs) var(--ui-color-accent-soft)}
   .passage-head{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-sm)}
   .label{color:var(--ui-color-ink-muted);font-size:var(--ui-text-2xs);font-variant-numeric:tabular-nums}
   .translation{margin:0;font-family:var(--ui-font-serif);font-size:15px;line-height:1.75;color:var(--ui-color-ink-soft);overflow-wrap:anywhere}
