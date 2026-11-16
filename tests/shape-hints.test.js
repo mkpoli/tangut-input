@@ -12,7 +12,7 @@ const named = new Set(readNames(readFileSync(new URL('../data/tangut-component-n
 test('the hint file covers every component and every attested example', () => {
   expect(hints.format).toBe('tangut-input/component-shape-hints')
   expect(hints.editorial).toBe(true)
-  expect(hints.counts).toEqual({ components: 768, exemplars: 19 })
+  expect(hints.counts).toEqual({ components: 768, exemplars: 21 })
   expect(hints.components.length).toBe(768)
   expect(hints.components[0].codepoint).toBe('U+18800')
   expect(hints.components.at(-1).codepoint).toBe('U+18AFF')

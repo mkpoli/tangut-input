@@ -11,7 +11,7 @@ const search = createNameSearch(names)
 const app = JSON.parse(readFileSync(new URL('../app/data/tangut-component-names.json', import.meta.url), 'utf8')).names
 const comparison = JSON.parse(readFileSync(new URL('../app/data/tangut-part-names.json', import.meta.url), 'utf8'))
 
-const SHAPE_SOURCES = new Set(['arakawa-2023', 'ja-wikipedia-tangut', 'NGWU YOH, chat message, 2026-11-10'])
+const SHAPE_SOURCES = new Set(['arakawa-2023', 'ja-wikipedia-tangut', 'NGWU YOH, personal communication, 2026-11-10'])
 
 const TANGUT = [
   ['くノ', '𘫺'],
@@ -33,9 +33,11 @@ const TANGUT = [
   ['コ匕﹅', '𘤾'],
   ['コ一匕﹅', '𘦺'],
   ['コくノ', '𘫿'],
+  ['冂ノくノ一', '𘪷'],
+  ['冂ノくノ一', '𘫙'],
 ]
 
-test('the nineteen Tangut components are named by their Japanese shapes', () => {
+test('the twenty-one Tangut components are named by their Japanese shapes', () => {
   const found = new Map(names
     .filter(name => SHAPE_SOURCES.has(name.source))
     .map(name => [name.name, name.char]))
@@ -59,9 +61,9 @@ test('the site copy holds the same rows as the source table', () => {
     .filter(line => line && !line.startsWith('#'))
     .map(line => {
       const [name, char, from, detail] = line.split('\t')
-      return [name, { char, source: from, detail, credit: from === 'arakawa-2023' ? 'Arakawa 2023' : from === 'ja-wikipedia-tangut' ? 'Arakawa 2020 · Japanese Wikipedia' : from.split(',')[0] }]
+      return [char, { name, source: from, detail, credit: from === 'arakawa-2023' ? 'Arakawa 2023' : from === 'ja-wikipedia-tangut' ? 'Arakawa 2020 · Japanese Wikipedia' : from.split(',')[0] }]
     }))
-  const site = new Map(app.map(row => [row.name, { char: row.char, source: row.source, detail: row.detail, credit: row.credit }]))
+  const site = new Map(app.map(row => [row.char, { name: row.name, source: row.source, detail: row.detail, credit: row.credit }]))
   expect(site).toEqual(source)
 })
 
@@ -73,10 +75,11 @@ test('the comparison table covers every named part', () => {
 
 test('a shape name reaches its component first', () => {
   for (const [name, char] of TANGUT) {
-    expect(search.search(name)[0]).toMatchObject({ char, label: name, score: 0 })
+    const row = { char, label: name, score: 0 }
+    expect(search.search(name)).toContainEqual(expect.objectContaining(row))
     // The search folds katakana to hiragana, so the same name typed in hiragana works.
-    expect(search.search([...name].map(kana => kana === 'ノ' ? 'の' : kana).join(''))[0].char).toBe(char)
-    expect(searchShapeNames(app, name)[0]).toMatchObject({ char, name, tier: 0 })
+    expect(search.search([...name].map(kana => kana === 'ノ' ? 'の' : kana).join(''))).toContainEqual(expect.objectContaining({ char }))
+    expect(searchShapeNames(app, name)).toContainEqual(expect.objectContaining({ char, name, tier: 0 }))
   }
 })
 

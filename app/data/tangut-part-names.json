@@ -219,6 +219,32 @@
       "source": "Arakawa 2023, table 4"
     },
     {
+      "char": "𘪷",
+      "names": {
+        "ja": [
+          "冂ノくノ一"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023, table 4"
+    },
+    {
+      "char": "𘫙",
+      "names": {
+        "ja": [
+          "冂ノくノ一"
+        ],
+        "en": [],
+        "zh": [],
+        "ru": [],
+        "ko": []
+      },
+      "source": "Arakawa 2023, table 4"
+    },
+    {
       "char": "𘫺",
       "names": {
         "ja": [
@@ -257,7 +283,7 @@
         "ru": [],
         "ko": []
       },
-      "source": "NGWU YOH, chat message, 2026-11-10"
+      "source": "NGWU YOH, personal communication, 2026-11-10"
     }
   ]
 }
