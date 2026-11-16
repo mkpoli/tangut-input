@@ -82,3 +82,19 @@ uv run scripts/build_tangut_cursive_font.py   # writes fonts/CursiveTangut-Regul
 
 The first command needs network access once; later runs use `cache/cursive/`. Pass `--refresh` to
 download the page and the crops again.
+
+## Adding a form
+
+A verified crop with a known character can be added to the record without touching the table:
+
+```sh
+uv run scripts/add_tangut_cursive_form.py --char 𗀔 --image crops/u17014.jpg \
+    --source "Arakawa Shintaro 2016 p. 89 no. 1 A" --base
+```
+
+If the character is new to the record, its first form stands at the code point. `--base` moves an
+existing character's base to the new form and turns the earlier base into an alternate. `--crop
+left,top,right,bottom` trims a strip of a neighbouring character before tracing, as fractions of the
+image. The script writes the record and rebuilds the face; `--no-build` writes the record alone. The
+tool traces the crop it is given and does not identify the character; the code point has to come from
+a transcription or a catalogue.

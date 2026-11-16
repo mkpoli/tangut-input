@@ -16,8 +16,9 @@ it into your text. <https://tangut.mkpo.li/>
   that way.
 - **Texts**: every text behind the corpus, grouped by edition, Wikisource, the Lausanne Corpus and
   MiCA, with its passages, characters, source and first line. Read opens the text passage by
-  passage; a Glosses toggle puts Chinese and English glosses under each character, and each
-  character opens its card. Transcribe still loads the first line.
+  passage, where each character opens its card; a Glosses toggle puts Chinese and English glosses
+  under each character, and Transcribe still loads the first line. A place in a character's
+  attestation opens the same reader at that passage.
 - **Cangjie**: an input method over the Tangut Cangjie codes. Candidates are numbered; `Space` or a
   digit adds one to the text. The on-screen keyboard shows the shapes each key names and dims the
   keys no code continues with. Every component is listed under its own code (beginning `p`).
@@ -92,6 +93,8 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
   Tangut Supplement and Tangut Components Supplement, with their Unicode names, strokes,
   descriptions (BabelStone for U+18D00–U+18D08, the WG2 proposals for U+18D09–U+18D20), Cangjie codes and
   the face that draws each; built by `scripts/build_tangut_supplement.py`.
+- `app/data/tangut-newest-ids.json`: descriptions for U+187F8–U+187FF, which BabelStone's table does
+  not reach, from table 2 of WG2 N5217R2 and built by `scripts/build_tangut_newest_ids.py`.
 - `app/data/tangut-attestation.json.gz` and `app/public/facsimile/`: where each character stands in
   fourteen sources, built by `scripts/build_tangut_attestation.py`. One is the Glyph Atlas record of
   Solonin and Arakawa's *Bodhicaryāvatāra in Tangut Translation*, chapter 2 (CC BY 4.0), with its
@@ -109,6 +112,9 @@ The design and its reasoning are in [`docs/design.md`](docs/design.md).
 - `app/data/tangut-frequency.json.gz`: how often each character occurs in the corpus, built by
   `scripts/build_tangut_frequency.py`; the finders put the commoner characters first within each
   tier.
+- `app/data/tangut-script-forms.json` and `app/public/seal/shouling/`: the sixteen seal-script
+  characters of the 壽陵 title, cut from the front plate of 李范文《夏漢字典》 (1997), whose 2008
+  edition prints it at p. 90; `scripts/build_tangut_script_forms.py` cuts a 300 dpi render.
 - `app/data/tangut-shapes.bin.gz`: glyph pen lines for the drawing pad, rendered from Noto Serif
   Tangut 2.168 by `scripts/build_tangut_shapes.py`; `scripts/handwriting/score.mjs` measures the
   search on drawings made by hand and `scripts/eval_tangut_shapes.mjs` on drawings made from a font.
@@ -159,9 +165,10 @@ and any seal or cursive forms.
 
 The deployed site keeps what readers drew and picked in a D1 database: `drawings` holds a pad
 drawing with the character chosen from its results, or a quiz round's prompt with the pen's timing
-and pressure; `picks` holds a character chosen from any finder with the page and the query behind it.
-A record carries a random id from the browser's local storage, no address and no account.
-`POST /api/record` is the only thing the worker answers; every page is still served from the assets.
+and pressure; `picks` holds a character chosen from any finder with the page and its place in the list.
+New pick records omit search queries; older D1 records may retain them. A record carries a random id
+from the browser's local storage, no address and no account. The worker also serves finder pages with
+page-specific metadata.
 
 ```sh
 bun run records                      # counts, the last drawings and the last picks

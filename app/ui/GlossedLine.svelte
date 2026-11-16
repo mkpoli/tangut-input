@@ -15,8 +15,7 @@
   /** @param {string} char */
   const chinese = char => {
     const found = entry(char)
-    const gloss = hanGloss(ix.leilin.get(char), found?.definitions?.zh, found?.wiktionary_zh)
-    return /\p{Script=Han}/u.test(gloss.text) ? gloss : { text: '', title: '', source: gloss.source }
+    return hanGloss(ix.leilin.get(char), found?.definitions?.zh, found?.wiktionary_zh)
   }
   /** @param {string} char */
   const english = char => {

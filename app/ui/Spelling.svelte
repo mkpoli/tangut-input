@@ -4,6 +4,7 @@
 </script>
 
 <script>
+  import { isImeKey } from '../lib/keyboard.js'
   // One spelling as a reader needs it: the script with its romanisation beside it, and, on hover or
   // focus, the IPA and the records it comes from. The source prints transliteration; the script and
   // the IPA are worked out from it, so the card marks the printed form when it differs.
@@ -58,7 +59,7 @@
     }
     /** @param {KeyboardEvent} event */
     const escape = event => {
-      if (event.key !== 'Escape') return
+      if (isImeKey(event) || event.key !== 'Escape') return
       event.stopPropagation()
       const inTip = Boolean(tip?.contains(document.activeElement))
       close()

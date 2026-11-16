@@ -49,3 +49,14 @@ export function idsViews(char, recorded, index) {
   const editorial = showEditorial ? render(roots[0], true) : recorded
   return { recorded, editorial, showEditorial, recordedParts: leavesOf(recorded), editorialParts: leavesOf(editorial) }
 }
+
+/**
+ * A description on its own, read the way the editorial view reads it: unambiguous parts become the
+ * characters they spell, and a three-part description is cut in two. `''` when the text is not one
+ * complete description.
+ * @param {string} recorded @param {Map<string, Set<string>>} index
+ */
+export function editorialDescription(recorded, index) {
+  const view = idsViews('', recorded, index)
+  return view.showEditorial ? view.editorial : ''
+}
