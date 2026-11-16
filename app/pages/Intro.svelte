@@ -6,15 +6,17 @@
   import { t } from '../lib/i18n.svelte.js'
   import { SOURCES } from '../lib/intro-sources.js'
   import { FIGURES } from '../lib/intro-figures.js'
+  import { LINKS } from '../lib/intro-links.js'
   import IntroFigure from '../ui/IntroFigure.svelte'
 
-  /** The article's sections, in order; their text is `intro.s1` … `intro.s5`. @type {{ id: string, figure: keyof typeof FIGURES }[]} */
+  /** The article's sections, in order; their text is `intro.s1` … `intro.s6`. @type {{ id: string, figure: keyof typeof FIGURES }[]} */
   const SECTIONS = [
-    { id: 'people', figure: 'tombs' },
+    { id: 'people', figure: 'map' },
     { id: 'script', figure: 'manuscript' },
     { id: 'language', figure: 'pearl' },
     { id: 'texts', figure: 'khara' },
     { id: 'after-1227', figure: 'pillars' },
+    { id: 'today', figure: 'tombs' },
   ]
 
   /** @param {string} body */
@@ -58,7 +60,7 @@
   </header>
 
   {#each SECTIONS as section, index (section.id)}
-    <section class="intro-row" id={section.id}>
+    <section class="intro-row" class:map-row={section.figure === 'map'} id={section.id}>
       <div class="intro-text">
         <h2 class="intro-heading">{t(`intro.s${index + 1}.heading`)}</h2>
         {#each paragraphs(t(`intro.s${index + 1}.body`)) as paragraph}
@@ -74,6 +76,22 @@
     <div class="intro-text">
       <p class="intro-para intro-close">{t('intro.close')}</p>
       <p class="intro-start"><a href="/">{t('intro.start')}</a></p>
+    </div>
+  </section>
+
+  <section class="links" id="links">
+    <h2 class="intro-heading">{t('intro.links.title')}</h2>
+    <div class="link-groups">
+      {#each LINKS as group (group.group)}
+        <div class="link-group">
+          <h3 class="link-heading">{t(`intro.links.${group.group}`)}</h3>
+          <ul class="link-list">
+            {#each group.items as item (item.url)}
+              <li><a href={item.url}>{item.label}</a></li>
+            {/each}
+          </ul>
+        </div>
+      {/each}
     </div>
   </section>
 
@@ -97,6 +115,7 @@
   .intro-head .ui-page-intro{max-inline-size:none}
   .intro-row{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:var(--ui-space-4xl);align-items:start}
   .intro-row.intro-end{grid-template-columns:minmax(0,1fr)}
+  .intro-row.map-row{grid-template-columns:minmax(0,66ch) minmax(0,1fr)}
   .intro-text{display:flex;flex-direction:column;gap:var(--ui-space-lg);max-inline-size:66ch;min-inline-size:0}
   .intro-heading{font-family:var(--ui-font-serif);font-size:var(--ui-text-xl);font-weight:var(--ui-weight-semibold);line-height:1.3}
   .intro-para{max-inline-size:66ch;color:var(--ui-color-ink);font-size:var(--ui-text-md);line-height:var(--ui-leading-loose)}
@@ -107,6 +126,16 @@
   .cite .sep{margin-inline-end:1px}
   .cite a{padding-inline:1px;color:var(--ui-color-accent);text-decoration:none}
   .cite a:hover{text-decoration:underline}
+.links{display:flex;flex-direction:column;gap:var(--ui-space-lg);padding-top:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
+  .link-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ui-space-3xl)}
+  .link-group{display:flex;flex-direction:column;gap:var(--ui-space-xs);min-inline-size:0}
+  .link-heading{margin:0;color:var(--ui-color-ink-muted);font-family:var(--ui-font-mono);font-size:var(--ui-text-2xs);font-weight:var(--ui-weight-semibold);letter-spacing:var(--ui-tracking-caps);text-transform:uppercase}
+  .link-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+  .link-list a{color:var(--ui-color-ink);font-size:var(--ui-text-sm);text-underline-offset:2px}
+  .link-list a:hover{color:var(--ui-color-accent-ink)}
+  @media (max-width: 900px){
+    .link-groups{grid-template-columns:minmax(0,1fr);gap:var(--ui-space-xl)}
+  }
   .sources{display:flex;flex-direction:column;gap:var(--ui-space-sm);padding-top:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
   .image-note{margin:0;color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);line-height:1.55}
   .source-list{margin:0;padding-inline-start:1.5em;columns:2;column-gap:var(--ui-space-4xl);color:var(--ui-color-ink-soft);font-size:13px;line-height:1.65}
@@ -116,7 +145,7 @@
   .source-list li:target{color:var(--ui-color-ink)}
   .source-list a{color:inherit;text-underline-offset:2px}
   @media (max-width: 1000px){
-    .intro-head,.intro-row{grid-template-columns:minmax(0,1fr);gap:var(--ui-space-xl)}
+    .intro-head,.intro-row,.intro-row.map-row{grid-template-columns:minmax(0,1fr);gap:var(--ui-space-xl)}
     .source-list{columns:1}
   }
   @media (max-width: 900px){
