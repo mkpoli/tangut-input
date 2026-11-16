@@ -82,6 +82,7 @@
   "find.group.meaning": "뜻으로",
   "find.group.tibetan": "티베트 문자 표기로",
   "find.group.description": "자형 기술로",
+  "find.group.parts": "이 부품을 가진 글자",
   "find.group.identifier": "식별자로",
   "find.group.seta": "티베트 확장 A PUA 코드로",
   "find.group.pua": "탕구트 PUA 이체자로",

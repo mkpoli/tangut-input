@@ -82,6 +82,7 @@
   "find.group.meaning": "按释义",
   "find.group.tibetan": "按藏文拼写",
   "find.group.description": "按构字描述",
+  "find.group.parts": "含有此部件的字",
   "find.group.identifier": "按编号",
   "find.group.seta": "作为藏文扩充集A PUA编码",
   "find.group.pua": "作为西夏文PUA异体字",
