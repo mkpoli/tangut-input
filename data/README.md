@@ -184,6 +184,16 @@ form, and the other way, including the Parts finder's side-by-side layout filter
 and the variants page lists them. A component substitution whose description no recorded character carries is
 written out on the card as a derived form; it names no character and no reading.
 
+
+## `shouling/`
+
+The sixteen seal-script characters of 大白高國護城聖德至懿皇帝壽陵誌文, from the front plate of
+李范文《夏漢字典》 (1997), 「西夏文篆書仁孝陵出土篆額殘碑 / 篆額復原圖」; the 2008 edition prints
+it at p. 90. The plate states no licence. `README.md` here records the grid's order and the
+licence position: the crops are quoted for identification, and are a modern tracing of the broken
+碑額. `scripts/build_tangut_script_forms.py` cuts a 300 dpi render of the plate and writes
+`app/public/seal/shouling/<code point>.png` and `app/data/tangut-script-forms.json`.
+
 ## `tangut-titles.tsv`
 
 Imperial titles, one row per title and citing work: the holder; `identified`, `stated` by a study or
