@@ -36,6 +36,10 @@ export const PAGE_SEO = {
     title: 'Texts — Tangut Input',
     description: 'Browse the texts behind the attested corpus, with their passages, characters and sources, and load a first passage into Transcribe.',
   },
+  convert: {
+    title: 'PUA conversion — Tangut Input',
+    description: 'Turn Tangut Yinchuan private-use code points back into Unicode Tangut characters, and browse every recorded variant.',
+  },
   transcribe: {
     title: 'Transcribe Tangut text — every character’s reading',
     description: 'Paste a line of Tangut and read every character: its reconstruction in any of eight systems, its rhyme and tone, and a table of all eight for copying.',
@@ -43,6 +47,10 @@ export const PAGE_SEO = {
   fanqie: {
     title: 'Fanqie — Tangut Input',
     description: 'Type the two characters a Tangut fanqie is spelt with, the upper and the lower, and find the character they spell.',
+  },
+  chains: {
+    title: 'Fanqie chains — Tangut Input',
+    description: 'The 文海’s fanqie followed as two graphs: 173 initial chains and 321 rhyme chains, their members, direct links, crossings and unresolved sets.',
   },
   chart: {
     title: 'Rhyme chart — Tangut Input',

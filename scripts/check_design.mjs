@@ -275,7 +275,7 @@ async function noSideScroll(page) {
   assert.ok(overflow.scroll <= overflow.view + 1, `the page scrolls sideways (${overflow.scroll} > ${overflow.view})`)
 }
 
-const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chart', '/eras', '/texts', '/texts?q=wikisource-tongyin-preface', '/gyalrongic', '/transcribe?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6', '/draw', '/parts', '/codes', '/variants', '/intro', '/about']
+const PAGES = ['/', '/meaning?q=water', '/cangjie?q=pa', '/sijiao?q=123', '/reading?q=do1', '/fanqie', '/chains', '/chains?q=R-036', '/chart', '/eras', '/texts', '/texts?q=wikisource-tongyin-preface', '/gyalrongic', '/transcribe?q=%F0%97%8B%95%F0%98%8F%A8%F0%98%9C%B6', '/draw', '/parts', '/codes', '/variants', '/convert?q=%F3%B0%8A%BB%F3%B1%81%84%F3%B0%83%8F%F3%B0%83%BE', '/intro', '/about']
 
 /** Visits every page at one viewport and checks it renders without script errors or side scroll. */
 async function checkPages(viewport, scheme) {
@@ -540,7 +540,7 @@ await step('the bar keeps one row at 1280 and two at 901', async () => {
 })
 await DESKTOP_APP.close()
 
-await step('the input method takes the digits of a code and picks after letters', async () => {
+await step('the input method types digits and picks with arrows and Enter', async () => {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
   const page = await context.newPage()
   await page.goto(`${APP}/`)
@@ -560,7 +560,12 @@ await step('the input method takes the digits of a code and picks after letters'
   assert.equal(await text(), '')
   await box.fill('msb')
   await page.keyboard.press('1')
-  assert.notEqual(await text(), '', 'a digit picks after a Cangjie code')
+  assert.equal(await box.inputValue(), 'msb1', 'digits remain available after letters')
+  await box.fill('msb')
+  await page.locator('.ime [role=option]').first().waitFor()
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('Enter')
+  assert.notEqual(await text(), '', 'arrows and Enter pick a candidate')
   await context.close()
 })
 

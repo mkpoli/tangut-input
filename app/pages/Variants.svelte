@@ -5,7 +5,7 @@
   import VARIANTS from '../data/tangut-variants.json' with { type: 'json' }
   import { tick } from 'svelte'
   import { db, ix, hex, readingOf } from '../lib/db.svelte.js'
-  import { componentPositions } from '../lib/variants.js'
+  import { componentPositions, derivedForms } from '../lib/variants.js'
   import { SCRIPT_FORMS, SCRIPT_SOURCES } from '../lib/script-forms.js'
   import { choose, ui } from '../lib/ui.svelte.js'
   import { route } from '../lib/route.svelte.js'
@@ -19,6 +19,8 @@
   const possible = $derived(ready ? ix.variantPairs : [])
   const puaUnencoded = $derived(ready ? ix.puaUnencoded : [])
   const positions = $derived(ready ? componentPositions(ix.entries) : new Map())
+  // The substitutions no character answers, for review: derived, not recorded.
+  const derivedRows = $derived(ready ? derivedForms(ix.entries, ix.byDescription) : [])
   // The groups a pair list cannot show: a character reached through another form, and the pair
   // reported by hand. Every other pair is in the tables below, one record to a row.
   const linked = $derived(ready ? ix.variantGroups.filter(family => family.links.length > 1 || family.grounds.some(ground => ground.kind === 'reported')) : [])
@@ -136,6 +138,25 @@
     </div>
   </section>
 
+  <section class="ui-section" id="derived">
+    {@render heading('derived-heading', t('card.variantDerived'), derivedRows.length)}
+    <p class="ui-hint">{t('variants.derived.hint')}</p>
+    <div class="ui-table-wrap">
+      <table class="ui-table list" aria-labelledby="derived-heading">
+        <thead><tr><th scope="col" class="character">{t('variants.character')}</th><th scope="col">{t('variants.description')}</th><th scope="col">{t('variants.component')}</th></tr></thead>
+        <tbody>
+          {#each derivedRows as row (row.char + row.description)}
+            <tr>
+              <td class="character">{@render char(row.char)}</td>
+              <td><span class="ui-formula">{row.description}</span></td>
+              <td><span class="pair" role="img" aria-label={row.components}>{#each [...row.components] as part (part)}<G char={part} />{/each}</span></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="ui-section" id="components">
     {@render heading('components-heading', t('variants.components'), VARIANTS.groups.length)}
     <p class="ui-hint">{t('variants.components.hint')}</p>
@@ -223,6 +244,7 @@
   .said{display:block;margin-block-start:var(--ui-space-xs);color:var(--ui-color-ink-soft);font-size:var(--ui-text-xs)}
   .reading{font-variant-numeric:tabular-nums;white-space:nowrap}
   .pair{display:inline-flex;gap:2px;vertical-align:middle}
+  .character{inline-size:72px;white-space:nowrap}
   .places{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs) var(--ui-space-md);font-size:var(--ui-text-sm);color:var(--ui-color-ink-soft)}
   .place b{font-weight:var(--ui-weight-semibold);color:var(--ui-color-ink);font-variant-numeric:tabular-nums}
   .families{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--ui-space-sm);margin:0;padding:0;list-style:none}
