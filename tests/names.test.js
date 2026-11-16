@@ -11,7 +11,7 @@ const search = createNameSearch(names)
 const app = JSON.parse(readFileSync(new URL('../app/data/tangut-component-names.json', import.meta.url), 'utf8')).names
 const comparison = JSON.parse(readFileSync(new URL('../app/data/tangut-part-names.json', import.meta.url), 'utf8'))
 
-const SHAPE_SOURCES = new Set(['arakawa-2023', 'ja-wikipedia-tangut', 'NGWU YOH, chat message, 2026-11-10'])
+const SHAPE_SOURCES = new Set(['arakawa-2023', 'ja-wikipedia-tangut', 'NGWU YOH, personal communication, 2026-11-10'])
 
 const TANGUT = [
   ['くノ', '𘫺'],

@@ -514,7 +514,7 @@ Format: `name`, `char`, `source`, `detail`; comments start with `#`.
 - Source `arakawa-2020`: 荒川慎太郎「西夏文字の、ある「５画」部首の再分類」日本言語学会第160回
   大会予稿集 (<https://ls-japan.jpn.org/modules/documents/LSJpapers/meeting/160/handouts/a/A-3_160.pdf>):
   the distinction between the two forms.
-- Source `NGWU YOH, chat message, 2026-11-10`: コくノ for 𘫿, the plain form of Arakawa's dotted
+- Source `NGWU YOH, personal communication, 2026-11-10`: コくノ for 𘫿, the plain form of Arakawa's dotted
   A3 コくノ﹅. The code point is this project's reading of the glyph.
 - Licence: **CC BY-SA 4.0** for the Wikipedia rows; the Arakawa rows are short shape names.
 

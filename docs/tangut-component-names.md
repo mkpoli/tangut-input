@@ -26,7 +26,7 @@ shorthand for a shape: 𘡃 is ノメ and 𘫺 is くノ, and the two are told a
 | コ一匕﹅ | 𘦺 U+189BA | Arakawa 2023, table 5 B11 |
 | 冂ノくノ一 | 𘪷 U+18AB7 | Arakawa 2023, table 4 A6 |
 | 冂ノくノ一 | 𘫙 U+18AD9 | Arakawa 2023, table 4 A7 |
-| コくノ | 𘫿 U+18AFF | NGWU YOH, chat message, 2026-11-10; Arakawa 2023 names the shape |
+| コくノ | 𘫿 U+18AFF | NGWU YOH, personal communication, 2026-11-10; Arakawa 2023 names the shape |
 
 The hover card takes a component's stroke count from the site's Unicode-derived data, which can
 differ from a count in the source.
