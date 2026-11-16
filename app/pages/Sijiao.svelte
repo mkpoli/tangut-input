@@ -2,6 +2,7 @@
   // 四角號碼, the four-corner code: six digits read from the shapes in the four corners of the
   // character, then a digit naming the shape beside the last corner. A reader with a printed
   // dictionary can find a character by its code without knowing a reading or a decomposition.
+  import { isImeKey } from '../lib/keyboard.js'
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import G from '../ui/G.svelte'
   import Icon from '../ui/Icon.svelte'
@@ -72,7 +73,7 @@
   }
   /** @param {KeyboardEvent} event */
   function keys(event) {
-    if (event.ctrlKey || event.metaKey || event.altKey) return
+    if (isImeKey(event) || event.ctrlKey || event.metaKey || event.altKey) return
     const k = event.key
     if (k === 'Backspace' && code) { event.preventDefault(); setCode(code.slice(0, -1)); return }
     if (k === 'Escape' && code) { event.preventDefault(); setCode(''); return }

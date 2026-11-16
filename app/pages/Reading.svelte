@@ -2,6 +2,7 @@
   // Reading: type a reconstruction in whatever system you know. Every system is searched at once,
   // folded to plain letters, and each candidate shows which systems read it so and how. A final
   // digit, or the tone buttons, keep to one tone; systems without tones always pass.
+  import { isImeKey } from '../lib/keyboard.js'
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
@@ -32,7 +33,7 @@
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
-    if (!shown.length) return
+    if (isImeKey(event) || !shown.length) return
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
       active = Math.max(0, Math.min(shown.length - 1, active + (event.key === 'ArrowDown' ? 1 : -1)))
