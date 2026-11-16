@@ -1,0 +1,19 @@
+{
+  "format": "tangut-input/newest-ids",
+  "source": {
+    "name": "WG2 N5217R2 = L2/23-246, table 2",
+    "author": "Andrew West",
+    "date": "2023-10-02",
+    "url": "https://www.unicode.org/wg2/docs/n5217r2-Tangut-components-ideographs.pdf"
+  },
+  "characters": {
+    "𘟸": "⿱𘣍⿲𘠮𘫾𘦡",
+    "𘟹": "⿰𘫽𘡦",
+    "𘟺": "⿱𘡊⿰𘧤⿱𘡩𘤕",
+    "𘟻": "⿰𘧩𘤘",
+    "𘟼": "⿰𘡱𘤘",
+    "𘟽": "⿱𘣘⿰𘢌𘥦",
+    "𘟾": "⿰𘨆𘥾",
+    "𘟿": "⿰𘫟⿱𘢸𘢱"
+  }
+}

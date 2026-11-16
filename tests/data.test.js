@@ -152,6 +152,13 @@ test('the 類林 glosses belong to known characters, the commonest first', () =>
   expect(glosses['𘄿'][0]).toEqual(['篇', 22])
 })
 
+test('the 類林 road gloss belongs to 𗵘, not 𗵚', () => {
+  const { glosses, corrections } = JSON.parse(readFileSync(new URL('../app/data/tangut-leilin.json', import.meta.url), 'utf8'))
+  expect(glosses['𗵘']).toEqual([['路', 22], ['道', 11]])
+  expect(glosses['𗵚']).toBeUndefined()
+  expect(corrections).toEqual([expect.objectContaining({ from: '𗵚', to: '𗵘', rows: 33, key: { lfw: '0021', rhyme: '1.19' } })])
+})
+
 const ccamc = json('tangut-ccamc-index.json.gz')
 
 test('the CCAMC index holds only normalized search terms', () => {
@@ -185,13 +192,24 @@ test('the rhyme record keeps the fields the card and the chart read', () => {
 
 const attestation = json('tangut-attestation.json.gz')
 
+test('the two texts from Jacques\'s editions carry the road word, not the elephant', () => {
+  expect(attestation.rows['𗵚'].lcdtt).toBeUndefined()
+  const road = attestation.rows['𗵘'].lcdtt
+  const places = prefix => road.filter(([line]) => line.startsWith(`lcdtt:${prefix}:`)).length
+  expect(places('leilin')).toBe(33)
+  expect(places('filial-piety')).toBe(9)
+  expect(attestation.lines['lcdtt:leilin:line-213'].text).toContain('𗝿𗵘𗟫')
+  expect(attestation.lines['lcdtt:filial-piety:line-119'].text).toContain('𗵘𗸕')
+  expect(attestation.sources.find(source => source.id === 'lcdtt').note).toContain('read 𗵘')
+})
+
 test('the attestation joins the edition, the twelve Wikisource texts, the Lausanne corpus and MiCA', () => {
   expect(attestation.corpus).toEqual({
     lines: 6028,
     characters: 105542,
     distinct: 3379,
     sources: 15,
-    sha256: 'd810d0b821bb72a0c2a29b0cb42ec6de165a7f5b9b6e8ad7e637c3cdaa30af3a',
+    sha256: 'a9937b4c801193674ccd95ac2badd7ad56f677b29a2e70b38eef41647e9c752c',
   })
   expect(attestation.sources.map(source => source.id)).toEqual([
     'solonin-2024',
@@ -301,7 +319,7 @@ test('the frequency table counts every place in the corpus', () => {
     lines: 6028,
     characters: 105542,
     distinct: 3379,
-    sha256: 'd810d0b821bb72a0c2a29b0cb42ec6de165a7f5b9b6e8ad7e637c3cdaa30af3a',
+    sha256: 'a9937b4c801193674ccd95ac2badd7ad56f677b29a2e70b38eef41647e9c752c',
   })
   expect(Object.keys(frequency.counts).length).toBe(3379)
   expect(Object.values(frequency.counts).reduce((sum, count) => sum + count, 0)).toBe(105542)

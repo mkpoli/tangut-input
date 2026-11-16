@@ -1,6 +1,7 @@
 <script>
   // Meaning: search Wiktionary, Downes and CCAMC's normalized terms.
   // CCAMC-only matches display Downes's English gloss when available.
+  import { isImeKey } from '../lib/keyboard.js'
   import { db, ix, gloss } from '../lib/db.svelte.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
@@ -35,7 +36,7 @@
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
-    if (event.isComposing) return
+    if (isImeKey(event)) return
     if (!candidates.length) {
       if (event.key === 'Escape') { query = ''; setQuery('') }
       return

@@ -1,4 +1,5 @@
 <script>
+  import { isImeKey } from '../lib/keyboard.js'
   // Cangjie, the fast method: letters name the shapes of a character in writing order. The code
   // box behaves like an input method: candidates are numbered, Space or a digit commits one into
   // the text, Backspace in an empty box deletes from the text. The keyboard below doubles as the
@@ -158,7 +159,7 @@
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
-    if (event.ctrlKey || event.metaKey || event.altKey) return
+    if (isImeKey(event) || event.ctrlKey || event.metaKey || event.altKey) return
     const k = event.key
     if (k === 'Backspace' && !code) { event.preventDefault(); backspace(); return }
     if (k === 'Escape' && code) { event.preventDefault(); setCode(''); return }
