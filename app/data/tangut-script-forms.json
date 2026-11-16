@@ -1,0 +1,162 @@
+{
+  "format": "tangut-script-forms/1",
+  "built": "2026-11-09",
+  "sources": [
+    {
+      "id": "shouling",
+      "title": "篆額復原圖",
+      "titleZh": "大白高國護城聖德至懿皇帝壽陵誌文",
+      "author": "李范文",
+      "book": "夏漢字典",
+      "edition": "1997, front plate; 2008 edition p. 90",
+      "licence": "No licence stated",
+      "note": "The plate arranges the sixteen characters under the Chinese translation 大白高國 / 護城聖德 / 至懿皇帝 / 壽陵誌文. The forms are a modern tracing of the broken 碑額, not the stone itself."
+    }
+  ],
+  "forms": [
+    {
+      "char": "𘜶",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/18736.png",
+      "position": 0,
+      "width": 293,
+      "height": 416
+    },
+    {
+      "char": "𗴂",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17D02.png",
+      "position": 1,
+      "width": 293,
+      "height": 443
+    },
+    {
+      "char": "𗹭",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17E6D.png",
+      "position": 2,
+      "width": 293,
+      "height": 353
+    },
+    {
+      "char": "𗂧",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/170A7.png",
+      "position": 3,
+      "width": 293,
+      "height": 391
+    },
+    {
+      "char": "𗓑",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/174D1.png",
+      "position": 4,
+      "width": 320,
+      "height": 416
+    },
+    {
+      "char": "𗍁",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17341.png",
+      "position": 5,
+      "width": 320,
+      "height": 443
+    },
+    {
+      "char": "𗼈",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17F08.png",
+      "position": 6,
+      "width": 320,
+      "height": 353
+    },
+    {
+      "char": "𗣼",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/178FC.png",
+      "position": 7,
+      "width": 320,
+      "height": 391
+    },
+    {
+      "char": "𗫡",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17AE1.png",
+      "position": 8,
+      "width": 303,
+      "height": 416
+    },
+    {
+      "char": "𗤓",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17913.png",
+      "position": 9,
+      "width": 303,
+      "height": 443
+    },
+    {
+      "char": "𘓺",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/184FA.png",
+      "position": 10,
+      "width": 303,
+      "height": 353
+    },
+    {
+      "char": "𘋨",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/182E8.png",
+      "position": 11,
+      "width": 303,
+      "height": 391
+    },
+    {
+      "char": "𘗽",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/185FD.png",
+      "position": 12,
+      "width": 331,
+      "height": 416
+    },
+    {
+      "char": "𗳇",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/17CC7.png",
+      "position": 13,
+      "width": 331,
+      "height": 443
+    },
+    {
+      "char": "𘋼",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/182FC.png",
+      "position": 14,
+      "width": 331,
+      "height": 353
+    },
+    {
+      "char": "𘝞",
+      "script": "seal",
+      "source": "shouling",
+      "image": "/seal/shouling/1875E.png",
+      "position": 15,
+      "width": 331,
+      "height": 391
+    }
+  ]
+}

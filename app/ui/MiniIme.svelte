@@ -3,6 +3,7 @@
   // shape or by its sound, and it goes in at the caret. It is a board for the characters a keyboard
   // cannot type, so it stays open between picks.
   import { tick } from 'svelte'
+  import { isImeKey } from '../lib/keyboard.js'
   import { db, ix, isTangut, gloss, readingOf } from '../lib/db.svelte.js'
   import { byMeaning, byParts, byCode, bySijiao, byCodePoint, byTibetan } from '../lib/search.js'
   import { searchReadings } from '../lib/reading.js'
@@ -120,6 +121,7 @@
 
   /** @param {KeyboardEvent} event */
   function keys(event) {
+    if (isImeKey(event)) return
     if (event.key === 'Escape') {
       event.preventDefault()
       close()
