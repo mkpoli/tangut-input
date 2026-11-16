@@ -2,7 +2,7 @@ import { expect, test } from 'bun:test'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
 import { buildPartIndex } from '../app/lib/composition.js'
-import { componentPositions, derivedDescriptions, familyIndex, keepVariantsTogether, possiblePairs, surroundingDescriptions, variantFamilies, variantIndex } from '../app/lib/variants.js'
+import { componentPositions, derivedDescriptions, derivedForms, familyIndex, keepVariantsTogether, possiblePairs, surroundingDescriptions, variantFamilies, variantIndex } from '../app/lib/variants.js'
 import VARIANTS from '../app/data/tangut-variants.json' with { type: 'json' }
 
 const NONE = { variants: [], partial: [], synonyms: [], components: [], reported: [] }
@@ -50,6 +50,15 @@ test('a surrounding form first in ⿺ answers the side-by-side layout', () => {
   // A ⿺ whose first part is not a recorded surrounding form stays an enclosure.
   const plain = buildPartIndex([{ char: '𗸞', composition: '⿺𘠁𘣩' }], [['𘣠', '𘣢']])
   expect([...plain.layoutsOf.get('𗸞')]).toEqual(['⿺'])
+})
+
+test('the derived forms list names the character, the description and the pair', () => {
+  const stated = { ...NONE, components: [['𘣠', '𘣢']], surrounding: [['𘣠', '𘣢']] }
+  const entries = [{ char: '𗸘', composition: '⿰𘣠𘣩' }, { char: '𗸠', composition: '⿺𘣢𘣩' }]
+  expect(derivedForms(entries, new Set(['⿰𘣠𘣩', '⿺𘣢𘣩']), stated)).toEqual([])
+  expect(derivedForms(entries.slice(0, 1), new Set(['⿰𘣠𘣩']), stated)).toEqual([
+    { char: '𗸘', description: '⿺𘣢𘣩', components: '𘣠𘣢' },
+  ])
 })
 
 test('a derived description is the substitution no character carries', () => {
@@ -125,6 +134,7 @@ test('the recorded data gives the stated variants and the possible ones', () => 
   const byChar = new Map(entries.map(entry => [entry.char, entry]))
   expect(derivedDescriptions(byChar.get('𗠐'), described)).toContain('⿰𘡯𘣜')
   expect(derivedDescriptions(byChar.get('𗸘'), described)).toEqual([])
+  expect(derivedForms(entries, described).some(row => row.char === '𗠐' && row.description === '⿰𘡯𘣜')).toBe(true)
 })
 
 test('variant components stand together, under the first member\'s strokes', () => {
