@@ -748,6 +748,8 @@
   "gyalrongic.kind.grammar": "Grammar",
   "gyalrongic.kind.preprint": "Preprint",
   "gyalrongic.kind.thesis": "Thesis",
+  "attest.readText": "Read in the texts",
+  "texts.earlier": "Earlier passages",
   "nav.dataset": "Dataset",
   "nav.dataset.hint": "Strokes drawn by hand, free to use",
   "draw.dataset": "Stroke dataset",
