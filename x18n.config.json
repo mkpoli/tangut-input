@@ -81,6 +81,8 @@
     "core:font.yinchuan",
     "core:gyalrongic.hint",
     "core:nav.cangjie.hint",
+    "core:nav.chains",
+    "core:nav.chains.hint",
     "core:nav.chart.hint",
     "core:nav.codes.hint",
     "core:nav.draw.hint",

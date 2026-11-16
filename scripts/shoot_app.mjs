@@ -49,6 +49,7 @@ const SCREENS = [
   { name: 'variants', path: '/variants' },
   { name: 'cangjie', path: '/cangjie', act: async page => { await page.locator('input.code-input').pressSequentially('msb', { delay: 40 }) } },
   { name: 'reading', path: '/reading?q=ndzi' },
+  { name: 'chains', path: '/chains' },
   { name: 'draw', path: '/draw', act: draw },
   { name: 'parts', path: '/parts?q=%F0%98%A0%80%F0%98%A0%86' },
   { name: 'codes', path: '/codes' },
