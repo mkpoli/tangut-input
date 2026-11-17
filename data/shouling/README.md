@@ -22,5 +22,5 @@ Re-cut them with the page rendered at 300 dpi:
 
 ```sh
 pdftoppm -f 8 -l 8 -r 300 -png '李范文（1997）『夏漢字典』.pdf' /tmp/xhzd-page
-uv run scripts/build_tangut_script_forms.py --page /tmp/xhzd-page-08.png
+uv run scripts/build_tangut_script_forms.py --page /tmp/xhzd-page-0008.png
 ```
