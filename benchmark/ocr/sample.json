@@ -1,0 +1,218 @@
+[
+ {
+  "id": "c40b1-c02-1",
+  "column": 2,
+  "position": 1,
+  "char": "𗉛",
+  "mixocr": "𗉙",
+  "band": "𗉛",
+  "tesseract": "环"
+ },
+ {
+  "id": "c40b1-c02-2",
+  "column": 2,
+  "position": 2,
+  "char": "𗷫",
+  "mixocr": "𗷫",
+  "band": "𗷫",
+  "tesseract": "瞰"
+ },
+ {
+  "id": "c40b1-c02-3",
+  "column": 2,
+  "position": 3,
+  "char": "𗆂",
+  "mixocr": "𗆂",
+  "band": "𗆂",
+  "tesseract": "腐"
+ },
+ {
+  "id": "c40b1-c02-4",
+  "column": 2,
+  "position": 4,
+  "char": "𗈑",
+  "mixocr": "𗒼",
+  "band": "𗒼",
+  "tesseract": "芸"
+ },
+ {
+  "id": "c40b1-c06-1",
+  "column": 6,
+  "position": 1,
+  "char": "𗵺",
+  "mixocr": "𘔮",
+  "band": "𘔮",
+  "tesseract": "系孙"
+ },
+ {
+  "id": "c40b1-c06-2",
+  "column": 6,
+  "position": 2,
+  "char": "𗅉",
+  "mixocr": "𗂈",
+  "band": "𗅋",
+  "tesseract": "许"
+ },
+ {
+  "id": "c40b1-c06-3",
+  "column": 6,
+  "position": 3,
+  "char": "𗤶",
+  "mixocr": "𗫒",
+  "band": "𗤶",
+  "tesseract": "猷"
+ },
+ {
+  "id": "c40b1-c06-4",
+  "column": 6,
+  "position": 4,
+  "char": "𗛻",
+  "mixocr": "𗚛",
+  "band": "𗚛",
+  "tesseract": "叛"
+ },
+ {
+  "id": "c40b1-c10-1",
+  "column": 10,
+  "position": 1,
+  "char": "𘔫",
+  "mixocr": "𘔫",
+  "band": "𘔫",
+  "tesseract": "租"
+ },
+ {
+  "id": "c40b1-c10-2",
+  "column": 10,
+  "position": 2,
+  "char": "𗷺",
+  "mixocr": "𗫂",
+  "band": "𗪯",
+  "tesseract": "颞"
+ },
+ {
+  "id": "c40b1-c10-3",
+  "column": 10,
+  "position": 3,
+  "char": "𗐆",
+  "mixocr": "𗐆",
+  "band": "𗐆",
+  "tesseract": "懋"
+ },
+ {
+  "id": "c40b1-c10-4",
+  "column": 10,
+  "position": 4,
+  "char": "𗟻",
+  "mixocr": "𗟻",
+  "band": "𗟻",
+  "tesseract": ".得"
+ },
+ {
+  "id": "c40b1-c14-1",
+  "column": 14,
+  "position": 1,
+  "char": "𘕕",
+  "mixocr": "𘕓",
+  "band": "𘕓",
+  "tesseract": "敏"
+ },
+ {
+  "id": "c40b1-c14-2",
+  "column": 14,
+  "position": 2,
+  "char": "𘊄",
+  "mixocr": "𘊄",
+  "band": "𘊄",
+  "tesseract": "敏"
+ },
+ {
+  "id": "c40b1-c14-3",
+  "column": 14,
+  "position": 3,
+  "char": "𗈲",
+  "mixocr": "𗈲",
+  "band": "𗈲",
+  "tesseract": "秦"
+ },
+ {
+  "id": "c40b1-c14-4",
+  "column": 14,
+  "position": 4,
+  "char": "𗈜",
+  "mixocr": "𗕗",
+  "band": "𗈜",
+  "tesseract": "歇"
+ },
+ {
+  "id": "c40b1-c18-1",
+  "column": 18,
+  "position": 1,
+  "char": "𘑰",
+  "mixocr": "𗱚",
+  "band": "𗱚",
+  "tesseract": "1秉"
+ },
+ {
+  "id": "c40b1-c18-2",
+  "column": 18,
+  "position": 2,
+  "char": "𗣭",
+  "mixocr": "𗼻",
+  "band": "𗼻",
+  "tesseract": "缩"
+ },
+ {
+  "id": "c40b1-c18-3",
+  "column": 18,
+  "position": 3,
+  "char": "𘓂",
+  "mixocr": "𘋢",
+  "band": "𘋢",
+  "tesseract": "裨"
+ },
+ {
+  "id": "c40b1-c18-4",
+  "column": 18,
+  "position": 4,
+  "char": "𗨤",
+  "mixocr": "𗥤",
+  "band": "𗨎",
+  "tesseract": "狼"
+ },
+ {
+  "id": "c40b1-c22-1",
+  "column": 22,
+  "position": 1,
+  "char": "𘝵",
+  "mixocr": "𘝵",
+  "band": "𗕙",
+  "tesseract": "力"
+ },
+ {
+  "id": "c40b1-c22-2",
+  "column": 22,
+  "position": 2,
+  "char": "𘎚",
+  "mixocr": "𘜓",
+  "band": "𘃛",
+  "tesseract": "净"
+ },
+ {
+  "id": "c40b1-c22-3",
+  "column": 22,
+  "position": 3,
+  "char": "𘌴",
+  "mixocr": "𗒐",
+  "band": "𗒐",
+  "tesseract": "薇"
+ },
+ {
+  "id": "c40b1-c22-4",
+  "column": 22,
+  "position": 4,
+  "char": "𗢳",
+  "mixocr": "𗢳",
+  "band": "𗢳",
+  "tesseract": "轻"
+ }
+]

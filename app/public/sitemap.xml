@@ -15,5 +15,6 @@
   <url><loc>https://tangut.mkpo.li/codes</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/variants</loc><priority>0.8</priority></url>
   <url><loc>https://tangut.mkpo.li/eras</loc><priority>0.8</priority></url>
+  <url><loc>https://tangut.mkpo.li/ocr</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://tangut.mkpo.li/about</loc><priority>0.5</priority></url>
 </urlset>

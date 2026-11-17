@@ -838,6 +838,8 @@
   "intro.links.language": "Language and tools",
   "attest.readText": "Read in the texts",
   "texts.earlier": "Earlier passages",
+  "nav.ocr": "OCR",
+  "nav.ocr.hint": "Who has read Tangut by machine, and how well",
   "nav.dataset": "Dataset",
   "nav.dataset.hint": "Strokes drawn by hand, free to use",
   "draw.dataset": "Stroke dataset",

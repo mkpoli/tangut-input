@@ -36,6 +36,7 @@
   import About from './pages/About.svelte'
   import Intro from './pages/Intro.svelte'
   import Gyalrongic from './pages/Gyalrongic.svelte'
+  import Ocr from './pages/Ocr.svelte'
 
   load()
   applyTheme()
@@ -158,7 +159,7 @@
   }
 
   // Pages that are read rather than searched: they take the full width and carry no character card.
-  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic', 'dataset', 'codes'])
+  const READING_PAGES = /** @type {import('./lib/route.svelte.js').Page[]} */ (['about', 'intro', 'gyalrongic', 'dataset', 'codes', 'ocr'])
 
   // A layout or page change removes the dialog without waiting for its exit animation.
   function resetCard() {
@@ -443,8 +444,9 @@
         {:else if route.page === 'codes'}<Codes />
         {:else if route.page === 'intro'}<Intro />
         {:else if route.page === 'gyalrongic'}<Gyalrongic />
+        {:else if route.page === 'ocr'}<Ocr />
         {:else}<About />{/if}
-        {#if route.page !== 'about' && route.page !== 'dataset'}
+        {#if route.page !== 'about' && route.page !== 'dataset' && route.page !== 'ocr'}
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>

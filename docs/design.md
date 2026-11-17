@@ -38,8 +38,8 @@ click opens it; a double click, `Enter` or a Cangjie number key adds it to the t
 finder group (From a text, From a shape, From a sound, From a meaning), More, the reconstruction
 with its label and sound icon, the sponsor and a settings button. A group button opens a menu under
 the bar listing its finders, each with its hint and the open one marked; the button stays marked
-while a page inside its group is open. More holds the introduction, the Gyalrongic note and
-Sources. The foot of the finder keeps Sources. Escape, a click elsewhere or a change of layout
+while a page inside its group is open. More holds the introduction, the Gyalrongic note, Sources, the
+dataset and the OCR survey. The foot of the finder keeps Sources. Escape, a click elsewhere or a change of layout
 closes the menu, and Escape puts focus back on its button. The settings popover is two groups:
 Appearance, with the three-way theme (system, light or dark) and the colour scheme; and Text, with
 the interface language and the Tangut face. Each row carries its own icon. The text strip sits
@@ -53,7 +53,8 @@ rule runs the width of the page. The sticky chrome below follows the taller bar.
 **Phone (390 wide).** The top bar keeps the mark, the reconstruction and settings; settings opens
 as a sheet from the same button. The finders move to a bottom tab bar of groups, each tab with its
 icon over the name, each group opening its pages in a sheet with a row for each finder; More holds
-the introduction, the Gyalrongic note and Sources. The sheets are native `<dialog>`s, so Escape
+the introduction, the Gyalrongic note, Sources, the dataset and the OCR survey. The sheets are
+native `<dialog>`s, so Escape
 closes them and focus returns to the tab that opened them. The card becomes a full-height sheet
 that a tap opens and Back or `Esc` closes; previews from the keyboard do not open it. The text
 strip stays at the top.

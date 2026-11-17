@@ -838,6 +838,8 @@
   "intro.links.language": "言語とツール",
   "attest.readText": "本文で読む",
   "texts.earlier": "前の箇所",
+  "nav.ocr": "OCR",
+  "nav.ocr.hint": "西夏文字を機械に読ませた試みと成績",
   "nav.dataset": "手書きデータ",
   "nav.dataset.hint": "手で書いた字形データ（自由に利用可）",
   "draw.dataset": "手書きデータ",

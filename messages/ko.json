@@ -838,6 +838,8 @@
   "intro.links.language": "언어와 도구",
   "attest.readText": "문헌에서 읽기",
   "texts.earlier": "이전 구절",
+  "nav.ocr": "OCR",
+  "nav.ocr.hint": "탕구트 문자의 기계 인식 시도와 성적",
   "nav.dataset": "필사 데이터",
   "nav.dataset.hint": "손으로 쓴 필획 데이터, 자유롭게 이용 가능",
   "draw.dataset": "필사 데이터",

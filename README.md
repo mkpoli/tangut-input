@@ -168,6 +168,12 @@ record per line with its session beside it, and `dataset.json` as a manifest. Th
 after each saved drawing. The folder is ignored by git, so recordings stay on the machine that made
 them; `docs/handwriting.md` describes the fields.
 
+## OCR
+
+`/ocr` collects the attempts to read Tangut by machine since 2011, with their terms and the scores
+their authors report. `benchmark/ocr/` holds a 24-sign sample, a runner and a scorer; the page
+measures Tesseract, tangut-mixocr and this site's band reader on it.
+
 ## Materials
 
 `docs/materials.md` lists every source the site draws on — what each actually gives, the terms it

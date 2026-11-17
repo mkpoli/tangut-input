@@ -84,6 +84,10 @@ export const PAGE_SEO = {
     title: 'Gyalrongic literature — Tangut Input',
     description: 'Grammars, dictionaries, data and studies of rGyalrong, Khroskyabs and Horpa, with the work that compares them with Tangut.',
   },
+  ocr: {
+    title: 'Tangut OCR — attempts, licences and scores',
+    description: 'Who has read Tangut by machine since 2011, what each attempt reads, the terms it comes under, and the scores reported by their authors or measured on one fixed page.',
+  },
   about: {
     title: 'Sources — Tangut Input',
     description: 'Where every record on Tangut Input comes from — Wiktionary, BabelStone, the Tangut Cangjie table, Unicode, an edition with facsimile, twelve Wikisource texts and the Lausanne Corpus — and what the site keeps.',
