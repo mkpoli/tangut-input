@@ -68,6 +68,7 @@ const SCREENS = [
   { name: 'intro', path: '/intro' },
   { name: 'gyalrongic', path: '/gyalrongic' },
   { name: 'sources', path: '/about' },
+  { name: 'ocr', path: '/ocr' },
 ]
 
 /** Draw a rough character on the pad: a roof, two columns and a hook, as a hand might. @param {import('playwright-core').Page} page */

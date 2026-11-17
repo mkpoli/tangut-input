@@ -838,6 +838,8 @@
   "intro.links.language": "语言与工具",
   "attest.readText": "在文献中阅读",
   "texts.earlier": "前面的段落",
+  "nav.ocr": "OCR",
+  "nav.ocr.hint": "西夏文的机器识别尝试与成绩",
   "nav.dataset": "手写数据",
   "nav.dataset.hint": "手写的笔画数据，可自由使用",
   "draw.dataset": "手写数据",
