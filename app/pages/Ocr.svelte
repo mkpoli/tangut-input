@@ -34,7 +34,7 @@
     <div class="runs">
       {#each MEASURED as run (run.name)}
         <div class="run" class:ours={run.ours}>
-          <div class="run-name"><b>{run.name}</b><span>{run.note}</span></div>
+          <div class="run-name"><b>{run.name}</b><span>{run.note} · {run.terms}</span></div>
           <div class="bar" aria-hidden="true"><i style={`--v:${run.score / run.total}`}></i></div>
           <span class="right">{run.score}/{run.total}</span>
           <span class="pct">{percent(run.score / run.total)}</span>

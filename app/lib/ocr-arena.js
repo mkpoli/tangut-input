@@ -235,18 +235,21 @@ export const MEASURED = [
   {
     name: 'Tesseract 5.5.2',
     note: 'chi_sim, one glyph per crop, --psm 10',
+    terms: 'Apache-2.0',
     score: right('tesseract'),
     total: SAMPLE.length,
   },
   {
     name: 'tangut-mixocr v1',
     note: 'one glyph per crop',
+    terms: 'MIT',
     score: right('mixocr'),
     total: SAMPLE.length,
   },
   {
     name: 'Band reader',
     note: 'four glyphs a column, this site',
+    terms: 'MIT',
     score: right('band'),
     total: SAMPLE.length,
     ours: true,
