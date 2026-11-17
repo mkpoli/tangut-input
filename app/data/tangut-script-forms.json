@@ -1,6 +1,6 @@
 {
   "format": "tangut-script-forms/1",
-  "built": "2026-11-09",
+  "built": "2026-11-17",
   "sources": [
     {
       "id": "shouling",
@@ -20,8 +20,8 @@
       "source": "shouling",
       "image": "/seal/shouling/18736.png",
       "position": 0,
-      "width": 293,
-      "height": 416
+      "width": 345,
+      "height": 359
     },
     {
       "char": "𗴂",
@@ -29,8 +29,8 @@
       "source": "shouling",
       "image": "/seal/shouling/17D02.png",
       "position": 1,
-      "width": 293,
-      "height": 443
+      "width": 324,
+      "height": 338
     },
     {
       "char": "𗹭",
@@ -38,8 +38,8 @@
       "source": "shouling",
       "image": "/seal/shouling/17E6D.png",
       "position": 2,
-      "width": 293,
-      "height": 353
+      "width": 325,
+      "height": 352
     },
     {
       "char": "𗂧",
@@ -47,8 +47,8 @@
       "source": "shouling",
       "image": "/seal/shouling/170A7.png",
       "position": 3,
-      "width": 293,
-      "height": 391
+      "width": 325,
+      "height": 374
     },
     {
       "char": "𗓑",
@@ -56,8 +56,8 @@
       "source": "shouling",
       "image": "/seal/shouling/174D1.png",
       "position": 4,
-      "width": 320,
-      "height": 416
+      "width": 344,
+      "height": 380
     },
     {
       "char": "𗍁",
@@ -65,8 +65,8 @@
       "source": "shouling",
       "image": "/seal/shouling/17341.png",
       "position": 5,
-      "width": 320,
-      "height": 443
+      "width": 324,
+      "height": 338
     },
     {
       "char": "𗼈",
@@ -74,8 +74,8 @@
       "source": "shouling",
       "image": "/seal/shouling/17F08.png",
       "position": 6,
-      "width": 320,
-      "height": 353
+      "width": 326,
+      "height": 328
     },
     {
       "char": "𗣼",
@@ -83,8 +83,8 @@
       "source": "shouling",
       "image": "/seal/shouling/178FC.png",
       "position": 7,
-      "width": 320,
-      "height": 391
+      "width": 349,
+      "height": 363
     },
     {
       "char": "𗫡",
@@ -92,8 +92,8 @@
       "source": "shouling",
       "image": "/seal/shouling/17AE1.png",
       "position": 8,
-      "width": 303,
-      "height": 416
+      "width": 343,
+      "height": 373
     },
     {
       "char": "𗤓",
@@ -101,8 +101,8 @@
       "source": "shouling",
       "image": "/seal/shouling/17913.png",
       "position": 9,
-      "width": 303,
-      "height": 443
+      "width": 325,
+      "height": 352
     },
     {
       "char": "𘓺",
@@ -110,8 +110,8 @@
       "source": "shouling",
       "image": "/seal/shouling/184FA.png",
       "position": 10,
-      "width": 303,
-      "height": 353
+      "width": 322,
+      "height": 332
     },
     {
       "char": "𘋨",
@@ -119,8 +119,8 @@
       "source": "shouling",
       "image": "/seal/shouling/182E8.png",
       "position": 11,
-      "width": 303,
-      "height": 391
+      "width": 325,
+      "height": 395
     },
     {
       "char": "𘗽",
@@ -128,8 +128,8 @@
       "source": "shouling",
       "image": "/seal/shouling/185FD.png",
       "position": 12,
-      "width": 331,
-      "height": 416
+      "width": 358,
+      "height": 401
     },
     {
       "char": "𗳇",
@@ -137,8 +137,8 @@
       "source": "shouling",
       "image": "/seal/shouling/17CC7.png",
       "position": 13,
-      "width": 331,
-      "height": 443
+      "width": 351,
+      "height": 349
     },
     {
       "char": "𘋼",
@@ -146,8 +146,8 @@
       "source": "shouling",
       "image": "/seal/shouling/182FC.png",
       "position": 14,
-      "width": 331,
-      "height": 353
+      "width": 328,
+      "height": 342
     },
     {
       "char": "𘝞",
@@ -155,8 +155,8 @@
       "source": "shouling",
       "image": "/seal/shouling/1875E.png",
       "position": 15,
-      "width": 331,
-      "height": 391
+      "width": 334,
+      "height": 412
     }
   ]
 }

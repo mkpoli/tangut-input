@@ -7,7 +7,7 @@
 Render the plate first, because the book is not in this repository:
 
     pdftoppm -f 8 -l 8 -r 300 -png '李范文（1997）『夏漢字典』.pdf' /tmp/xhzd-page
-    uv run scripts/build_tangut_script_forms.py --page /tmp/xhzd-page-08.png
+    uv run scripts/build_tangut_script_forms.py --page /tmp/xhzd-page-0008.png
 
 The plate is four columns, right to left, four characters top to bottom, in the order of its
 Chinese translation: 大白高國 / 護城聖德 / 至懿皇帝 / 壽陵誌文. Each crop goes to
@@ -24,12 +24,20 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'app/public/seal/shouling'
 RECORD = ROOT / 'app/data/tangut-script-forms.json'
 
-# The rendered page is 4517×6409 at 300 dpi. The grid sits at GRID, and each character in one of
-# four columns and four rows.
+# The rendered page is 4517×6409 at 300 dpi. Each box below is the ink bounds of one character,
+# measured on that render; the cutter pads every side equally so no stroke is cut and the
+# character sits in the middle of its crop.
 PAGE = (4517, 6409)
-GRID = (2057, 4326, 4114, 5869)
-COLS = [(298, 565), (683, 928), (1020, 1278), (1366, 1603)]
-ROWS = [(179, 515), (521, 878), (883, 1168), (1182, 1497)]
+BOXES = {
+    '大': (3417, 4546, 3692, 4835), '白': (3413, 4896, 3671, 5168),
+    '高': (3409, 5191, 3666, 5475), '國': (3413, 5515, 3666, 5817),
+    '護': (3063, 4538, 3333, 4844), '城': (3063, 4896, 3321, 5168),
+    '聖': (3067, 5199, 3329, 5463), '德': (3067, 5528, 3346, 5821),
+    '至': (2730, 4538, 3001, 4839), '懿': (2739, 4888, 2996, 5172),
+    '皇': (2734, 5199, 2992, 5467), '帝': (2743, 5515, 2992, 5834),
+    '壽': (2345, 4529, 2625, 4852), '陵': (2350, 4896, 2633, 5177),
+    '誌': (2363, 5208, 2625, 5484), '銘': (2371, 5502, 2625, 5834),
+}
 # Columns right to left; in each, characters top to bottom.
 ORDER = [
     ['大', '白', '高', '國'],
@@ -60,22 +68,18 @@ def main():
     page = Image.open(args.page).convert('L')
     if page.size != PAGE:
         raise SystemExit(f'{args.page}: expected {PAGE[0]}×{PAGE[1]}, found {page.size[0]}×{page.size[1]}')
-    left, top, _, _ = GRID
     OUT.mkdir(parents=True, exist_ok=True)
     forms = []
-    for column, group in enumerate(ORDER):
-        x0, x1 = COLS[3 - column]
-        for row, zh in enumerate(group):
-            y0, y1 = ROWS[row]
-            crop = page.crop((left + x0, top + y0, left + x1, top + y1))
+    for group in ORDER:
+        for zh in group:
+            crop = page.crop(BOXES[zh])
             crop = ImageOps.autocontrast(crop, cutoff=1)
             # Lift the paper to white and keep the line's soft edge.
             crop = crop.point(lambda value: 255 if value > 225 else value)
-            # Pad the ink box so no stroke sits on the image edge.
-            pad_x = max(8, round(crop.width * 0.12))
-            pad_y = max(8, round(crop.height * 0.12))
-            framed = Image.new('L', (crop.width + 2 * pad_x, crop.height + 2 * pad_y), 255)
-            framed.paste(crop, (pad_x, pad_y))
+            # Pad the ink box equally on every side so the character sits centred.
+            pad = max(8, round(max(crop.width, crop.height) * 0.12))
+            framed = Image.new('L', (crop.width + 2 * pad, crop.height + 2 * pad), 255)
+            framed.paste(crop, (pad, pad))
             crop = framed
             char = CHARS[zh]
             name = f'{ord(char):04X}.png'
