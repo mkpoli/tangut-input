@@ -1,3 +1,6 @@
+@import '../design/tokens.css';
+@import '../design/controls.css';
+
 /* The workshop's colours, for the system's scheme or the one chosen (data-theme on the root). Every
    token is a light-dark() pair, so color-scheme alone picks the side. */
 :root{color-scheme:light dark}
