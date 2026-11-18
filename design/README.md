@@ -242,7 +242,7 @@ row, width of a key) and nothing that repaints a control.
 ## Accessibility
 
 - Every control has a visible label, or an `aria-label` for an icon-only button.
-- Tab reaches every control; Space toggles; arrows move within a segmented control or radio group.
+- Tab moves between controls and enters a radio group once. Arrow keys move within the group. Space toggles a focused checkbox or switch.
 - The ring stays visible on every surface in both schemes, at 3:1 or better.
 - State is never colour alone: a mark, a thumb, a rule or a word carries it.
 - Text clears 4.5:1 on its surface; a boundary that identifies a control clears 3:1.
