@@ -47,7 +47,7 @@
             <span class="ui-segment-face">Khara</span>
           </label>
         </div>
-        <div class="ui-segmented theme-pick" role="group" aria-label="Theme">
+        <div class="ui-segmented theme-pick" role="radiogroup" aria-label="Theme">
           <label class="ui-segment">
             <input type="radio" name="theme" value="auto" />
             <span class="ui-segment-face">System</span>
@@ -168,6 +168,10 @@
           <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" /> <span>Count strokes</span></label>
           <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" indeterminate /> <span>Mixed</span></label>
           <label class="ui-switch-row"><span>Follow the system theme</span><input class="ui-switch" type="checkbox" role="switch" checked aria-label="Follow the system theme" /></label>
+        </div>
+        <div class="choice-grid" role="radiogroup" aria-label="Comparison view">
+          <label class="ui-check-row"><input class="ui-radio" type="radio" name="comparison" value="table" checked /><span class="ui-check-text">Comparison table</span></label>
+          <label class="ui-check-row"><input class="ui-radio" type="radio" name="comparison" value="mixed" /><span class="ui-check-text">Mixed proof</span></label>
         </div>
         <div class="ui-segmented" role="radiogroup" aria-label="View">
           <label class="ui-segment"><input type="radio" name="view" checked /><span class="ui-segment-face">By rhyme</span></label>
