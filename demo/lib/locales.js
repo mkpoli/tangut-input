@@ -4,7 +4,7 @@ import en from '../../messages/en.json' with { type: 'json' }
 import ja from '../../messages/ja.json' with { type: 'json' }
 import zhHans from '../../messages/zh-Hans.json' with { type: 'json' }
 import zhHant from '../../messages/zh-Hant.json' with { type: 'json' }
-import vi from '../../messages/vi.json' with { type: 'json' }
+import vi from '../messages/components/vi.json' with { type: 'json' }
 import ko from '../../messages/ko.json' with { type: 'json' }
 import appEn from '../messages/en.json' with { type: 'json' }
 import appJa from '../messages/ja.json' with { type: 'json' }
