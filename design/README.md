@@ -173,13 +173,39 @@ component reads semantic tokens, never a raw colour.
 | One choice from a long list | `.ui-select` in `.ui-select-wrap` | The browser's list and typeahead |
 | An immediate on/off setting | `.ui-switch` | `role="switch"` on a checkbox |
 | One or more independent options | `.ui-checkbox` in `.ui-check-row` | Space toggles |
-| One choice out of a few visible options | `.ui-radio` in a label | Arrow keys move the choice |
+| One choice out of a few visible options | `.ui-radio` in `.ui-check-row` | Arrow keys move the choice |
 
 A card is a container: `.ui-card`, with `data-variant="sunken"` for an inset and `data-padding="sm"`
 for a compact panel. A one-off statement about the records is `.ui-notice`.
 
 Checkbox, radio and switch are native `<input>` elements restyled with `appearance: none`. The
 browser keeps form submission, autofill, keyboard, screen readers and forced-colours mode working.
+
+## Choice controls
+
+Tangut, Jurchen, Khitan and Han Input use the same markup for choices. Use a checkbox for each independent search or display option, a radio group for mutually exclusive options, and a switch for an on/off preference.
+
+```html
+<label class="ui-check-row">
+  <input class="ui-checkbox" type="checkbox" name="baseline" />
+  <span class="ui-check-text">Show baseline</span>
+</label>
+
+<div role="radiogroup" aria-label="Comparison view">
+  <label class="ui-check-row">
+    <input class="ui-radio" type="radio" name="view" value="table" checked />
+    <span class="ui-check-text">Comparison table</span>
+  </label>
+  <label class="ui-check-row">
+    <input class="ui-radio" type="radio" name="view" value="mixed" />
+    <span class="ui-check-text">Mixed proof</span>
+  </label>
+</div>
+```
+
+Give each radio group its own input name and an accessible label. Tab reaches the selected option, arrow keys change the selection, and Space toggles a focused checkbox. Clicking the text activates its input. For compact segmented radios, put the native input immediately before a `.ui-segment-face` inside a `label.ui-segment`. For a preference switch, use a labelled `input.ui-switch[type=checkbox][role=switch]`.
+
+The shared styles supply the selected mark, hover, disabled and keyboard-focus states in each theme and in forced colours. Keep page-specific styles on the surrounding layout.
 
 ## Patterns
 
