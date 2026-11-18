@@ -1,3 +1,6 @@
+@import '../design/tokens.css';
+@import '../design/controls.css';
+
 /* The workshop's colours, for the system's scheme or the one chosen (data-theme on the root). Every
    token is a light-dark() pair, so color-scheme alone picks the side. */
 :root{color-scheme:light dark}
@@ -27,6 +30,18 @@
   --cjk:var(--cjk-sans);--ids-font:var(--cjk-sans);
   /* After the reader's fonts and installed broad-coverage ones, before the bundled fallback. */
   --ids-glyph-fallback:"Jigmo","Jigmo2","Jigmo3","Plangothic P1","Plangothic P2","IDS Fallback";
+  /* Use the workshop palette for the shared choice controls. */
+  --ui-color-surface:var(--surface);
+  --ui-color-surface-sunken:var(--surface-2);
+  --ui-color-border:var(--line);
+  --ui-color-control-border:var(--muted);
+  --ui-color-control-border-hover:var(--ink);
+  --ui-color-ink:var(--ink);
+  --ui-color-ink-muted:var(--muted);
+  --ui-color-accent:var(--accent);
+  --ui-color-accent-hover:color-mix(in srgb,var(--accent) 88%,var(--ink));
+  --ui-color-on-accent:var(--on-accent);
+  --ui-color-focus:var(--focus);
   /* The components' tokens, from the workshop's. */
   --ids-ink:var(--ink);--ids-muted:var(--muted);--ids-line:var(--line);--ids-line-strong:var(--line-strong);
   --ids-surface:var(--surface);--ids-surface-subtle:var(--surface-2);--ids-surface-selected:var(--hover);

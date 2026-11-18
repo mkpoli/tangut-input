@@ -10,6 +10,7 @@
 
   /** @type {{ drawing?: import('../../src/adapter/types.js').Drawing | null, scopes?: import('../../src/document/index.js').ScopeTree | null, slots?: number[][], incomplete?: boolean, document?: import('../../src/document/index.js').Document | null, sequence: string, t: (key: string, params?: Record<string, string | number>) => string, onnote: (text: string) => void }} */
   let { drawing = null, scopes = null, slots = [], incomplete = false, document = null, sequence, t, onnote } = $props()
+  const uid = $props.id()
   let partial = $state(false)
   let s = $state(storedSettings())
   $effect(() => keepSettings($state.snapshot(s)))
@@ -50,9 +51,12 @@
   <div class="rows">
     <div class="row">
       <span class="name">{t('app.export.format')}</span>
-      <div class="seg" role="radiogroup" aria-label={t('app.export.format')}>
+      <div class="ui-segmented" role="radiogroup" aria-label={t('app.export.format')}>
         {#each /** @type {const} */ (['svg', 'png']) as f (f)}
-          <button type="button" role="radio" aria-checked={s.format === f} onclick={() => s.format = f}>{f.toUpperCase()}</button>
+          <label class="ui-segment">
+            <input type="radio" name={uid + '-format'} value={f} bind:group={s.format} />
+            <span class="ui-segment-face">{f.toUpperCase()}</span>
+          </label>
         {/each}
       </div>
       {#if s.format === 'png'}
@@ -63,20 +67,27 @@
     </div>
     <div class="row">
       <span class="name">{t('app.export.background')}</span>
-      <div class="swatches" role="radiogroup" aria-label={t('app.export.background')}>
+      <div class="ui-segmented" role="radiogroup" aria-label={t('app.export.background')}>
         {#each BACKGROUNDS as b (b)}
-          <button type="button" role="radio" class="swatch {b}" aria-checked={s.background === b} title={t(`app.export.bg.${b}`)} aria-label={t(`app.export.bg.${b}`)}
-            style:--swatch={b === 'custom' ? s.custom : undefined} onclick={() => s.background = b}></button>
+          <label class="ui-segment" title={t(`app.export.bg.${b}`)}>
+            <input type="radio" name={uid + '-background'} value={b} bind:group={s.background} aria-label={t(`app.export.bg.${b}`)} />
+            <span class="ui-segment-face"><span aria-hidden="true" class="swatch {b}" style:--swatch={s.custom}></span></span>
+          </label>
         {/each}
-        {#if s.background === 'custom'}<input type="color" aria-label={t('app.export.bg.custom')} bind:value={s.custom} />{/if}
       </div>
+      {#if s.background === 'custom'}<input type="color" aria-label={t('app.export.bg.custom')} bind:value={s.custom} />{/if}
     </div>
     <div class="row">
       <span class="name">{t('app.export.ink')}</span>
-      <div class="seg" role="radiogroup" aria-label={t('app.export.ink')}>
-        <button type="button" role="radio" aria-checked={s.ink === 'auto'} title={t('app.export.inkAutoHint')} onclick={() => s.ink = 'auto'}>
-          <span class="dot" style:--swatch={s.ink === 'auto' ? inkOf(s) : inkOf({ ...s, ink: 'auto' })}></span>{t('app.export.inkAuto')}</button>
-        <button type="button" role="radio" aria-checked={s.ink === 'custom'} onclick={() => s.ink = 'custom'}>{t('app.export.inkCustom')}</button>
+      <div class="ui-segmented" role="radiogroup" aria-label={t('app.export.ink')}>
+        <label class="ui-segment" title={t('app.export.inkAutoHint')}>
+          <input type="radio" name={uid + '-ink'} value="auto" bind:group={s.ink} />
+          <span class="ui-segment-face"><span class="dot" style:--swatch={inkOf({ ...s, ink: 'auto' })}></span>{t('app.export.inkAuto')}</span>
+        </label>
+        <label class="ui-segment">
+          <input type="radio" name={uid + '-ink'} value="custom" bind:group={s.ink} />
+          <span class="ui-segment-face">{t('app.export.inkCustom')}</span>
+        </label>
       </div>
       {#if s.ink === 'custom'}<input type="color" aria-label={t('app.export.inkCustom')} bind:value={s.inkColour} />{/if}
     </div>
@@ -85,14 +96,14 @@
       <input type="range" min="0" max="0.25" step="0.01" bind:value={s.padding} />
       <output class="num">{Math.round(s.padding * 100)}%</output>
     </label>
-    <label class="row check">
-      <input type="checkbox" bind:checked={s.placeholders} />
+    <label class="ui-check-row">
+      <input class="ui-checkbox" type="checkbox" bind:checked={s.placeholders} />
       <span>{t('app.export.placeholders')}</span>
     </label>
   </div>
   {#if incomplete}
     <p class="incomplete" role="status">{t('app.export.incomplete')}</p>
-    <label class="row check"><input type="checkbox" bind:checked={partial} /><span>{t('app.export.partial')}</span></label>
+    <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" bind:checked={partial} /><span>{t('app.export.partial')}</span></label>
   {/if}
   <div class="actions">
     <span class="thumb" class:none={!backgroundOf(s)} aria-hidden="true">{#if thumb}<img src={thumb} alt="" />{/if}</span>
@@ -107,17 +118,9 @@
   .rows{display:flex;flex-direction:column;gap:4px}
   .row{display:flex;align-items:center;gap:10px;min-height:30px;font-size:13px}
   .name{width:76px;flex:none;color:var(--muted)}
-  .check{gap:8px}
-  .check input{margin:0 0 0 86px;accent-color:var(--accent)}
-  .seg{display:flex;gap:2px;padding:2px;border-radius:9px;background:var(--surface-2);border:1px solid var(--line)}
-  .seg button{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:0;border-radius:7px;background:none;color:var(--muted);font:inherit;font-size:12.5px;cursor:pointer}
-  .seg button[aria-checked="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .14)}
-  .swatches{display:flex;align-items:center;gap:6px}
-  .swatch{width:26px;height:26px;padding:0;border:1px solid var(--line-strong);border-radius:7px;cursor:pointer;background:var(--swatch)}
-  .swatch.none{background:repeating-conic-gradient(#c9c9d0 0 25%,#fff 0 50%) 0 0/10px 10px}
-  .swatch.white{--swatch:#fff}.swatch.black{--swatch:#000}
-  .swatch.custom{background:conic-gradient(from 90deg,#f43,#fc3,#3c6,#39f,#a3f,#f43)}
-  .swatch[aria-checked="true"]{outline:2px solid var(--accent);outline-offset:2px}
+  .swatch{width:14px;height:14px;border:1px solid var(--line-strong);border-radius:3px}
+  .swatch.none{background:repeating-conic-gradient(#c9c9d0 0 25%,#fff 0 50%) 0 0/8px 8px}
+  .swatch.white{background:#fff}.swatch.black{background:#000}.swatch.custom{background:var(--swatch)}
   .dot{width:10px;height:10px;border-radius:50%;background:var(--swatch);border:1px solid var(--line-strong)}
   input[type="color"]{width:32px;height:28px;padding:0 2px;border:1px solid var(--line);border-radius:7px;background:var(--surface)}
   input[type="range"]{flex:1;min-width:0;accent-color:var(--accent)}

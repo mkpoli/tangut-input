@@ -13,9 +13,9 @@
       <span>{t('app.prefs.theme')}</span>
       <ThemeSwitch {theme} label={t('app.prefs.theme')} labels={{ system: t('app.theme.system'), light: t('app.theme.light'), dark: t('app.theme.dark') }} onchange={ontheme} />
     </div>
-    <label class="pref">
+    <label class="ui-switch-row">
       <span>{t('app.prefs.keyHints')}</span>
-      <input type="checkbox" role="switch" bind:checked={keyHints} />
+      <input class="ui-switch" type="checkbox" role="switch" bind:checked={keyHints} />
     </label>
     <label class="pref">
       <span>{t('app.prefs.tint.label')}</span>
@@ -40,10 +40,6 @@
   .pref{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
   .pref:last-child{border-bottom:0}
   .column{flex-direction:column;align-items:stretch;gap:6px}
-  input[type="checkbox"]{width:36px;height:20px;margin:0;appearance:none;border-radius:999px;background:var(--line-strong);position:relative;cursor:pointer;transition:background-color .15s}
-  input[type="checkbox"]::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
-  input[type="checkbox"]:checked{background:var(--accent)}
-  input[type="checkbox"]:checked::after{transform:translateX(16px)}
   input[type="url"]{height:34px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);color:var(--ink);font:12px ui-monospace,"SF Mono",Menlo,Consolas,monospace}
   small{font-size:12px;color:var(--muted)}
   select{min-height:34px;padding:0 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface-2);color:var(--ink);font:inherit}
