@@ -181,7 +181,7 @@ for a compact panel. A one-off statement about the records is `.ui-notice`.
 Checkbox, radio and switch are native `<input>` elements restyled with `appearance: none`. The
 browser keeps form submission, autofill, keyboard, screen readers and forced-colours mode working.
 
-## Choice controls
+### Choice controls
 
 Tangut, Jurchen, Khitan and Han Input use the same markup for choices. Use a checkbox for each independent search or display option, a radio group for mutually exclusive options, and a switch for an on/off preference.
 
@@ -201,6 +201,11 @@ Tangut, Jurchen, Khitan and Han Input use the same markup for choices. Use a che
     <span class="ui-check-text">Mixed proof</span>
   </label>
 </div>
+
+<label class="ui-switch-row">
+  <span>Show keyboard hints</span>
+  <input class="ui-switch" type="checkbox" role="switch" name="key-hints" />
+</label>
 ```
 
 Give each radio group its own input name and an accessible label. Tab reaches the selected option, arrow keys change the selection, and Space toggles a focused checkbox. Clicking the text activates its input. For compact segmented radios, put the native input immediately before a `.ui-segment-face` inside a `label.ui-segment`. For a preference switch, use a labelled `input.ui-switch[type=checkbox][role=switch]`.
