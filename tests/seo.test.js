@@ -22,3 +22,7 @@ test('the worker runs first for every page with a head', () => {
 test('a page canonical is its own address', () => {
   for (const page of Object.keys(PAGE_SEO)) expect(seoOf(page).url).toBe(`https://tangut.mkpo.li/${page}`)
 })
+
+test('a path that is neither a page nor an asset is a 404, not the app', () => {
+  expect(config.assets.not_found_handling).toBeUndefined()
+})
