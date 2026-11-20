@@ -2,13 +2,12 @@
   "name": "tangut-input",
   "main": "app/worker.js",
   "compatibility_date": "2026-10-30",
-  // The assets are the app, and a miss opens the app so a link can carry a query. The worker handles
-  // API requests and selected finder pages; other assets are served directly.
+  // The assets are the app. The worker handles API requests and every page the app routes to, so a
+  // link can carry a query; any other path that is not an asset is a 404.
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*", "/", "/meaning", "/cangjie", "/sijiao", "/reading", "/fanqie", "/chains", "/chart", "/eras", "/texts", "/transcribe", "/convert", "/draw", "/parts", "/codes", "/variants", "/intro", "/gyalrongic", "/about", "/dataset", "/ocr"]
+    "run_worker_first": ["/api/*", "/", "/meaning", "/cangjie", "/sijiao", "/reading", "/fanqie", "/chains", "/chart", "/eras", "/texts", "/transcribe", "/convert", "/draw", "/parts", "/codes", "/variants", "/intro", "/gyalrongic", "/about", "/dataset", "/dataset/", "/ocr"]
   },
   // Every drawing and every character picked, kept so the record can be read back later.
   // An open write endpoint needs a ceiling: each address may send this many batches a minute.
