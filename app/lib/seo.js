@@ -84,6 +84,10 @@ export const PAGE_SEO = {
     title: 'Gyalrongic literature — Tangut Input',
     description: 'Grammars, dictionaries, data and studies of rGyalrong, Khroskyabs and Horpa, with the work that compares them with Tangut.',
   },
+  dataset: {
+    title: 'Tangut stroke dataset — Tangut Input',
+    description: 'Strokes drawn on this site’s pad with a mouse, a trackpad or a stylus, kept with the character each one was made for.',
+  },
   ocr: {
     title: 'Tangut OCR — attempts, licences and scores',
     description: 'Who has read Tangut by machine since 2011, what each attempt reads, the terms it comes under, and the scores reported by their authors or measured on one fixed page.',
