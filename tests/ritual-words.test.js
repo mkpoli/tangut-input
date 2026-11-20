@@ -39,6 +39,22 @@ test('each month name opens its verse of the ode in the matching version', () =>
   })
 })
 
+test('the month word and the numbers two to seven are the parts of their month names', () => {
+  const months = WORDS.words.filter(word => word.kind === 'month')
+  const month = WORDS.words.find(word => word.kind === 'word')
+  const numbers = WORDS.words.filter(word => word.kind === 'number')
+  expect(numbers.map(word => word.gloss)).toEqual(['two', 'three', 'four', 'five', 'six', 'seven'])
+  for (const name of months) {
+    expect(name.ritual.endsWith(month.ritual)).toBe(true)
+    expect(name.common.endsWith(month.common)).toBe(true)
+  }
+  numbers.forEach((number, i) => {
+    expect(months[i + 1].ritual).toBe(number.ritual + month.ritual)
+    expect(months[i + 1].common).toBe(number.common + month.common)
+  })
+  expect(new Set(WORDS.words.map(word => word.gloss)).size).toBe(WORDS.words.length)
+})
+
 test('a character finds its pairs from either side', () => {
   expect(ritualWords('𘘞').length).toBe(13)
   expect(ritualWords('𗒹').map(word => word.gloss)).toEqual(['seven', 'seventh lunar month'])

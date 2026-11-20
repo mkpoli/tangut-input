@@ -468,13 +468,14 @@
       <section>
         <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.ritual')}</h3>
         <table class="ritual">
-          <thead><tr><th scope="col">{t('card.ritualForm')}</th><th scope="col">{t('card.commonForm')}</th></tr></thead>
+          <thead><tr><th class="ui-visually-hidden" scope="col">{t('card.meaning')}</th><th scope="col">{t('card.ritualForm')}</th><th scope="col">{t('card.commonForm')}</th></tr></thead>
           <tbody>
-            {#each ritual as word (word.ritual + word.common)}
-              <tr>
+            {#each ritual as word (word.gloss)}
+              <tr title={word.gloss}>
+                <th class="ui-visually-hidden" scope="row" lang="en">{word.gloss}</th>
                 {#each [word.ritual, word.common] as form (form)}
                   <td>
-                    <div class="ui-tiles rel" style:--ui-tile-size="40px">
+                    <div class="ui-tiles rel">
                       {#each [...form] as other, i (i)}
                         {@const sound = readingOf(other, ui.reading)}
                         <button class="ui-tile" type="button" aria-current={other === char ? 'true' : undefined} title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
@@ -488,7 +489,7 @@
         </table>
         <p class="ui-hint">
           {#each RITUAL_SOURCES as source (source.id)}
-            <a href={source.url} target="_blank" rel="noopener noreferrer" title={source.title}>{source.author} {source.date.slice(0, 4)} ↗</a>
+            <a href={source.url} target="_blank" rel="noopener noreferrer" title={source.title}>{source.author} {source.date.slice(0, 4)}<span aria-hidden="true"> ↗</span></a>
           {/each}
         </p>
       </section>
@@ -871,7 +872,8 @@
   .ritual{border-collapse:collapse;justify-self:start}
   .ritual th{padding:0 var(--ui-space-lg) var(--ui-space-2xs) 0;color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);font-weight:400;text-align:start}
   .ritual td{padding:2px var(--ui-space-md) 2px 0;vertical-align:top}
-  .ritual .ui-tiles{display:flex;flex-wrap:nowrap;gap:3px}
+  .ritual .ui-tiles{--ui-tile-size:40px;display:flex;flex-wrap:nowrap;gap:3px}
+  @media (max-width:359px){.ritual .ui-tiles{--ui-tile-size:33px}.ritual .ui-tiles :global(.ui-script){font-size:21px}}
   .ritual .ui-tile{flex:none;inline-size:var(--ui-tile-size)}
   .ritual .ui-tile[aria-current='true']{background:var(--ui-color-accent-soft)}
   .rel :global(.ui-script){font-size:26px}
