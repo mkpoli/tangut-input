@@ -1,0 +1,152 @@
+{
+  "format": "tangut-ritual-words/1",
+  "built": "2026-11-21",
+  "sources": [
+    {
+      "id": "west2011",
+      "author": "Andrew West",
+      "title": "The Myth of the Tangut Ritual Language",
+      "where": "BabelStone Blog",
+      "date": "2011-08-29",
+      "url": "https://www.babelstone.co.uk/Blog/2011/08/myth-of-tangut-ritual-language.html",
+      "retrieved": "2026-11-20",
+      "licence": "No licence stated",
+      "note": "Reads the Ode on Monthly Pleasures 𗼑𗼑𗫉𗊱 from 西田龍雄 1997 and tabulates the month names of both versions and the numbers two to seven. \"Ritual language\" and \"common language\" are Kepping's terms for Nishida's vocabulary I and II; West argues the ritual lines are glosses that mostly use ordinary words. A blog post, not reviewed. Glosses are West's English."
+    }
+  ],
+  "words": [
+    {
+      "kind": "word",
+      "gloss": "month",
+      "ritual": "𘘞𗳝",
+      "common": "𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "number",
+      "gloss": "two",
+      "ritual": "𘙇𘂚",
+      "common": "𗍫",
+      "source": "west2011"
+    },
+    {
+      "kind": "number",
+      "gloss": "three",
+      "ritual": "𗛰𘕻",
+      "common": "𘕕",
+      "source": "west2011"
+    },
+    {
+      "kind": "number",
+      "gloss": "four",
+      "ritual": "𗲛𗝝",
+      "common": "𗥃",
+      "source": "west2011"
+    },
+    {
+      "kind": "number",
+      "gloss": "five",
+      "ritual": "𗉨𗘝",
+      "common": "𗏁",
+      "source": "west2011"
+    },
+    {
+      "kind": "number",
+      "gloss": "six",
+      "ritual": "𘀐𘍼",
+      "common": "𗤁",
+      "source": "west2011"
+    },
+    {
+      "kind": "number",
+      "gloss": "seven",
+      "ritual": "𗘎𗘋",
+      "common": "𗒹",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "first lunar month",
+      "ritual": "𗤒𗆧𘘞𗳝",
+      "common": "𗩭𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "second lunar month",
+      "ritual": "𘙇𘂚𘘞𗳝",
+      "common": "𗍫𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "third lunar month",
+      "ritual": "𗛰𘕻𘘞𗳝",
+      "common": "𘕕𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "fourth lunar month",
+      "ritual": "𗲛𗝝𘘞𗳝",
+      "common": "𗥃𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "fifth lunar month",
+      "ritual": "𗉨𗘝𘘞𗳝",
+      "common": "𗏁𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "sixth lunar month",
+      "ritual": "𘀐𘍼𘘞𗳝",
+      "common": "𗤁𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "seventh lunar month",
+      "ritual": "𗘎𗘋𘘞𗳝",
+      "common": "𗒹𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "eighth lunar month",
+      "ritual": "𗍫𗥃𘘞𗳝",
+      "common": "𘉋𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "ninth lunar month",
+      "ritual": "𗥃𗏁𘘞𗳝",
+      "common": "𗢭𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "tenth lunar month",
+      "ritual": "𗍫𗏁𘘞𗳝",
+      "common": "𗰗𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "eleventh lunar month",
+      "ritual": "𗏁𗤁𘘞𗳝",
+      "common": "𗰗𘈩𗼑",
+      "source": "west2011"
+    },
+    {
+      "kind": "month",
+      "gloss": "twelfth lunar month",
+      "ritual": "𗌽𗎓𘘞𗳝",
+      "common": "𗎊𗼑",
+      "source": "west2011"
+    }
+  ]
+}
