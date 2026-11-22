@@ -44,11 +44,11 @@ test('a surrounding form first in ⿺ answers the side-by-side layout', () => {
   const index = buildPartIndex([
     { char: '𗸘', composition: '⿰𘣠𘣩' },
     { char: '𗸠', composition: '⿺𘣢𘣩' },
-  ], [['𘣠', '𘣢']])
+  ], [], [['𘣠', '𘣢']])
   expect([...index.layoutsOf.get('𗸘')]).toEqual(['⿰'])
   expect([...index.layoutsOf.get('𗸠')]).toEqual(['⿺', '⿰'])
   // A ⿺ whose first part is not a recorded surrounding form stays an enclosure.
-  const plain = buildPartIndex([{ char: '𗸞', composition: '⿺𘠁𘣩' }], [['𘣠', '𘣢']])
+  const plain = buildPartIndex([{ char: '𗸞', composition: '⿺𘠁𘣩' }], [], [['𘣠', '𘣢']])
   expect([...plain.layoutsOf.get('𗸞')]).toEqual(['⿺'])
 })
 

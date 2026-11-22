@@ -1,5 +1,5 @@
 // The page query is a JSON tuple so composite descriptions and repeated parts stay distinct.
-export const PART_LAYOUTS = ['⿰', '⿱', '⿲', '⿳', '⿺', '⿸', '⿵', '⿻']
+export const PART_LAYOUTS = ['⿰', '⿱', '⿲', '⿳', '⿴', '⿺', '⿸', '⿵', '⿻']
 
 /** @param {string[]} parts @param {string} layout */
 export function encodePartsQuery(parts, layout) {
