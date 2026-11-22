@@ -114,6 +114,20 @@
       "credit": "Arakawa 2023"
     },
     {
+      "name": "冂ノくノ一",
+      "char": "𘪷",
+      "source": "arakawa-2023",
+      "detail": "A6 in table 4: the 冂ノくノ一 element in the 旁 position; the final short horizontal is the stroke Arakawa treats as a dot; table 6 maps A6 to this component",
+      "credit": "Arakawa 2023"
+    },
+    {
+      "name": "冂ノくノ一",
+      "char": "𘫙",
+      "source": "arakawa-2023",
+      "detail": "A7 in table 4: the 冂ノくノ一 element in the 偏 and 旁 positions; the final short horizontal is the stroke Arakawa treats as a dot; table 6 maps A7 to this component",
+      "credit": "Arakawa 2023"
+    },
+    {
       "name": "くノ",
       "char": "𘫺",
       "source": "arakawa-2023",
@@ -130,7 +144,7 @@
     {
       "name": "コくノ",
       "char": "𘫿",
-      "source": "NGWU YOH, chat message, 2026-11-10",
+      "source": "NGWU YOH, personal communication, 2026-11-10",
       "detail": "The plain コくノ, the form without the emphatic dot; Arakawa 2023 names コくノ and its dotted A3 コくノ﹅ (𘧆). U+18AFF is this project's reading of the glyph.",
       "credit": "NGWU YOH"
     }
