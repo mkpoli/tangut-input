@@ -19,6 +19,7 @@
   import { partsOfSpeech } from '../lib/pos.js'
   import Ids from './Ids.svelte'
   import { scriptForms } from '../lib/script-forms.js'
+  import { ritualWords, RITUAL_SOURCES } from '../lib/ritual-words.js'
   import Attest from './Attest.svelte'
   import { loadWenhaiComposition } from '../lib/data.js'
   import Peek from './Peek.svelte'
@@ -69,6 +70,7 @@
   const leilin = $derived(ready && char ? ix.leilin.get(char) : undefined)
   const variants = $derived(ready && char ? ix.variants.get(char) : undefined)
   const forms = $derived(char ? scriptForms(char) : [])
+  const ritual = $derived(char ? ritualWords(char) : [])
   // The same substitution the possible pairs use, written out where no character carries it.
   const derivedForms = $derived(ready && entry?.composition ? derivedDescriptions(entry, ix.byDescription) : [])
   // The group the character stands in, when a pair list would hide part of it: a chain of stated
@@ -462,6 +464,37 @@
       </section>
     {/if}
 
+    {#if ritual.length}
+      <section>
+        <h3 class="ui-label"><Icon name="scroll" size={15}/>{t('card.ritual')}</h3>
+        <table class="ritual">
+          <thead><tr><th class="ui-visually-hidden" scope="col">{t('card.meaning')}</th><th scope="col">{t('card.ritualForm')}</th><th scope="col">{t('card.commonForm')}</th></tr></thead>
+          <tbody>
+            {#each ritual as word (word.gloss)}
+              <tr title={word.gloss}>
+                <th class="ui-visually-hidden" scope="row" lang="en">{word.gloss}</th>
+                {#each [word.ritual, word.common] as form (form)}
+                  <td>
+                    <div class="ui-tiles rel">
+                      {#each [...form] as other, i (i)}
+                        {@const sound = readingOf(other, ui.reading)}
+                        <button class="ui-tile" type="button" aria-current={other === char ? 'true' : undefined} title={gloss(other)} onclick={() => choose(other)}><G char={other} />{#if sound}<span class="ui-tile-sound">{sound}</span>{/if}</button>
+                      {/each}
+                    </div>
+                  </td>
+                {/each}
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+        <p class="ui-hint">
+          {#each RITUAL_SOURCES as source (source.id)}
+            <a href={source.url} target="_blank" rel="noopener noreferrer" title={source.title}>{source.author} {source.date.slice(0, 4)}<span aria-hidden="true"> ↗</span></a>
+          {/each}
+        </p>
+      </section>
+    {/if}
+
     {#if hasCardReadings({ readings, keyed, rhymeClass, spelling, hands, glosses: tibetanGlosses })}
       <section>
         <h3 class="ui-label"><Icon name="reading" size={15}/>{t('card.readings')}</h3>
@@ -836,6 +869,13 @@
   .derived{display:flex;flex-wrap:wrap;gap:var(--ui-space-xs);margin:var(--ui-space-xs) 0 0;padding:0;list-style:none}
   .derived .ui-formula{font-size:16px}
   .rel{gap:3px}
+  .ritual{border-collapse:collapse;justify-self:start}
+  .ritual th{padding:0 var(--ui-space-lg) var(--ui-space-2xs) 0;color:var(--ui-color-ink-muted);font-size:var(--ui-text-xs);font-weight:400;text-align:start}
+  .ritual td{padding:2px var(--ui-space-md) 2px 0;vertical-align:top}
+  .ritual .ui-tiles{--ui-tile-size:40px;display:flex;flex-wrap:nowrap;gap:3px}
+  @media (max-width:359px){.ritual .ui-tiles{--ui-tile-size:33px}.ritual .ui-tiles :global(.ui-script){font-size:21px}}
+  .ritual .ui-tile{flex:none;inline-size:var(--ui-tile-size)}
+  .ritual .ui-tile[aria-current='true']{background:var(--ui-color-accent-soft)}
   .rel :global(.ui-script){font-size:26px}
   .more{font-size:var(--ui-text-xs)}
   .wenhai-chains .ui-label{display:flex;align-items:center;gap:var(--ui-space-2xs)}
