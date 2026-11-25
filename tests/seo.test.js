@@ -28,6 +28,10 @@ test('a page canonical is its own address', () => {
   for (const page of Object.keys(PAGE_SEO)) expect(seoOf(page).url).toBe(`https://tangut.mkpo.li/${page}`)
 })
 
+test('a path that is neither a page nor an asset is a 404, not the app', () => {
+  expect(config.assets.not_found_handling).toBeUndefined()
+})
+
 test('the worker fetches / rather than /index.html and rewrites the page head', async () => {
   const env = {
     ASSETS: {
