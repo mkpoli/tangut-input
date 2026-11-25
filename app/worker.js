@@ -9,10 +9,10 @@
 // An event is either a pick, `{ type: 'pick', char, finder, place, locale, session }`, or a
 // drawing, `{ type: 'drawing', strokes, picked?, place?, origin?, answer?, kind?, times?, … }`. The
 // rows land in D1 (`migrations/0001_records.sql`); `bun run records` reads them back.
-import { seoOf } from './lib/seo.js'
+import { PAGE_SEO, seoOf } from './lib/seo.js'
 
-// The paths that answer with a head of their own: `PAGES` in `app/lib/route.svelte.js`, About, the introduction, the variants page, the Gyalrongic reading list, the dataset and the OCR survey.
-const FINDERS = new Set(['', 'meaning', 'cangjie', 'sijiao', 'reading', 'fanqie', 'chains', 'chart', 'eras', 'transcribe', 'convert', 'draw', 'parts', 'variants', 'intro', 'gyalrongic', 'about', 'ocr'])
+// The paths that answer with a head of their own: every page in `PAGE_SEO`.
+const FINDERS = new Set(Object.keys(PAGE_SEO))
 
 // A drawing of a few hundred points is a few kilobytes; anything past this is not a reader's pen.
 const LIMIT = 60_000
@@ -164,9 +164,10 @@ async function record(request, env) {
  * @param {URL} url
  */
 async function page(request, env, url) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return env.ASSETS.fetch(request)
   const finder = url.pathname.replace(/^\/+|\/+$/g, '')
   if (!FINDERS.has(finder)) return env.ASSETS.fetch(request)
-  const asset = await env.ASSETS.fetch(new URL('/index.html', url).toString())
+  const asset = await env.ASSETS.fetch(new URL('/', url).toString())
   if (!asset.ok) return asset
   const { title, description, url: canonical } = seoOf(finder)
   const attribute = (/** @type {string} */ name, /** @type {string} */ value) => ({
