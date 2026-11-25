@@ -18,7 +18,10 @@ test('every routed page and sitemap address has a head of its own', () => {
 
 test('the worker runs first for every page with a head', () => {
   const first = new Set(config.assets.run_worker_first)
-  for (const page of Object.keys(PAGE_SEO)) expect(first.has(`/${page}`), page).toBe(true)
+  for (const page of Object.keys(PAGE_SEO)) {
+    expect(first.has(`/${page}`), `/${page}`).toBe(true)
+    if (page) expect(first.has(`/${page}/`), `/${page}/`).toBe(true)
+  }
 })
 
 test('a page canonical is its own address', () => {
