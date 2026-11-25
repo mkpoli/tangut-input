@@ -164,9 +164,10 @@ async function record(request, env) {
  * @param {URL} url
  */
 async function page(request, env, url) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return env.ASSETS.fetch(request)
   const finder = url.pathname.replace(/^\/+|\/+$/g, '')
   if (!FINDERS.has(finder)) return env.ASSETS.fetch(request)
-  const asset = await env.ASSETS.fetch(new URL('/index.html', url).toString())
+  const asset = await env.ASSETS.fetch(new URL('/', url).toString())
   if (!asset.ok) return asset
   const { title, description, url: canonical } = seoOf(finder)
   const attribute = (/** @type {string} */ name, /** @type {string} */ value) => ({
